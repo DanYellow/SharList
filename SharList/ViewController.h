@@ -20,5 +20,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 @property (nonatomic, strong) UISearchController *searchController;
 
 
+- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
+
 @end
 

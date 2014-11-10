@@ -27,22 +27,23 @@
     ViewController *viewController = [[ViewController alloc] init];
     viewController.title = @"First";
     
-    ViewController *viewController2 = [[ViewController alloc] init];
-    viewController2.title = @"Second";
+    SettingsViewControllerViewController *settingsViewController = [[SettingsViewControllerViewController alloc] init];
+    settingsViewController.title = @"Paramètres";
     //    fvc.tabBarItem.image=[UIImage imageNamed:@"i.png"];
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
 
     
-    self.tabBarController.viewControllers = [NSArray arrayWithObjects:navigationController, nil];
+    self.tabBarController.viewControllers = @[navigationController, settingsViewController];
 //    [self.window.rootViewController.view addSubview: self.tabBarController.view];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window setRootViewController:self.tabBarController];
     [self.window setBackgroundColor:[UIColor whiteColor]];
     [self.window makeKeyAndVisible];
-//    self.window.rootViewController.definesPresentationContext = YES;
-//    self.window.rootViewController.edgesForExtendedLayout = UIRectEdgeNone;
+    
+    self.window.rootViewController.definesPresentationContext = YES;
+    self.window.rootViewController.edgesForExtendedLayout = UIRectEdgeNone;
     
     return YES;
 }

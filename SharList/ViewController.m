@@ -30,7 +30,18 @@
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
-    self.navigationController.navigationBar.barTintColor = [UIColor clearColor];
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    imgView.image = [UIImage imageNamed:@"appBG"];
+    imgView.contentMode = UIViewContentModeScaleAspectFit;
+//    [self.view addSubview:imgView];
+    
+    [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]]];
+
+    
+    
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = NO;
     
     // Moto of the app
@@ -46,11 +57,10 @@
     [self.view addSubview:appMottoText];
     
     // Facebook login
-    CGFloat heightRatioLoginViewFB = ((740*100)/screenHeight);
     FBLoginView *fbLoginButton = [[FBLoginView alloc] init];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
-    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), (((heightRatioLoginViewFB*screenHeight)/100)/2) );
+    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight] - 64 );
     [self.view addSubview:fbLoginButton];
     
     
@@ -61,17 +71,35 @@
     self.searchController.searchResultsUpdater = self;
     self.searchController.searchBar.searchBarStyle = UISearchBarStyleMinimal;
     self.searchController.dimsBackgroundDuringPresentation = YES;
+//    self.searchController.searchBar.backgroundColor = [UIColor whiteColor];
     [self.searchController.searchBar sizeToFit];
     self.searchController.searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
-    self.searchController.searchBar.barTintColor = [UIColor grayColor];
+    self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     
-    [self.view addSubview: self.searchController.searchBar];
+    CGFloat strokeUnderSearchControllerY = [self computeRatio:270.0 forDimension:screenHeight] - 84;
+    UIView *strokeUnderSearchController = [[UIView alloc] initWithFrame:CGRectMake(0, strokeUnderSearchControllerY, [self computeRatio:608.0 forDimension:screenWidth], 1.0)];
+    strokeUnderSearchController.center = CGPointMake(self.view.center.x, strokeUnderSearchControllerY);
+    strokeUnderSearchController.backgroundColor = [UIColor blackColor];
+    strokeUnderSearchController.opaque = YES;
+    strokeUnderSearchController.userInteractionEnabled = NO;
+    [self.view addSubview:strokeUnderSearchController];
+    
+    
+    // Uitableview of user selection (what user likes)
+    UITableViewController *userSelection = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    userSelection.tableView.frame = CGRectMake(0, ([self computeRatio:284.0 forDimension:screenHeight] - 74.0), screenWidth, [self computeRatio:702.0 forDimension:screenHeight] + 64);
+    userSelection.tableView.dataSource = self;
+    userSelection.tableView.delegate = self;
+    userSelection.tableView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:userSelection.tableView];
+
     
     // Detect if user is connected
-    if (FBSession.activeSession.isOpen) {
+    if (/* DISABLES CODE */ (YES)) { //FBSession.activeSession.isOpen
         [self.tabBarController.tabBar setHidden:NO];
+        [self.view addSubview: self.searchController.searchBar];
     } else {
         [self.tabBarController.tabBar setHidden:YES];
     }
@@ -83,7 +111,7 @@
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
 {
     FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+//    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
 //    NSLog(@"user %@ | %@:", user, user.objectID);
     
@@ -162,6 +190,43 @@
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil] show];
     }
+}
+
+#pragma mark - Tableview configuration
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 30;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 55.0;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    
+    cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.4];
+
+    cell.textLabel.text = @"animal";
+    
+    return cell;
+}
+
+#pragma mark - custom methods
+
+- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension {
+    CGFloat ratio = 0;
+    ratio = ((aNumber*100)/aDimension);
+    ratio = ((ratio*aDimension)/100);
+    
+    if ([UIScreen mainScreen].scale > 2.1)
+        ratio = ratio/3; // Because we are in retina HD
+    else
+        ratio = ratio/2; // Because we are in retina
+    
+    return ratio;
 }
 
 - (void)didReceiveMemoryWarning {

@@ -14,6 +14,8 @@
 		1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC31A0FE20900CD725A /* Images.xcassets */; };
 		1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC51A0FE20900CD725A /* LaunchScreen.xib */; };
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
+		1A076DDF1A102B1C00CD725A /* appBG.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DDE1A102B1C00CD725A /* appBG.png */; };
+		1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */; };
 		C972540DD50E496DAA79453E /* libPods-SharList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C05C0F3990854370BFE3C1AC /* libPods-SharList.a */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +43,9 @@
 		1A076DCC1A0FE20900CD725A /* SharListTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SharListTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A076DD11A0FE20900CD725A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A076DD21A0FE20900CD725A /* SharListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharListTests.m; sourceTree = "<group>"; };
+		1A076DDE1A102B1C00CD725A /* appBG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appBG.png; sourceTree = "<group>"; };
+		1A1D6E431A1099C00090C598 /* SettingsViewControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewControllerViewController.h; sourceTree = "<group>"; };
+		1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewControllerViewController.m; sourceTree = "<group>"; };
 		A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SharList.xcconfig"; path = "Pods/Pods-SharList.xcconfig"; sourceTree = "<group>"; };
 		C05C0F3990854370BFE3C1AC /* libPods-SharList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SharList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -89,6 +94,8 @@
 			children = (
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
+				1A076DDD1A102B0B00CD725A /* Images */,
+				1A1D6E461A1099C60090C598 /* SettingsVieWControllerViewController */,
 				1A076DDC1A10113000CD725A /* FirstViewController */,
 				1A076DC01A0FE20900CD725A /* Main.storyboard */,
 				1A076DC31A0FE20900CD725A /* Images.xcassets */,
@@ -131,6 +138,23 @@
 				1A076DBE1A0FE20900CD725A /* ViewController.m */,
 			);
 			name = FirstViewController;
+			sourceTree = "<group>";
+		};
+		1A076DDD1A102B0B00CD725A /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				1A076DDE1A102B1C00CD725A /* appBG.png */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		1A1D6E461A1099C60090C598 /* SettingsVieWControllerViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1A1D6E431A1099C00090C598 /* SettingsViewControllerViewController.h */,
+				1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */,
+			);
+			name = SettingsVieWControllerViewController;
 			sourceTree = "<group>";
 		};
 		58C2B6CA8DD147B7BE564C25 /* Frameworks */ = {
@@ -225,6 +249,7 @@
 			files = (
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
 				1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */,
+				1A076DDF1A102B1C00CD725A /* appBG.png in Resources */,
 				1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -276,6 +301,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */,
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
 				1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */,
 				1A076DB91A0FE20900CD725A /* main.m in Sources */,

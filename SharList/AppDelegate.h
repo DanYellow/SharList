@@ -12,6 +12,7 @@
 
 
 #import "ViewController.h"
+#import "SettingsViewControllerViewController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
