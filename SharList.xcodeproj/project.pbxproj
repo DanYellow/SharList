@@ -17,6 +17,9 @@
 		1A076DDF1A102B1C00CD725A /* appBG.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DDE1A102B1C00CD725A /* appBG.png */; };
 		1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */; };
 		1A1D6E481A10AE930090C598 /* api.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A1D6E471A10AE930090C598 /* api.json */; };
+		1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */; };
+		1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */; };
+		1A3C22821A114339005B31E4 /* UserTaste.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C22811A114339005B31E4 /* UserTaste.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		C972540DD50E496DAA79453E /* libPods-SharList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C05C0F3990854370BFE3C1AC /* libPods-SharList.a */; };
 /* End PBXBuildFile section */
@@ -49,6 +52,12 @@
 		1A1D6E431A1099C00090C598 /* SettingsViewControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewControllerViewController.h; sourceTree = "<group>"; };
 		1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewControllerViewController.m; sourceTree = "<group>"; };
 		1A1D6E471A10AE930090C598 /* api.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = api.json; sourceTree = "<group>"; };
+		1A3C227A1A113069005B31E4 /* DetailsMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMediaViewController.h; sourceTree = "<group>"; };
+		1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsMediaViewController.m; sourceTree = "<group>"; };
+		1A3C227E1A114027005B31E4 /* UserTaste.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UserTaste.xcdatamodel; sourceTree = "<group>"; };
+		1A3C22801A114339005B31E4 /* UserTaste.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTaste.h; sourceTree = "<group>"; };
+		1A3C22811A114339005B31E4 /* UserTaste.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTaste.m; sourceTree = "<group>"; };
+		1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
 		A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SharList.xcconfig"; path = "Pods/Pods-SharList.xcconfig"; sourceTree = "<group>"; };
@@ -99,10 +108,13 @@
 			children = (
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
+				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomView */,
 				1A076DDD1A102B0B00CD725A /* Images */,
 				1A1D6E461A1099C60090C598 /* SettingsVieWControllerViewController */,
+				1A3C22831A114345005B31E4 /* CoreData */,
 				1A076DDC1A10113000CD725A /* FirstViewController */,
+				1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */,
 				1A076DC01A0FE20900CD725A /* Main.storyboard */,
 				1A076DC31A0FE20900CD725A /* Images.xcassets */,
 				1A076DC51A0FE20900CD725A /* LaunchScreen.xib */,
@@ -162,6 +174,25 @@
 				1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */,
 			);
 			name = SettingsVieWControllerViewController;
+			sourceTree = "<group>";
+		};
+		1A3C22791A11303E005B31E4 /* DetailsMediaViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1A3C227A1A113069005B31E4 /* DetailsMediaViewController.h */,
+				1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */,
+			);
+			name = DetailsMediaViewController;
+			sourceTree = "<group>";
+		};
+		1A3C22831A114345005B31E4 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */,
+				1A3C22801A114339005B31E4 /* UserTaste.h */,
+				1A3C22811A114339005B31E4 /* UserTaste.m */,
+			);
+			name = CoreData;
 			sourceTree = "<group>";
 		};
 		1A7B09DC1A10DBCD00FA2766 /* CustomView */ = {
@@ -320,8 +351,11 @@
 			files = (
 				1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */,
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
+				1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */,
 				1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */,
 				1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */,
+				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,
+				1A3C22821A114339005B31E4 /* UserTaste.m in Sources */,
 				1A076DB91A0FE20900CD725A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -445,6 +479,8 @@
 			baseConfigurationReference = A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = SharList/PrefixHeader.pch;
 				INFOPLIST_FILE = SharList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -456,6 +492,7 @@
 			baseConfigurationReference = A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = SharList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -527,6 +564,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				1A3C227E1A114027005B31E4 /* UserTaste.xcdatamodel */,
+			);
+			currentVersion = 1A3C227E1A114027005B31E4 /* UserTaste.xcdatamodel */;
+			path = UserTaste.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 1A076DAB1A0FE20900CD725A /* Project object */;
 }

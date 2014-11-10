@@ -10,10 +10,13 @@
 #import <CoreData/CoreData.h>
 
 #import <FacebookSDK/FacebookSDK.h>
-#import "CoreData+MagicalRecord.h"
+#import <MagicalRecord/MagicalRecord.h>
 
 
 #import "ShareListMediaTableViewCell.h"
+#import "DetailsMediaViewController.h"
+
+#import "UserTaste.h"
 
 
 

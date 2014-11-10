@@ -22,7 +22,12 @@
 
 @implementation ViewController
 
-- (void)viewDidLoad {
+- (void) viewWillAppear:(BOOL)animated
+{
+    [self.tabBarController.tabBar setHidden:NO];
+}
+
+- (void) viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
@@ -42,11 +47,12 @@
     self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
     self.extendedLayoutIncludesOpaqueBars = YES;
+    self.automaticallyAdjustsScrollViewInsets = YES;
     
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
-                                                  forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.shadowImage = [UIImage new];
-    self.navigationController.navigationBar.translucent = YES;
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+//                                                  forBarMetrics:UIBarMetricsDefault];
+//    self.navigationController.navigationBar.shadowImage = [UIImage new];
+//    self.navigationController.navigationBar.translucent = YES;
     
     UIBarButtonItem *btnEdit = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction
                                                                              target:self action:nil];
@@ -115,7 +121,7 @@
     
     [self.searchController.view addSubview:UISearchControllerBG];
     
-    CGFloat strokeUnderSearchControllerY = [self computeRatio:270.0 forDimension:screenHeight] - 20.0;
+    CGFloat strokeUnderSearchControllerY = CGRectGetHeight(self.searchController.searchBar.frame) + CGRectGetMaxY(self.searchController.searchBar.frame) + 5 - 44.0;
     UIView *strokeUnderSearchController = [[UIView alloc] initWithFrame:CGRectMake(0, strokeUnderSearchControllerY, [self computeRatio:608.0 forDimension:screenWidth], 1.0)];
     strokeUnderSearchController.center = CGPointMake(self.view.center.x, strokeUnderSearchControllerY);
     strokeUnderSearchController.backgroundColor = [UIColor blackColor];
@@ -123,17 +129,19 @@
     strokeUnderSearchController.userInteractionEnabled = NO;
     [self.view addSubview:strokeUnderSearchController];
     
-    
+   
     // Uitableview of user selection (what user likes)
     UITableViewController *userSelectionTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userSelectionTableViewController.tableView.frame = CGRectMake(0, ([self computeRatio:284.0 forDimension:screenHeight] - 10.0), screenWidth, [self computeRatio:702.0 forDimension:screenHeight]);
+    userSelectionTableViewController.tableView.frame = CGRectMake(0, strokeUnderSearchControllerY + 12, screenWidth, [self computeRatio:704.0 forDimension:screenHeight] + self.tabBarController.tabBar.frame.size.height + 44);
     userSelectionTableViewController.tableView.dataSource = self;
     userSelectionTableViewController.tableView.delegate = self;
-    userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
+    userSelectionTableViewController.tableView.backgroundColor = [UIColor brownColor];
     userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:0.0f green:1.0f blue:0.0f alpha:1.0f];
     [self.view addSubview:userSelectionTableViewController.tableView];
     
-    
+    DetailsMediaViewController *modalVC = [[DetailsMediaViewController alloc] init];
+//    modalVC.delegate = self;
+    [self.navigationController pushViewController:modalVC animated:YES];
 
 
     APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
@@ -158,6 +166,20 @@
             }
         }
     }
+    
+    NSArray *fooArray = @[@"I am Charlotte Simmons",
+                           @"I am Charlotte Simmons",
+                           @"I am Charlotte Simmons",
+                           @"I am Charlotte Simmons",
+                          @"I am Charlotte Simmons"];
+    NSDictionary *productManagers = @{@"iPhone": fooArray, @"iPad": fooArray, @"Mobile Web": fooArray};
+    
+//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+//        UserTaste *userTaste = [UserTaste MR_createInContext:localContext];
+//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+//        userTaste.taste = arrayData;
+////        userTaste.fbid = 
+//    } completion:nil];
 }
 
 
@@ -181,7 +203,7 @@
     FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
 //    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
-//    NSLog(@"user %@ | %@:", user, user.objectID);
+    NSLog(@"user %@ | %@:", user, user.objectID);
     
     // Here we add userid (aka user.objectID) to the database
     
@@ -314,7 +336,7 @@
         NSString *title = [rowsOfSection objectAtIndex:indexPath.row];
         
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
         cell.textLabel.text = title;
     }
     
@@ -347,10 +369,13 @@
     ratio = ((aNumber*100)/aDimension);
     ratio = ((ratio*aDimension)/100);
     
-    if ([UIScreen mainScreen].scale > 2.1)
+    if ([UIScreen mainScreen].scale > 2.1) {
+        
         ratio = ratio/3; // Because we are in retina HD
-    else
+        
+    } else {
         ratio = ratio/2; // Because we are in retina
+    }
     
     return roundf(ratio);
 }
@@ -359,13 +384,12 @@
 #pragma mark - Content filtering
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController {
-    self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
-    self.searchResultsController.tableView.contentInset = UIEdgeInsetsMake(0, 0, self.bottomLayoutGuide.length, 0);
+    self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame) - (self.tabBarController.tabBar.frame.size.height / 2));
+//    self.searchResultsController.tableView.contentInset = UIEdgeInsetsMake(0, 0, self.bottomLayoutGuide.length, 0);
     NSString *searchString = [searchController.searchBar text];
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
     [filteredTableDatas removeAllObjects];
-    
     
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
     
@@ -374,7 +398,7 @@
     for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
         
         // This predicate manage a media in several categories
-        NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
+        NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
         
         [filteredTableDatas setValue: [[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
     }

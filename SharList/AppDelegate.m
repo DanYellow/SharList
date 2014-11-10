@@ -21,6 +21,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+//    [MagicalRecord setupAutoMigratingCoreDataStack];
+    
     // Tabbar controller definition
     self.tabBarController = [[UITabBarController alloc] init];
     
@@ -32,7 +34,8 @@
     //    fvc.tabBarItem.image=[UIImage imageNamed:@"i.png"];
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    
+    navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    navigationController.navigationBar.backgroundColor = [UIColor clearColor];
     
     self.tabBarController.viewControllers = @[navigationController, settingsViewController];
 //    [self.window.rootViewController.view addSubview: self.tabBarController.view];
