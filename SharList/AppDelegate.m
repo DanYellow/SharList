@@ -21,7 +21,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-//    [MagicalRecord setupAutoMigratingCoreDataStack];
+    [MagicalRecord setupAutoMigratingCoreDataStack];
     
     // Tabbar controller definition
     self.tabBarController = [[UITabBarController alloc] init];

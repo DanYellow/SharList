@@ -10,7 +10,6 @@
 #import <CoreData/CoreData.h>
 
 #import <FacebookSDK/FacebookSDK.h>
-#import <MagicalRecord/MagicalRecord.h>
 
 
 #import "ShareListMediaTableViewCell.h"
@@ -31,11 +30,15 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 //    NSMutableArray *filteredDatas;
     NSMutableDictionary *filteredTableDatas;
     NSArray *categoryList;
+    NSMutableDictionary *userTasteDict;
+    
+    BOOL USERALREADYMADEARESEARCH;
     
 }
 
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) UITableViewController *searchResultsController;
+@property (strong, nonatomic) UserTaste *userTaste;
 
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;

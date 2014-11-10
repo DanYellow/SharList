@@ -109,7 +109,7 @@
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
-				1A7B09DC1A10DBCD00FA2766 /* CustomView */,
+				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
 				1A1D6E461A1099C60090C598 /* SettingsVieWControllerViewController */,
 				1A3C22831A114345005B31E4 /* CoreData */,
@@ -195,13 +195,13 @@
 			name = CoreData;
 			sourceTree = "<group>";
 		};
-		1A7B09DC1A10DBCD00FA2766 /* CustomView */ = {
+		1A7B09DC1A10DBCD00FA2766 /* CustomViews */ = {
 			isa = PBXGroup;
 			children = (
 				1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */,
 				1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */,
 			);
-			name = CustomView;
+			name = CustomViews;
 			sourceTree = "<group>";
 		};
 		58C2B6CA8DD147B7BE564C25 /* Frameworks */ = {

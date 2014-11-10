@@ -23,11 +23,11 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    self.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.2];
+    self.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.3];
     self.textLabel.font = [UIFont fontWithName:@"Helvetica" size:15];
     self.textLabel.textColor = [UIColor whiteColor];
     self.textLabel.frame = CGRectMake(-40.0, -40.0, self.textLabel.frame.size.width, 15);
-    self.textLabel.backgroundColor = [UIColor redColor];
+    self.textLabel.backgroundColor = [UIColor clearColor];
     
     return self;
 }

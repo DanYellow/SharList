@@ -66,6 +66,8 @@
     
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     
+    // Variables initialisation
+    USERALREADYMADEARESEARCH = NO;
 
     
     // Motto of the app
@@ -97,6 +99,7 @@
     self.searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
     self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:0.0f green:0.0f blue:1.0f alpha:0.1f];
+
     
     
     // Definition of uisearchcontroller
@@ -135,13 +138,13 @@
     userSelectionTableViewController.tableView.frame = CGRectMake(0, strokeUnderSearchControllerY + 12, screenWidth, [self computeRatio:704.0 forDimension:screenHeight] + self.tabBarController.tabBar.frame.size.height + 44);
     userSelectionTableViewController.tableView.dataSource = self;
     userSelectionTableViewController.tableView.delegate = self;
-    userSelectionTableViewController.tableView.backgroundColor = [UIColor brownColor];
+    userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
     userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:0.0f green:1.0f blue:0.0f alpha:1.0f];
     [self.view addSubview:userSelectionTableViewController.tableView];
     
-    DetailsMediaViewController *modalVC = [[DetailsMediaViewController alloc] init];
+    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
 //    modalVC.delegate = self;
-    [self.navigationController pushViewController:modalVC animated:YES];
+//    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 
 
     APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
@@ -167,19 +170,35 @@
         }
     }
     
+//    [UserTaste MR_truncateAll];
+    
     NSArray *fooArray = @[@"I am Charlotte Simmons",
                            @"I am Charlotte Simmons",
                            @"I am Charlotte Simmons",
                            @"I am Charlotte Simmons",
                           @"I am Charlotte Simmons"];
-    NSDictionary *productManagers = @{@"iPhone": fooArray, @"iPad": fooArray, @"Mobile Web": fooArray};
+    NSDictionary *productManagers = @{@"serie": fooArray, @"movie": fooArray, @"book": fooArray};
     
 //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-//        UserTaste *userTaste = [UserTaste MR_createInContext:localContext];
+    
+//    } completion:nil];
+//        UserTaste *userTaste = [UserTaste  MR_createEntity];
 //        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
 //        userTaste.taste = arrayData;
-////        userTaste.fbid = 
-//    } completion:nil];
+//        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
+//        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+
+    
+    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
+    
+    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
+//    NSLog(@"userTasteDict : %@, %lu", userTasteDict , (unsigned long)userTasteDict.count);
+    
+//    NSMutableDictionary *array = [NSKeyedUnarchiver unarchiveObjectWithData:[[people objectAtIndex:0] taste]];
+//    NSLog(@"person : %@, %lli", array, [[person fbid]  longLongValue]);
+    
+
 }
 
 
@@ -203,7 +222,7 @@
     FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
 //    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
-    NSLog(@"user %@ | %@:", user, user.objectID);
+//    NSLog(@"user %@ | %@:", user, user.objectID);
     
     // Here we add userid (aka user.objectID) to the database
     
@@ -288,11 +307,14 @@
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         NSString *sectionTitle = [categoryList objectAtIndex:section];
-        NSArray *sectionCategories = [filteredTableDatas objectForKey:sectionTitle];
+        NSArray *sectionElements = [filteredTableDatas objectForKey:sectionTitle];
         
-        return sectionCategories.count;
+        return sectionElements.count;
     } else {
-        return 30;
+        NSString *sectionTitle = [[userTasteDict allKeys] objectAtIndex:section];
+        NSArray *sectionElements = [userTasteDict objectForKey:sectionTitle];
+        
+        return sectionElements.count;
     }
 }
 
@@ -301,7 +323,7 @@
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         return [categoryList count];
     } else {
-        return 1;
+        return userTasteDict.count;
     }
 }
 
@@ -309,8 +331,7 @@
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         return [categoryList objectAtIndex:section];
     } else {
-        
-        return nil;
+        return [[userTasteDict allKeys] objectAtIndex:section];
     }
 }
 
@@ -319,7 +340,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0 || tableView != ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+    if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
     } else {
         return 42.0;
@@ -331,13 +352,29 @@
     static NSString *CellIdentifier = @"Cell";
     ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
-        NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
-        NSString *title = [rowsOfSection objectAtIndex:indexPath.row];
+
+        NSString *title;
+    
+        if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+            
+            NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
+            NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
+            title = [rowsOfSection objectAtIndex:indexPath.row];
+        } else {
+            NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
+            NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
+            
+            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9]; // For "Classic mode we want a cell's background more opaque
+            title = [rowsOfSection objectAtIndex:indexPath.row];
+            
+            NSLog(@"%@, %@", sectionTitle, userTasteDict);
+        }
         
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.text = title;
+        
+        
     }
     
     return cell;
@@ -350,14 +387,22 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.backgroundColor = [UIColor colorWithRed:(127.0f/255.0f) green:(151.0f/255.0f) blue:(163.0f/255.0f) alpha:.85f];
-        cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
-        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
-        cell.textLabel.textColor = [UIColor whiteColor];
-    }
     
+    if (cell == nil) {
+        if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+            cell.backgroundColor = [UIColor colorWithRed:(127.0f/255.0f) green:(151.0f/255.0f) blue:(163.0f/255.0f) alpha:.85f];
+            cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
+            cell.textLabel.textColor = [UIColor whiteColor];
+        } else {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+            cell.backgroundColor = [UIColor clearColor];
+            cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
+            cell.textLabel.textColor = [UIColor blackColor];
+        }
+    }
     
     return cell;
 }
@@ -380,12 +425,27 @@
     return roundf(ratio);
 }
 
+- (UIImage *) takeSnapshotOfView:(UIView *)view
+{
+    UIGraphicsBeginImageContext(CGSizeMake(view.frame.size.width, view.frame.size.height));
+    [view drawViewHierarchyInRect:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height) afterScreenUpdates:YES];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
 
 #pragma mark - Content filtering
 
-- (void) updateSearchResultsForSearchController:(UISearchController *) searchController {
-    self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame) - (self.tabBarController.tabBar.frame.size.height / 2));
-//    self.searchResultsController.tableView.contentInset = UIEdgeInsetsMake(0, 0, self.bottomLayoutGuide.length, 0);
+- (void) updateSearchResultsForSearchController:(UISearchController *) searchController
+{
+    if (!USERALREADYMADEARESEARCH) { //USERALREADYMADEARESEARCH == NO
+        self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame) - (self.tabBarController.tabBar.frame.size.height / 2) - 25);
+        USERALREADYMADEARESEARCH = YES;
+    }
+    
+    
     NSString *searchString = [searchController.searchBar text];
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
@@ -402,6 +462,7 @@
         
         [filteredTableDatas setValue: [[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
     }
+    
     NSLog(@"%@", filteredTableDatas);
     [self.searchResultsController.tableView reloadData];
     
@@ -427,15 +488,7 @@
     [self.searchController.searchBar resignFirstResponder];
 }
 
-- (UIImage *) takeSnapshotOfView:(UIView *)view
-{
-    UIGraphicsBeginImageContext(CGSizeMake(view.frame.size.width, view.frame.size.height));
-    [view drawViewHierarchyInRect:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height) afterScreenUpdates:YES];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-
-    return image;
-}
+# pragma mark - Delegate methods
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
