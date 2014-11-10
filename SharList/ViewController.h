@@ -10,6 +10,11 @@
 #import <CoreData/CoreData.h>
 
 #import <FacebookSDK/FacebookSDK.h>
+#import "CoreData+MagicalRecord.h"
+
+
+#import "ShareListMediaTableViewCell.h"
+
 
 
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
@@ -31,6 +36,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
+- (UIImage *) takeSnapshotOfView:(UIView *)view;
 
 @end
 

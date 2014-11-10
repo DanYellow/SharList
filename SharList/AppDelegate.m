@@ -25,7 +25,7 @@
     self.tabBarController = [[UITabBarController alloc] init];
     
     ViewController *viewController = [[ViewController alloc] init];
-    viewController.title = @"First";
+    viewController.title = @"Ma liste";
     
     SettingsViewControllerViewController *settingsViewController = [[SettingsViewControllerViewController alloc] init];
     settingsViewController.title = @"Paramètres";

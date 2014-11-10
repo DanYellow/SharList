@@ -41,12 +41,26 @@
     
     self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
-//    self.extendedLayoutIncludesOpaqueBars = YES;
+    self.extendedLayoutIncludesOpaqueBars = YES;
     
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                   forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = YES;
+    
+    UIBarButtonItem *btnEdit = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+                                                                             target:self action:nil];
+    btnEdit.enabled = YES;
+    
+    UIBarButtonItem *btnTrash = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash
+                                                                              target:self action:nil];
+    btnTrash.enabled = NO;
+    
+    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:btnEdit, btnTrash, nil];
+    
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
+
     
     // Motto of the app
     CGFloat appMottoYPos = [self computeRatio:260.0 forDimension:screenHeight];
@@ -72,10 +86,11 @@
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     self.searchResultsController.tableView.dataSource = self;
     self.searchResultsController.tableView.delegate = self;
-    self.searchResultsController.tableView.backgroundColor = [UIColor colorWithRed:(5.0f/255.0f) green:(61.0f/255.0f) blue:(94.0f/255.0f) alpha:.8f];
+    self.searchResultsController.tableView.backgroundColor = [UIColor colorWithRed:(127.0f/255.0f) green:(151.0f/255.0f) blue:(163.0f/255.0f) alpha:1.0f];
     self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, screenWidth, screenHeight);
     self.searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
     self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:0.0f green:0.0f blue:1.0f alpha:0.1f];
     
     
     // Definition of uisearchcontroller
@@ -87,7 +102,7 @@
     self.searchController.dimsBackgroundDuringPresentation = YES;
     [self.searchController.searchBar sizeToFit];
     self.searchController.searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
-    self.searchController.searchBar.barTintColor = [UIColor grayColor];
+    self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
     self.searchController.searchBar.frame = CGRectMake(0, 0.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
@@ -96,6 +111,7 @@
     UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)];
     UISearchControllerBG.tag = 3;
     UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(230.0f/255.0f) green:(230.0f/255.0f) blue:(230.0f/255.0f) alpha:1.0f];
+//    UISearchControllerBG.backgroundColor = [UIColor whiteColor];
     
     [self.searchController.view addSubview:UISearchControllerBG];
     
@@ -114,6 +130,7 @@
     userSelectionTableViewController.tableView.dataSource = self;
     userSelectionTableViewController.tableView.delegate = self;
     userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
+    userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:0.0f green:1.0f blue:0.0f alpha:1.0f];
     [self.view addSubview:userSelectionTableViewController.tableView];
     
     
@@ -252,7 +269,6 @@
         NSArray *sectionCategories = [filteredTableDatas objectForKey:sectionTitle];
         
         return sectionCategories.count;
-       
     } else {
         return 30;
     }
@@ -271,6 +287,7 @@
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         return [categoryList objectAtIndex:section];
     } else {
+        
         return nil;
     }
 }
@@ -279,27 +296,46 @@
     return 55.0;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0 || tableView != ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        return 0;
+    } else {
+        return 42.0;
+    }
+}
+
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-    
-    cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.4];
-
-    cell.textLabel.text = @"animal";
+    static NSString *CellIdentifier = @"Cell";
+    ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
+        NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
+        NSString *title = [rowsOfSection objectAtIndex:indexPath.row];
+        
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.textLabel.text = title;
+    }
     
     return cell;
 }
 
+
+// Title of categories
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UITableViewCell *cell = [[UITableViewCell alloc] init];
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell.backgroundColor = [UIColor colorWithRed:(127.0f/255.0f) green:(151.0f/255.0f) blue:(163.0f/255.0f) alpha:.85f];
+        cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
+        cell.textLabel.textColor = [UIColor whiteColor];
+    }
     
-    cell.backgroundColor = [UIColor clearColor];
-    cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
-    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18];
-    cell.textLabel.textColor = [UIColor whiteColor];
-//    cell.textLabel.text = [cell.textLabel.text uppercaseString];
     
     return cell;
 }
@@ -324,6 +360,7 @@
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController {
     self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
+    self.searchResultsController.tableView.contentInset = UIEdgeInsetsMake(0, 0, self.bottomLayoutGuide.length, 0);
     NSString *searchString = [searchController.searchBar text];
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
@@ -343,6 +380,22 @@
     }
     NSLog(@"%@", filteredTableDatas);
     [self.searchResultsController.tableView reloadData];
+    
+    // Blurred background
+    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];
+    [bluredImageView setFrame:self.searchResultsController.tableView.frame];
+    bluredImageView.alpha = .50f;
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    
+    visualEffectView.frame = bluredImageView.bounds;
+    [bluredImageView addSubview:visualEffectView];
+    
+    self.searchResultsController.tableView.backgroundView = bluredImageView;
 }
 
 - (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -350,6 +403,15 @@
     [self.searchController.searchBar resignFirstResponder];
 }
 
+- (UIImage *) takeSnapshotOfView:(UIView *)view
+{
+    UIGraphicsBeginImageContext(CGSizeMake(view.frame.size.width, view.frame.size.height));
+    [view drawViewHierarchyInRect:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height) afterScreenUpdates:YES];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    return image;
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
