@@ -32,7 +32,7 @@
     //    fvc.tabBarItem.image=[UIImage imageNamed:@"i.png"];
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-
+    
     
     self.tabBarController.viewControllers = @[navigationController, settingsViewController];
 //    [self.window.rootViewController.view addSubview: self.tabBarController.view];
@@ -42,8 +42,8 @@
     [self.window setBackgroundColor:[UIColor whiteColor]];
     [self.window makeKeyAndVisible];
     
-    self.window.rootViewController.definesPresentationContext = YES;
-    self.window.rootViewController.edgesForExtendedLayout = UIRectEdgeNone;
+//    self.window.rootViewController.definesPresentationContext = YES;
+//    self.window.rootViewController.edgesForExtendedLayout = UIRectEdgeNone;
     
     return YES;
 }

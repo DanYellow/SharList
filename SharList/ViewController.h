@@ -7,17 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
 
 #import <FacebookSDK/FacebookSDK.h>
+
 
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate>
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;
+   
+    // Datas from API
+    NSArray *APIdatas;
+    NSMutableArray *filteredDatas;
 }
 
-@property (nonatomic, strong) UISearchController *searchController;
+@property (strong, nonatomic) UISearchController *searchController;
+@property (strong, nonatomic) UITableViewController *searchResultsController;
 
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;

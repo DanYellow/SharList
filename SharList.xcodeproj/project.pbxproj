@@ -16,6 +16,7 @@
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A076DDF1A102B1C00CD725A /* appBG.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DDE1A102B1C00CD725A /* appBG.png */; };
 		1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */; };
+		1A1D6E481A10AE930090C598 /* api.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A1D6E471A10AE930090C598 /* api.json */; };
 		C972540DD50E496DAA79453E /* libPods-SharList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C05C0F3990854370BFE3C1AC /* libPods-SharList.a */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +47,7 @@
 		1A076DDE1A102B1C00CD725A /* appBG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appBG.png; sourceTree = "<group>"; };
 		1A1D6E431A1099C00090C598 /* SettingsViewControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewControllerViewController.h; sourceTree = "<group>"; };
 		1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewControllerViewController.m; sourceTree = "<group>"; };
+		1A1D6E471A10AE930090C598 /* api.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = api.json; sourceTree = "<group>"; };
 		A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SharList.xcconfig"; path = "Pods/Pods-SharList.xcconfig"; sourceTree = "<group>"; };
 		C05C0F3990854370BFE3C1AC /* libPods-SharList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SharList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -100,6 +102,7 @@
 				1A076DC01A0FE20900CD725A /* Main.storyboard */,
 				1A076DC31A0FE20900CD725A /* Images.xcassets */,
 				1A076DC51A0FE20900CD725A /* LaunchScreen.xib */,
+				1A1D6E471A10AE930090C598 /* api.json */,
 				1A076DB61A0FE20900CD725A /* Supporting Files */,
 			);
 			path = SharList;
@@ -250,6 +253,7 @@
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
 				1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */,
 				1A076DDF1A102B1C00CD725A /* appBG.png in Resources */,
+				1A1D6E481A10AE930090C598 /* api.json in Resources */,
 				1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
