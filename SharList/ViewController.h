@@ -20,7 +20,10 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
    
     // Datas from API
     NSArray *APIdatas;
-    NSMutableArray *filteredDatas;
+//    NSMutableArray *filteredDatas;
+    NSMutableDictionary *filteredTableDatas;
+    NSArray *categoryList;
+    
 }
 
 @property (strong, nonatomic) UISearchController *searchController;

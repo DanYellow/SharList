@@ -46,8 +46,7 @@
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                   forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [UIImage new];
-//    self.navigationController.navigationBar.translucent = YES;
-//    [self.navigationController.view setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0]];
+    self.navigationController.navigationBar.translucent = YES;
     
     // Motto of the app
     CGFloat appMottoYPos = [self computeRatio:260.0 forDimension:screenHeight];
@@ -67,6 +66,16 @@
     fbLoginButton.tag = 1;
     fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     [self.view addSubview:fbLoginButton];
+    
+    
+    // UITableview of results
+    self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    self.searchResultsController.tableView.dataSource = self;
+    self.searchResultsController.tableView.delegate = self;
+    self.searchResultsController.tableView.backgroundColor = [UIColor colorWithRed:(5.0f/255.0f) green:(61.0f/255.0f) blue:(94.0f/255.0f) alpha:.8f];
+    self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, screenWidth, screenHeight);
+    self.searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
+    self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     
     // Definition of uisearchcontroller
@@ -108,19 +117,13 @@
     [self.view addSubview:userSelectionTableViewController.tableView];
     
     
-    // UITableview of results
-    self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    self.searchResultsController.tableView.dataSource = self;
-    self.searchResultsController.tableView.delegate = self;
-    
-    
-    self.searchResultsController.tableView.backgroundColor = [UIColor lightGrayColor];
-    self.searchResultsController.tableView.frame = CGRectMake(0, 100.0, screenWidth, screenHeight);
-    self.searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
-    self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
 
     APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
-    NSLog(@"%@", APIdatas);
+    
+    categoryList = [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    
+    filteredTableDatas = [[NSMutableDictionary alloc] init];
     
     // Detect if user is connected
     if (/* DISABLES CODE */ (YES)) { //FBSession.activeSession.isOpen
@@ -128,6 +131,15 @@
         [self.view addSubview: self.searchController.searchBar];
     } else {
         [self.tabBarController.tabBar setHidden:YES];
+    }
+    
+    for (UIView *subView in self.searchController.searchBar.subviews) {
+        for(id field in subView.subviews){
+            if ([field isKindOfClass:[UITextField class]]) {
+                UITextField *textField = (UITextField *)field;
+                [textField setBackgroundColor:[UIColor blueColor]];
+            }
+        }
     }
 }
 
@@ -233,22 +245,61 @@
 
 #pragma mark - Tableview configuration
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 30;
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        NSString *sectionTitle = [categoryList objectAtIndex:section];
+        NSArray *sectionCategories = [filteredTableDatas objectForKey:sectionTitle];
+        
+        return sectionCategories.count;
+       
+    } else {
+        return 30;
+    }
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (NSInteger )numberOfSectionsInTableView:(UITableView *)tableView
+{
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        return [categoryList count];
+    } else {
+        return 1;
+    }
+}
+
+- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        return [categoryList objectAtIndex:section];
+    } else {
+        return nil;
+    }
+}
+
+- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 55.0;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     
     cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.4];
 
     cell.textLabel.text = @"animal";
+    
+    return cell;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UITableViewCell *cell = [[UITableViewCell alloc] init];
+    
+    
+    cell.backgroundColor = [UIColor clearColor];
+    cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
+    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:18];
+    cell.textLabel.textColor = [UIColor whiteColor];
+//    cell.textLabel.text = [cell.textLabel.text uppercaseString];
     
     return cell;
 }
@@ -269,11 +320,36 @@
 }
 
 
-#pragma mark - UISearchController delegate methods
+#pragma mark - Content filtering
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController {
-    NSLog(@"foo");
+    self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
+    NSString *searchString = [searchController.searchBar text];
+    
+    NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
+    [filteredTableDatas removeAllObjects];
+    
+    
+    NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
+    
+    [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
+    
+    for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
+        
+        // This predicate manage a media in several categories
+        NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
+        
+        [filteredTableDatas setValue: [[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
+    }
+    NSLog(@"%@", filteredTableDatas);
+    [self.searchResultsController.tableView reloadData];
 }
+
+- (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [self.searchController.searchBar resignFirstResponder];
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
