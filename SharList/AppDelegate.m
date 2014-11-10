@@ -32,7 +32,12 @@
     //    fvc.tabBarItem.image=[UIImage imageNamed:@"i.png"];
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    navigationController.navigationBar.translucent = YES;
+    navigationController.navigationBar.backgroundColor = [UIColor clearColor];
     
+    [navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    navigationController.navigationBar.shadowImage = [UIImage new];
     
     self.tabBarController.viewControllers = @[navigationController, settingsViewController];
 //    [self.window.rootViewController.view addSubview: self.tabBarController.view];

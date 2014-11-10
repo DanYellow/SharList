@@ -26,7 +26,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    CGPoint centerOfView = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+//    CGPoint centerOfView = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
@@ -41,7 +41,7 @@
     
     self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
-    self.extendedLayoutIncludesOpaqueBars = YES;
+//    self.extendedLayoutIncludesOpaqueBars = YES;
     
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                   forBarMetrics:UIBarMetricsDefault];
@@ -58,7 +58,7 @@
     
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:btnEdit, btnTrash, nil];
     
-    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    [self.navigationController.navigationBar setTintColor:[UIColor redColor]];
     
 
     
@@ -360,7 +360,7 @@
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController {
     self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
-    self.searchResultsController.tableView.contentInset = UIEdgeInsetsMake(0, 0, self.bottomLayoutGuide.length, 0);
+//    self.searchResultsController.tableView.contentInset = UIEdgeInsetsMake(0, 0, self.bottomLayoutGuide.length, 0);
     NSString *searchString = [searchController.searchBar text];
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
