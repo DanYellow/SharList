@@ -45,26 +45,28 @@
     [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]]];
     
     self.definesPresentationContext = YES;
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+//    self.edgesForExtendedLayout = UIRectEdgeNone;
     self.extendedLayoutIncludesOpaqueBars = YES;
     self.automaticallyAdjustsScrollViewInsets = YES;
     
-//    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
-//                                                  forBarMetrics:UIBarMetricsDefault];
-//    self.navigationController.navigationBar.shadowImage = [UIImage new];
-//    self.navigationController.navigationBar.translucent = YES;
+
+    SWRevealViewController *revealController = [self revealViewController];
+    [revealController panGestureRecognizer];
+    [revealController tapGestureRecognizer];
     
-    UIBarButtonItem *btnEdit = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction
-                                                                             target:self action:nil];
-    btnEdit.enabled = YES;
+//    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
+//        self.edgesForExtendedLayout = UIRectEdgeNone;
     
-    UIBarButtonItem *btnTrash = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash
-                                                                              target:self action:nil];
-    btnTrash.enabled = NO;
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
+    self.navigationController.navigationBar.translucent = YES;
+    self.navigationController.navigationBar.backgroundColor = [UIColor colorWithWhite:1 alpha:.1];
     
-    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:btnEdit, btnTrash, nil];
+    UIBarButtonItem *revealButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"reveal-icon.png"]
+                                                                         style:UIBarButtonItemStylePlain target:revealController action:@selector(revealToggle:)];
     
-    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    self.navigationItem.leftBarButtonItem = revealButtonItem;
     
     // Variables initialisation
     USERALREADYMADEARESEARCH = NO;
@@ -114,8 +116,8 @@
     self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
-    self.searchController.searchBar.frame = CGRectMake(0, 0.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor redColor]];
+    self.searchController.searchBar.frame = CGRectMake(0, 64.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor blackColor]];
     
     UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)];
     UISearchControllerBG.tag = 3;
@@ -139,10 +141,10 @@
     userSelectionTableViewController.tableView.dataSource = self;
     userSelectionTableViewController.tableView.delegate = self;
     userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
-    userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:0.0f green:1.0f blue:0.0f alpha:1.0f];
+    userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(206.0f/255.0f) green:(206.0f/255.0f) blue:(206.0f/255.0f) alpha:.4f];
     [self.view addSubview:userSelectionTableViewController.tableView];
     
-    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+//    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
 //    modalVC.delegate = self;
 //    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 
@@ -366,8 +368,6 @@
             
             cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9]; // For "Classic mode we want a cell's background more opaque
             title = [rowsOfSection objectAtIndex:indexPath.row];
-            
-            NSLog(@"%@, %@", sectionTitle, userTasteDict);
         }
         
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
@@ -440,8 +440,9 @@
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController
 {
+//    self.searchController.searchBar.frame = CGRectMake(0, 0, 230, 44);
     if (!USERALREADYMADEARESEARCH) { //USERALREADYMADEARESEARCH == NO
-        self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame) - (self.tabBarController.tabBar.frame.size.height / 2) - 25);
+        self.searchResultsController.tableView.frame = CGRectMake(0, -64.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame) + 64.0f);
         USERALREADYMADEARESEARCH = YES;
     }
     
@@ -463,7 +464,7 @@
         [filteredTableDatas setValue: [[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
     }
     
-    NSLog(@"%@", filteredTableDatas);
+//    NSLog(@"%@", filteredTableDatas);
     [self.searchResultsController.tableView reloadData];
     
     // Blurred background

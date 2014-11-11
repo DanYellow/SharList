@@ -17,3 +17,4 @@
 
 #define MR_ENABLE_ACTIVE_RECORD_LOGGING 0
 #import "CoreData+MagicalRecord.h"
+#import "SWRevealViewController.h"

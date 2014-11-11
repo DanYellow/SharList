@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 
-@interface AppDelegate ()
+@interface AppDelegate ()<SWRevealViewControllerDelegate>
 
 @property (nonatomic, retain) UITabBarController *tabBarController;
 
@@ -22,31 +22,27 @@
     // Override point for customization after application launch.
     
     [MagicalRecord setupAutoMigratingCoreDataStack];
-    
-    // Tabbar controller definition
-    self.tabBarController = [[UITabBarController alloc] init];
+
     
     ViewController *viewController = [[ViewController alloc] init];
     viewController.title = @"Ma liste";
     
-    SettingsViewControllerViewController *settingsViewController = [[SettingsViewControllerViewController alloc] init];
-    settingsViewController.title = @"Paramètres";
-    //    fvc.tabBarItem.image=[UIImage imageNamed:@"i.png"];
+    SideMenuViewController *sideMenuController = [[SideMenuViewController alloc] init];
+    sideMenuController.title = @"Ma liste";
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
-    navigationController.navigationBar.backgroundColor = [UIColor clearColor];
     
-    self.tabBarController.viewControllers = @[navigationController, settingsViewController];
-//    [self.window.rootViewController.view addSubview: self.tabBarController.view];
+    UINavigationController *frontNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    UINavigationController *rearNavigationController = [[UINavigationController alloc] initWithRootViewController:sideMenuController];
+
+    SWRevealViewController *revealController = [[SWRevealViewController alloc] initWithRearViewController:rearNavigationController frontViewController:frontNavigationController];
+    revealController.delegate = self;
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [self.window setRootViewController:self.tabBarController];
+    [self.window setRootViewController:revealController];
     [self.window setBackgroundColor:[UIColor whiteColor]];
     [self.window makeKeyAndVisible];
     
-//    self.window.rootViewController.definesPresentationContext = YES;
-//    self.window.rootViewController.edgesForExtendedLayout = UIRectEdgeNone;
+
     
     return YES;
 }

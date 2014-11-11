@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SideMenuViewController : UIViewController
+#import "ViewController.h"
+
+@interface SideMenuViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+{
+    CGFloat screenWidth;
+    CGFloat screenHeight;
+}
+
+@property (nonatomic, retain) UITableView *menuTableView;
 
 @end

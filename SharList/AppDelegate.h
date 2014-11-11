@@ -13,6 +13,7 @@
 
 #import "ViewController.h"
 #import "SettingsViewControllerViewController.h"
+#import "SideMenuViewController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
