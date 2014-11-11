@@ -28,7 +28,7 @@
     viewController.title = @"Ma liste";
     
     SideMenuViewController *sideMenuController = [[SideMenuViewController alloc] init];
-    sideMenuController.title = @"Ma liste";
+    sideMenuController.title = @"Paramètres";
     
     
     UINavigationController *frontNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
@@ -42,7 +42,6 @@
     [self.window setBackgroundColor:[UIColor whiteColor]];
     [self.window makeKeyAndVisible];
     
-
     
     return YES;
 }

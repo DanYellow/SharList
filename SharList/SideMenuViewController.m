@@ -30,6 +30,7 @@
                                                   forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = YES;
+    self.navigationController.navigationBar.hidden = NO;
     
     UITableView *sideMenuTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)
                                                                                  style:UITableViewStylePlain];
@@ -65,14 +66,14 @@
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
         cell.textLabel.textColor = [UIColor whiteColor];
-        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:18.0f];
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f];
         cell.backgroundColor = [UIColor clearColor];
     }
     
     NSString *text = nil;
     if (row == 0)
     {
-        text = @"Front View Controller";
+        text = @"Mon shike";
     }
     else if (row == 1)
     {
@@ -80,7 +81,7 @@
     }
     else if (row == 2)
     {
-        text = @"Enter Presentation Mode";
+        text = @"Paramètres";
     }
     else if (row == 3)
     {
@@ -109,11 +110,11 @@
         [revealController setFrontViewPosition:FrontViewPositionLeft animated:YES];
         return;
     }
-    else if (row == 2)
-    {
-        [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
-        return;
-    }
+//    else if (row == 2)
+//    {
+//        [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
+//        return;
+//    }
     else if (row == 3)
     {
         [revealController setFrontViewPosition:FrontViewPositionRight animated:YES];
@@ -131,7 +132,12 @@
     
     else if (row == 1)
     {
-        newFrontController = [[ViewController alloc] init];
+        newFrontController = [[SettingsViewControllerViewController alloc] init];
+    }
+    
+    else if (row == 2)
+    {
+        newFrontController = [[SettingsViewControllerViewController alloc] init];
     }
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newFrontController];

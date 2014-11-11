@@ -32,6 +32,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     NSArray *categoryList;
     NSMutableDictionary *userTasteDict;
     
+    
+    
     BOOL USERALREADYMADEARESEARCH;
     
 }

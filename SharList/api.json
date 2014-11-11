@@ -88,5 +88,25 @@
     "id": 17,
     "name": "I am Charlotte Simmons",
     "type": "serie"
+  },
+  {
+    "id": 18,
+    "name": "Brooklyn Nine-nine",
+    "type": "serie"
+  },
+  {
+    "id": 19,
+    "name": "South Park",
+    "type": "serie"
+  },
+  {
+    "id": 20,
+    "name": "The Walking Dead",
+    "type": "serie"
+  },
+  {
+    "id": 21,
+    "name": "Archer",
+    "type": "serie"
   }
 ]

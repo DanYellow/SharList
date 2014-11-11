@@ -15,14 +15,14 @@
 @implementation DetailsMediaViewController
 
 - (void) viewWillAppear:(BOOL)animated {
-    [self.tabBarController.tabBar setHidden:YES];
+//    [self.tabBarController.tabBar setHidden:YES];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    
+    [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]]];
 }
 
 - (void)didReceiveMemoryWarning {

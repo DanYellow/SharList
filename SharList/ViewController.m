@@ -24,31 +24,31 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
-    [self.tabBarController.tabBar setHidden:NO];
+    
 }
 
 - (void) viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    CGPoint centerOfView = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+//    CGPoint centerOfView = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
+
     
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-    imgView.image = [UIImage imageNamed:@"appBG"];
-    imgView.contentMode = UIViewContentModeScaleAspectFit;
-//    [self.view addSubview:imgView];
-    
-    [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]]];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]];
     
     self.definesPresentationContext = YES;
-//    self.edgesForExtendedLayout = UIRectEdgeNone;
+    self.edgesForExtendedLayout = UIRectEdgeTop;
+    self.automaticallyAdjustsScrollViewInsets = NO;
     self.extendedLayoutIncludesOpaqueBars = YES;
-    self.automaticallyAdjustsScrollViewInsets = YES;
     
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
+    self.navigationController.navigationBar.translucent = YES;
 
     SWRevealViewController *revealController = [self revealViewController];
     [revealController panGestureRecognizer];
@@ -61,12 +61,15 @@
                                                   forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = YES;
-    self.navigationController.navigationBar.backgroundColor = [UIColor colorWithWhite:1 alpha:.1];
+
+
     
     UIBarButtonItem *revealButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"reveal-icon.png"]
                                                                          style:UIBarButtonItemStylePlain target:revealController action:@selector(revealToggle:)];
     
     self.navigationItem.leftBarButtonItem = revealButtonItem;
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(appearsSearchBar)];
     
     // Variables initialisation
     USERALREADYMADEARESEARCH = NO;
@@ -116,10 +119,11 @@
     self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
-    self.searchController.searchBar.frame = CGRectMake(0, 64.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    self.searchController.searchBar.hidden = YES;
+    self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor blackColor]];
     
-    UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)];
+    UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)]; // [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)];
     UISearchControllerBG.tag = 3;
     UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(230.0f/255.0f) green:(230.0f/255.0f) blue:(230.0f/255.0f) alpha:1.0f];
 //    UISearchControllerBG.backgroundColor = [UIColor whiteColor];
@@ -144,9 +148,6 @@
     userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(206.0f/255.0f) green:(206.0f/255.0f) blue:(206.0f/255.0f) alpha:.4f];
     [self.view addSubview:userSelectionTableViewController.tableView];
     
-//    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
-//    modalVC.delegate = self;
-//    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 
 
     APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
@@ -157,19 +158,9 @@
     
     // Detect if user is connected
     if (/* DISABLES CODE */ (YES)) { //FBSession.activeSession.isOpen
-        [self.tabBarController.tabBar setHidden:NO];
+        
         [self.view addSubview: self.searchController.searchBar];
     } else {
-        [self.tabBarController.tabBar setHidden:YES];
-    }
-    
-    for (UIView *subView in self.searchController.searchBar.subviews) {
-        for(id field in subView.subviews){
-            if ([field isKindOfClass:[UITextField class]]) {
-                UITextField *textField = (UITextField *)field;
-                [textField setBackgroundColor:[UIColor blueColor]];
-            }
-        }
     }
     
 //    [UserTaste MR_truncateAll];
@@ -200,7 +191,7 @@
 //    NSMutableDictionary *array = [NSKeyedUnarchiver unarchiveObjectWithData:[[people objectAtIndex:0] taste]];
 //    NSLog(@"person : %@, %lli", array, [[person fbid]  longLongValue]);
     
-
+    NSLog(@"foo %@", NSStringFromCGRect(self.view.frame));
 }
 
 
@@ -212,9 +203,28 @@
     return json;
 }
 
+- (void) appearsSearchBar {
+    UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
+
+    
+    
+    self.searchController.searchBar.hidden = NO;
+    [UIView animateWithDuration: 0.5
+                          delay: 0.3
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+                         UISearchControllerBG.frame = CGRectMake(0, 0, screenWidth, 64);
+                     }
+                     completion:nil];
+    NSLog(@"%@", NSStringFromCGRect(self.searchController.searchBar.frame));
+    [self.searchController.searchBar becomeFirstResponder];
+}
+
 //- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-//    [self.searchController.searchBar becomeFirstResponder];
+//    [_searchController.searchBar becomeFirstResponder];
 //}
+
 
 
 #pragma mark - Facebook user connection
@@ -374,10 +384,21 @@
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.text = title;
         
+        UIView *bgColorView = [[UIView alloc] init];
+        [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
+        [cell setSelectedBackgroundView:bgColorView];
         
     }
     
     return cell;
+}
+
+- (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
+    
+    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+//    modalVC.delegate = self;
+    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+
 }
 
 
@@ -440,11 +461,7 @@
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController
 {
-//    self.searchController.searchBar.frame = CGRectMake(0, 0, 230, 44);
-    if (!USERALREADYMADEARESEARCH) { //USERALREADYMADEARESEARCH == NO
-        self.searchResultsController.tableView.frame = CGRectMake(0, -64.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame) + 64.0f);
-        USERALREADYMADEARESEARCH = YES;
-    }
+    self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
     
     
     NSString *searchString = [searchController.searchBar text];
