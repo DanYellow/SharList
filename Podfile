@@ -7,6 +7,7 @@ target "SharList" do
 	pod 'Facebook-iOS-SDK', '~> 3.13'
 	# pod 'Reachability', '~> 3.1'
 	pod 'SWRevealViewController', '~> 2.3'
+	pod 'CRGradientNavigationBar'
 end
 
 target "SharListTests" do

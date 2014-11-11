@@ -11,6 +11,8 @@
 
 #import <FacebookSDK/FacebookSDK.h>
 
+#import "CRGradientNavigationBar.h"
+
 
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"

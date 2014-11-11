@@ -30,7 +30,6 @@
     SideMenuViewController *sideMenuController = [[SideMenuViewController alloc] init];
     sideMenuController.title = @"Paramètres";
     
-    
     UINavigationController *frontNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
     UINavigationController *rearNavigationController = [[UINavigationController alloc] initWithRootViewController:sideMenuController];
 
@@ -41,7 +40,6 @@
     [self.window setRootViewController:revealController];
     [self.window setBackgroundColor:[UIColor whiteColor]];
     [self.window makeKeyAndVisible];
-    
     
     return YES;
 }

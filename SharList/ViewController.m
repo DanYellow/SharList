@@ -41,14 +41,21 @@
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]];
     
     self.definesPresentationContext = YES;
-    self.edgesForExtendedLayout = UIRectEdgeTop;
-    self.automaticallyAdjustsScrollViewInsets = NO;
-    self.extendedLayoutIncludesOpaqueBars = YES;
+    self.edgesForExtendedLayout = UIRectEdgeAll;
+//    self.automaticallyAdjustsScrollViewInsets = NO;
+//    self.extendedLayoutIncludesOpaqueBars = YES;
+//    
+
+    NSArray *colors = [NSArray arrayWithObjects:[UIColor clearColor], [UIColor clearColor], nil];
+    [[CRGradientNavigationBar appearance] setBarTintGradientColors:colors];
+    [[self.navigationController navigationBar] setTranslucent:NO];
     
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
-                                                  forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.shadowImage = [UIImage new];
-    self.navigationController.navigationBar.translucent = YES;
+//    [self.navigationController.navigationBar setTranslucent:YES];
+//    self.navigationController.navigationBar.shadowImage = [UIImage new];
+//    self.navigationController.view.backgroundColor = [UIColor clearColor];
+//    [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+//    self.navigationController.navigationBar.shadowImage = [[UIImage alloc] init];
+//    self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
 
     SWRevealViewController *revealController = [self revealViewController];
     [revealController panGestureRecognizer];
@@ -56,11 +63,7 @@
     
 //    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
 //        self.edgesForExtendedLayout = UIRectEdgeNone;
-    
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
-                                                  forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.shadowImage = [UIImage new];
-    self.navigationController.navigationBar.translucent = YES;
+
 
 
     
@@ -120,13 +123,17 @@
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
     self.searchController.searchBar.hidden = YES;
+    self.searchController.searchBar.clipsToBounds = YES;
+//    self.searchController.searchBar.
     self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor blackColor]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
+    
     
     UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)]; // [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)];
     UISearchControllerBG.tag = 3;
-    UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(230.0f/255.0f) green:(230.0f/255.0f) blue:(230.0f/255.0f) alpha:1.0f];
-//    UISearchControllerBG.backgroundColor = [UIColor whiteColor];
+    UISearchControllerBG.clipsToBounds = YES;
+//    UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(230.0f/255.0f) green:(230.0f/255.0f) blue:(230.0f/255.0f) alpha:1.0f];
+    UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(44.0f/255.0f) green:(61.0f/255.0f) blue:(69.0f/255.0f) alpha:1];
     
     [self.searchController.view addSubview:UISearchControllerBG];
     
@@ -206,20 +213,49 @@
 - (void) appearsSearchBar {
     UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
 
-    
-    
     self.searchController.searchBar.hidden = NO;
-    [UIView animateWithDuration: 0.5
+    [UIView animateWithDuration: 0.2
                           delay: 0.3
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
+                         self.navigationController.navigationBar.translucent = NO;
                          self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
                          UISearchControllerBG.frame = CGRectMake(0, 0, screenWidth, 64);
                      }
-                     completion:nil];
-    NSLog(@"%@", NSStringFromCGRect(self.searchController.searchBar.frame));
+                     completion:^(BOOL finished){
+                         
+                     }];
     [self.searchController.searchBar becomeFirstResponder];
 }
+
+- (void) searchBarCancelButtonClicked:(UISearchBar *) searchBar {
+    UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
+    self.navigationController.navigationBar.translucent = YES;
+    
+    [UIView animateWithDuration: 0.1
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         
+                         self.searchController.searchBar.frame = CGRectMake(0, -50, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+                         UISearchControllerBG.frame = CGRectMake(0, -60, 320, 64);
+                     }
+                     completion:^(BOOL finished){
+                         self.searchController.searchBar.hidden = YES;
+                         [searchBar resignFirstResponder];
+                     }];
+    
+    
+}
+
+- (void)didDismissSearchController:(UISearchController *)searchController {
+    NSLog(@"dissmiss");
+}
+
+- (void)willDismissSearchController:(UISearchController *)searchController {
+    NSLog(@"willDismissSearchController");
+}
+
 
 //- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
 //    [_searchController.searchBar becomeFirstResponder];
@@ -333,6 +369,7 @@
 - (NSInteger )numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        NSLog(@"category : %li",[categoryList count] );
         return [categoryList count];
     } else {
         return userTasteDict.count;
@@ -478,7 +515,8 @@
         // This predicate manage a media in several categories
         NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
         
-        [filteredTableDatas setValue: [[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
+        // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
+        [filteredTableDatas setValue: [[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
     }
     
 //    NSLog(@"%@", filteredTableDatas);
