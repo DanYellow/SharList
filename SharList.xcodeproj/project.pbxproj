@@ -15,6 +15,7 @@
 		1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC51A0FE20900CD725A /* LaunchScreen.xib */; };
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A076DDF1A102B1C00CD725A /* appBG.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DDE1A102B1C00CD725A /* appBG.png */; };
+		1A0A045D1A12A58400B6F844 /* appBG-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A0A045C1A12A58400B6F844 /* appBG-2.png */; };
 		1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */; };
 		1A1D6E481A10AE930090C598 /* api.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A1D6E471A10AE930090C598 /* api.json */; };
 		1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */; };
@@ -53,6 +54,7 @@
 		1A076DD11A0FE20900CD725A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A076DD21A0FE20900CD725A /* SharListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharListTests.m; sourceTree = "<group>"; };
 		1A076DDE1A102B1C00CD725A /* appBG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appBG.png; sourceTree = "<group>"; };
+		1A0A045C1A12A58400B6F844 /* appBG-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "appBG-2.png"; sourceTree = "<group>"; };
 		1A1D6E431A1099C00090C598 /* SettingsViewControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewControllerViewController.h; sourceTree = "<group>"; };
 		1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewControllerViewController.m; sourceTree = "<group>"; };
 		1A1D6E471A10AE930090C598 /* api.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = api.json; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 			children = (
 				1A3C22881A118098005B31E4 /* reveal-icon.png */,
 				1A3C22891A118098005B31E4 /* reveal-icon@2x.png */,
+				1A0A045C1A12A58400B6F844 /* appBG-2.png */,
 				1A076DDE1A102B1C00CD725A /* appBG.png */,
 			);
 			name = Images;
@@ -309,6 +312,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
+				1A0A045D1A12A58400B6F844 /* appBG-2.png in Resources */,
 				1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */,
 				1A3C228B1A118098005B31E4 /* reveal-icon@2x.png in Resources */,
 				1A076DDF1A102B1C00CD725A /* appBG.png in Resources */,

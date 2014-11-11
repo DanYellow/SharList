@@ -38,33 +38,19 @@
     screenHeight = screenRect.size.height;
 
     
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG-2"]];
     
     self.definesPresentationContext = YES;
 //    self.edgesForExtendedLayout = UIRectEdgeNone;
 //    self.automaticallyAdjustsScrollViewInsets = NO;
 //    self.extendedLayoutIncludesOpaqueBars = YES;
-//    
 
-    
-    
-//    [self.navigationController.navigationBar setTranslucent:YES];
-//    self.navigationController.navigationBar.shadowImage = [UIImage new];
-//    self.navigationController.view.backgroundColor = [UIColor clearColor];
-//    [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-//    self.navigationController.navigationBar.shadowImage = [[UIImage alloc] init];
-//    self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
 
     SWRevealViewController *revealController = [self revealViewController];
     [revealController panGestureRecognizer];
     [revealController tapGestureRecognizer];
     
-//    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
-//        self.edgesForExtendedLayout = UIRectEdgeNone;
 
-
-
-    
     UIBarButtonItem *revealButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"reveal-icon.png"]
                                                                          style:UIBarButtonItemStylePlain target:revealController action:@selector(revealToggle:)];
     
@@ -120,8 +106,8 @@
     self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
-    self.searchController.searchBar.hidden = YES;
-    self.searchController.searchBar.frame = CGRectMake(0, self.topLayoutGuide.length, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+//    self.searchController.searchBar.hidden = YES;
+    self.searchController.searchBar.frame = CGRectMake(0, 0.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
     
     
@@ -144,7 +130,7 @@
    
     // Uitableview of user selection (what user likes)
     UITableViewController *userSelectionTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userSelectionTableViewController.tableView.frame = CGRectMake(0, strokeUnderSearchControllerY + 12, screenWidth, [self computeRatio:704.0 forDimension:screenHeight] + self.tabBarController.tabBar.frame.size.height + 44);
+    userSelectionTableViewController.tableView.frame = CGRectMake(0, [self computeRatio:60.0 forDimension:screenHeight], screenWidth, [self computeRatio:800.0 forDimension:screenHeight] + 44);
     userSelectionTableViewController.tableView.dataSource = self;
     userSelectionTableViewController.tableView.delegate = self;
     userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
@@ -178,17 +164,17 @@
 //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
     
 //    } completion:nil];
-        UserTaste *userTaste = [UserTaste  MR_createEntity];
-        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-        userTaste.taste = arrayData;
-        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+//        UserTaste *userTaste = [UserTaste  MR_createEntity];
+//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+//        userTaste.taste = arrayData;
+//        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
+//        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
     
-//    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
-//                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
-//    
-//    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
+    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
+    
+    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
 //    NSLog(@"userTasteDict : %@, %lu", userTasteDict , (unsigned long)userTasteDict.count);
     
 //    NSMutableDictionary *array = [NSKeyedUnarchiver unarchiveObjectWithData:[[people objectAtIndex:0] taste]];
@@ -205,7 +191,8 @@
     return json;
 }
 
-- (void) appearsSearchBar {
+- (void) appearsSearchBar
+{
     UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
 
     self.searchController.searchBar.hidden = NO;
@@ -213,8 +200,8 @@
                           delay: 0.3
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
-                         self.navigationController.navigationBar.translucent = NO;
-                         self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+
+//                         self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
                          UISearchControllerBG.frame = CGRectMake(0, 0, screenWidth, 64);
                      }
                      completion:^(BOOL finished){
@@ -223,9 +210,9 @@
     [self.searchController.searchBar becomeFirstResponder];
 }
 
-- (void) searchBarCancelButtonClicked:(UISearchBar *) searchBar {
+- (void) disappearsSearchBar
+{
     UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
-    self.navigationController.navigationBar.translucent = YES;
     
     [UIView animateWithDuration: 0.1
                           delay: 0.0
@@ -237,18 +224,18 @@
                      }
                      completion:^(BOOL finished){
                          self.searchController.searchBar.hidden = YES;
-                         [searchBar resignFirstResponder];
+                         [self.searchController.searchBar resignFirstResponder];
                      }];
-    
-    
 }
 
-- (void)didDismissSearchController:(UISearchController *)searchController {
-    NSLog(@"dissmiss");
+- (void) searchBarCancelButtonClicked:(UISearchBar *) searchBar
+{
+    [self disappearsSearchBar];
 }
 
-- (void)willDismissSearchController:(UISearchController *)searchController {
-    NSLog(@"willDismissSearchController");
+- (void)didDismissSearchController:(UISearchController *)searchController
+{
+    [self disappearsSearchBar];
 }
 
 
@@ -429,6 +416,9 @@
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
 //    modalVC.delegate = self;
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
 
 }
 
@@ -449,7 +439,8 @@
             cell.textLabel.textColor = [UIColor whiteColor];
         } else {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-            cell.backgroundColor = [UIColor clearColor];
+            cell.backgroundColor = [UIColor colorWithRed:(175.0f/255.0f) green:(197.0f/255.0f) blue:(208.0f/255.0f) alpha:.95f];
+
             cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
             cell.textLabel.textColor = [UIColor blackColor];
