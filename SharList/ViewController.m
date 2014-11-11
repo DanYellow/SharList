@@ -41,14 +41,12 @@
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]];
     
     self.definesPresentationContext = YES;
-    self.edgesForExtendedLayout = UIRectEdgeAll;
+//    self.edgesForExtendedLayout = UIRectEdgeNone;
 //    self.automaticallyAdjustsScrollViewInsets = NO;
 //    self.extendedLayoutIncludesOpaqueBars = YES;
 //    
 
-    NSArray *colors = [NSArray arrayWithObjects:[UIColor clearColor], [UIColor clearColor], nil];
-    [[CRGradientNavigationBar appearance] setBarTintGradientColors:colors];
-    [[self.navigationController navigationBar] setTranslucent:NO];
+    
     
 //    [self.navigationController.navigationBar setTranslucent:YES];
 //    self.navigationController.navigationBar.shadowImage = [UIImage new];
@@ -123,13 +121,11 @@
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
     self.searchController.searchBar.hidden = YES;
-    self.searchController.searchBar.clipsToBounds = YES;
-//    self.searchController.searchBar.
-    self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    self.searchController.searchBar.frame = CGRectMake(0, self.topLayoutGuide.length, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
     
     
-    UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)]; // [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)];
+    UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)]; // [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)];
     UISearchControllerBG.tag = 3;
     UISearchControllerBG.clipsToBounds = YES;
 //    UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(230.0f/255.0f) green:(230.0f/255.0f) blue:(230.0f/255.0f) alpha:1.0f];
@@ -137,7 +133,7 @@
     
     [self.searchController.view addSubview:UISearchControllerBG];
     
-    CGFloat strokeUnderSearchControllerY = CGRectGetHeight(self.searchController.searchBar.frame) + CGRectGetMaxY(self.searchController.searchBar.frame) + 5 - 44.0;
+    CGFloat strokeUnderSearchControllerY = CGRectGetHeight(self.searchController.searchBar.frame) + CGRectGetMaxY(self.searchController.searchBar.frame) + 5 + 44.0;
     UIView *strokeUnderSearchController = [[UIView alloc] initWithFrame:CGRectMake(0, strokeUnderSearchControllerY, [self computeRatio:608.0 forDimension:screenWidth], 1.0)];
     strokeUnderSearchController.center = CGPointMake(self.view.center.x, strokeUnderSearchControllerY);
     strokeUnderSearchController.backgroundColor = [UIColor blackColor];
@@ -182,23 +178,22 @@
 //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
     
 //    } completion:nil];
-//        UserTaste *userTaste = [UserTaste  MR_createEntity];
-//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-//        userTaste.taste = arrayData;
-//        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
-//        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        UserTaste *userTaste = [UserTaste  MR_createEntity];
+        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+        userTaste.taste = arrayData;
+        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
     
-    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
-                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
-    
-    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
+//    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+//                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
+//    
+//    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
 //    NSLog(@"userTasteDict : %@, %lu", userTasteDict , (unsigned long)userTasteDict.count);
     
 //    NSMutableDictionary *array = [NSKeyedUnarchiver unarchiveObjectWithData:[[people objectAtIndex:0] taste]];
 //    NSLog(@"person : %@, %lli", array, [[person fbid]  longLongValue]);
-    
-    NSLog(@"foo %@", NSStringFromCGRect(self.view.frame));
+
 }
 
 
@@ -356,7 +351,7 @@
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         NSString *sectionTitle = [categoryList objectAtIndex:section];
         NSArray *sectionElements = [filteredTableDatas objectForKey:sectionTitle];
-        
+
         return sectionElements.count;
     } else {
         NSString *sectionTitle = [[userTasteDict allKeys] objectAtIndex:section];
@@ -369,7 +364,6 @@
 - (NSInteger )numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-        NSLog(@"category : %li",[categoryList count] );
         return [categoryList count];
     } else {
         return userTasteDict.count;
@@ -519,7 +513,7 @@
         [filteredTableDatas setValue: [[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
     }
     
-//    NSLog(@"%@", filteredTableDatas);
+    NSLog(@"%@", filteredTableDatas);
     [self.searchResultsController.tableView reloadData];
     
     // Blurred background

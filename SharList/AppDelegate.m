@@ -30,7 +30,21 @@
     SideMenuViewController *sideMenuController = [[SideMenuViewController alloc] init];
     sideMenuController.title = @"Paramètres";
     
-    UINavigationController *frontNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    UINavigationController *frontNavigationController = [[UINavigationController alloc] initWithNavigationBarClass:[CRGradientNavigationBar class] toolbarClass:nil];
+    [frontNavigationController setViewControllers:@[viewController]];
+    
+    UIColor *firstColor = [UIColor colorWithRed:255.0f/255.0f green:42.0f/255.0f blue:104.0f/255.0f alpha:0];
+    UIColor *secondColor = [UIColor colorWithRed:255.0f/255.0f green:42.0f/255.0f blue:104.0f/255.0f alpha:0];
+    [frontNavigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefaultPrompt];
+     frontNavigationController.navigationBar.shadowImage = [UIImage new];
+    
+    NSArray *colors = [NSArray arrayWithObjects:firstColor, secondColor, nil];
+    // or NSArray *colors = [NSArray arrayWithObjects:(id)UIColorFromRGB(0xf16149).CGColor, (id)UIColorFromRGB(0xf14959).CGColor, nil];
+    
+    [[CRGradientNavigationBar appearance] setBarTintGradientColors:colors];
+    [[frontNavigationController navigationBar] setTranslucent:YES]; // Remember, the default value is YES.
+    
+    
     UINavigationController *rearNavigationController = [[UINavigationController alloc] initWithRootViewController:sideMenuController];
 
     SWRevealViewController *revealController = [[SWRevealViewController alloc] initWithRearViewController:rearNavigationController frontViewController:frontNavigationController];
