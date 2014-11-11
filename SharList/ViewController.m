@@ -84,9 +84,8 @@
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
     fbLoginButton.frame = CGRectMake(51, screenHeight - 90, 218, 46);
-    NSLog(@"%@", NSStringFromCGRect(fbLoginButton.frame));
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
-    [self.view addSubview:fbLoginButton];
+    
     
     
     // UITableview of results
@@ -113,7 +112,6 @@
     self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
-//    self.searchController.searchBar.hidden = YES;
     self.searchController.searchBar.frame = CGRectMake(0, 0.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
     
@@ -132,7 +130,9 @@
     strokeUnderSearchController.backgroundColor = [UIColor blackColor];
     strokeUnderSearchController.opaque = YES;
     strokeUnderSearchController.tag = 5;
+    strokeUnderSearchController.hidden = YES;
     strokeUnderSearchController.userInteractionEnabled = NO;
+    [self.view addSubview:strokeUnderSearchController];
     
    
     // Uitableview of user selection (what user likes)
@@ -152,11 +152,21 @@
     
     filteredTableDatas = [[NSMutableDictionary alloc] init];
     
-    // Detect if user is connected
-    if (FBSession.activeSession.isOpen) {
-//        [self userConnectionForFbID:[userPreferences objectForKey:@"fbUserID"]];
+    // Detect if user not is connected
+    if (!FBSession.activeSession.isOpen) {
+        [self.view addSubview:fbLoginButton];
     } else {
+        if ([userPreferences boolForKey:@"appHasBeenLaunched"]) {
+            [self userConnectionForFbID:[userPreferences objectForKey:@"fbUserID"]];
+        }
     }
+    
+    // Test if it's the first use
+    if (![userPreferences boolForKey:@"firstTime"]) {
+        // Display and extra button for
+        [userPreferences setBool:YES forKey:@"firstTime"];
+    }
+    
     
 //    [UserTaste MR_truncateAll];
     
@@ -201,19 +211,16 @@
 {
     UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
 
-    self.searchController.searchBar.hidden = NO;
-    [UIView animateWithDuration: 0.2
-                          delay: 0.3
+    [UIView animateWithDuration: 0.1
+                          delay: 0.0
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
-
-//                         self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
                          UISearchControllerBG.frame = CGRectMake(0, 0, screenWidth, 64);
                      }
                      completion:^(BOOL finished){
-                         
+                         [self.searchController.searchBar becomeFirstResponder];
                      }];
-    [self.searchController.searchBar becomeFirstResponder];
+    
 }
 
 - (void) disappearsSearchBar
@@ -225,40 +232,43 @@
                         options: UIViewAnimationOptionCurveLinear
                      animations:^{
                          
-                         self.searchController.searchBar.frame = CGRectMake(0, -50, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
                          UISearchControllerBG.frame = CGRectMake(0, -60, 320, 64);
                      }
                      completion:^(BOOL finished){
-                         self.searchController.searchBar.hidden = YES;
                          [self.searchController.searchBar resignFirstResponder];
                      }];
 }
 
 - (void) searchBarCancelButtonClicked:(UISearchBar *) searchBar
 {
-//    [self disappearsSearchBar];
+    [self disappearsSearchBar];
 }
 
-- (void)didDismissSearchController:(UISearchController *)searchController
+- (void) didDismissSearchController:(UISearchController *)searchController
 {
-//    [self disappearsSearchBar];
+    [self disappearsSearchBar];
 }
 
 
-//- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-//    [_searchController.searchBar becomeFirstResponder];
-//}
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar{
+    [self appearsSearchBar];
+    
+    return YES;
+}
+
+
+#pragma mark - Facebook user connection
+
 
 // This method have to be called when the user is connected
 - (void) userConnectionForFbID:(NSNumber*)userfbID
 {
-    
     // We retrieve user taste if it's local
     self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
                                               withValue:userfbID];
     // then put it into the NSDictionary of "taste"
     userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
-    NSLog(@"%@", userTasteDict);
+
     [self.view addSubview: self.searchController.searchBar];
     
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
@@ -267,12 +277,25 @@
     
     
     UIView *strokeUnderSearchController = (UIView*)[self.view viewWithTag:5];
-    [self.view addSubview:strokeUnderSearchController];
+    strokeUnderSearchController.hidden = NO;
 }
 
 
+- (void) userLoggedOutOffb
+{
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+    userSelectionTableView.hidden = YES;
+    
+    UIView *strokeUnderSearchController = (UIView*)[self.view viewWithTag:5];
+    strokeUnderSearchController.hidden = YES;
+    
+    [self.searchController.searchBar removeFromSuperview];
+    [userTasteDict removeAllObjects];
+    
+    // user logged out so we remove his key into the NSUserdefault
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"fbUserID"];
+}
 
-#pragma mark - Facebook user connection
 
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
 {
@@ -285,6 +308,10 @@
     
     NSUserDefaults *userPreferences = [NSUserDefaults standardUserDefaults];
     [userPreferences setObject:fbIDNumber forKey:@"fbUserID"];
+    // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
+    [userPreferences setBool:YES forKey:@"appHasBeenLaunched"];
+    
+    
     
     // We remove facebook's button into a thread for solve a curious issue
 //    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
@@ -301,8 +328,6 @@
 
     [self userConnectionForFbID:fbIDNumber];
 
-    
-    
     UILabel *appMottoText = (UILabel*)[self.view viewWithTag:2];
     CGFloat endTransitionY = appMottoText.frame.origin.y;
     endTransitionY = endTransitionY - (endTransitionY/2);
@@ -328,11 +353,9 @@
 
 
 // When user logged out
-- (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
-    NSLog(@"User logged out");
-    
-    // user logged out so we remove his key into the NSUserdefault
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"fbUserID"];
+- (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
+{
+    [self userLoggedOutOffb];
 }
 
 // Manage error for connection
@@ -477,21 +500,33 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
+    CGFloat fontSize = 15.0f;
     
     if (cell == nil) {
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
             cell.backgroundColor = [UIColor colorWithRed:(127.0f/255.0f) green:(151.0f/255.0f) blue:(163.0f/255.0f) alpha:.85f];
             cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
-            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:fontSize];
             cell.textLabel.textColor = [UIColor whiteColor];
         } else {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-            cell.backgroundColor = [UIColor colorWithRed:(175.0f/255.0f) green:(197.0f/255.0f) blue:(208.0f/255.0f) alpha:.95f];
+//            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+//            cell.backgroundColor = [UIColor colorWithRed:(175.0f/255.0f) green:(197.0f/255.0f) blue:(208.0f/255.0f) alpha:.95f];
+//
+//            cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
+//            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
+//            cell.textLabel.textColor = [UIColor blackColor];
+            UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 18)];
+            /* Create custom view to display section header... */
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, 18)];
+            label.font = [UIFont fontWithName:@"HelveticaNeue" size:fontSize];
+            NSString *string = [[categoryList objectAtIndex:section] uppercaseString];
+            label.text = string;
+            label.textColor = [UIColor blackColor];
 
-            cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
-            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
-            cell.textLabel.textColor = [UIColor blackColor];
+            [cell addSubview:label];
+            cell.backgroundColor = [UIColor colorWithRed:(175.0f/255.0f) green:(197.0f/255.0f) blue:(208.0f/255.0f) alpha:.95f];
+            return cell;
         }
     }
     

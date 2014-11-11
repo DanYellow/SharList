@@ -20,7 +20,12 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    self.title = NSLocalizedString(@"Rear View", nil);
+    self.title = NSLocalizedString(@"Menu", nil);
+    UILabel *menuTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
+    menuTitle.text = NSLocalizedString(@"Menu", nil);
+    menuTitle.textColor = [UIColor whiteColor];
+//    [self.navigationController.view addSubview:menuTitle];
+    menuTitle.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:18.0f];
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
@@ -45,14 +50,10 @@
     self.view.backgroundColor = [UIColor colorWithRed:(44.0f/255.0f) green:(61.0f/255.0f) blue:(69.0f/255.0f) alpha:1];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 4;
+    return 3;
 }
 
 
@@ -62,8 +63,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     NSInteger row = indexPath.row;
     
-    if (nil == cell)
-    {
+    if (nil == cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f];
@@ -71,21 +71,12 @@
     }
     
     NSString *text = nil;
-    if (row == 0)
-    {
+    if (row == 0) {
         text = @"Mon shike";
-    }
-    else if (row == 1)
-    {
-        text = @"Map View Controller";
-    }
-    else if (row == 2)
-    {
+    } else if (row == 1) {
+        text = @"Mes découvertes";
+    } else if (row == 2) {
         text = @"Paramètres";
-    }
-    else if (row == 3)
-    {
-        text = @"Resign Presentation Mode";
     }
     
     cell.textLabel.text = NSLocalizedString(text, nil);
@@ -115,28 +106,16 @@
 //        [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
 //        return;
 //    }
-    else if (row == 3)
-    {
-        [revealController setFrontViewPosition:FrontViewPositionRight animated:YES];
-        return;
-    }
-    
+
     // otherwise we'll create a new frontViewController and push it with animation
     
     UIViewController *newFrontController = nil;
     
-    if (row == 0)
-    {
+    if (row == 0) {
         newFrontController = [[ViewController alloc] init];
-    }
-    
-    else if (row == 1)
-    {
+    } else if (row == 1) {
         newFrontController = [[SettingsViewControllerViewController alloc] init];
-    }
-    
-    else if (row == 2)
-    {
+    } else if (row == 2) {
         newFrontController = [[SettingsViewControllerViewController alloc] init];
     }
     
@@ -145,6 +124,12 @@
     
     _presentedRow = row;  // <- store the presented row
 }
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
 
 /*
 #pragma mark - Navigation

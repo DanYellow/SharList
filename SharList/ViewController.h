@@ -37,7 +37,6 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     
     
     BOOL USERALREADYMADEARESEARCH;
-    
 }
 
 @property (strong, nonatomic) UISearchController *searchController;
@@ -50,6 +49,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 
 // Manage user
 - (void) userConnectionForFbID:(NSNumber*)userfbID;
+- (void) userLoggedOutOffb;
 
 
 @end
