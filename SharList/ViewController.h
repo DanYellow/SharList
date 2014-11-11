@@ -48,5 +48,9 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
 - (UIImage *) takeSnapshotOfView:(UIView *)view;
 
+// Manage user
+- (void) userConnectionForFbID:(NSNumber*)userfbID;
+
+
 @end
 

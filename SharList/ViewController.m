@@ -18,6 +18,8 @@
 // 1 : Facebook button for connect
 // 2 : appMottoText (UILabel)
 // 3 : UISearchControllerBG | Background of the input
+// 4 : userSelectionTableViewController | Tableview of user taste
+// 5 : strokeUnderSearchController
 
 
 @implementation ViewController
@@ -33,15 +35,19 @@
     
 //    CGPoint centerOfView = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
     
+    // Création variables
+    USERALREADYMADEARESEARCH = NO;
+    
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
-
+    
+    NSUserDefaults *userPreferences = [NSUserDefaults standardUserDefaults];
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG-2"]];
     
     self.definesPresentationContext = YES;
-//    self.edgesForExtendedLayout = UIRectEdgeNone;
+    self.edgesForExtendedLayout = UIRectEdgeNone;
 //    self.automaticallyAdjustsScrollViewInsets = NO;
 //    self.extendedLayoutIncludesOpaqueBars = YES;
 
@@ -58,8 +64,7 @@
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(appearsSearchBar)];
     
-    // Variables initialisation
-    USERALREADYMADEARESEARCH = NO;
+
 
     
     // Motto of the app
@@ -78,7 +83,9 @@
     FBLoginView *fbLoginButton = [[FBLoginView alloc] init];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
-    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
+    fbLoginButton.frame = CGRectMake(51, screenHeight - 90, 218, 46);
+    NSLog(@"%@", NSStringFromCGRect(fbLoginButton.frame));
+//    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     [self.view addSubview:fbLoginButton];
     
     
@@ -119,25 +126,25 @@
     
     [self.searchController.view addSubview:UISearchControllerBG];
     
-    CGFloat strokeUnderSearchControllerY = CGRectGetHeight(self.searchController.searchBar.frame) + CGRectGetMaxY(self.searchController.searchBar.frame) + 5 + 44.0;
+    CGFloat strokeUnderSearchControllerY = CGRectGetHeight(self.searchController.searchBar.frame) + CGRectGetMaxY(self.searchController.searchBar.frame) + 5 - 44.0;
     UIView *strokeUnderSearchController = [[UIView alloc] initWithFrame:CGRectMake(0, strokeUnderSearchControllerY, [self computeRatio:608.0 forDimension:screenWidth], 1.0)];
     strokeUnderSearchController.center = CGPointMake(self.view.center.x, strokeUnderSearchControllerY);
     strokeUnderSearchController.backgroundColor = [UIColor blackColor];
     strokeUnderSearchController.opaque = YES;
+    strokeUnderSearchController.tag = 5;
     strokeUnderSearchController.userInteractionEnabled = NO;
-    [self.view addSubview:strokeUnderSearchController];
     
    
     // Uitableview of user selection (what user likes)
     UITableViewController *userSelectionTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userSelectionTableViewController.tableView.frame = CGRectMake(0, [self computeRatio:60.0 forDimension:screenHeight], screenWidth, [self computeRatio:800.0 forDimension:screenHeight] + 44);
+    userSelectionTableViewController.tableView.frame = CGRectMake(0, strokeUnderSearchControllerY + 14, screenWidth, [self computeRatio:800.0 forDimension:screenHeight] + 44); //[self computeRatio:60.0 forDimension:screenHeight]
     userSelectionTableViewController.tableView.dataSource = self;
     userSelectionTableViewController.tableView.delegate = self;
     userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
+    userSelectionTableViewController.tableView.tag = 4;
     userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(206.0f/255.0f) green:(206.0f/255.0f) blue:(206.0f/255.0f) alpha:.4f];
+    userSelectionTableViewController.tableView.hidden = YES;
     [self.view addSubview:userSelectionTableViewController.tableView];
-    
-
 
     APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
     
@@ -146,9 +153,8 @@
     filteredTableDatas = [[NSMutableDictionary alloc] init];
     
     // Detect if user is connected
-    if (/* DISABLES CODE */ (YES)) { //FBSession.activeSession.isOpen
-        
-        [self.view addSubview: self.searchController.searchBar];
+    if (FBSession.activeSession.isOpen) {
+//        [self userConnectionForFbID:[userPreferences objectForKey:@"fbUserID"]];
     } else {
     }
     
@@ -170,15 +176,15 @@
 //        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
 //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
-    
-    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
-                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
-    
-    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
+//    
+//    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+//                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
+//    
+//    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
 //    NSLog(@"userTasteDict : %@, %lu", userTasteDict , (unsigned long)userTasteDict.count);
     
 //    NSMutableDictionary *array = [NSKeyedUnarchiver unarchiveObjectWithData:[[people objectAtIndex:0] taste]];
-//    NSLog(@"person : %@, %lli", array, [[person fbid]  longLongValue]);
+    
 
 }
 
@@ -230,18 +236,39 @@
 
 - (void) searchBarCancelButtonClicked:(UISearchBar *) searchBar
 {
-    [self disappearsSearchBar];
+//    [self disappearsSearchBar];
 }
 
 - (void)didDismissSearchController:(UISearchController *)searchController
 {
-    [self disappearsSearchBar];
+//    [self disappearsSearchBar];
 }
 
 
 //- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
 //    [_searchController.searchBar becomeFirstResponder];
 //}
+
+// This method have to be called when the user is connected
+- (void) userConnectionForFbID:(NSNumber*)userfbID
+{
+    
+    // We retrieve user taste if it's local
+    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+                                              withValue:userfbID];
+    // then put it into the NSDictionary of "taste"
+    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
+    NSLog(@"%@", userTasteDict);
+    [self.view addSubview: self.searchController.searchBar];
+    
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+    userSelectionTableView.hidden = NO;
+    [userSelectionTableView reloadData];
+    
+    
+    UIView *strokeUnderSearchController = (UIView*)[self.view viewWithTag:5];
+    [self.view addSubview:strokeUnderSearchController];
+}
 
 
 
@@ -250,13 +277,31 @@
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
 {
     FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
+    
+    // We format the user id (NSString) to an NSNumber to be stored in NSUserDefault key
+    NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
+    [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
+    
+    NSUserDefaults *userPreferences = [NSUserDefaults standardUserDefaults];
+    [userPreferences setObject:fbIDNumber forKey:@"fbUserID"];
+    
+    // We remove facebook's button into a thread for solve a curious issue
 //    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
 //    NSLog(@"user %@ | %@:", user, user.objectID);
     
     // Here we add userid (aka user.objectID) to the database
     
-    [self.tabBarController.tabBar setHidden:NO];
+    //        UserTaste *userTaste = [UserTaste  MR_createEntity];
+    //        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+    //        userTaste.taste = arrayData;
+    //        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
+    //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+
+    [self userConnectionForFbID:fbIDNumber];
+
+    
     
     UILabel *appMottoText = (UILabel*)[self.view viewWithTag:2];
     CGFloat endTransitionY = appMottoText.frame.origin.y;
@@ -285,6 +330,9 @@
 // When user logged out
 - (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     NSLog(@"User logged out");
+    
+    // user logged out so we remove his key into the NSUserdefault
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"fbUserID"];
 }
 
 // Manage error for connection
