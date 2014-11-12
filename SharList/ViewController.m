@@ -84,7 +84,7 @@
     FBLoginView *fbLoginButton = [[FBLoginView alloc] init];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
-    fbLoginButton.frame = CGRectMake(51, screenHeight - 90, 218, 46);
+    fbLoginButton.frame = CGRectMake(51, screenHeight - 110, 218, 46);
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
     
