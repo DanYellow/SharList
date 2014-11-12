@@ -43,6 +43,7 @@
     screenHeight = screenRect.size.height;
     
     NSUserDefaults *userPreferences = [NSUserDefaults standardUserDefaults];
+    userTasteDict = [[NSMutableDictionary alloc] init];
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG-2"]];
     
@@ -152,9 +153,10 @@
     
     filteredTableDatas = [[NSMutableDictionary alloc] init];
     
+     [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
     if (!FBSession.activeSession.isOpen) {
-        [self.view addSubview:fbLoginButton];
+//        [self.view addSubview:fbLoginButton];
     } else {
         if ([userPreferences boolForKey:@"appHasBeenLaunched"]) {
             [self userConnectionForFbID:[userPreferences objectForKey:@"fbUserID"]];
