@@ -22,7 +22,7 @@
 
 
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate>
+UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate>
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -33,6 +33,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     NSMutableDictionary *filteredTableDatas;
     NSArray *categoryList;
     NSMutableDictionary *userTasteDict;
+    NSUserDefaults *userPreferences;
     
     
     
@@ -42,6 +43,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) UITableViewController *searchResultsController;
 @property (strong, nonatomic) UserTaste *userTaste;
+@property (retain, nonatomic) NSMutableData *responseData;
+@property (nonatomic, assign, getter=isFirstFBLoginDone) BOOL FirstFBLoginDone;
 
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
@@ -50,6 +53,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 // Manage user
 - (void) userConnectionForFbID:(NSNumber*)userfbID;
 - (void) userLoggedOutOffb;
+- (void) updateTasteToServer;
+- (NSMutableDictionary*) getServerDatasForFbID:(NSNumber*)userfbID;
 
 
 @end

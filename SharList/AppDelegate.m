@@ -30,16 +30,15 @@
     SideMenuViewController *sideMenuController = [[SideMenuViewController alloc] init];
     sideMenuController.title = @"Paramètres";
     
+        
     UINavigationController *frontNavigationController = [[UINavigationController alloc] initWithNavigationBarClass:[CRGradientNavigationBar class] toolbarClass:nil];
     [frontNavigationController setViewControllers:@[viewController]];
     
     UIColor *firstColor = [UIColor colorWithRed:203.0f/255.0f green:217.0f/255.0f blue:222.0f/255.0f alpha:1.0f];
     UIColor *secondColor = [UIColor colorWithRed:217.0f/255.0f green:231.0f/255.0f blue:236.0f/255.0f alpha:1.0f];
-//    [frontNavigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefaultPrompt];
-     frontNavigationController.navigationBar.shadowImage = [UIImage new];
+    frontNavigationController.navigationBar.shadowImage = [UIImage new];
     
-    NSArray *colors = [NSArray arrayWithObjects:firstColor, secondColor, nil];
-    // or NSArray *colors = [NSArray arrayWithObjects:(id)UIColorFromRGB(0xf16149).CGColor, (id)UIColorFromRGB(0xf14959).CGColor, nil];
+    NSArray *colors = @[firstColor, secondColor];
     
     [[CRGradientNavigationBar appearance] setBarTintGradientColors:colors];
     [[frontNavigationController navigationBar] setTranslucent:NO]; // Remember, the default value is YES.

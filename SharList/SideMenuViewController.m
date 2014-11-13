@@ -119,7 +119,18 @@
         newFrontController = [[SettingsViewControllerViewController alloc] init];
     }
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newFrontController];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithNavigationBarClass:[CRGradientNavigationBar class] toolbarClass:nil];
+    [navigationController setViewControllers:@[newFrontController]];
+    navigationController.navigationBar.shadowImage = [UIImage new];
+
+    UIColor *firstColor = [UIColor colorWithRed:203.0f/255.0f green:217.0f/255.0f blue:222.0f/255.0f alpha:1.0f];
+    UIColor *secondColor = [UIColor colorWithRed:217.0f/255.0f green:231.0f/255.0f blue:236.0f/255.0f alpha:1.0f];
+
+    NSArray *colors = @[firstColor, secondColor];
+    
+    [[CRGradientNavigationBar appearance] setBarTintGradientColors:colors];
+    [[navigationController navigationBar] setTranslucent:NO]; // Remember, the default value is YES.
+    
     [revealController pushFrontViewController:navigationController animated:YES];
     
     _presentedRow = row;  // <- store the presented row

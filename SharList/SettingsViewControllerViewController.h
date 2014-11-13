@@ -9,13 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface SettingsViewControllerViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate>
+UISearchControllerDelegate, UINavigationControllerDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
 }
 
-@property (strong, nonatomic) UISearchController *searchController;
-@property (strong, nonatomic) UITableViewController *searchResultsController;
+@property (strong, nonatomic) UITableViewController *settingsTVController;
 
 @end
