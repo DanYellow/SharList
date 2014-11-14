@@ -54,7 +54,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 - (void) userConnectionForFbID:(NSNumber*)userfbID;
 - (void) userLoggedOutOffb;
 - (void) updateTasteToServer;
-- (NSMutableDictionary*) getServerDatasForFbID:(NSNumber*)userfbID;
+- (void) getServerDatasForFbID:(NSNumber*)userfbID;
 
 
 @end

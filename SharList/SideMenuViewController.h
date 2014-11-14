@@ -11,6 +11,7 @@
 #import "ViewController.h"
 #import "SettingsViewControllerViewController.h"
 
+
 @interface SideMenuViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 {
     CGFloat screenWidth;

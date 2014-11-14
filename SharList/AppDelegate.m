@@ -37,6 +37,7 @@
     UIColor *firstColor = [UIColor colorWithRed:203.0f/255.0f green:217.0f/255.0f blue:222.0f/255.0f alpha:1.0f];
     UIColor *secondColor = [UIColor colorWithRed:217.0f/255.0f green:231.0f/255.0f blue:236.0f/255.0f alpha:1.0f];
     frontNavigationController.navigationBar.shadowImage = [UIImage new];
+    [frontNavigationController.navigationBar setTintColor:[UIColor colorWithRed:(44.0f/255.0f) green:(61.0f/255.0f) blue:(69.0f/255.0f) alpha:1]];
     
     NSArray *colors = @[firstColor, secondColor];
     
@@ -88,6 +89,23 @@
     // You can add your app-specific url handling code here if needed
     
     return wasHandled;
+}
+
+- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension
+{
+    CGFloat ratio = 0;
+    ratio = ((aNumber * 100)/aDimension);
+    ratio = ((ratio*aDimension)/100);
+    
+    if ([UIScreen mainScreen].scale > 2.1) {
+        
+        ratio = ratio/3; // Because we are in retina HD
+        
+    } else {
+        ratio = ratio/2; // Because we are in retina
+    }
+    
+    return roundf(ratio);
 }
 
 @end

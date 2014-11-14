@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A0014EA1A156A5E003430E9 /* bb.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A0014E91A156A5E003430E9 /* bb.png */; };
+		1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */; };
 		1A076DB91A0FE20900CD725A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DB81A0FE20900CD725A /* main.m */; };
 		1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DBB1A0FE20900CD725A /* AppDelegate.m */; };
 		1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DBE1A0FE20900CD725A /* ViewController.m */; };
@@ -40,6 +42,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A0014E91A156A5E003430E9 /* bb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bb.png; sourceTree = "<group>"; };
+		1A0014EB1A157C0F003430E9 /* CCARadialGradientLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCARadialGradientLayer.h; sourceTree = "<group>"; };
+		1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCARadialGradientLayer.m; sourceTree = "<group>"; };
 		1A076DB31A0FE20900CD725A /* SharList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A076DB71A0FE20900CD725A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A076DB81A0FE20900CD725A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -121,6 +126,8 @@
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
 				1A3C22851A1179BB005B31E4 /* SideMenuViewController.h */,
 				1A3C22861A1179BB005B31E4 /* SideMenuViewController.m */,
+				1A0014EB1A157C0F003430E9 /* CCARadialGradientLayer.h */,
+				1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
@@ -168,7 +175,6 @@
 			children = (
 				1A076DBD1A0FE20900CD725A /* ViewController.h */,
 				1A076DBE1A0FE20900CD725A /* ViewController.m */,
-				1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */,
 			);
 			name = FirstViewController;
 			sourceTree = "<group>";
@@ -180,6 +186,8 @@
 				1A3C22891A118098005B31E4 /* reveal-icon@2x.png */,
 				1A0A045C1A12A58400B6F844 /* appBG-2.png */,
 				1A076DDE1A102B1C00CD725A /* appBG.png */,
+				1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */,
+				1A0014E91A156A5E003430E9 /* bb.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -316,6 +324,7 @@
 				1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */,
 				1A3C228B1A118098005B31E4 /* reveal-icon@2x.png in Resources */,
 				1A076DDF1A102B1C00CD725A /* appBG.png in Resources */,
+				1A0014EA1A156A5E003430E9 /* bb.png in Resources */,
 				1A1D6E481A10AE930090C598 /* api.json in Resources */,
 				1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */,
 				1A3C228F1A11AAAC005B31E4 /* invisible-bg.png in Resources */,
@@ -374,6 +383,7 @@
 				1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */,
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
 				1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */,
+				1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */,
 				1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */,
 				1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */,
 				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,

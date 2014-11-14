@@ -20,7 +20,7 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic,strong) NSManagedObjectContext* managedObjectContext;
 
-
+- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
 
 @end
 

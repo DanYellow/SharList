@@ -37,6 +37,8 @@
     self.navigationController.navigationBar.translucent = YES;
     self.navigationController.navigationBar.hidden = NO;
     
+    
+    
     UITableView *sideMenuTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)
                                                                                  style:UITableViewStylePlain];
 

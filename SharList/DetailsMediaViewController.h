@@ -7,7 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
+
+#import "AppDelegate.h"
+
+#import "CCARadialGradientLayer.h"
 
 @interface DetailsMediaViewController : UIViewController
+{
+    CGFloat screenWidth;
+    CGFloat screenHeight;
+}
 
 @end

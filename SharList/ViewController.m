@@ -46,7 +46,7 @@
     screenHeight = screenRect.size.height;
     
     userPreferences = [NSUserDefaults standardUserDefaults];
-    userTasteDict = [[NSMutableDictionary alloc] init];
+
     self.responseData = [NSMutableData data];
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG-2"]];
@@ -200,7 +200,8 @@
 }
 
 
-- (NSArray*) fetchDatas {
+- (NSArray*) fetchDatas
+{
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"api" ofType:@"json"];
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
@@ -272,14 +273,15 @@
     // We retrieve user taste if it's local
     self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
                                               withValue:userfbID];
+    userTasteDict = [[NSMutableDictionary alloc] init];
+    
     if (self.userTaste) {
         // then put it into the NSDictionary of "taste"
-        userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
+        userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+        
     } else {
         [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"]];
     }
-    
-    
     
     [self.view addSubview: self.searchController.searchBar];
     
@@ -306,6 +308,8 @@
     
     // user logged out so we remove his key into the NSUserdefault
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"fbUserID"];
+    
+    self.FirstFBLoginDone = YES;
 }
 
 
@@ -495,7 +499,6 @@
         UIView *bgColorView = [[UIView alloc] init];
         [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
         [cell setSelectedBackgroundView:bgColorView];
-        
     }
     
     return cell;
@@ -556,7 +559,7 @@
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension {
     CGFloat ratio = 0;
-    ratio = ((aNumber*100)/aDimension);
+    ratio = ((aNumber * 100)/aDimension);
     ratio = ((ratio*aDimension)/100);
     
     if ([UIScreen mainScreen].scale > 2.1) {
@@ -596,22 +599,18 @@
     }
 }
 
-- (NSMutableDictionary*) getServerDatasForFbID:(NSNumber*)userfbID
+- (void) getServerDatasForFbID:(NSNumber*)userfbID
 {
-    NSMutableDictionary *userTasteFromServer = [[NSMutableDictionary alloc] init];
-    
     NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                        timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
-    NSLog(@"userfbID : %@", userfbID);
+
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", userfbID];
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     [[NSURLConnection alloc] initWithRequest:request delegate:self];
-    
-    return userTasteFromServer;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
@@ -626,33 +625,25 @@
         responseString = [responseString substringToIndex:[responseString length] - 1];
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
-        userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
         
         UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
         userSelectionTableView.hidden = NO;
         [userSelectionTableView reloadData];
-//        
-//        NSArray *fooArray = @[@"I am Charlotte Simmons",
-//                              @"I am Charlotte Simmons",
-//                              @"I am Charlotte Simmons",
-//                              @"I am Charlotte Simmons",
-//                              @"I am Charlotte Simmons"];
-//        NSDictionary *productManagers = @{@"serie": fooArray, @"movie": fooArray, @"book": fooArray};
  
         UserTaste *userTaste = [UserTaste MR_createEntity];
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
         userTaste.taste = arrayData;
         userTaste.fbid = [userPreferences objectForKey:@"fbUserID"];
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-//
+        
         self.responseData = nil;
     }
-    
 }
 
-
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
     NSLog(@"Connection failed: %@", [error description]);
 }
 
