@@ -76,7 +76,7 @@
     if (row == 0) {
         text = @"Mon shike";
     } else if (row == 1) {
-        text = @"Mes découvertes";
+        text = @"Mes rencontres";
     } else if (row == 2) {
         text = @"Paramètres";
     }

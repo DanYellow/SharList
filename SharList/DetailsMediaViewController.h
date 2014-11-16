@@ -13,10 +13,14 @@
 
 #import "CCARadialGradientLayer.h"
 
-@interface DetailsMediaViewController : UIViewController
+@interface DetailsMediaViewController : UIViewController <UITextViewDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
 }
+
+
+- (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;
+
 
 @end

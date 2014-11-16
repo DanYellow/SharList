@@ -99,6 +99,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A0014EE1A15819A003430E9 /* Vendors */ = {
+			isa = PBXGroup;
+			children = (
+				1A0014EB1A157C0F003430E9 /* CCARadialGradientLayer.h */,
+				1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */,
+			);
+			name = Vendors;
+			sourceTree = "<group>";
+		};
 		1A076DAA1A0FE20900CD725A = {
 			isa = PBXGroup;
 			children = (
@@ -126,14 +135,13 @@
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
 				1A3C22851A1179BB005B31E4 /* SideMenuViewController.h */,
 				1A3C22861A1179BB005B31E4 /* SideMenuViewController.m */,
-				1A0014EB1A157C0F003430E9 /* CCARadialGradientLayer.h */,
-				1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
 				1A1D6E461A1099C60090C598 /* SettingsVieWControllerViewController */,
 				1A3C22831A114345005B31E4 /* CoreData */,
 				1A076DDC1A10113000CD725A /* FirstViewController */,
+				1A0014EE1A15819A003430E9 /* Vendors */,
 				1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */,
 				1A076DC01A0FE20900CD725A /* Main.storyboard */,
 				1A076DC31A0FE20900CD725A /* Images.xcassets */,
