@@ -178,9 +178,9 @@
 //                          @"I am Charlotte Simmons"];
 //    NSDictionary *productManagers = @{@"serie": fooArray, @"movie": fooArray, @"book": fooArray};
 //    
-////    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
 //    
-////    } completion:nil];
+//    } completion:nil];
 //        UserTaste *userTaste = [UserTaste  MR_createEntity];
 //        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
 //        userTaste.taste = arrayData;
@@ -275,7 +275,7 @@
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] init];
     
-    if (self.userTaste) {
+    if (/* self.userTaste */ (NO)) { //
         // then put it into the NSDictionary of "taste"
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
         
@@ -430,10 +430,11 @@
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         NSString *sectionTitle = [categoryList objectAtIndex:section];
         NSArray *sectionElements = [filteredTableDatas objectForKey:sectionTitle];
+        
 
         return sectionElements.count;
     } else {
-        NSString *sectionTitle = [[userTasteDict allKeys] objectAtIndex:section];
+        NSString *sectionTitle = [ [[userTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
         NSArray *sectionElements = [userTasteDict objectForKey:sectionTitle];
         if ([sectionElements isKindOfClass:[NSNull class]]) {
             return 0;
@@ -474,13 +475,14 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
+    
+    
     ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
 
         NSString *title;
-    
+//        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-            
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
             NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
             title = [rowsOfSection objectAtIndex:indexPath.row];
@@ -488,29 +490,60 @@
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
             NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
             
-            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9]; // For "Classic mode we want a cell's background more opaque
+            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9]; // For "Classic mode" we want a cell's background more opaque
             title = [rowsOfSection objectAtIndex:indexPath.row];
+            
+//            NSPredicate *typePredicate = [NSPredicate predicateWithFormat:@"type == %@", sectionTitle];
+//            NSPredicate *namePredicate = [NSPredicate predicateWithFormat:@"name == %@", title];
+            
+            
+//             NSLog(@"row :%ld, section : %ld, %@", (long)indexPath.row, (long)indexPath.section, [[[APIdatas filteredArrayUsingPredicate:typePredicate] filteredArrayUsingPredicate:namePredicate] valueForKey:@"year"]);
         }
         
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.text = title;
-        
-        UIView *bgColorView = [[UIView alloc] init];
-        [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
-        [cell setSelectedBackgroundView:bgColorView];
+//        cell.imageView.image = [UIImage imageNamed:@"bb"];
+//        
+//        cell.imageView.layer.borderWidth = 2;
+//        cell.imageView.layer.cornerRadius = 90;
+//        cell.imageView.layer.masksToBounds = YES;
     }
+    
+    UIView *bgColorView = [[UIView alloc] init];
+    [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
+    [cell setSelectedBackgroundView:bgColorView];
     
     return cell;
 }
 
-- (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     
-    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
-//    modalVC.delegate = self;
-    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+//    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+////    modalVC.delegate = self;
+//    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
+    
+    [[userTasteDict objectForKey:@"movie"] removeObject:cell.textLabel.text];
+    NSLog(@"%@", cell.textLabel.text);
+//    NSLog(@"cell: %@, %@, %li, %@, %@", cell.textLabel.text, titleForHeader, (long)indexPath.row, [userTasteDict objectForKey:@"serie"], [userPreferences objectForKey:@"fbUserID"]);
+//    NSLog(@"string : %@", [[userTasteDict objectForKey:@"serie"] isKindOfClass:[NSMutableArray class]]);
+    
+    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"fbUserID"]];
+
+
+//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+//        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+//        userTaste.taste = arrayData;
+//    } completion:^(BOOL success, NSError *error) {
+        [tableView reloadData];
+//    }];
+
+
     cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
 
 }

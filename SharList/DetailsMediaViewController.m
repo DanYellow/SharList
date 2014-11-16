@@ -63,7 +63,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.text = @"Breaking Bad";
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentCenter;
+    mediaTitleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+    mediaTitleLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    mediaTitleLabel.layer.shadowRadius = 2.5;
+    mediaTitleLabel.layer.shadowOpacity = 0.75;
+    mediaTitleLabel.clipsToBounds = NO;
+    mediaTitleLabel.layer.masksToBounds = NO;
     mediaTitleLabel.font = [UIFont fontWithName:@"Avenir-Medium" size:18.0];
+    [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+    
     [infoMediaView addSubview:mediaTitleLabel];
     
     CGFloat mediaDescriptionWidth = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:608 forDimension:screenWidth];
@@ -113,7 +121,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     yAxis.maximumRelativeValue = [NSNumber numberWithInt:aInt];
     
     UIMotionEffectGroup *motionGroup = [[UIMotionEffectGroup alloc] init];
-    motionGroup.motionEffects = @[xAxis, yAxis];
+    motionGroup.motionEffects = @[xAxis];
     
     return motionGroup;
 }
