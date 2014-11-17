@@ -40,6 +40,8 @@
     USERALREADYMADEARESEARCH = NO;
     
     self.title = @"Ma liste";
+    
+    fooDict = [[NSMutableDictionary alloc] init];
   
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -501,7 +503,7 @@
 //        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
-            NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
+            NSArray *rowsOfSection = [[filteredTableDatas objectForKey:sectionTitle] valueForKey:@"name"];
             title = [rowsOfSection objectAtIndex:indexPath.row];
         } else {
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
@@ -709,21 +711,36 @@
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
     [filteredTableDatas removeAllObjects];
+    [fooDict removeAllObjects];
     
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
     
     [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
+//    NSLog(@"%@", filteredDatas);
+    NSMutableArray *fooArr = [[NSMutableArray alloc] init];
     
+
     for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
         
         // This predicate manage a media in several categories
         NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
-        
+//        NSLog(@"fot : %@", [[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"]);
         // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
-        [filteredTableDatas setValue: [[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
+//        NSLog(@"%@", [filteredDatas filteredArrayUsingPredicate:nameForTypePredicate]);
+//        [filteredTableDatas setValue: [[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
+        
+        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name"  ascending:YES];
+        NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
+        NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
+        
+        [filteredTableDatas setValue:sortedDatas forKey:[[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
+        
+        
+
     }
     
-    NSLog(@"%@", filteredTableDatas);
+    NSLog(@"%@", fooDict);
+
     [self.searchResultsController.tableView reloadData];
     
     // Blurred background

@@ -35,7 +35,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     NSMutableDictionary *userTasteDict;
     NSUserDefaults *userPreferences;
     
-    
+    NSMutableDictionary *fooDict;
     
     BOOL USERALREADYMADEARESEARCH;
 }
