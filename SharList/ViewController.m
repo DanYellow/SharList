@@ -20,6 +20,7 @@
 // 3 : UISearchControllerBG | Background of the input
 // 4 : userSelectionTableViewController | Tableview of user taste
 // 5 : strokeUnderSearchController
+// 6 : UIRefreshControl for userTaste
 
 
 @implementation ViewController
@@ -134,7 +135,15 @@
     strokeUnderSearchController.userInteractionEnabled = NO;
     [self.view addSubview:strokeUnderSearchController];
     
-   
+    
+    UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
+    userSelectRefresh.backgroundColor = [UIColor purpleColor];
+    userSelectRefresh.tintColor = [UIColor whiteColor];
+    userSelectRefresh.tag = 6;
+    [userSelectRefresh addTarget:self
+                          action:@selector(getLatestLoans)
+                forControlEvents:UIControlEventValueChanged];
+    
     // Uitableview of user selection (what user likes)
     UITableViewController *userSelectionTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     userSelectionTableViewController.tableView.frame = CGRectMake(0, strokeUnderSearchControllerY + 14, screenWidth, [self computeRatio:800.0 forDimension:screenHeight] + 44); //[self computeRatio:60.0 forDimension:screenHeight]
@@ -144,10 +153,13 @@
     userSelectionTableViewController.tableView.tag = 4;
     userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(206.0f/255.0f) green:(206.0f/255.0f) blue:(206.0f/255.0f) alpha:.4f];
     userSelectionTableViewController.tableView.hidden = YES;
+    userSelectionTableViewController.refreshControl = userSelectRefresh;
     [self.view addSubview:userSelectionTableViewController.tableView];
+    
+
 
     APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
-    
+    NSLog(@"APIdatas : %@", APIdatas);
     categoryList = [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     
     filteredTableDatas = [[NSMutableDictionary alloc] init];
@@ -197,6 +209,11 @@
 //    NSMutableDictionary *array = [NSKeyedUnarchiver unarchiveObjectWithData:[[people objectAtIndex:0] taste]];
     
 
+}
+
+- (void) getLatestLoans {
+    UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:6];
+    [userSelectRefresh endRefreshing];
 }
 
 
