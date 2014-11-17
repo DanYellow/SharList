@@ -10,4 +10,11 @@
 
 @interface ShareListMediaTableViewCell : UITableViewCell
 
+
+@property (retain, nonatomic) id model;
+
+
+- (void) setModel:(id) s;
+- (id) model;
+
 @end

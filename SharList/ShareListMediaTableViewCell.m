@@ -30,10 +30,22 @@
     self.textLabel.backgroundColor = [UIColor clearColor];
     
     
-    self.detailTextLabel.text = @"Dramatique \n2008";
+//    self.detailTextLabel.text = [self.model objectForKey:@"type"];
+//    NSLog(@"type : %@", [self.model objectForKey:@"type"]);
     self.detailTextLabel.numberOfLines = 0;
     
     return self;
+}
+
+- (void) setModel:(id)s
+{
+    self.model = s;
+    
+    // do some more stuff
+}
+
+- (id) model {
+    return self.model;
 }
 
 @end

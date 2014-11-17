@@ -15,31 +15,31 @@
     "id": 2,
     "name": "Family Guy",
     "type": "serie",
-    "year": 2008
+    "year": 2005
   },
   {
     "id": 3,
     "name": "The Simpsons",
     "type": "serie",
-    "year": 2008
+    "year": 1989
   },
   {
     "id": 4,
     "name": "Halt Catch and Fire",
     "type": "serie",
-    "year": 2008
+    "year": 2014
   },
   {
     "id": 5,
     "name": "I am Charlotte Simmons",
     "type": "book",
-    "year": 2008
+    "year": 2012 
   },
   {
     "id": 6,
     "name": "Silicon Valley",
     "type": "serie",
-    "year": 2008
+    "year": 2014
   },
   {
     "id": 7,
@@ -63,7 +63,7 @@
     "id": 10,
     "name": "Scorpion",
     "type": "serie",
-    "year": 2008
+    "year": 2014
   },
   {
     "id": 11,

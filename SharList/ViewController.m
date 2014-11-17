@@ -495,16 +495,21 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    
     ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+
     if (cell == nil) {
 
-        NSString *title;
+        NSString *title, *description, *year;
 //        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
-            NSArray *rowsOfSection = [[filteredTableDatas objectForKey:sectionTitle] valueForKey:@"name"];
-            title = [rowsOfSection objectAtIndex:indexPath.row];
+            NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
+            
+            title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
+            year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
+            
+            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
+            
         } else {
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
             NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
@@ -522,6 +527,7 @@
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.text = title;
+        cell.detailTextLabel.text = year;
 //        cell.imageView.image = [UIImage imageNamed:@"bb"];
 //        
 //        cell.imageView.layer.borderWidth = 2;
