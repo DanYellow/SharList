@@ -96,11 +96,11 @@
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     self.searchResultsController.tableView.dataSource = self;
     self.searchResultsController.tableView.delegate = self;
-    self.searchResultsController.tableView.backgroundColor = [UIColor colorWithRed:(127.0f/255.0f) green:(151.0f/255.0f) blue:(163.0f/255.0f) alpha:1.0f];
+    self.searchResultsController.tableView.backgroundColor = [UIColor clearColor];
     self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, screenWidth, screenHeight);
     self.searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
     self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:0.0f green:0.0f blue:1.0f alpha:0.1f];
+    self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
 
     
     
@@ -118,9 +118,11 @@
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
     self.searchController.searchBar.frame = CGRectMake(0, -50.0,
                                                        self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    self.searchController.view.backgroundColor = [UIColor whiteColor]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
+    
     UITextField *textField = [self.searchController.searchBar valueForKey:@"_searchField"];
     textField.textColor = [UIColor whiteColor];
-        
+    
     UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)]; // [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)];
     UISearchControllerBG.tag = 3;
     UISearchControllerBG.clipsToBounds = YES;
@@ -147,13 +149,15 @@
     userSelectionTableViewController.tableView.tag = 4;
     userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userSelectionTableViewController.tableView.hidden = YES;
+    userSelectionTableViewController.tableView.clipsToBounds = YES;
     userSelectionTableViewController.refreshControl = userSelectRefresh;
+    userSelectionTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:userSelectionTableViewController.tableView];
     
 
 
     APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
-    NSLog(@"APIdatas : %@", APIdatas);
+//    NSLog(@"APIdatas : %@", APIdatas);
     categoryList = [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     
     filteredTableDatas = [[NSMutableDictionary alloc] init];
@@ -239,12 +243,13 @@
 - (void) disappearsSearchBar
 {
     UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
+    self.searchController.searchBar.frame = CGRectMake(0, -50.0,
+                                                       self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     
     [UIView animateWithDuration: 0.1
                           delay: 0.0
                         options: UIViewAnimationOptionCurveLinear
                      animations:^{
-                         
                          UISearchControllerBG.frame = CGRectMake(0, -60, 320, 64);
                      }
                      completion:^(BOOL finished){
@@ -282,12 +287,13 @@
 // This method have to be called when the user is connected
 - (void) userConnectionForFbID:(NSNumber*)userfbID
 {
-    // We retrieve user taste if it's local
+    // We retrieve user taste if it exists in local
     self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] init];
     
-    if (/* self.userTaste */ (NO)) { //
+    if (self.userTaste) {
+        //
         // then put it into the NSDictionary of "taste"
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
         
@@ -500,13 +506,15 @@
             
 //            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
             
+            cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
+            cell.textLabel.textColor = [UIColor whiteColor];
         } else {
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
             NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
             
             // For "Classic mode" we want a cell's background more opaque
             cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
-            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+            
             title = [rowsOfSection objectAtIndex:indexPath.row];
             
 //            NSPredicate *typePredicate = [NSPredicate predicateWithFormat:@"type == %@", sectionTitle];
@@ -578,19 +586,24 @@
     labelView.backgroundColor =[UIColor clearColor];
     labelView.opaque = YES;
     
+    NSString *string = [[categoryList objectAtIndex:section] uppercaseString];
+    
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-            cell.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.85f];
-            cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
-            cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-            cell.textLabel.textColor = [UIColor colorWithRed:(229.0f/255.0f) green:(233.0f/255.0f) blue:(233.0f/255.0f) alpha:.9f];
+            cell.backgroundColor = [UIColor colorWithWhite:.95 alpha:.85f];
+            cell.indentationLevel = 2;
+            
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
+            label.font = [UIFont fontWithName:@"Avenir" size:fontSize];
+            label.text = string;
+            label.textColor = [UIColor blackColor];
+            [labelView addSubview:label];
         } else {
             cell.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
             label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-            NSString *string = [[categoryList objectAtIndex:section] uppercaseString];
             label.text = string;
             label.textColor = [UIColor whiteColor];
             [labelView addSubview:label];
@@ -701,7 +714,6 @@
 {
     self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
     
-    
     NSString *searchString = [searchController.searchBar text];
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
@@ -728,8 +740,9 @@
     
     // Blurred background
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];
+    bluredImageView.alpha = .95f;
     [bluredImageView setFrame:self.searchResultsController.tableView.frame];
-    bluredImageView.alpha = .50f;
+    bluredImageView.alpha = 15.50f;
     
     UIVisualEffect *blurEffect;
     blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
