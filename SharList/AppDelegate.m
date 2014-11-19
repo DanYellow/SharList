@@ -34,11 +34,24 @@
     self.tabBarController = [[UITabBarController alloc] init];
     
     [UITabBar appearance].barTintColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.95f];
+    [UITabBar appearance].tintColor = [UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:.95f];
+    
+    
+    UINavigationController* navController2 = [[UINavigationController alloc]
+                                             initWithRootViewController:settingsViewController];
+    navController2.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     
     
     UINavigationController* navController = [[UINavigationController alloc]
                                              initWithRootViewController:viewController];
     navController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
+    
+    CALayer *rightBorder = [CALayer layer];
+    rightBorder.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+    rightBorder.borderWidth = 1;
+    rightBorder.frame = CGRectMake(0.0f, navController.navigationBar.frame.size.height, navController.navigationBar.frame.size.width, 1.0f);
+    [navController.navigationBar.layer addSublayer:rightBorder];
+    
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:1.0f]];
     NSMutableDictionary *titleBarAttributes = [NSMutableDictionary dictionaryWithDictionary: [[UINavigationBar appearance] titleTextAttributes]];
@@ -47,7 +60,7 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
     
     
-    NSArray* controllers = @[navController, settingsViewController];
+    NSArray* controllers = @[navController, navController2];
     
     self.tabBarController.viewControllers = controllers;
     

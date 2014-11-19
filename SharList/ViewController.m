@@ -54,7 +54,7 @@
     
     self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
-
+    
     
     // Design on the view
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(appearsSearchBar)];
@@ -65,6 +65,11 @@
     UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
     gradient.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
     [self.view.layer insertSublayer:gradient atIndex:0];
+    
+    CALayer *bgLayer = [CALayer layer];
+    bgLayer.frame = self.view.bounds;
+    bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"triangles-bg.png"]].CGColor;
+    [self.view.layer insertSublayer:bgLayer atIndex:1];
     
     // Motto of the app
     CGFloat appMottoYPos = [self computeRatio:260.0 forDimension:screenHeight];
@@ -111,14 +116,14 @@
     self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
-    self.searchController.searchBar.frame = CGRectMake(0, -50.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
-    
-    
+    self.searchController.searchBar.frame = CGRectMake(0, -50.0,
+                                                       self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    UITextField *textField = [self.searchController.searchBar valueForKey:@"_searchField"];
+    textField.textColor = [UIColor whiteColor];
+        
     UIView *UISearchControllerBG = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)]; // [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)];
     UISearchControllerBG.tag = 3;
     UISearchControllerBG.clipsToBounds = YES;
-//    UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(230.0f/255.0f) green:(230.0f/255.0f) blue:(230.0f/255.0f) alpha:1.0f];
     UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(44.0f/255.0f) green:(61.0f/255.0f) blue:(69.0f/255.0f) alpha:1];
     
     [self.searchController.view addSubview:UISearchControllerBG];
@@ -126,11 +131,11 @@
     
     
     UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
-    userSelectRefresh.backgroundColor = [UIColor purpleColor];
+    userSelectRefresh.backgroundColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.9f];
     userSelectRefresh.tintColor = [UIColor whiteColor];
     userSelectRefresh.tag = 6;
     [userSelectRefresh addTarget:self
-                          action:@selector(getLatestLoans)
+                          action:@selector(fetchUserDatas)
                 forControlEvents:UIControlEventValueChanged];
     
     // Uitableview of user selection (what user likes)
@@ -200,7 +205,7 @@
 
 }
 
-- (void) getLatestLoans {
+- (void) fetchUserDatas {
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:6];
     [userSelectRefresh endRefreshing];
 }
@@ -228,7 +233,7 @@
                      completion:^(BOOL finished){
                          [self.searchController.searchBar becomeFirstResponder];
                      }];
-    
+    [self.tabBarController.tabBar setHidden:YES];
 }
 
 - (void) disappearsSearchBar
@@ -245,6 +250,7 @@
                      completion:^(BOOL finished){
                          [self.searchController.searchBar resignFirstResponder];
                      }];
+    [self.tabBarController.tabBar setHidden:NO];
 }
 
 - (void) searchBarCancelButtonClicked:(UISearchBar *) searchBar
@@ -471,7 +477,7 @@
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
     } else {
-        return 54.0;
+        return 52.0;
     }
 }
 
@@ -492,14 +498,14 @@
             title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
             year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
             
-            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
+//            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
             
         } else {
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
             NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
             
             // For "Classic mode" we want a cell's background more opaque
-            cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.8];
+            cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
             title = [rowsOfSection objectAtIndex:indexPath.row];
             
@@ -514,7 +520,7 @@
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.text = title;
         cell.detailTextLabel.text = year;
-        cell.tintColor = [UIColor purpleColor];
+        cell.tintColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.95f];
 //        cell.imageView.image = [UIImage imageNamed:@"bb"];
 //        
 //        cell.imageView.layer.borderWidth = 2;
@@ -580,8 +586,7 @@
             cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
             cell.textLabel.textColor = [UIColor colorWithRed:(229.0f/255.0f) green:(233.0f/255.0f) blue:(233.0f/255.0f) alpha:.9f];
         } else {
-            cell.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.85f];
-            
+            cell.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
             label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
