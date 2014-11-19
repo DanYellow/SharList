@@ -41,8 +41,6 @@
     
     self.title = @"Ma liste";
     
-    fooDict = [[NSMutableDictionary alloc] init];
-  
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
@@ -50,20 +48,23 @@
     
     userPreferences = [NSUserDefaults standardUserDefaults];
 
+    // Contains raw data from the server
     self.responseData = [NSMutableData data];
     
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG-2"]];
     
     self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
 
-
-    SWRevealViewController *revealController = [self revealViewController];
-    [revealController panGestureRecognizer];
-    [revealController tapGestureRecognizer];
     
-    
+    // Design on the view
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(appearsSearchBar)];
+    
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = self.view.bounds;
+    UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
+    UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
+    gradient.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
+    [self.view.layer insertSublayer:gradient atIndex:0];
     
     // Motto of the app
     CGFloat appMottoYPos = [self computeRatio:260.0 forDimension:screenHeight];
@@ -110,7 +111,7 @@
     self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
-    self.searchController.searchBar.frame = CGRectMake(0, 0.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    self.searchController.searchBar.frame = CGRectMake(0, -50.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
     
     
@@ -122,15 +123,6 @@
     
     [self.searchController.view addSubview:UISearchControllerBG];
     
-    CGFloat strokeUnderSearchControllerY = CGRectGetHeight(self.searchController.searchBar.frame) + CGRectGetMaxY(self.searchController.searchBar.frame) + 5 - 44.0;
-    UIView *strokeUnderSearchController = [[UIView alloc] initWithFrame:CGRectMake(0, strokeUnderSearchControllerY, [self computeRatio:608.0 forDimension:screenWidth], 1.0)];
-    strokeUnderSearchController.center = CGPointMake(self.view.center.x, strokeUnderSearchControllerY);
-    strokeUnderSearchController.backgroundColor = [UIColor blackColor];
-    strokeUnderSearchController.opaque = YES;
-    strokeUnderSearchController.tag = 5;
-    strokeUnderSearchController.hidden = YES;
-    strokeUnderSearchController.userInteractionEnabled = NO;
-    [self.view addSubview:strokeUnderSearchController];
     
     
     UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
@@ -143,12 +135,12 @@
     
     // Uitableview of user selection (what user likes)
     UITableViewController *userSelectionTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userSelectionTableViewController.tableView.frame = CGRectMake(0, strokeUnderSearchControllerY + 14, screenWidth, [self computeRatio:800.0 forDimension:screenHeight] + 44); //[self computeRatio:60.0 forDimension:screenHeight]
+    userSelectionTableViewController.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight); //[self computeRatio:800.0 forDimension:screenHeight] + 44
     userSelectionTableViewController.tableView.dataSource = self;
     userSelectionTableViewController.tableView.delegate = self;
     userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
     userSelectionTableViewController.tableView.tag = 4;
-    userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(206.0f/255.0f) green:(206.0f/255.0f) blue:(206.0f/255.0f) alpha:.4f];
+    userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userSelectionTableViewController.tableView.hidden = YES;
     userSelectionTableViewController.refreshControl = userSelectRefresh;
     [self.view addSubview:userSelectionTableViewController.tableView];
@@ -226,7 +218,7 @@
 - (void) appearsSearchBar
 {
     UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
-
+    self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     [UIView animateWithDuration: 0.1
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -302,10 +294,7 @@
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
-    
-    
-    UIView *strokeUnderSearchController = (UIView*)[self.view viewWithTag:5];
-    strokeUnderSearchController.hidden = NO;
+
 }
 
 
@@ -475,14 +464,14 @@
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 55.0;
+    return 69.0;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
     } else {
-        return 42.0;
+        return 54.0;
     }
 }
 
@@ -491,9 +480,9 @@
     static NSString *CellIdentifier = @"Cell";
     
     ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-
+    
     if (cell == nil) {
-
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         NSString *title, *description, *year;
 //        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
@@ -509,7 +498,9 @@
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
             NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
             
-            cell.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.9]; // For "Classic mode" we want a cell's background more opaque
+            // For "Classic mode" we want a cell's background more opaque
+            cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.8];
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
             title = [rowsOfSection objectAtIndex:indexPath.row];
             
 //            NSPredicate *typePredicate = [NSPredicate predicateWithFormat:@"type == %@", sectionTitle];
@@ -519,10 +510,11 @@
 //             NSLog(@"row :%ld, section : %ld, %@", (long)indexPath.row, (long)indexPath.section, [[[APIdatas filteredArrayUsingPredicate:typePredicate] filteredArrayUsingPredicate:namePredicate] valueForKey:@"year"]);
         }
         
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+        
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.text = title;
         cell.detailTextLabel.text = year;
+        cell.tintColor = [UIColor purpleColor];
 //        cell.imageView.image = [UIImage imageNamed:@"bb"];
 //        
 //        cell.imageView.layer.borderWidth = 2;
@@ -575,34 +567,31 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
-    CGFloat fontSize = 15.0f;
+    CGFloat fontSize = 18.0f;
+    UIView *labelView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, cell.frame.size.height)];
+    labelView.backgroundColor =[UIColor clearColor];
+    labelView.opaque = YES;
     
     if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-            cell.backgroundColor = [UIColor colorWithRed:(127.0f/255.0f) green:(151.0f/255.0f) blue:(163.0f/255.0f) alpha:.85f];
+            cell.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.85f];
             cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
-            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:fontSize];
-            cell.textLabel.textColor = [UIColor whiteColor];
+            cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+            cell.textLabel.textColor = [UIColor colorWithRed:(229.0f/255.0f) green:(233.0f/255.0f) blue:(233.0f/255.0f) alpha:.9f];
         } else {
-//            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-//            cell.backgroundColor = [UIColor colorWithRed:(175.0f/255.0f) green:(197.0f/255.0f) blue:(208.0f/255.0f) alpha:.95f];
-//
-//            cell.textLabel.text = [[categoryList objectAtIndex:section] uppercaseString];
-//            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16];
-//            cell.textLabel.textColor = [UIColor blackColor];
-            UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 18)];
-            /* Create custom view to display section header... */
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, 18)];
-            label.font = [UIFont fontWithName:@"HelveticaNeue" size:fontSize];
+            cell.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.85f];
+            
+            
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
+            label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
             NSString *string = [[categoryList objectAtIndex:section] uppercaseString];
             label.text = string;
-            label.textColor = [UIColor blackColor];
-
-            [cell addSubview:label];
-            cell.backgroundColor = [UIColor colorWithRed:(175.0f/255.0f) green:(197.0f/255.0f) blue:(208.0f/255.0f) alpha:.95f];
-            return cell;
+            label.textColor = [UIColor whiteColor];
+            [labelView addSubview:label];
         }
+        
+        [cell addSubview:labelView];
     }
     
     return cell;
@@ -712,36 +701,24 @@
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
     [filteredTableDatas removeAllObjects];
-    [fooDict removeAllObjects];
     
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
     
     [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
-//    NSLog(@"%@", filteredDatas);
-    NSMutableArray *fooArr = [[NSMutableArray alloc] init];
-    
 
     for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
         
         // This predicate manage a media in several categories
         NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
-//        NSLog(@"fot : %@", [[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"]);
+
         // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
-//        NSLog(@"%@", [filteredDatas filteredArrayUsingPredicate:nameForTypePredicate]);
-//        [filteredTableDatas setValue: [[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] valueForKey:@"name"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] forKey: [[filteredDatas valueForKey:@"type"] objectAtIndex:i ]];
-        
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name"  ascending:YES];
         NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
         NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
         
         [filteredTableDatas setValue:sortedDatas forKey:[[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
-        
-        
-
     }
     
-    NSLog(@"%@", fooDict);
-
     [self.searchResultsController.tableView reloadData];
     
     // Blurred background

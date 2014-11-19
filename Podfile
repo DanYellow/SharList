@@ -6,8 +6,9 @@ target "SharList" do
 	pod 'MagicalRecord', '~> 2.2'
 	pod 'Facebook-iOS-SDK', '~> 3.13'
 	# pod 'Reachability', '~> 3.1'
-	pod 'SWRevealViewController', '~> 2.3'
+	# pod 'SWRevealViewController', '~> 2.3'
 	pod 'CRGradientNavigationBar'
+	pod 'SWTableViewCell', '~> 0.3.6'
 end
 
 target "SharListTests" do
