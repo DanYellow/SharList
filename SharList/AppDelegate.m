@@ -37,13 +37,15 @@
     [UITabBar appearance].tintColor = [UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:.95f];
     
     
-    UINavigationController* navController2 = [[UINavigationController alloc]
+    UINavigationController* navControllerSettings = [[UINavigationController alloc]
                                              initWithRootViewController:settingsViewController];
-    navController2.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
+    navControllerSettings.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
+    navControllerSettings.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     
     
     UINavigationController* navController = [[UINavigationController alloc]
                                              initWithRootViewController:viewController];
+    navController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     navController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     
     CALayer *bottomBorder = [CALayer layer];
@@ -60,7 +62,7 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
     
     
-    NSArray* controllers = @[navController, navController2];
+    NSArray* controllers = @[navController, navControllerSettings];
     
     self.tabBarController.viewControllers = controllers;
     

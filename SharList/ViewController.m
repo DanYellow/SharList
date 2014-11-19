@@ -36,10 +36,10 @@
     
 //    CGPoint centerOfView = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
     
-    // Création variables
+    // Variables init
     USERALREADYMADEARESEARCH = NO;
     
-    self.title = @"Ma liste";
+    self.title = [@"Ma liste" uppercaseString];
     
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -87,7 +87,7 @@
     FBLoginView *fbLoginButton = [[FBLoginView alloc] init];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
-    fbLoginButton.frame = CGRectMake(51, screenHeight - 90, 218, 46);
+    fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
     
@@ -116,9 +116,10 @@
     self.searchController.searchBar.barTintColor = [UIColor whiteColor];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
-    self.searchController.searchBar.frame = CGRectMake(0, -50.0,
+    self.searchController.searchBar.frame = CGRectMake(0, -60.0,
                                                        self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
-    self.searchController.view.backgroundColor = [UIColor whiteColor]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
+    self.searchController.view.backgroundColor = [UIColor colorWithWhite:1.0 alpha:.95f]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
+    self.searchResultsController.view.clipsToBounds = YES;
     
     UITextField *textField = [self.searchController.searchBar valueForKey:@"_searchField"];
     textField.textColor = [UIColor whiteColor];
@@ -226,35 +227,39 @@
 
 - (void) appearsSearchBar
 {
-    UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
     self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
-    [UIView animateWithDuration: 0.1
-                          delay: 0.0
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         UISearchControllerBG.frame = CGRectMake(0, 0, screenWidth, 64);
-                     }
-                     completion:^(BOOL finished){
-                         [self.searchController.searchBar becomeFirstResponder];
-                     }];
-    [self.tabBarController.tabBar setHidden:YES];
+
+    self.searchController.view.alpha = 1;
+    [self.searchController.searchBar becomeFirstResponder];
+//    [UIView animateWithDuration: 0.1
+//                          delay: 0.0
+//                        options: UIViewAnimationOptionCurveEaseOut
+//                     animations:^{
+//                         self.searchController.view.alpha = 1;
+//                     }
+//                     completion:^(BOOL finished){
+//                         
+//                     }];
+//    [self.tabBarController.tabBar setHidden:YES];
 }
 
 - (void) disappearsSearchBar
 {
-    UIView *UISearchControllerBG = (UIView*)[self.searchController.view viewWithTag:3];
-    self.searchController.searchBar.frame = CGRectMake(0, -50.0,
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    self.searchController.searchBar.frame = CGRectMake(0, -60.0,
                                                        self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
-    
-    [UIView animateWithDuration: 0.1
+   
+    [UIView animateWithDuration: 0.5
                           delay: 0.0
                         options: UIViewAnimationOptionCurveLinear
                      animations:^{
-                         UISearchControllerBG.frame = CGRectMake(0, -60, 320, 64);
+                         self.searchController.view.alpha = 0;
                      }
-                     completion:^(BOOL finished){
-                         [self.searchController.searchBar resignFirstResponder];
-                     }];
+                     completion:nil];
+    
+    
+    [self.searchController.searchBar resignFirstResponder];
+
     [self.tabBarController.tabBar setHidden:NO];
 }
 
@@ -269,11 +274,11 @@
 }
 
 
-- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar{
-    [self appearsSearchBar];
-    
-    return YES;
-}
+//- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar{
+//    [self appearsSearchBar];
+//    
+//    return YES;
+//}
 
 
 #pragma mark - Facebook user connection
@@ -306,7 +311,6 @@
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
-
 }
 
 

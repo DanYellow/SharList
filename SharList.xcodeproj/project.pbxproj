@@ -25,7 +25,6 @@
 		1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */; };
 		1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */; };
 		1A3C22821A114339005B31E4 /* UserTaste.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C22811A114339005B31E4 /* UserTaste.m */; };
-		1A3C22871A1179BB005B31E4 /* SideMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C22861A1179BB005B31E4 /* SideMenuViewController.m */; };
 		1A3C228A1A118098005B31E4 /* reveal-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3C22881A118098005B31E4 /* reveal-icon.png */; };
 		1A3C228B1A118098005B31E4 /* reveal-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3C22891A118098005B31E4 /* reveal-icon@2x.png */; };
 		1A3C228F1A11AAAC005B31E4 /* invisible-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */; };
@@ -73,8 +72,6 @@
 		1A3C22801A114339005B31E4 /* UserTaste.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTaste.h; sourceTree = "<group>"; };
 		1A3C22811A114339005B31E4 /* UserTaste.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTaste.m; sourceTree = "<group>"; };
 		1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		1A3C22851A1179BB005B31E4 /* SideMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SideMenuViewController.h; sourceTree = "<group>"; };
-		1A3C22861A1179BB005B31E4 /* SideMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SideMenuViewController.m; sourceTree = "<group>"; };
 		1A3C22881A118098005B31E4 /* reveal-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal-icon.png"; sourceTree = "<group>"; };
 		1A3C22891A118098005B31E4 /* reveal-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal-icon@2x.png"; sourceTree = "<group>"; };
 		1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "invisible-bg.png"; sourceTree = "<group>"; };
@@ -137,8 +134,6 @@
 			children = (
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
-				1A3C22851A1179BB005B31E4 /* SideMenuViewController.h */,
-				1A3C22861A1179BB005B31E4 /* SideMenuViewController.m */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
@@ -395,7 +390,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A3C22871A1179BB005B31E4 /* SideMenuViewController.m in Sources */,
 				1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */,
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
 				1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */,

@@ -18,14 +18,20 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    self.title = [@"Paramètres" uppercaseString];
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
+    
+    
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = self.view.bounds;
+    UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
+    UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
+    gradient.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
+    [self.view.layer insertSublayer:gradient atIndex:0];
 
-    
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG-2"]];
-    
     self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
