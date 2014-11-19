@@ -116,9 +116,9 @@
     if (row == 0) {
         newFrontController = [[ViewController alloc] init];
     } else if (row == 1) {
-        newFrontController = [[SettingsViewControllerViewController alloc] init];
+        newFrontController = [[SettingsViewController alloc] init];
     } else if (row == 2) {
-        newFrontController = [[SettingsViewControllerViewController alloc] init];
+        newFrontController = [[SettingsViewController alloc] init];
     }
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithNavigationBarClass:[CRGradientNavigationBar class] toolbarClass:nil];

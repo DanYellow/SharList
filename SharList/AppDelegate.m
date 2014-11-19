@@ -27,31 +27,28 @@
     ViewController *viewController = [[ViewController alloc] init];
     viewController.title = @"Ma liste";
     
-    SideMenuViewController *sideMenuController = [[SideMenuViewController alloc] init];
-    sideMenuController.title = @"Paramètres";
-    
-        
-    UINavigationController *frontNavigationController = [[UINavigationController alloc] initWithNavigationBarClass:[CRGradientNavigationBar class] toolbarClass:nil];
-    [frontNavigationController setViewControllers:@[viewController]];
-    
-    UIColor *firstColor = [UIColor colorWithRed:203.0f/255.0f green:217.0f/255.0f blue:222.0f/255.0f alpha:1.0f];
-    UIColor *secondColor = [UIColor colorWithRed:217.0f/255.0f green:231.0f/255.0f blue:236.0f/255.0f alpha:1.0f];
-    frontNavigationController.navigationBar.shadowImage = [UIImage new];
-    [frontNavigationController.navigationBar setTintColor:[UIColor colorWithRed:(44.0f/255.0f) green:(61.0f/255.0f) blue:(69.0f/255.0f) alpha:1]];
-    
-    NSArray *colors = @[firstColor, secondColor];
-    
-    [[CRGradientNavigationBar appearance] setBarTintGradientColors:colors];
-    [[frontNavigationController navigationBar] setTranslucent:NO]; // Remember, the default value is YES.
+    SettingsViewController *settingsViewController = [[SettingsViewController alloc] init];
+    settingsViewController.title = @"Paramètres";
     
     
-    UINavigationController *rearNavigationController = [[UINavigationController alloc] initWithRootViewController:sideMenuController];
-
-    SWRevealViewController *revealController = [[SWRevealViewController alloc] initWithRearViewController:rearNavigationController frontViewController:frontNavigationController];
-    revealController.delegate = self;
+    self.tabBarController = [[UITabBarController alloc] init];
+    
+    
+    UINavigationController* navController = [[UINavigationController alloc]
+                                             initWithRootViewController:viewController];
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
+    [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:1.0f]];
+    NSMutableDictionary *titleBarAttributes = [NSMutableDictionary dictionaryWithDictionary: [[UINavigationBar appearance] titleTextAttributes]];
+    [titleBarAttributes setValue:[UIFont fontWithName:@"Helvetica-Light" size:19] forKey:NSFontAttributeName];
+    [titleBarAttributes setValue:[UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:1.0f] forKey:NSForegroundColorAttributeName];
+    [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
+    
+    NSArray* controllers = @[navController];
+    
+    self.tabBarController.viewControllers = controllers;
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [self.window setRootViewController:revealController];
+    [self.window setRootViewController:self.tabBarController];
     [self.window setBackgroundColor:[UIColor whiteColor]];
     [self.window makeKeyAndVisible];
     

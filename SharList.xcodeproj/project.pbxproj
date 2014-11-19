@@ -18,7 +18,7 @@
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A076DDF1A102B1C00CD725A /* appBG.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DDE1A102B1C00CD725A /* appBG.png */; };
 		1A0A045D1A12A58400B6F844 /* appBG-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A0A045C1A12A58400B6F844 /* appBG-2.png */; };
-		1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */; };
+		1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewController.m */; };
 		1A1D6E481A10AE930090C598 /* api.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A1D6E471A10AE930090C598 /* api.json */; };
 		1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */; };
 		1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */; };
@@ -60,8 +60,8 @@
 		1A076DD21A0FE20900CD725A /* SharListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharListTests.m; sourceTree = "<group>"; };
 		1A076DDE1A102B1C00CD725A /* appBG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appBG.png; sourceTree = "<group>"; };
 		1A0A045C1A12A58400B6F844 /* appBG-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "appBG-2.png"; sourceTree = "<group>"; };
-		1A1D6E431A1099C00090C598 /* SettingsViewControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewControllerViewController.h; sourceTree = "<group>"; };
-		1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewControllerViewController.m; sourceTree = "<group>"; };
+		1A1D6E431A1099C00090C598 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		1A1D6E441A1099C00090C598 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		1A1D6E471A10AE930090C598 /* api.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = api.json; sourceTree = "<group>"; };
 		1A3C227A1A113069005B31E4 /* DetailsMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMediaViewController.h; sourceTree = "<group>"; };
 		1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsMediaViewController.m; sourceTree = "<group>"; };
@@ -203,8 +203,8 @@
 		1A1D6E461A1099C60090C598 /* SettingsVieWControllerViewController */ = {
 			isa = PBXGroup;
 			children = (
-				1A1D6E431A1099C00090C598 /* SettingsViewControllerViewController.h */,
-				1A1D6E441A1099C00090C598 /* SettingsViewControllerViewController.m */,
+				1A1D6E431A1099C00090C598 /* SettingsViewController.h */,
+				1A1D6E441A1099C00090C598 /* SettingsViewController.m */,
 			);
 			name = SettingsVieWControllerViewController;
 			sourceTree = "<group>";
@@ -388,7 +388,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A3C22871A1179BB005B31E4 /* SideMenuViewController.m in Sources */,
-				1A1D6E451A1099C00090C598 /* SettingsViewControllerViewController.m in Sources */,
+				1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */,
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
 				1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */,
 				1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */,

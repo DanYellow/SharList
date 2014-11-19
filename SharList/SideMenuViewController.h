@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "ViewController.h"
-#import "SettingsViewControllerViewController.h"
+#import "SettingsViewController.h"
 
 
 @interface SideMenuViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>

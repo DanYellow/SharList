@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SettingsViewControllerViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
+@interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UINavigationControllerDelegate>
 {
     CGFloat screenWidth;

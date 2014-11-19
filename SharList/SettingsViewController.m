@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 Jean-Louis Danielo. All rights reserved.
 //
 
-#import "SettingsViewControllerViewController.h"
+#import "SettingsViewController.h"
 
-@interface SettingsViewControllerViewController ()
+@interface SettingsViewController ()
 
 @end
 
-@implementation SettingsViewControllerViewController
+@implementation SettingsViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
