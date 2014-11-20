@@ -19,8 +19,23 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 @implementation DetailsMediaViewController
 
-- (void) viewWillAppear:(BOOL)animated {
-//    [self.tabBarController.tabBar setHidden:YES];
+// Before page loading we hide the tabbar
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.tabBarController.tabBar setHidden:YES];
+    
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [self.navigationController setNavigationBarHidden:NO];    // it shows
+    [self.tabBarController.tabBar setHidden:NO];
 }
 
 - (void)viewDidLoad {
@@ -31,9 +46,22 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
-    [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"appBG"]]];
+    [self.view setBackgroundColor:[UIColor blackColor]];
     
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = self.view.bounds;
+    UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
+    UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
+    gradient.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
+    [self.view.layer insertSublayer:gradient atIndex:0];
+    
+//    self.edgesForExtendedLayout = UIRectEdgeNone;
+    
+    //Navigationbarcontroller
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
+    self.navigationController.navigationBar.translucent = YES;
     
     UIImageView *imgMedia = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bb"]];
     CGFloat imgMediaHeight = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:470 forDimension:screenHeight];
@@ -69,7 +97,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.layer.shadowOpacity = 0.75;
     mediaTitleLabel.clipsToBounds = NO;
     mediaTitleLabel.layer.masksToBounds = NO;
-    mediaTitleLabel.font = [UIFont fontWithName:@"Avenir-Medium" size:18.0];
+    mediaTitleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:20.0];
     [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     
     [infoMediaView addSubview:mediaTitleLabel];
@@ -78,7 +106,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionX = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:16 forDimension:screenWidth];
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame) + 15, mediaDescriptionWidth, 100)];
     mediaDescription.text = @"Walter « Walt » White est professeur de chimie dans un lycée, et vit avec son fils handicapé et sa femme enceinte à Albuquerque, au Nouveau-Mexique. Lorsqu'on lui diagnostique un cancer du poumon en phase terminale avec une espérance de vie estimée à deux ans, tout s'effondre pour lui. Il décide alors de mettre en place un laboratoire et un trafic de méthamphétamine pour assurer un avenir financier confortable à sa famille après sa mort, en s'associant à Jesse Pinkman, un de ses anciens élèves devenu petit trafiquant.";
-    mediaDescription.textColor = [UIColor colorWithRed:(26.0f/255.0f) green:(26.0f/255.0f) blue:(26.0f/255.0f) alpha:1];
+    mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
@@ -92,8 +120,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton addTarget:self action:@selector(aMethod:) forControlEvents:UIControlEventTouchUpInside];
     [buyButton setTitle:@"Acheter" forState:UIControlStateNormal];
-    buyButton.frame = CGRectMake(0, screenHeight - 104, screenWidth, 42);
-    buyButton.backgroundColor = [UIColor purpleColor];
+    buyButton.frame = CGRectMake(0, screenHeight - 43, screenWidth, 43);
+    buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
     [self.view addSubview:buyButton];
 }
 

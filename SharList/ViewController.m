@@ -27,7 +27,17 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
+    [self.tabBarController.tabBar setHidden:NO];
+    [super viewWillAppear:animated];
+    
 
+    self.navigationController.navigationBar.translucent = NO;
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [self.tabBarController.tabBar setHidden:NO];
 }
 
 - (void) viewDidLoad {
@@ -54,6 +64,9 @@
     
 //    self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
+    
+    //Main screen display
+    [self.view setBackgroundColor:[UIColor blackColor]];
     
     
     // Design on the view
@@ -118,7 +131,15 @@
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
     self.searchController.searchBar.frame = CGRectMake(0, -60.0,
                                                        self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
-    self.searchController.view.backgroundColor = [UIColor colorWithWhite:1.0 alpha:.95f]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
+    self.searchController.view.backgroundColor = [UIColor colorWithRed:(2.0/255.0f) green:(17.0/255.0f) blue:(28.0/255.0f) alpha:.85f]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
+//    CALayer *searchControllerBGimgLayer = [CALayer layer];
+//    searchControllerBGimgLayer.contents = (id)[UIImage imageNamed:@"triangles-bg.png"].CGImage;
+//    searchControllerBGimgLayer.masksToBounds = YES;
+//    searchControllerBGimgLayer.contentsGravity = @"resizeAspectFill";
+//    searchControllerBGimgLayer.frame = self.view.frame;
+//    [self.searchController.view.layer insertSublayer:searchControllerBGimgLayer atIndex:0];
+
+    
 //    self.searchResultsController.view.clipsToBounds = YES;
     self.searchController.view.opaque = YES;
     self.searchController.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
@@ -535,20 +556,20 @@
             [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
             gradientLayer.colors = @[(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor]];
             
-//            UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
-//            imgBackground.image = [UIImage imageNamed:@"bb"];
-//            imgBackground.contentMode = UIViewContentModeScaleAspectFill;
-//            imgBackground.clipsToBounds = YES;
-//            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
-//            [cell addSubview:imgBackground];
+            UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
+            imgBackground.image = [UIImage imageNamed:@"bb"];
+            imgBackground.contentMode = UIViewContentModeScaleAspectFill;
+            imgBackground.clipsToBounds = YES;
+            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+            [cell addSubview:imgBackground];
             
-            CALayer *imgLayer = [CALayer layer];
-            imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
-            imgLayer.masksToBounds = YES;
-            imgLayer.contentsGravity = @"resizeAspectFill";
-            imgLayer.frame = cellFrame;
-            [imgLayer addSublayer:gradientLayer];
-            [cell.layer insertSublayer:imgLayer atIndex:0];
+//            CALayer *imgLayer = [CALayer layer];
+//            imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
+//            imgLayer.masksToBounds = YES;
+//            imgLayer.contentsGravity = @"resizeAspectFill";
+//            imgLayer.frame = cellFrame;
+//            [imgLayer addSublayer:gradientLayer];
+//            [cell.layer insertSublayer:imgLayer atIndex:0];
            
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
@@ -590,32 +611,32 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     
-//    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
-////    modalVC.delegate = self;
-//    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+//    modalVC.delegate = self;
+    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
-    
-    [[userTasteDict objectForKey:@"movie"] removeObject:cell.textLabel.text];
-    NSLog(@"%@", cell.textLabel.text);
-//    NSLog(@"cell: %@, %@, %li, %@, %@", cell.textLabel.text, titleForHeader, (long)indexPath.row, [userTasteDict objectForKey:@"serie"], [userPreferences objectForKey:@"fbUserID"]);
-//    NSLog(@"string : %@", [[userTasteDict objectForKey:@"serie"] isKindOfClass:[NSMutableArray class]]);
-    
-    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"fbUserID"]];
-
-
-//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-//        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
-//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-//        userTaste.taste = arrayData;
-//    } completion:^(BOOL success, NSError *error) {
-        [tableView reloadData];
-//    }];
-
-
-    cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+//    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//    
+//    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
+//    
+//    [[userTasteDict objectForKey:@"movie"] removeObject:cell.textLabel.text];
+//    NSLog(@"%@", cell.textLabel.text);
+////    NSLog(@"cell: %@, %@, %li, %@, %@", cell.textLabel.text, titleForHeader, (long)indexPath.row, [userTasteDict objectForKey:@"serie"], [userPreferences objectForKey:@"fbUserID"]);
+////    NSLog(@"string : %@", [[userTasteDict objectForKey:@"serie"] isKindOfClass:[NSMutableArray class]]);
+//    
+//    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"fbUserID"]];
+//
+//
+////    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+////        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+////        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+////        userTaste.taste = arrayData;
+////    } completion:^(BOOL success, NSError *error) {
+//        [tableView reloadData];
+////    }];
+//
+//
+//    cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
 
 }
 
