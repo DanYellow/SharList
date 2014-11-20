@@ -52,7 +52,7 @@
     self.responseData = [NSMutableData data];
     
     
-    self.definesPresentationContext = YES;
+//    self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
     
@@ -119,7 +119,9 @@
     self.searchController.searchBar.frame = CGRectMake(0, -60.0,
                                                        self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     self.searchController.view.backgroundColor = [UIColor colorWithWhite:1.0 alpha:.95f]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
-    self.searchResultsController.view.clipsToBounds = YES;
+//    self.searchResultsController.view.clipsToBounds = YES;
+    self.searchController.view.opaque = YES;
+    self.searchController.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     
     UITextField *textField = [self.searchController.searchBar valueForKey:@"_searchField"];
     textField.textColor = [UIColor whiteColor];
@@ -130,7 +132,6 @@
     UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(44.0f/255.0f) green:(61.0f/255.0f) blue:(69.0f/255.0f) alpha:1];
     
     [self.searchController.view addSubview:UISearchControllerBG];
-    
     
     
     UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
@@ -227,10 +228,12 @@
 
 - (void) appearsSearchBar
 {
-    self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    self.searchController.searchBar.frame = CGRectMake(0, 10, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
 
     self.searchController.view.alpha = 1;
+//    self.searchController.view.backgroundColor = [UIColor colorWithWhite:1.0 alpha:.95f];
     [self.searchController.searchBar becomeFirstResponder];
+    
 //    [UIView animateWithDuration: 0.1
 //                          delay: 0.0
 //                        options: UIViewAnimationOptionCurveEaseOut
@@ -240,7 +243,8 @@
 //                     completion:^(BOOL finished){
 //                         
 //                     }];
-//    [self.tabBarController.tabBar setHidden:YES];
+    [self.tabBarController.tabBar setHidden:YES];
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
 - (void) disappearsSearchBar
@@ -479,7 +483,8 @@
     }
 }
 
-- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     return 69.0;
 }
 
@@ -512,6 +517,7 @@
             
             cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
             cell.textLabel.textColor = [UIColor whiteColor];
+            cell.textLabel.text = title;
         } else {
             NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
             NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
@@ -520,6 +526,41 @@
             cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
             
             title = [rowsOfSection objectAtIndex:indexPath.row];
+            
+            CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
+            
+            CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+            gradientLayer.frame = cellFrame;
+            [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
+            [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
+            gradientLayer.colors = @[(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor]];
+            
+//            UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
+//            imgBackground.image = [UIImage imageNamed:@"bb"];
+//            imgBackground.contentMode = UIViewContentModeScaleAspectFill;
+//            imgBackground.clipsToBounds = YES;
+//            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+//            [cell addSubview:imgBackground];
+            
+            CALayer *imgLayer = [CALayer layer];
+            imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
+            imgLayer.masksToBounds = YES;
+            imgLayer.contentsGravity = @"resizeAspectFill";
+            imgLayer.frame = cellFrame;
+            [imgLayer addSublayer:gradientLayer];
+            [cell.layer insertSublayer:imgLayer atIndex:0];
+           
+            
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
+            label.font = [UIFont fontWithName:@"Helvetica-Neue" size:16.0f];
+            label.text = title;
+            label.layer.shadowColor = [UIColor blackColor].CGColor;
+            label.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+            label.layer.shadowOpacity = .75f;
+     
+            label.textColor = [UIColor whiteColor];
+            [cell addSubview:label];
+            
             
 //            NSPredicate *typePredicate = [NSPredicate predicateWithFormat:@"type == %@", sectionTitle];
 //            NSPredicate *namePredicate = [NSPredicate predicateWithFormat:@"name == %@", title];
@@ -530,9 +571,9 @@
         
         
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        cell.textLabel.text = title;
+//        cell.textLabel.text = title;
         cell.detailTextLabel.text = year;
-        cell.tintColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.95f];
+        cell.tintColor = [UIColor redColor];
 //        cell.imageView.image = [UIImage imageNamed:@"bb"];
 //        
 //        cell.imageView.layer.borderWidth = 2;
@@ -543,7 +584,7 @@
     UIView *bgColorView = [[UIView alloc] init];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
-    
+
     return cell;
 }
 
@@ -595,8 +636,8 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-            cell.backgroundColor = [UIColor colorWithWhite:.95 alpha:.85f];
-            cell.indentationLevel = 2;
+            cell.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
+            cell.indentationLevel = 20;
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
             label.font = [UIFont fontWithName:@"Avenir" size:fontSize];
@@ -758,6 +799,7 @@
     [bluredImageView addSubview:visualEffectView];
     
     self.searchResultsController.tableView.backgroundView = bluredImageView;
+//    self.searchController.view.backgroundColor = [UIColor colorWithWhite:1.0 alpha:.05f];
 }
 
 - (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView

@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 
-@interface AppDelegate ()<SWRevealViewControllerDelegate>
+@interface AppDelegate ()
 
 @property (nonatomic, retain) UITabBarController *tabBarController;
 
@@ -53,6 +53,8 @@
     bottomBorder.borderWidth = 1;
     bottomBorder.frame = CGRectMake(0.0f, navController.navigationBar.frame.size.height, navController.navigationBar.frame.size.width, 1.0f);
     [navController.navigationBar.layer addSublayer:bottomBorder];
+    
+    [navControllerSettings.navigationBar.layer addSublayer:bottomBorder];
     
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:1.0f]];
