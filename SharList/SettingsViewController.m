@@ -14,15 +14,21 @@
 
 @implementation SettingsViewController
 
+- (void) viewDidAppear:(BOOL)animated
+{
+    self.title = [self.title uppercaseString];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    self.title = [@"Paramètres" uppercaseString];
-    
+        
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
+    
+    //Main screen display
+    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     
     
     CAGradientLayer *gradient = [CAGradientLayer layer];

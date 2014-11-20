@@ -30,17 +30,20 @@
     [self.tabBarController.tabBar setHidden:NO];
     [super viewWillAppear:animated];
     
-
     self.navigationController.navigationBar.translucent = NO;
+    
+    self.title = [self.title uppercaseString];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     [self.tabBarController.tabBar setHidden:NO];
+    self.navigationController.navigationBar.translucent = YES;
 }
 
-- (void) viewDidLoad {
+- (void) viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
@@ -48,8 +51,6 @@
     
     // Variables init
     USERALREADYMADEARESEARCH = NO;
-    
-    self.title = [@"Ma liste" uppercaseString];
     
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -63,10 +64,10 @@
     
     
 //    self.definesPresentationContext = YES;
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+    self.edgesForExtendedLayout = UIRectEdgeAll;
     
     //Main screen display
-    [self.view setBackgroundColor:[UIColor blackColor]];
+    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     
     
     // Design on the view
@@ -126,7 +127,7 @@
     self.searchController.dimsBackgroundDuringPresentation = YES;
     [self.searchController.searchBar sizeToFit];
     self.searchController.searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
-    self.searchController.searchBar.barTintColor = [UIColor whiteColor];
+    self.searchController.searchBar.barTintColor = [UIColor colorWithRed:(2.0/255.0f) green:(17.0/255.0f) blue:(28.0/255.0f) alpha:1.0f];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
     self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
     self.searchController.searchBar.frame = CGRectMake(0, -60.0,
@@ -139,8 +140,6 @@
 //    searchControllerBGimgLayer.frame = self.view.frame;
 //    [self.searchController.view.layer insertSublayer:searchControllerBGimgLayer atIndex:0];
 
-    
-//    self.searchResultsController.view.clipsToBounds = YES;
     self.searchController.view.opaque = YES;
     self.searchController.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     
