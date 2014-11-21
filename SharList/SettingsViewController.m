@@ -16,7 +16,6 @@
 
 - (void) viewDidAppear:(BOOL)animated
 {
-    self.title = [self.title uppercaseString];
 }
 
 - (void)viewDidLoad {

@@ -12,6 +12,7 @@
 #import <FacebookSDK/FacebookSDK.h>
 
 #import "CRGradientNavigationBar.h"
+//#import "SWTableViewCell.h"
 
 
 #import "ShareListMediaTableViewCell.h"
@@ -22,7 +23,8 @@
 
 
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate>
+UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate,
+SWTableViewCellDelegate>
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;

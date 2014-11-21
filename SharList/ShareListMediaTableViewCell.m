@@ -26,6 +26,7 @@
     self.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.35];
     self.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
     self.textLabel.textColor = [UIColor blackColor];
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
 //    self.textLabel.frame = CGRectMake(-40.0, -40.0, self.textLabel.frame.size.width, 15);
     self.textLabel.backgroundColor = [UIColor clearColor];
     

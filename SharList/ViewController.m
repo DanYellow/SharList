@@ -33,6 +33,7 @@
     self.navigationController.navigationBar.translucent = NO;
     
     self.title = [self.title uppercaseString];
+    self.tabBarController.tabBarItem.title = [self.title lowercaseString];
     
     self.searchController.searchBar.hidden = NO;
 }
@@ -41,7 +42,7 @@
 {
     [super viewWillDisappear:animated];
     [self.tabBarController.tabBar setHidden:NO];
-//    self.navigationController.navigationBar.translucent = YES;
+    self.navigationController.navigationBar.translucent = YES;
     
     self.searchController.searchBar.hidden = YES;
 }
@@ -102,7 +103,7 @@
     [self.view addSubview:appMottoText];
     
     // Facebook login
-    FBLoginView *fbLoginButton = [[FBLoginView alloc] init];
+    FBLoginView *fbLoginButton = [FBLoginView new];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
     fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
@@ -174,9 +175,7 @@
     userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
     userSelectionTableViewController.tableView.tag = 4;
     userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    userSelectionTableViewController.tableView.hidden = YES;
-    userSelectionTableViewController.tableView.clipsToBounds = YES;
-    userSelectionTableViewController.refreshControl = userSelectRefresh;
+//    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userSelectionTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:userSelectionTableViewController.tableView];
@@ -525,14 +524,16 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    SWTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
-    if (cell == nil) {
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    if (cell == nil ) {
+        cell = [[SWTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell.delegate = self;
+        
+        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
         NSString *title, *description, *year;
 //        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-            NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
             NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
             
             title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
@@ -543,11 +544,14 @@
             cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
             cell.textLabel.textColor = [UIColor whiteColor];
             cell.textLabel.text = title;
+//            cell.rightUtilityButtons = [self rightButtonsForUserFavs];
+            
         } else {
-            NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
+            
             NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
             
             // For "Classic mode" we want a cell's background more opaque
+            
             cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
             
             title = [rowsOfSection objectAtIndex:indexPath.row];
@@ -560,20 +564,20 @@
             [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
             gradientLayer.colors = @[(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor]];
             
-            UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
-            imgBackground.image = [UIImage imageNamed:@"bb"];
-            imgBackground.contentMode = UIViewContentModeScaleAspectFill;
-            imgBackground.clipsToBounds = YES;
-            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
-            [cell addSubview:imgBackground];
+//            UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
+//            imgBackground.image = [UIImage imageNamed:@"bb"];
+//            imgBackground.contentMode = UIViewContentModeScaleAspectFill;
+//            imgBackground.clipsToBounds = YES;
+//            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+//            [cell addSubview:imgBackground];
             
-//            CALayer *imgLayer = [CALayer layer];
-//            imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
-//            imgLayer.masksToBounds = YES;
-//            imgLayer.contentsGravity = @"resizeAspectFill";
-//            imgLayer.frame = cellFrame;
-//            [imgLayer addSublayer:gradientLayer];
-//            [cell.layer insertSublayer:imgLayer atIndex:0];
+            CALayer *imgLayer = [CALayer layer];
+            imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
+            imgLayer.masksToBounds = YES;
+            imgLayer.contentsGravity = @"resizeAspectFill";
+            imgLayer.frame = cellFrame;
+            [imgLayer addSublayer:gradientLayer];
+            [cell.layer insertSublayer:imgLayer atIndex:0];
            
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
@@ -582,8 +586,12 @@
             label.layer.shadowColor = [UIColor blackColor].CGColor;
             label.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
             label.layer.shadowOpacity = .75f;
-     
             label.textColor = [UIColor whiteColor];
+            
+            cell.rightUtilityButtons = [self rightButtonsForSearch];
+            
+            
+            
             [cell addSubview:label];
             
             
@@ -596,14 +604,8 @@
         
         
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//        cell.textLabel.text = title;
+
         cell.detailTextLabel.text = year;
-        cell.tintColor = [UIColor redColor];
-//        cell.imageView.image = [UIImage imageNamed:@"bb"];
-//        
-//        cell.imageView.layer.borderWidth = 2;
-//        cell.imageView.layer.cornerRadius = 90;
-//        cell.imageView.layer.masksToBounds = YES;
     }
     
     UIView *bgColorView = [[UIView alloc] init];
@@ -613,14 +615,47 @@
     return cell;
 }
 
-- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
+- (NSArray *) rightButtonsForUserFavs
+{
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
     
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:(236.0/255.0f) green:(31.0/255.0f) blue:(63.0/255.0f) alpha:1.0]
+                     title:@"Retirer"];
+
+    
+    return rightUtilityButtons;
+}
+
+- (NSArray *) rightButtonsForSearch
+{
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
+    
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:(236.0/255.0f) green:(31.0/255.0f) blue:(63.0/255.0f) alpha:1.0]
+                                                title:@"Retirer"];
+    
+    
+    return rightUtilityButtons;
+}
+
+// prevent multiple cells from showing utilty buttons simultaneously
+- (BOOL) swipeableTableViewCellShouldHideUtilityButtonsOnSwipe:(SWTableViewCell *)cell
+{
+    return YES;
+}
+
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
+{
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
-//    modalVC.delegate = self;
-    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
-//    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-//    
+    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+    [self.searchController setActive:NO];
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.alpha = .5f;
+//
 //    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
 //    
 //    [[userTasteDict objectForKey:@"movie"] removeObject:cell.textLabel.text];

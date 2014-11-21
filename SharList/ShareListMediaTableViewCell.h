@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ShareListMediaTableViewCell : UITableViewCell
+#import "SWTableViewCell.h"
+
+@interface ShareListMediaTableViewCell : SWTableViewCell
 
 
 @property (retain, nonatomic) id model;
