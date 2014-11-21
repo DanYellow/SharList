@@ -134,7 +134,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.layer.shadowOpacity = 0.75;
     mediaTitleLabel.clipsToBounds = NO;
     mediaTitleLabel.layer.masksToBounds = NO;
-    mediaTitleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:20.0];
+    mediaTitleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:22.0];
     [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     
     [infoMediaView addSubview:mediaTitleLabel];
@@ -284,7 +284,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     itunesBuyButton.layer.borderWidth = 2.0f;
     [displayBuyView addSubview:itunesBuyButton];
     
-    UIView* barrier = [[UIView alloc] initWithFrame:CGRectMake(0, amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + 5, 30, 3)];
+    UIView* barrier = [[UIView alloc] initWithFrame:CGRectMake(0, amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + 7, 5, 3)]; // w: 25
     barrier.tag = 2;
     barrier.backgroundColor = [UIColor colorWithWhite:1 alpha:.15];
     [displayBuyView addSubview:barrier];
@@ -322,6 +322,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     if (self.isPhysicsAdded == NO) {
         for (ShopButton *shopButton in displayBuyView.subviews) {
             if ([shopButton isKindOfClass:[ShopButton class]]) {
+                // [NSValue valueWithCGRect:shopButton.frame]
+                NSLog(@"start : %@", NSStringFromCGRect(shopButton.frame));
                 [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:shopButton.frame]];
             }
         }
@@ -339,11 +341,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
     gravity = [[UIGravityBehavior alloc] initWithItems:@[amazonBuyButton]];
     collision = [[UICollisionBehavior alloc] initWithItems:@[amazonBuyButton, itunesBuyButton]];
+    collision.collisionDelegate = self;
+    
+    UIDynamicItemBehavior* itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[amazonBuyButton, itunesBuyButton]];
+    itemBehaviour.elasticity = 0.9;
+    itemBehaviour.allowsRotation = NO;
+    itemBehaviour.density = .4000;
+    
     [animator addBehavior:gravity];
+    [animator addBehavior:itemBehaviour];
     [animator addBehavior:collision];
     
 
-    
     CGPoint rightEdge = CGPointMake(barrier.frame.origin.x +
                                     barrier.frame.size.width, barrier.frame.origin.y);
     [collision addBoundaryWithIdentifier:@"barrier"
@@ -362,7 +371,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [self addPhysics];
     
-    [UIView animateWithDuration:0.4 delay:0.2
+    [UIView animateWithDuration:0.7 delay:0.2
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          displayBuyView.alpha = 0;
@@ -375,16 +384,20 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
                          
                          NSUInteger count = 0;
+                         // shopButton.frame = [(UIView *)[buyButtonsInitPositions objectAtIndex:count] frame];
+                         // shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
                          for (ShopButton *shopButton in displayBuyView.subviews) {
                              if ([shopButton isKindOfClass:[ShopButton class]]) {
+//                                 ShopButton *foo = (ShopButton *)[buyButtonsInitPositions objectAtIndex:count];
+//                                 shopButton.frame = [(ShopButton *)[buyButtonsInitPositions objectAtIndex:count] frame];
                                  shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
+//                                 NSLog(@"array : end, %@", NSStringFromCGRect(foo.frame));
                                  count++;
                              }
                          }
                          [animator removeAllBehaviors];
                      }];
 }
-
 
 - (UIImage *) takeSnapshotOfView:(UIView *)view
 {

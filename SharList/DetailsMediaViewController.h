@@ -14,7 +14,7 @@
 #import "CCARadialGradientLayer.h"
 #import "ShopButton.h"
 
-@interface DetailsMediaViewController : UIViewController <UITextViewDelegate>
+@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -40,6 +40,7 @@
 - (void) hideBuyScreen;
 - (void) openStore:(UIButton*)sender;
 
+- (void) addPhysics;
 
 
 @end
