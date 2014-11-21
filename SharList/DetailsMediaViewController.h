@@ -12,12 +12,24 @@
 #import "AppDelegate.h"
 
 #import "CCARadialGradientLayer.h"
+#import "ShopButton.h"
 
 @interface DetailsMediaViewController : UIViewController <UITextViewDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
+    
+    
+    UIDynamicAnimator *animator;
+    UIGravityBehavior *gravity;
+    UICollisionBehavior *collision;
+    
+    // This NSArray is usefull for re-init the pos of UIButton when they disappears
+    // with UIKit gravity
+    NSMutableArray *buyButtonsInitPositions;
 }
+
+@property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
 
 
 - (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;

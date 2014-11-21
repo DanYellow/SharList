@@ -28,6 +28,7 @@
 		1A3C228A1A118098005B31E4 /* reveal-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3C22881A118098005B31E4 /* reveal-icon.png */; };
 		1A3C228B1A118098005B31E4 /* reveal-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3C22891A118098005B31E4 /* reveal-icon@2x.png */; };
 		1A3C228F1A11AAAC005B31E4 /* invisible-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */; };
+		1A4953D41A1EBB9500A0C232 /* ShopButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4953D31A1EBB9500A0C232 /* ShopButton.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		C972540DD50E496DAA79453E /* libPods-SharList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C05C0F3990854370BFE3C1AC /* libPods-SharList.a */; };
 /* End PBXBuildFile section */
@@ -75,6 +76,8 @@
 		1A3C22881A118098005B31E4 /* reveal-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal-icon.png"; sourceTree = "<group>"; };
 		1A3C22891A118098005B31E4 /* reveal-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reveal-icon@2x.png"; sourceTree = "<group>"; };
 		1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "invisible-bg.png"; sourceTree = "<group>"; };
+		1A4953D21A1EBB9500A0C232 /* ShopButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopButton.h; sourceTree = "<group>"; };
+		1A4953D31A1EBB9500A0C232 /* ShopButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopButton.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
 		A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SharList.xcconfig"; path = "Pods/Pods-SharList.xcconfig"; sourceTree = "<group>"; };
@@ -232,6 +235,8 @@
 		1A7B09DC1A10DBCD00FA2766 /* CustomViews */ = {
 			isa = PBXGroup;
 			children = (
+				1A4953D21A1EBB9500A0C232 /* ShopButton.h */,
+				1A4953D31A1EBB9500A0C232 /* ShopButton.m */,
 				1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */,
 				1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */,
 			);
@@ -399,6 +404,7 @@
 				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,
 				1A3C22821A114339005B31E4 /* UserTaste.m in Sources */,
 				1A076DB91A0FE20900CD725A /* main.m in Sources */,
+				1A4953D41A1EBB9500A0C232 /* ShopButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

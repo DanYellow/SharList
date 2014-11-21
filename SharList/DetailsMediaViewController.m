@@ -24,7 +24,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
 // 400 - 410 : Buttons buy range
-// Amazon : 
+// 400 : Amazon
+// 401 : iTunes
 
 @implementation DetailsMediaViewController
 
@@ -85,6 +86,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view.layer insertSublayer:gradient atIndex:0];
     
 //    self.edgesForExtendedLayout = UIRectEdgeNone;
+    
+    // Init vars
+    self.PhysicsAdded = NO;
+    buyButtonsInitPositions = [[NSMutableArray alloc] init];
     
     //Navigationbarcontroller
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
@@ -156,6 +161,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     buyButton.frame = CGRectMake(0, screenHeight - 43, screenWidth, 43);
     buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
     [self.view addSubview:buyButton];
+    
+    
+
 }
 
 
@@ -215,10 +223,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [displayBuyView addSubview:bluredImageView];
     
-    
     BOOL doesContain = [self.view.subviews containsObject:(UIView*)[self.view viewWithTag:1]];
+    UIView *displayBuyViewAlias = (UIView*)[self.view viewWithTag:1];
     if (doesContain == YES) {
-        UIView *displayBuyViewAlias = (UIView*)[self.view viewWithTag:1];
         displayBuyViewAlias.hidden = NO;
     } else {
        [self.view addSubview:displayBuyView];
@@ -228,6 +235,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          displayBuyView.alpha = 1;
+                         displayBuyViewAlias.alpha = 1;
                      }
                      completion:nil];
     
@@ -247,7 +255,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIColor *amazonOrange = [UIColor colorWithRed:1 green:(124.0f/255.0f) blue:(2.0f/255.0f) alpha:1.0f];
     
-    UIButton *amazonBuyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    ShopButton *amazonBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
+    amazonBuyButton.tag = 400;
     [amazonBuyButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
     [amazonBuyButton setTitle:[@"Amazon" uppercaseString] forState:UIControlStateNormal];
     [amazonBuyButton setTitleColor:amazonOrange forState:UIControlStateNormal];
@@ -258,11 +267,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     amazonBuyButton.layer.borderWidth = 2.0f;
     [displayBuyView addSubview:amazonBuyButton];
     
+
     
     CGFloat itunesBuyButtonPosY = amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + (38/2);
     UIColor *itunesGray = [UIColor colorWithRed:(166.0f/255.0f) green:(166.0f/255.0f) blue:(166.0f/255.0f) alpha:1.0f];
     
-    UIButton *itunesBuyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    ShopButton *itunesBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
+    itunesBuyButton.tag = 401;
     [itunesBuyButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
     [itunesBuyButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
     itunesBuyButton.titleLabel.font = buttonFont;
@@ -272,6 +283,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     itunesBuyButton.layer.borderColor = itunesGray.CGColor;
     itunesBuyButton.layer.borderWidth = 2.0f;
     [displayBuyView addSubview:itunesBuyButton];
+    
+    UIView* barrier = [[UIView alloc] initWithFrame:CGRectMake(0, amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + 5, 30, 3)];
+    barrier.tag = 2;
+    barrier.backgroundColor = [UIColor colorWithWhite:1 alpha:.15];
+    [displayBuyView addSubview:barrier];
     
     
     CGRect lineFrame = CGRectMake(0, 18, 35, 4);
@@ -302,16 +318,49 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [crossButton addSubview:lineLeft];
     
     
-//    Line *lineRight = [[Line alloc] initWithFrame:CGRectMake(45, 0, 1, 90)];
-//    lineRight.transform = CGAffineTransformMakeRotation(DegreesToRadians(-45));
+    // Create array of all shop buttons one time only
+    if (self.isPhysicsAdded == NO) {
+        for (ShopButton *shopButton in displayBuyView.subviews) {
+            if ([shopButton isKindOfClass:[ShopButton class]]) {
+                [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:shopButton.frame]];
+            }
+        }
+    }
+}
+
+- (void) addPhysics
+{
+    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
+    UIView *barrier = (UIView*)[self.view viewWithTag:2];
+    
+    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
+    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
+    
+    animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
+    gravity = [[UIGravityBehavior alloc] initWithItems:@[amazonBuyButton]];
+    collision = [[UICollisionBehavior alloc] initWithItems:@[amazonBuyButton, itunesBuyButton]];
+    [animator addBehavior:gravity];
+    [animator addBehavior:collision];
+    
+
+    
+    CGPoint rightEdge = CGPointMake(barrier.frame.origin.x +
+                                    barrier.frame.size.width, barrier.frame.origin.y);
+    [collision addBoundaryWithIdentifier:@"barrier"
+                               fromPoint:barrier.frame.origin
+                                 toPoint:rightEdge];
+    
+    self.PhysicsAdded = YES;
 }
 
 - (void) hideBuyScreen
 {
-    // We need uinavigationcontroller so...
-    [self.navigationController setNavigationBarHidden:NO];
-    
     UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
+    
+    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
+    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
+    
+    [self addPhysics];
     
     [UIView animateWithDuration:0.4 delay:0.2
                         options: UIViewAnimationOptionCurveEaseOut
@@ -320,6 +369,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }
                      completion:^(BOOL finished){
                          displayBuyView.hidden = YES;
+                         
+                         // We need uinavigationcontroller so...
+                         [self.navigationController setNavigationBarHidden:NO];
+
+                         
+                         NSUInteger count = 0;
+                         for (ShopButton *shopButton in displayBuyView.subviews) {
+                             if ([shopButton isKindOfClass:[ShopButton class]]) {
+                                 shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
+                                 count++;
+                             }
+                         }
+                         [animator removeAllBehaviors];
                      }];
 }
 
