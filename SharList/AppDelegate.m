@@ -48,15 +48,21 @@
     navController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     navController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     
+    CGRect bottomBorderFrame = CGRectMake(0.0f, navController.navigationBar.frame.size.height, navController.navigationBar.frame.size.width, 1.0f);
+    
     CALayer *bottomBorder = [CALayer layer];
     bottomBorder.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
     bottomBorder.borderWidth = 1;
     bottomBorder.name = @"bottomBorderLayer";
-    bottomBorder.frame = CGRectMake(0.0f, navController.navigationBar.frame.size.height, navController.navigationBar.frame.size.width, 1.0f);
+    bottomBorder.frame = bottomBorderFrame;
     [navController.navigationBar.layer addSublayer:bottomBorder];
     
-    [navControllerSettings.navigationBar.layer addSublayer:bottomBorder];
-    [navController.navigationBar.layer addSublayer:bottomBorder];
+    CALayer *bottomBorder2 = [CALayer layer];
+    bottomBorder2.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+    bottomBorder2.borderWidth = 1;
+    bottomBorder2.name = @"bottomBorderLayer";
+    bottomBorder2.frame = bottomBorderFrame;
+    [navControllerSettings.navigationBar.layer addSublayer:bottomBorder2];
     
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:1.0f]];
@@ -72,7 +78,7 @@
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window setRootViewController:self.tabBarController];
-    [self.window setBackgroundColor:[UIColor whiteColor]];
+    [self.window setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [self.window makeKeyAndVisible];
     
     return YES;
@@ -81,6 +87,8 @@
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    
+
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {

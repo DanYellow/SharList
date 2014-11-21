@@ -33,13 +33,17 @@
     self.navigationController.navigationBar.translucent = NO;
     
     self.title = [self.title uppercaseString];
+    
+    self.searchController.searchBar.hidden = NO;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     [self.tabBarController.tabBar setHidden:NO];
-    self.navigationController.navigationBar.translucent = YES;
+//    self.navigationController.navigationBar.translucent = YES;
+    
+    self.searchController.searchBar.hidden = YES;
 }
 
 - (void) viewDidLoad
@@ -174,6 +178,7 @@
     userSelectionTableViewController.tableView.clipsToBounds = YES;
     userSelectionTableViewController.refreshControl = userSelectRefresh;
     userSelectionTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    userSelectionTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:userSelectionTableViewController.tableView];
     
 
