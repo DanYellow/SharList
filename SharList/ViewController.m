@@ -67,8 +67,8 @@
     
     userPreferences = [NSUserDefaults standardUserDefaults];
 
-    // Contains raw data from the server
-    self.responseData = [NSMutableData data];
+    // Shoud contain raw data from the server
+    self.responseData = [NSMutableData new];
     
     
 //    self.definesPresentationContext = YES;
@@ -183,9 +183,6 @@
                           action:@selector(fetchUserDatas)
                 forControlEvents:UIControlEventValueChanged];
     
-
-    
-
 
     APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
 //    NSLog(@"APIdatas : %@", APIdatas);
@@ -344,6 +341,9 @@
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
+    
+    self.navigationController.navigationBar.hidden = NO;
+    self.tabBarController.tabBar.hidden = NO;
 }
 
 
@@ -352,8 +352,8 @@
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = YES;
     
-    UIView *strokeUnderSearchController = (UIView*)[self.view viewWithTag:5];
-    strokeUnderSearchController.hidden = YES;
+    self.navigationController.navigationBar.hidden = YES;
+    self.tabBarController.tabBar.hidden = YES;
     
     [self.searchController.searchBar removeFromSuperview];
     [userTasteDict removeAllObjects];
@@ -821,9 +821,9 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
 {
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
+    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.37:8888/Share/connexion.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
     
@@ -836,10 +836,11 @@
     }
 
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@", userfbID, userTasteJSON];
- 
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-    [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    
+    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+    [conn start];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
@@ -848,18 +849,22 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     //Getting your response string
+   
     if (self.responseData != nil) {
         // This solved a weird issue with php
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-        responseString = [responseString substringToIndex:[responseString length] - 1];
+//        responseString = [responseString substringToIndex:[responseString length] - 1];
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         
+        self.navigationController.navigationBar.hidden = NO;
+        self.tabBarController.tabBar.hidden = NO;
+        
         UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
         userSelectionTableView.hidden = NO;
         [userSelectionTableView reloadData];
- 
+        
         UserTaste *userTaste = [UserTaste MR_createEntity];
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
         userTaste.taste = arrayData;
@@ -867,6 +872,7 @@
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         
         self.responseData = nil;
+        self.responseData = [NSMutableData new];
     }
 }
 
