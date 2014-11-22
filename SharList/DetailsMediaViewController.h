@@ -31,6 +31,8 @@
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
 
+@property (nonatomic, strong) NSMutableDictionary *mediaDatas;
+
 
 - (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;
 - (UIImage *) takeSnapshotOfView:(UIView *)view;

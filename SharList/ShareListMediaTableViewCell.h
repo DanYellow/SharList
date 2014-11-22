@@ -14,6 +14,7 @@
 
 
 @property (retain, nonatomic) id model;
+@property (nonatomic) NSString *name;
 
 
 - (void) setModel:(id) s;

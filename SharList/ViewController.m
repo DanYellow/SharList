@@ -32,10 +32,13 @@
     
     self.navigationController.navigationBar.translucent = NO;
     
-    self.title = [self.title uppercaseString];
-    self.tabBarController.tabBarItem.title = [self.title lowercaseString];
-    
     self.searchController.searchBar.hidden = NO;
+    
+    
+    if (!FBSession.activeSession.isOpen) {
+//        [self.view addSubview:fbLoginButton];
+        self.navigationController.navigationBar.hidden = YES;
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -110,6 +113,19 @@
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
     
+    // Uitableview of user selection (what user likes)
+    UITableViewController *userSelectionTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    userSelectionTableViewController.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight - 49); //[self computeRatio:800.0 forDimension:screenHeight] + 44
+    userSelectionTableViewController.tableView.dataSource = self;
+    userSelectionTableViewController.tableView.delegate = self;
+    userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
+    userSelectionTableViewController.tableView.tag = 4;
+    userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    //    userSelectionTableViewController.refreshControl = userSelectRefresh;
+    userSelectionTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    userSelectionTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:userSelectionTableViewController.tableView];
+    
     
     // UITableview of results
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
@@ -167,18 +183,7 @@
                           action:@selector(fetchUserDatas)
                 forControlEvents:UIControlEventValueChanged];
     
-    // Uitableview of user selection (what user likes)
-    UITableViewController *userSelectionTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userSelectionTableViewController.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight); //[self computeRatio:800.0 forDimension:screenHeight] + 44
-    userSelectionTableViewController.tableView.dataSource = self;
-    userSelectionTableViewController.tableView.delegate = self;
-    userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
-    userSelectionTableViewController.tableView.tag = 4;
-    userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-//    userSelectionTableViewController.refreshControl = userSelectRefresh;
-    userSelectionTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    userSelectionTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
-    [self.view addSubview:userSelectionTableViewController.tableView];
+
     
 
 
@@ -325,7 +330,7 @@
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] init];
     
-    if (self.userTaste) {
+    if (/* DISABLES CODE */ (NO) /*self.userTaste*/) {
         //
         // then put it into the NSDictionary of "taste"
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
@@ -478,10 +483,9 @@
         NSString *sectionTitle = [categoryList objectAtIndex:section];
         NSArray *sectionElements = [filteredTableDatas objectForKey:sectionTitle];
         
-
         return sectionElements.count;
     } else {
-        NSString *sectionTitle = [ [[userTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+        NSString *sectionTitle = [[[userTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
         NSArray *sectionElements = [userTasteDict objectForKey:sectionTitle];
         if ([sectionElements isKindOfClass:[NSNull class]]) {
             return 0;
@@ -524,10 +528,10 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    SWTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil ) {
-        cell = [[SWTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         cell.delegate = self;
         
         NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
@@ -539,8 +543,8 @@
             title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
             year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
             
-//            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
-            
+            // The line below bind the cell's database model to the cell
+            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
             cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
             cell.textLabel.textColor = [UIColor whiteColor];
             cell.textLabel.text = title;
@@ -554,7 +558,7 @@
             
             cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
             
-            title = [rowsOfSection objectAtIndex:indexPath.row];
+            title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
             
             CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
             
@@ -579,6 +583,7 @@
             [imgLayer addSublayer:gradientLayer];
             [cell.layer insertSublayer:imgLayer atIndex:0];
            
+
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
             label.font = [UIFont fontWithName:@"Helvetica-Neue" size:16.0f];
@@ -590,9 +595,14 @@
             
             cell.rightUtilityButtons = [self rightButtonsForSearch];
             
-            
+            // We hide this part to get easily datas
+            cell.textLabel.text = title;
+            cell.textLabel.hidden = YES;
+            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
             
             [cell addSubview:label];
+            
+            
             
             
 //            NSPredicate *typePredicate = [NSPredicate predicateWithFormat:@"type == %@", sectionTitle];
@@ -635,8 +645,33 @@
      [UIColor colorWithRed:(236.0/255.0f) green:(31.0/255.0f) blue:(63.0/255.0f) alpha:1.0]
                                                 title:@"Retirer"];
     
-    
     return rightUtilityButtons;
+}
+
+- (void)swipeableTableViewCell:(ShareListMediaTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
+    switch (index) {
+        case 0:
+        {
+            // Delete button was pressed
+            UITableView *foo = (UITableView*)[self.view viewWithTag:4];
+            
+            NSIndexPath *cellIndexPath = [foo indexPathForCell:cell];
+            [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] removeObject:cell.model];
+            
+            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"fbUserID"]];
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+                NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+                userTaste.taste = arrayData;
+            } completion:^(BOOL success, NSError *error) {
+                [foo deleteRowsAtIndexPaths:@[cellIndexPath]
+                           withRowAnimation:UITableViewRowAnimationFade];
+            }];
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 // prevent multiple cells from showing utilty buttons simultaneously
@@ -648,10 +683,15 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
-    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
     
-    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
-    [self.searchController setActive:NO];
+    UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+    NSLog(@"ttiel : %@, %@, %li", selectedCell.textLabel.text, titleForHeader, (long)indexPath.section);
+    
+//    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+//    detailsMediaViewController.mediaDatas =
+//    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+//    [self.searchController setActive:NO];
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.alpha = .5f;
@@ -700,7 +740,7 @@
             cell.indentationLevel = 20;
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-            label.font = [UIFont fontWithName:@"Avenir" size:fontSize];
+            label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
             label.text = string;
             label.textColor = [UIColor blackColor];
             [labelView addSubview:label];
@@ -717,7 +757,10 @@
         [cell addSubview:labelView];
     }
     
-    return cell;
+    UIView *view = [[UIView alloc] initWithFrame:[cell frame]];
+    [view addSubview:cell];
+    
+    return view;
 }
 
 #pragma mark - custom methods
@@ -837,7 +880,7 @@
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name"  ascending:YES];
         NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
         NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
-        
+    
         [filteredTableDatas setValue:sortedDatas forKey:[[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
     }
     
