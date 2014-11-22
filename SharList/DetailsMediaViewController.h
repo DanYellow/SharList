@@ -19,6 +19,9 @@
 //Custom views
 #import "ShopButton.h"
 
+//Models
+#import "UserTaste.h"
+
 @interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate>
 {
     CGFloat screenWidth;
@@ -32,6 +35,9 @@
     // This NSArray is usefull for re-init the pos of UIButton when they disappears
     // with UIKit gravity
     NSMutableArray *buyButtonsInitPositions;
+    NSMutableDictionary *userTasteDict;
+    
+    UIActivityIndicatorView *indicator;
 }
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;

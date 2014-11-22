@@ -333,7 +333,7 @@
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] init];
     
-    if (/* DISABLES CODE */ (NO) /*self.userTaste*/) {
+    if (self.userTaste) {
         //
         // then put it into the NSDictionary of "taste"
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
@@ -536,7 +536,7 @@
     
     ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
-    if (cell == nil ) {
+    if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         cell.delegate = self;
         
@@ -574,20 +574,20 @@
             [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
             gradientLayer.colors = @[(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor]];
             
-//            UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
-//            imgBackground.image = [UIImage imageNamed:@"bb"];
-//            imgBackground.contentMode = UIViewContentModeScaleAspectFill;
-//            imgBackground.clipsToBounds = YES;
-//            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
-//            [cell addSubview:imgBackground];
+            UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
+            imgBackground.image = [UIImage imageNamed:@"bb"];
+            imgBackground.contentMode = UIViewContentModeScaleAspectFill;
+            imgBackground.clipsToBounds = YES;
+            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+            [cell addSubview:imgBackground];
             
-            CALayer *imgLayer = [CALayer layer];
-            imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
-            imgLayer.masksToBounds = YES;
-            imgLayer.contentsGravity = @"resizeAspectFill";
-            imgLayer.frame = cellFrame;
-            [imgLayer addSublayer:gradientLayer];
-            [cell.layer insertSublayer:imgLayer atIndex:0];
+//            CALayer *imgLayer = [CALayer layer];
+//            imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
+//            imgLayer.masksToBounds = YES;
+//            imgLayer.contentsGravity = @"resizeAspectFill";
+//            imgLayer.frame = cellFrame;
+//            [imgLayer addSublayer:gradientLayer];
+//            [cell.layer insertSublayer:imgLayer atIndex:0];
            
 
             

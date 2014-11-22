@@ -10,7 +10,11 @@
 
 @interface DetailsMediaViewController ()
 
+@property (strong, nonatomic) UserTaste *userTaste;
+
 @end
+
+
 
 #define UIColorFromRGB(rgbValue) [UIColor \
 colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
@@ -28,6 +32,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 401 : iTunes
 
 @implementation DetailsMediaViewController
+
+
 
 // Before page loading we hide the tabbar
 
@@ -121,6 +127,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //        UIAlertView
     }];
     
+    
+    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+                                              withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    userTasteDict = [NSMutableDictionary new];
+    userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+
+    
+    
     CGFloat imgMediaHeight = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:470 forDimension:screenHeight];
     
     UIView *infoMediaView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, imgMediaHeight)];
@@ -137,11 +151,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.layer.shadowOpacity = 0.75;
     mediaTitleLabel.clipsToBounds = NO;
     mediaTitleLabel.layer.masksToBounds = NO;
-    mediaTitleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:22.0];
+    mediaTitleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:26.0];
     [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     [self.view addSubview:infoMediaView];
+    
+    indicator = [[UIActivityIndicatorView alloc] init];
+    indicator.center = self.view.center;
+    indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    [indicator startAnimating];
+    indicator.hidesWhenStopped = YES;
+    [self.view addSubview:indicator];
 }
 
 - (void) setMediaViewForData:(NSDictionary*)data
@@ -154,9 +175,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
          [NSURL URLWithString:data[@"Poster"]]
                  placeholderImage:[UIImage imageNamed:@"bb"]];
     CGFloat imgMediaHeight = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:470 forDimension:screenHeight];
-    imgMedia.frame = CGRectMake(0, 0, screenWidth, imgMediaHeight);
+    imgMedia.frame = CGRectMake(0, 15, screenWidth, imgMediaHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
     imgMedia.clipsToBounds = YES;
+    imgMedia.alpha = 0;
+//    imgMedia.transform = CGAffineTransformScale(CGAffineTransformIdentity, .7, .7);
     [infoMediaView insertSubview:imgMedia atIndex:0];
     
     CCARadialGradientLayer *radialGradientLayer = [CCARadialGradientLayer layer];
@@ -174,7 +197,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat mediaDescriptionWidth = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:608 forDimension:screenWidth];
     CGFloat mediaDescriptionX = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:16 forDimension:screenWidth];
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame) + 15, mediaDescriptionWidth, 100)];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame), mediaDescriptionWidth, 10)];
     mediaDescription.text = data[@"Plot"];
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
@@ -182,11 +205,43 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.delegate = self;
     //    mediaDescription.scrollEnabled = NO;
     [mediaDescription sizeToFit];
+    [mediaDescription layoutIfNeeded];
     mediaDescription.backgroundColor = [UIColor clearColor];
+    mediaDescription.alpha = 0;
+//    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
     mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:13.0];
     [self.view addSubview:mediaDescription];
     
+    CGRect frame = mediaDescription.frame;
+    frame.size.height = mediaDescription.contentSize.height;
+    mediaDescription.frame = frame;
     
+    [UIView animateWithDuration:0.3 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         mediaDescription.alpha = 1;
+//                         mediaDescription.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+                         mediaDescription.transform = CGAffineTransformMakeScale(1, 1);
+                         
+                         imgMedia.alpha = 1;
+                         imgMedia.frame = CGRectMake(0, 0, screenWidth, imgMediaHeight);
+//                         imgMedia.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+                     }
+                     completion:^(BOOL finished){
+                         //                         NSLog(@"Done!");
+                     }];
+    
+    UIButton *addToFavsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [addToFavsButton addTarget:self action:@selector(addMediaToUserList) forControlEvents:UIControlEventTouchUpInside];
+    [addToFavsButton setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+    [addToFavsButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    addToFavsButton.contentEdgeInsets = UIEdgeInsetsMake(0, 36, 0, 0);
+    addToFavsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    addToFavsButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:15.0f];
+    addToFavsButton.frame = CGRectMake(0, screenHeight - [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:222.0 forDimension:screenHeight], screenWidth, 43);
+    addToFavsButton.backgroundColor = [UIColor whiteColor];
+    
+    [self.view addSubview:addToFavsButton];
     
     
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -196,6 +251,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     buyButton.frame = CGRectMake(0, screenHeight - 43, screenWidth, 43);
     buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
     [self.view addSubview:buyButton];
+    
+    [indicator stopAnimating];
 }
 
 
@@ -443,7 +500,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addMediaToUserList
 {
+    [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] addObject:self.mediaDatas];
     
+    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+        userTaste.taste = arrayData;
+    } completion:^(BOOL success, NSError *error) {
+        NSLog(@"gentoo");
+    }];
 }
 
 - (void) openStore:(UIButton*)sender
