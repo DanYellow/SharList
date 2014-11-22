@@ -560,13 +560,16 @@
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
         CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
         
+        title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
+        imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
+        
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
             // For "Classic mode" we want a cell's background more opaque
             cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
             
-            cell.rightUtilityButtons = [self rightButtonsForSearch];
+//            cell.rightUtilityButtons = [self rightButtonsForSearch];
             
             // We hide this part to get easily datas
             cell.textLabel.frame = cellFrame;
@@ -579,14 +582,15 @@
             cell.selectionStyle = UITableViewCellSelectionStyleGray;
             //            cell.textLabel.hidden = YES;
             cell.model = [rowsOfSection objectAtIndex:indexPath.row];
+            
+            if (imdbID != nil) {
+                [self getImageCellForData:imdbID aCell:cell];
+            }
+
         }
         
-        title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
-        imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
         
-//        if (imdbID != nil) {
-//            [self getImageCellForData:imdbID aCell:cell];
-//        }
+        
         
         cell.textLabel.text = title;
         
@@ -625,8 +629,11 @@
     UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
     imgBackground.contentMode = UIViewContentModeScaleAspectFill;
     imgBackground.clipsToBounds = YES;
-    [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
-    [cell addSubview:imgBackground];
+    
+
+    
+//    [cell.backgroundView.layer insertSublayer:gradientLayer atIndex:0];
+    cell.backgroundView = imgBackground; //[cell addSubview:imgBackground];
     
     __block NSString *imgDistURL; // URL of the image from imdb database api
     
@@ -634,7 +641,9 @@
     linkAPI = [linkAPI stringByAppendingString:imdbID];
     linkAPI = [linkAPI stringByAppendingString:@"&plot=short&r=json"];
     
-    
+    CALayer *imgLayer = [CALayer layer];
+    imgLayer.frame = cellFrame;
+    [imgLayer addSublayer:gradientLayer];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
@@ -644,16 +653,8 @@
         [imgBackground setImageWithURL:
          [NSURL URLWithString:imgDistURL]
                       placeholderImage:[UIImage imageNamed:@"bb"]];
+        [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
         
-//        CALayer *imgLayer = [CALayer layer];
-//        imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
-//        imgLayer.masksToBounds = YES;
-//        imgLayer.contentsGravity = @"resizeAspectFill";
-//        imgLayer.frame = cellFrame;
-//        [imgLayer addSublayer:gradientLayer];
-//        [cell.layer insertSublayer:imgLayer atIndex:0];
-        
-
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
@@ -667,7 +668,6 @@
      [UIColor colorWithRed:(236.0/255.0f) green:(31.0/255.0f) blue:(63.0/255.0f) alpha:1.0]
                      title:@"Retirer"];
 
-    
     return rightUtilityButtons;
 }
 
@@ -733,7 +733,7 @@
 //    [self.searchController setActive:NO];
     NSLog(@"cell : %@", [tableView indexPathForSelectedRow]);
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.alpha = .5f;
+//    cell.alpha = .5f;
 //
 //    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
 //    
@@ -767,37 +767,67 @@
     
     CGFloat fontSize = 18.0f;
     UIView *labelView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, cell.frame.size.height)];
-    labelView.backgroundColor =[UIColor clearColor];
+    labelView.backgroundColor = [UIColor clearColor];
     labelView.opaque = YES;
     
     // This view fix an issue : http://stackoverflow.com/questions/12772197/what-is-the-meaning-of-the-no-index-path-for-table-cell-being-reused-message-i
     UIView *view = [[UIView alloc] initWithFrame:[cell frame]];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
     
     NSString *string = [[categoryList objectAtIndex:section] uppercaseString];
     
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-        if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-            view.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
-            
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-            label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-            label.text = string;
-            label.textColor = [UIColor blackColor];
-            [labelView addSubview:label];
-        } else {
-            view.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
-            
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-            label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-            label.text = string;
-            label.textColor = [UIColor whiteColor];
-            [labelView addSubview:label];
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         }
+        view.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
         
-        [cell addSubview:labelView];
+        
+        label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+        label.text = string;
+        label.textColor = [UIColor blackColor];
+        
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+        }
+        view.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
+        
+//        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
+        label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+        label.text = string;
+        label.textColor = [UIColor whiteColor];
+//        [labelView addSubview:label];
     }
+    [labelView addSubview:label];
+    [cell addSubview:labelView];
+    [view addSubview:cell];
     
+//    if (cell == nil) {
+//        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+//        if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+//            view.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
+//            
+//            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
+//            label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+//            label.text = string;
+//            label.textColor = [UIColor blackColor];
+//            [labelView addSubview:label];
+//        } else {
+//            view.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
+//            
+//            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
+//            label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+//            label.text = string;
+//            label.textColor = [UIColor whiteColor];
+//            [labelView addSubview:label];
+//        }
+//        
+//        [cell addSubview:labelView];
+//    }
+//    
     [view addSubview:cell];
     
     return view;
