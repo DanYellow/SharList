@@ -11,7 +11,7 @@
 
 #import <FacebookSDK/FacebookSDK.h>
 
-#import "CRGradientNavigationBar.h"
+
 //#import "SWTableViewCell.h"
 
 
@@ -20,6 +20,9 @@
 
 #import "UserTaste.h"
 
+//Vendors
+#import "AFNetworking.h"
+#import "UIImageView+AFNetworking.h"
 
 
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,

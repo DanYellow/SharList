@@ -534,109 +534,129 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
-    if (cell == nil) {
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.delegate = self;
-        
-        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
-        NSString *title, *description, *year;
-//        NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
-        if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-            NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
-            
-            title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
-            year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
-            
-            // The line below bind the cell's database model to the cell
-            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
+    
+    NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
+    NSString *title, *description, *year, *imdbID;
+    ShareListMediaTableViewCell *cell;
+    
+    //Search results tableview
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
+        if (cell == nil) {
+            cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            cell.delegate = self;
+            cell.model = [rowsOfSection objectAtIndex:indexPath.row];
             cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
             cell.textLabel.textColor = [UIColor whiteColor];
-            cell.textLabel.text = title;
-//            cell.rightUtilityButtons = [self rightButtonsForUserFavs];
-            
-        } else {
-            
-            NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
-            
+        }
+        
+        title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
+        year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
+        cell.textLabel.text = title;
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
+        CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
+        
+        if (cell == nil) {
+            cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            cell.delegate = self;
             // For "Classic mode" we want a cell's background more opaque
-            
             cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
-            
-            title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
-            
-            CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
-            
-            CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-            gradientLayer.frame = cellFrame;
-            [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
-            [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
-            gradientLayer.colors = @[(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor]];
-            
-            UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
-            imgBackground.image = [UIImage imageNamed:@"bb"];
-            imgBackground.contentMode = UIViewContentModeScaleAspectFill;
-            imgBackground.clipsToBounds = YES;
-            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
-            [cell addSubview:imgBackground];
-            
-//            CALayer *imgLayer = [CALayer layer];
-//            imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
-//            imgLayer.masksToBounds = YES;
-//            imgLayer.contentsGravity = @"resizeAspectFill";
-//            imgLayer.frame = cellFrame;
-//            [imgLayer addSublayer:gradientLayer];
-//            [cell.layer insertSublayer:imgLayer atIndex:0];
-           
-
-            
-//            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-//            label.font = [UIFont fontWithName:@"Helvetica-Neue" size:16.0f];
-//            label.text = title;
-//            label.layer.shadowColor = [UIColor blackColor].CGColor;
-//            label.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-//            label.layer.shadowOpacity = .75f;
-//            label.textColor = [UIColor whiteColor];
-//            [cell addSubview:label];
             
             cell.rightUtilityButtons = [self rightButtonsForSearch];
             
             // We hide this part to get easily datas
             cell.textLabel.frame = cellFrame;
-            cell.textLabel.text = title;
+            
             cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:16.0f];
             cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
             cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
             cell.textLabel.layer.shadowOpacity = .75f;
             cell.textLabel.textColor = [UIColor whiteColor];
             cell.selectionStyle = UITableViewCellSelectionStyleGray;
-//            cell.textLabel.hidden = YES;
-            [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
-            
-            
-            
-            
-            
-            
-//            NSPredicate *typePredicate = [NSPredicate predicateWithFormat:@"type == %@", sectionTitle];
-//            NSPredicate *namePredicate = [NSPredicate predicateWithFormat:@"name == %@", title];
-            
-            
-//             NSLog(@"row :%ld, section : %ld, %@", (long)indexPath.row, (long)indexPath.section, [[[APIdatas filteredArrayUsingPredicate:typePredicate] filteredArrayUsingPredicate:namePredicate] valueForKey:@"year"]);
+            //            cell.textLabel.hidden = YES;
+            cell.model = [rowsOfSection objectAtIndex:indexPath.row];
         }
         
+        title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
+        imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
         
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//        if (imdbID != nil) {
+//            [self getImageCellForData:imdbID aCell:cell];
+//        }
+        
+        cell.textLabel.text = title;
+        
 
-        cell.detailTextLabel.text = year;
     }
+
     
-    UIView *bgColorView = [[UIView alloc] init];
+    //            NSPredicate *typePredicate = [NSPredicate predicateWithFormat:@"type == %@", sectionTitle];
+    //            NSPredicate *namePredicate = [NSPredicate predicateWithFormat:@"name == %@", title];
+    
+    
+    //             NSLog(@"row :%ld, section : %ld, %@", (long)indexPath.row, (long)indexPath.section, [[[APIdatas filteredArrayUsingPredicate:typePredicate] filteredArrayUsingPredicate:namePredicate] valueForKey:@"year"]);
+
+    
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.detailTextLabel.text = year;
+//    }
+    
+    UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
 
     return cell;
+}
+
+- (void) getImageCellForData:(NSString*)imdbID aCell:(UITableViewCell*)cell
+{
+    CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.frame = cellFrame;
+    [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
+    [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
+    gradientLayer.colors = @[(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor]];
+    
+    UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
+    imgBackground.contentMode = UIViewContentModeScaleAspectFill;
+    imgBackground.clipsToBounds = YES;
+    [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+    [cell addSubview:imgBackground];
+    
+    __block NSString *imgDistURL; // URL of the image from imdb database api
+    
+    NSString *linkAPI = @"http://www.omdbapi.com/?i=";
+    linkAPI = [linkAPI stringByAppendingString:imdbID];
+    linkAPI = [linkAPI stringByAppendingString:@"&plot=short&r=json"];
+    
+    
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    [manager GET:linkAPI parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        imgDistURL = responseObject[@"Poster"];
+        
+        [imgBackground setImageWithURL:
+         [NSURL URLWithString:imgDistURL]
+                      placeholderImage:[UIImage imageNamed:@"bb"]];
+        
+//        CALayer *imgLayer = [CALayer layer];
+//        imgLayer.contents = (id)[UIImage imageNamed:@"bb"].CGImage;
+//        imgLayer.masksToBounds = YES;
+//        imgLayer.contentsGravity = @"resizeAspectFill";
+//        imgLayer.frame = cellFrame;
+//        [imgLayer addSublayer:gradientLayer];
+//        [cell.layer insertSublayer:imgLayer atIndex:0];
+        
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 - (NSArray *) rightButtonsForUserFavs
@@ -832,7 +852,7 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
 {
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.37:8888/Share/connexion.php"];
+    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
