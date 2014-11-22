@@ -336,7 +336,7 @@
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
         
     } else {
-        [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"]];
+        [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:NO];
     }
     
     [self.view addSubview: self.searchController.searchBar];
@@ -585,22 +585,29 @@
            
 
             
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-            label.font = [UIFont fontWithName:@"Helvetica-Neue" size:16.0f];
-            label.text = title;
-            label.layer.shadowColor = [UIColor blackColor].CGColor;
-            label.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-            label.layer.shadowOpacity = .75f;
-            label.textColor = [UIColor whiteColor];
+//            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
+//            label.font = [UIFont fontWithName:@"Helvetica-Neue" size:16.0f];
+//            label.text = title;
+//            label.layer.shadowColor = [UIColor blackColor].CGColor;
+//            label.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+//            label.layer.shadowOpacity = .75f;
+//            label.textColor = [UIColor whiteColor];
+//            [cell addSubview:label];
             
             cell.rightUtilityButtons = [self rightButtonsForSearch];
             
             // We hide this part to get easily datas
+            cell.textLabel.frame = cellFrame;
             cell.textLabel.text = title;
-            cell.textLabel.hidden = YES;
+            cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:16.0f];
+            cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+            cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+            cell.textLabel.layer.shadowOpacity = .75f;
+            cell.textLabel.textColor = [UIColor whiteColor];
+//            cell.textLabel.hidden = YES;
             [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
             
-            [cell addSubview:label];
+            
             
             
             
@@ -666,6 +673,7 @@
             } completion:^(BOOL success, NSError *error) {
                 [foo deleteRowsAtIndexPaths:@[cellIndexPath]
                            withRowAnimation:UITableViewRowAnimationFade];
+                [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:YES];
             }];
             break;
         }
@@ -689,7 +697,7 @@
     NSLog(@"ttiel : %@, %@, %li", selectedCell.textLabel.text, titleForHeader, (long)indexPath.section);
     
 //    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
-//    detailsMediaViewController.mediaDatas =
+//    detailsMediaViewController.mediaDatas = selectedCell.model
 //    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 //    [self.searchController setActive:NO];
     
@@ -731,13 +739,15 @@
     labelView.backgroundColor =[UIColor clearColor];
     labelView.opaque = YES;
     
+    // This view fix an issue : http://stackoverflow.com/questions/12772197/what-is-the-meaning-of-the-no-index-path-for-table-cell-being-reused-message-i
+    UIView *view = [[UIView alloc] initWithFrame:[cell frame]];
+    
     NSString *string = [[categoryList objectAtIndex:section] uppercaseString];
     
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-            cell.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
-            cell.indentationLevel = 20;
+            view.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
             label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
@@ -745,7 +755,7 @@
             label.textColor = [UIColor blackColor];
             [labelView addSubview:label];
         } else {
-            cell.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
+            view.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
             
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
             label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
@@ -757,7 +767,6 @@
         [cell addSubview:labelView];
     }
     
-    UIView *view = [[UIView alloc] initWithFrame:[cell frame]];
     [view addSubview:cell];
     
     return view;
@@ -792,8 +801,8 @@
     return image;
 }
 
-
-- (void) updateTasteToServer
+// This method retrieve an readable json of user taste for the database
+- (NSString *) updateTasteToServer
 {
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userTasteDict
@@ -801,21 +810,33 @@
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"Got an error: %@", error);
+        return nil;
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        NSLog(@"jsonString : %@", jsonString);
+   
+        return jsonString;
     }
 }
 
-- (void) getServerDatasForFbID:(NSNumber*)userfbID
+// This methods allows to retrieve and send (?) user datas from the server
+- (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
 {
     NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                        timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
+    
+    // We send the json to the server only when we need it
+    NSString *userTasteJSON;
+    if (isUpdate == YES) {
+        userTasteJSON = [self updateTasteToServer];
+    } else {
+        userTasteJSON = @"";
+    }
 
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", userfbID];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@", userfbID, userTasteJSON];
+ 
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     [[NSURLConnection alloc] initWithRequest:request delegate:self];
@@ -834,7 +855,6 @@
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-
         
         UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
         userSelectionTableView.hidden = NO;

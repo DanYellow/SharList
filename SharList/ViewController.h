@@ -55,8 +55,8 @@ SWTableViewCellDelegate>
 // Manage user
 - (void) userConnectionForFbID:(NSNumber*)userfbID;
 - (void) userLoggedOutOffb;
-- (void) updateTasteToServer;
-- (void) getServerDatasForFbID:(NSNumber*)userfbID;
+- (NSString*) updateTasteToServer;
+- (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate;
 
 
 @end
