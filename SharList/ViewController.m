@@ -534,8 +534,6 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    
-    
     NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
     NSString *title, *description, *year, *imdbID;
     ShareListMediaTableViewCell *cell;
@@ -589,12 +587,7 @@
 
         }
         
-        
-        
-        
         cell.textLabel.text = title;
-        
-
     }
 
     
@@ -631,8 +624,6 @@
     imgBackground.clipsToBounds = YES;
     
 
-    
-//    [cell.backgroundView.layer insertSublayer:gradientLayer atIndex:0];
     cell.backgroundView = imgBackground; //[cell addSubview:imgBackground];
     
     __block NSString *imgDistURL; // URL of the image from imdb database api
@@ -724,15 +715,14 @@
     NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
     
     ShareListMediaTableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
-    NSLog(@"ttiel : %@, %@, %li", selectedCell.textLabel.text, titleForHeader, (long)indexPath.section);
     
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
     detailsMediaViewController.mediaDatas = selectedCell.model;
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
-//    [self.searchController setActive:NO];
-    NSLog(@"cell : %@", [tableView indexPathForSelectedRow]);
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    [self.searchController setActive:NO];
+//    NSLog(@"cell : %@", [tableView indexPathForSelectedRow]);
+//    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
 //    cell.alpha = .5f;
 //
 //    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
@@ -759,78 +749,30 @@
 }
 
 
+
 // Title of categories
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
     CGFloat fontSize = 18.0f;
-    UIView *labelView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, cell.frame.size.height)];
-    labelView.backgroundColor = [UIColor clearColor];
-    labelView.opaque = YES;
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
+    headerView.opaque = YES;
+
+    NSString *title = [[categoryList objectAtIndex:section] uppercaseString];
     
-    // This view fix an issue : http://stackoverflow.com/questions/12772197/what-is-the-meaning-of-the-no-index-path-for-table-cell-being-reused-message-i
-    UIView *view = [[UIView alloc] initWithFrame:[cell frame]];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-    
-    NSString *string = [[categoryList objectAtIndex:section] uppercaseString];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
+    label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+    label.text = title;
     
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        if (cell == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-        }
-        view.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
-        
-        
-        label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-        label.text = string;
+        headerView.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
         label.textColor = [UIColor blackColor];
-        
     } else {
-        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        if (cell == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-        }
-        view.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
-        
-//        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-        label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-        label.text = string;
+        headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
         label.textColor = [UIColor whiteColor];
-//        [labelView addSubview:label];
     }
-    [labelView addSubview:label];
-    [cell addSubview:labelView];
-    [view addSubview:cell];
+    [headerView addSubview:label];
     
-//    if (cell == nil) {
-//        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-//        if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-//            view.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
-//            
-//            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-//            label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-//            label.text = string;
-//            label.textColor = [UIColor blackColor];
-//            [labelView addSubview:label];
-//        } else {
-//            view.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
-//            
-//            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, tableView.frame.size.width, cell.frame.size.height)];
-//            label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-//            label.text = string;
-//            label.textColor = [UIColor whiteColor];
-//            [labelView addSubview:label];
-//        }
-//        
-//        [cell addSubview:labelView];
-//    }
-//    
-    [view addSubview:cell];
-    
-    return view;
+    return headerView;
 }
 
 #pragma mark - custom methods
@@ -863,7 +805,7 @@
 }
 
 // This method retrieve an readable json of user taste for the database
-- (NSString *) updateTasteToServer
+- (NSString *) updateTasteForServer
 {
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userTasteDict

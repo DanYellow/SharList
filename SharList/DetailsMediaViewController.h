@@ -22,7 +22,7 @@
 //Models
 #import "UserTaste.h"
 
-@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate>
+@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -41,19 +41,21 @@
 }
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
-
 @property (nonatomic, strong) id mediaDatas;
+@property (retain, nonatomic) NSMutableData *responseData;
 
 
 - (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;
 - (UIImage *) takeSnapshotOfView:(UIView *)view;
 
-- (void) addMediaToUserList;
+- (void) addMediaToUserList:(UIButton*)sender;
+- (void) removeMediaToUserList:(UIButton*)sender;
 - (void) displayBuyScreen;
 - (void) hideBuyScreen;
 - (void) openStore:(UIButton*)sender;
 
 - (void) addPhysics;
+
 
 
 @end

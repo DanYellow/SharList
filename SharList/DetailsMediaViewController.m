@@ -97,7 +97,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     // Init vars
     self.PhysicsAdded = NO;
-    buyButtonsInitPositions = [[NSMutableArray alloc] init];
+    buyButtonsInitPositions = [NSMutableArray new];
+    // Shoud contain raw data from the server
+    self.responseData = [NSMutableData new];
     
     //Navigationbarcontroller
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
@@ -232,8 +234,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }];
     
     UIButton *addToFavsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [addToFavsButton addTarget:self action:@selector(addMediaToUserList) forControlEvents:UIControlEventTouchUpInside];
-    [addToFavsButton setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+    
+    // The media profile seen is amongst user fav list
+    if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas] == YES) {
+        [addToFavsButton addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+        [addToFavsButton setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
+    } else {
+        [addToFavsButton addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+        [addToFavsButton setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+    }
+    
     [addToFavsButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     addToFavsButton.contentEdgeInsets = UIEdgeInsetsMake(0, 36, 0, 0);
     addToFavsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
@@ -498,9 +508,34 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     return image;
 }
 
-- (void) addMediaToUserList
+- (void) addMediaToUserList:(UIButton*) sender
 {
+
+    return;
     [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] addObject:self.mediaDatas];
+    
+    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+//        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+//        userTaste.taste = arrayData;
+//    } completion:^(BOOL success, NSError *error) {
+//        NSLog(@"gentoo");
+//    }];
+    
+    UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
+    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+    userTaste.taste = arrayData;
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+}
+
+- (void) removeMediaToUserList:(UIButton*)sender
+{
+ 
+    
+    
+    return;
+    [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] removeObject:self.mediaDatas];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
@@ -508,8 +543,63 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
         userTaste.taste = arrayData;
     } completion:^(BOOL success, NSError *error) {
-        NSLog(@"gentoo");
+        [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
     }];
+}
+
+// This methods allows to retrieve and send (?) user datas from the server
+- (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
+{
+    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+                                                       timeoutInterval:10.0];
+    [request setHTTPMethod:@"POST"];
+    
+    // We send the json to the server only when we need it
+    NSString *userTasteJSON;
+    if (isUpdate == YES) {
+        userTasteJSON = [self updateTasteForServer];
+    } else {
+        userTasteJSON = @"";
+    }
+    
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@", userfbID, userTasteJSON];
+    
+    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+    [conn start];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [self.responseData appendData:data];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    //Getting your response string
+    
+    if (self.responseData != nil) {
+        self.responseData = nil;
+        self.responseData = [NSMutableData new];
+    }
+}
+
+// This method retrieve an readable json of user taste for the database
+- (NSString *) updateTasteForServer
+{
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userTasteDict
+                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                         error:&error];
+    if (!jsonData) {
+        NSLog(@"Got an error: %@", error);
+        return nil;
+    } else {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        
+        return jsonString;
+    }
 }
 
 - (void) openStore:(UIButton*)sender
