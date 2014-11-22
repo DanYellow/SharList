@@ -11,7 +11,12 @@
 
 #import "AppDelegate.h"
 
+//Vendors
+#import "AFNetworking.h"
+#import "UIImageView+AFNetworking.h"
 #import "CCARadialGradientLayer.h"
+
+//Custom views
 #import "ShopButton.h"
 
 @interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate>
@@ -31,7 +36,7 @@
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
 
-@property (nonatomic, strong) NSMutableDictionary *mediaDatas;
+@property (nonatomic, strong) id mediaDatas;
 
 
 - (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;

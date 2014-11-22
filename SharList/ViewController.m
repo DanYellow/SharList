@@ -39,6 +39,12 @@
 //        [self.view addSubview:fbLoginButton];
         self.navigationController.navigationBar.hidden = YES;
     }
+    
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+    [userSelectionTableView deselectRowAtIndexPath:[userSelectionTableView indexPathForSelectedRow] animated:YES];
+    UITableViewCell *cell = [userSelectionTableView cellForRowAtIndexPath:[userSelectionTableView indexPathForSelectedRow]];
+    cell.alpha = 0;
+    NSLog(@"cell : %@", [userSelectionTableView indexPathForSelectedRow]);
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -604,6 +610,7 @@
             cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
             cell.textLabel.layer.shadowOpacity = .75f;
             cell.textLabel.textColor = [UIColor whiteColor];
+            cell.selectionStyle = UITableViewCellSelectionStyleGray;
 //            cell.textLabel.hidden = YES;
             [cell setModel:[rowsOfSection objectAtIndex:indexPath.row]];
             
@@ -688,19 +695,23 @@
     return YES;
 }
 
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"foof");
+}
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
     NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
     
-    UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+    ShareListMediaTableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
     NSLog(@"ttiel : %@, %@, %li", selectedCell.textLabel.text, titleForHeader, (long)indexPath.section);
     
-//    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
-//    detailsMediaViewController.mediaDatas = selectedCell.model
-//    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
-//    [self.searchController setActive:NO];
+    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+    detailsMediaViewController.mediaDatas = selectedCell.model;
+    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
+//    [self.searchController setActive:NO];
+    NSLog(@"cell : %@", [tableView indexPathForSelectedRow]);
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.alpha = .5f;
 //
@@ -858,12 +869,10 @@
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         
-        self.navigationController.navigationBar.hidden = NO;
+//        self.navigationController.navigationBar.hidden = NO;
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
         self.tabBarController.tabBar.hidden = NO;
         
-        UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-        userSelectionTableView.hidden = NO;
-        [userSelectionTableView reloadData];
         
         UserTaste *userTaste = [UserTaste MR_createEntity];
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
@@ -873,8 +882,15 @@
         
         self.responseData = nil;
         self.responseData = [NSMutableData new];
+        
+        UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+        userSelectionTableView.hidden = NO;
+        [userSelectionTableView reloadData];
+        
+        
     }
 }
+
 
 - (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {

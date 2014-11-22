@@ -3,37 +3,43 @@
     "id": 0,
     "name": "Breaking Bad",
     "type": "serie",
-    "year": 2008
+    "year": 2008,
+    "imdbID": "tt0903747"
   },
   {
     "id": 1,
-    "name": "Orange Clockwork",
+    "name": "A Clockwork Orange",
     "type": "movie",
-    "year": 2008
+    "year": 2008,
+    "imdbID": "tt0066921"
   },
   {
     "id": 2,
     "name": "Family Guy",
     "type": "serie",
-    "year": 2005
+    "year": 2005,
+    "imdbID": "tt0182576"
   },
   {
     "id": 3,
     "name": "The Simpsons",
     "type": "serie",
-    "year": 1989
+    "year": 1989,
+    "imdbID": "tt0096697"
   },
   {
     "id": 4,
     "name": "Halt Catch and Fire",
     "type": "serie",
-    "year": 2014
+    "year": 2014,
+    "imdbID": "tt2543312"
   },
   {
     "id": 5,
     "name": "I am Charlotte Simmons",
     "type": "book",
-    "year": 2012 
+    "year": 2012,
+    "imdbID": "tt0182576"
   },
   {
     "id": 6,
@@ -147,7 +153,8 @@
     "id": 24,
     "name": "The Avengers",
     "type": "movie",
-    "year": 2012
+    "year": 2012,
+    "imdbID": "tt0903747"
   },
   {
     "id": 25,
@@ -237,7 +244,8 @@
     "id": 39,
     "name": "Toy Story",
     "type": "movie",
-    "year": 2008
+    "year": 2008,
+    "imdbID": "tt0114709"
   },
   {
     "id": 40,
