@@ -678,9 +678,9 @@
         case 0:
         {
             // Delete button was pressed
-            UITableView *foo = (UITableView*)[self.view viewWithTag:4];
+            UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
             
-            NSIndexPath *cellIndexPath = [foo indexPathForCell:cell];
+            NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
             [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] removeObject:cell.model];
             
             NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"fbUserID"]];
@@ -689,7 +689,7 @@
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
                 userTaste.taste = arrayData;
             } completion:^(BOOL success, NSError *error) {
-                [foo deleteRowsAtIndexPaths:@[cellIndexPath]
+                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
                            withRowAnimation:UITableViewRowAnimationFade];
                 [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:YES];
             }];
@@ -866,11 +866,17 @@
         self.tabBarController.tabBar.hidden = NO;
         
         
-        UserTaste *userTaste = [UserTaste MR_createEntity];
-        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-        userTaste.taste = arrayData;
-        userTaste.fbid = [userPreferences objectForKey:@"fbUserID"];
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbUserID"
+                                                        withValue:[userPreferences objectForKey:@"fbUserID"]];
+        // This is the first time for user
+        if (isNewUser == nil) {
+            UserTaste *userTaste = [UserTaste MR_createEntity];
+            NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+            userTaste.taste = arrayData;
+            userTaste.fbid = [userPreferences objectForKey:@"fbUserID"];
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        }
+        
         
         self.responseData = nil;
         self.responseData = [NSMutableData new];
@@ -911,7 +917,7 @@
         NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
 
         // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name"  ascending:YES];
+        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
         NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
         NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
     

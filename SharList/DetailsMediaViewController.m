@@ -510,9 +510,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addMediaToUserList:(UIButton*) sender
 {
-
-    return;
     [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] addObject:self.mediaDatas];
+
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+    NSArray *datasToSort = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
+    
+    [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
+    [userTasteDict setObject:datasToSort forKey:[self.mediaDatas valueForKey:@"type"]];
+    
+    NSLog(@"datasToSort : %@", userTasteDict);
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
 //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
@@ -523,18 +529,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //        NSLog(@"gentoo");
 //    }];
     
-    UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
-    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-    userTaste.taste = arrayData;
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+//    UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
+//    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+//    userTaste.taste = arrayData;
+//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
 - (void) removeMediaToUserList:(UIButton*)sender
 {
- 
-    
-    
-    return;
+
     [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] removeObject:self.mediaDatas];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
