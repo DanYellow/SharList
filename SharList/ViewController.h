@@ -12,6 +12,10 @@
 #import <FacebookSDK/FacebookSDK.h>
 
 
+//Vendors
+#import "AFNetworking.h"
+#import "UIImageView+AFNetworking.h"
+
 //#import "SWTableViewCell.h"
 
 
@@ -20,14 +24,9 @@
 
 #import "UserTaste.h"
 
-//Vendors
-#import "AFNetworking.h"
-#import "UIImageView+AFNetworking.h"
-
 
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate,
-SWTableViewCellDelegate>
+UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate>
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;

@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "DetailsMediaViewController.h"
+
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UINavigationControllerDelegate>
 {

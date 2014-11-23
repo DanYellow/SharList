@@ -22,6 +22,8 @@
 //Models
 #import "UserTaste.h"
 
+@protocol DetailsMediaViewControllerDelegate;
+
 @interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate>
 {
     CGFloat screenWidth;
@@ -40,11 +42,6 @@
     UIActivityIndicatorView *indicator;
 }
 
-@property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
-@property (nonatomic, strong) id mediaDatas;
-@property (retain, nonatomic) NSMutableData *responseData;
-
-
 - (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;
 - (UIImage *) takeSnapshotOfView:(UIView *)view;
 
@@ -56,6 +53,18 @@
 
 - (void) addPhysics;
 
+@property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
+@property (nonatomic, strong) id mediaDatas;
+@property (retain, nonatomic) NSMutableData *responseData;
+@property (nonatomic, assign) id<DetailsMediaViewControllerDelegate> delegate;
 
+@end
+
+
+@protocol DetailsMediaViewControllerDelegate <NSObject>
+
+@required
+
+- (void) userListHaveBeenUpdate:(NSMutableDictionary *)dict;
 
 @end

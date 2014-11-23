@@ -21,6 +21,7 @@
 // 4 : userSelectionTableViewController | Tableview of user taste
 // 5 : strokeUnderSearchController
 // 6 : UIRefreshControl for userTaste
+// 7 : emptyResult : Message for no results
 
 
 @implementation ViewController
@@ -39,12 +40,6 @@
 //        [self.view addSubview:fbLoginButton];
         self.navigationController.navigationBar.hidden = YES;
     }
-    
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-    [userSelectionTableView deselectRowAtIndexPath:[userSelectionTableView indexPathForSelectedRow] animated:YES];
-    UITableViewCell *cell = [userSelectionTableView cellForRowAtIndexPath:[userSelectionTableView indexPathForSelectedRow]];
-    cell.alpha = 0;
-    NSLog(@"cell : %@", [userSelectionTableView indexPathForSelectedRow]);
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -96,8 +91,9 @@
     
     CALayer *bgLayer = [CALayer layer];
     bgLayer.frame = self.view.bounds;
+    
     bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"triangles-bg.png"]].CGColor;
-    [self.view.layer insertSublayer:bgLayer atIndex:1];
+//    [self.view.layer insertSublayer:bgLayer atIndex:1];
     
     // Motto of the app
     CGFloat appMottoYPos = [self computeRatio:260.0 forDimension:screenHeight];
@@ -132,6 +128,8 @@
     userSelectionTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:userSelectionTableViewController.tableView];
     
+    UIView *foo = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    foo.backgroundColor = [UIColor orangeColor];
     
     // UITableview of results
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
@@ -142,6 +140,31 @@
     self.searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
     self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"No   results"];
+    
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = [UIImage imageNamed:@"reveal-icon"];
+//    textAttachment.image.l
+    
+    NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
+    
+    [attributedString replaceCharactersInRange:NSMakeRange(3, 1) withAttributedString:attrStringWithImage];
+    
+    //Message for empty search
+    UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, screenWidth, 90)];
+    emptyResultLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:26.0f];
+//    emptyResultLabel.text = @"No results";
+    emptyResultLabel.attributedText = attributedString;
+    emptyResultLabel.textColor = [UIColor whiteColor];
+//    emptyResultLabel.numberOfLines = 0;
+    emptyResultLabel.textAlignment = NSTextAlignmentCenter;
+    
+//    [emptyResultLabel sizeToFit];
+    emptyResultLabel.tag = 7;
+    emptyResultLabel.hidden = YES;
+    [self.searchResultsController.view addSubview:emptyResultLabel];
+
 
     
     
@@ -333,7 +356,7 @@
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] init];
     
-    if (self.userTaste) {
+    if ((NO)/*self.userTaste*/) {
         //
         // then put it into the NSDictionary of "taste"
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
@@ -348,7 +371,7 @@
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
     
-    self.navigationController.navigationBar.hidden = NO;
+    [[self navigationController] setNavigationBarHidden:NO animated:YES];
     self.tabBarController.tabBar.hidden = NO;
 }
 
@@ -358,7 +381,7 @@
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = YES;
     
-    self.navigationController.navigationBar.hidden = YES;
+    [[self navigationController] setNavigationBarHidden:YES animated:YES];
     self.tabBarController.tabBar.hidden = YES;
     
     [self.searchController.searchBar removeFromSuperview];
@@ -493,6 +516,7 @@
     } else {
         NSString *sectionTitle = [[[userTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
         NSArray *sectionElements = [userTasteDict objectForKey:sectionTitle];
+        // If the category is empty so the section not appears
         if ([sectionElements isKindOfClass:[NSNull class]]) {
             return 0;
         }
@@ -503,6 +527,14 @@
 - (NSInteger )numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        UILabel *emptyResultLabel = (UILabel*)[self.searchResultsController.view viewWithTag:7];
+        if ([[filteredTableDatas allKeys] count] == 0 && [self.searchController.searchBar.text length] != 0) {
+            emptyResultLabel.hidden = NO;
+            
+            return 0;
+        }
+        emptyResultLabel.hidden = YES;
+        
         return [categoryList count];
     } else {
         return userTasteDict.count;
@@ -545,14 +577,16 @@
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
-            cell.model = [rowsOfSection objectAtIndex:indexPath.row];
-            cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
-            cell.textLabel.textColor = [UIColor whiteColor];
+            
+            
         }
         
+        cell.model = [rowsOfSection objectAtIndex:indexPath.row];
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
         year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
         cell.textLabel.text = title;
+        cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
+        cell.textLabel.textColor = [UIColor whiteColor];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
@@ -563,29 +597,30 @@
         
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-            cell.delegate = self;
-            // For "Classic mode" we want a cell's background more opaque
-            cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
-            
-//            cell.rightUtilityButtons = [self rightButtonsForSearch];
-            
-            // We hide this part to get easily datas
-            cell.textLabel.frame = cellFrame;
-            
-            cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:16.0f];
-            cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-            cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-            cell.textLabel.layer.shadowOpacity = .75f;
-            cell.textLabel.textColor = [UIColor whiteColor];
-            cell.selectionStyle = UITableViewCellSelectionStyleGray;
-            //            cell.textLabel.hidden = YES;
-            cell.model = [rowsOfSection objectAtIndex:indexPath.row];
-            
-            if (imdbID != nil) {
-                [self getImageCellForData:imdbID aCell:cell];
-            }
-
         }
+        cell.delegate = self;
+        // For "Classic mode" we want a cell's background more opaque
+        cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
+        
+        //            cell.rightUtilityButtons = [self rightButtonsForSearch];
+        
+        // We hide this part to get easily datas
+        cell.textLabel.frame = cellFrame;
+        
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+        cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+        cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+        cell.textLabel.layer.shadowOpacity = .75f;
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        //            cell.textLabel.hidden = YES;
+        cell.model = [rowsOfSection objectAtIndex:indexPath.row];
+        
+        if (imdbID != nil) {
+            [self getImageCellForData:imdbID aCell:cell];
+        }
+        
+        
         
         cell.textLabel.text = title;
     }
@@ -718,6 +753,7 @@
     
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
     detailsMediaViewController.mediaDatas = selectedCell.model;
+    detailsMediaViewController.delegate = self;
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
     [self.searchController setActive:NO];
@@ -748,6 +784,12 @@
 
 }
 
+- (void) userListHaveBeenUpdate:(NSDictionary *)dict
+{
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+    userSelectionTableView.hidden = NO;
+    [userSelectionTableView reloadData];
+}
 
 
 // Title of categories
@@ -861,13 +903,25 @@
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         
+        // We order the NSDictionary key
+        for (NSString* key in [userTasteDict allKeys])
+        {
+            if ([userTasteDict objectForKey:key] != [NSNull null]) {
+                NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+                NSArray *sortedCategory = [[userTasteDict objectForKey:key] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
+                [userTasteDict removeObjectForKey:key];
+                [userTasteDict setObject:sortedCategory forKey:key];
+            }
+        }
+        
 //        self.navigationController.navigationBar.hidden = NO;
         [self.navigationController setNavigationBarHidden:NO animated:YES];
         self.tabBarController.tabBar.hidden = NO;
         
         
-        UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbUserID"
+        UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                         withValue:[userPreferences objectForKey:@"fbUserID"]];
+        NSLog(@"isNewUser : %@, %@", isNewUser, [userPreferences objectForKey:@"fbUserID"]);
         // This is the first time for user
         if (isNewUser == nil) {
             UserTaste *userTaste = [UserTaste MR_createEntity];
@@ -884,6 +938,7 @@
         UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
         userSelectionTableView.hidden = NO;
         [userSelectionTableView reloadData];
+        
         
         
     }
@@ -930,7 +985,6 @@
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];
     bluredImageView.alpha = .95f;
     [bluredImageView setFrame:self.searchResultsController.tableView.frame];
-    bluredImageView.alpha = 15.50f;
     
     UIVisualEffect *blurEffect;
     blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];

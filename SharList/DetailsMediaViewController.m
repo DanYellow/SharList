@@ -107,7 +107,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = YES;
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMediaToUserList)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMediaToUserList:)];
     
     __block NSDictionary *datasFromServer;
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -119,7 +119,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } else {
         linkAPI = [linkAPI stringByAppendingString:@"tt0903747"]; //Avengers
     }
-    linkAPI = [linkAPI stringByAppendingString:@"&plot=short&r=json"];
+    linkAPI = [linkAPI stringByAppendingString:@"&plot=full&r=json"];
     
     [manager GET:linkAPI parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         datasFromServer = [[NSDictionary alloc] initWithDictionary:responseObject];
@@ -177,7 +177,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
          [NSURL URLWithString:data[@"Poster"]]
                  placeholderImage:[UIImage imageNamed:@"bb"]];
     CGFloat imgMediaHeight = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:470 forDimension:screenHeight];
-    imgMedia.frame = CGRectMake(0, 15, screenWidth, imgMediaHeight);
+    imgMedia.frame = CGRectMake(0, 9, screenWidth, imgMediaHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
     imgMedia.clipsToBounds = YES;
     imgMedia.alpha = 0;
@@ -199,19 +199,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat mediaDescriptionWidth = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:608 forDimension:screenWidth];
     CGFloat mediaDescriptionX = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:16 forDimension:screenWidth];
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame), mediaDescriptionWidth, 10)];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame), mediaDescriptionWidth, [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:376 forDimension:screenHeight])];
     mediaDescription.text = data[@"Plot"];
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
     //    mediaDescription.scrollEnabled = NO;
-    [mediaDescription sizeToFit];
-    [mediaDescription layoutIfNeeded];
+//    [mediaDescription sizeToFit];
+//    [mediaDescription layoutIfNeeded];
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
-    mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:13.0];
+    mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
     [self.view addSubview:mediaDescription];
     
     CGRect frame = mediaDescription.frame;
@@ -250,10 +250,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     addToFavsButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:15.0f];
     addToFavsButton.frame = CGRectMake(0, screenHeight - [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:222.0 forDimension:screenHeight], screenWidth, 43);
     addToFavsButton.backgroundColor = [UIColor whiteColor];
-    
     [self.view addSubview:addToFavsButton];
     
-    
+
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton addTarget:self action:@selector(displayBuyScreen) forControlEvents:UIControlEventTouchUpInside];
     [buyButton setTitle:[@"Acheter" uppercaseString] forState:UIControlStateNormal];
@@ -342,7 +341,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(0, [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:86 forDimension:screenHeight], screenWidth, 16.0f)];
     titleBuyMedia.textColor = [UIColor whiteColor];
     titleBuyMedia.backgroundColor = [UIColor clearColor];
-    titleBuyMedia.text = [[NSString stringWithFormat:@"Acheter %@", @"Breaking Bad"] uppercaseString];
+    titleBuyMedia.text = [[NSString stringWithFormat:@"Acheter %@", self.mediaDatas[@"name"]] uppercaseString];
     titleBuyMedia.font = [UIFont fontWithName:@"Helvetica-Neue" size:19.0f];
     titleBuyMedia.textAlignment = NSTextAlignmentCenter;
     [displayBuyView addSubview:titleBuyMedia];
@@ -431,7 +430,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addPhysics
 {
-    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
+//    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
     UIView *barrier = (UIView*)[self.view viewWithTag:2];
     
     ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
@@ -465,8 +464,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
     
-    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
-    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
+//    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
+//    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
     
     [self addPhysics];
     
@@ -490,7 +489,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //                                 ShopButton *foo = (ShopButton *)[buyButtonsInitPositions objectAtIndex:count];
 //                                 shopButton.frame = [(ShopButton *)[buyButtonsInitPositions objectAtIndex:count] frame];
                                  shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
-//                                 NSLog(@"array : end, %@", NSStringFromCGRect(foo.frame));
                                  count++;
                              }
                          }
@@ -513,32 +511,39 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] addObject:self.mediaDatas];
 
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-    NSArray *datasToSort = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
+    NSArray *sortedCategory = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
     
     [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
-    [userTasteDict setObject:datasToSort forKey:[self.mediaDatas valueForKey:@"type"]];
-    
-    NSLog(@"datasToSort : %@", userTasteDict);
+    [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
+
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
-//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-//        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
-//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-//        userTaste.taste = arrayData;
-//    } completion:^(BOOL success, NSError *error) {
-//        NSLog(@"gentoo");
-//    }];
-    
-//    UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
-//    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-//    userTaste.taste = arrayData;
-//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+        userTaste.taste = arrayData;
+    } completion:^(BOOL success, NSError *error) {
+        // Update listeners for the button
+        [sender removeTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+        [sender addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+        [sender setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
+        
+//        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
+//            [self.delegate userListHaveBeenUpdate:userTasteDict];
+//        }
+    }];
+
 }
 
 - (void) removeMediaToUserList:(UIButton*)sender
 {
-
     [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] removeObject:self.mediaDatas];
+    
+//    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+//    NSArray *sortedCategory = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
+//    
+//    [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
+//    [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
@@ -547,7 +552,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         userTaste.taste = arrayData;
     } completion:^(BOOL success, NSError *error) {
         [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
+        
+        // Update listeners for the button
+        [sender removeTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+        [sender addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+        [sender setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+        
+        
     }];
+    
+    if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
+        [self.delegate userListHaveBeenUpdate:userTasteDict];
+    }
 }
 
 // This methods allows to retrieve and send (?) user datas from the server
