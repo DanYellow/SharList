@@ -22,6 +22,7 @@
 // 5 : strokeUnderSearchController
 // 6 : UIRefreshControl for userTaste
 // 7 : emptyResult : Message for no results
+// 8 : emptyUserTasteLabel : Message for no user taste
 
 
 @implementation ViewController
@@ -51,24 +52,6 @@
     self.searchController.searchBar.hidden = YES;
 }
 
-- (UIImage*) changeImg:(UIImage*)image forColor:(UIColor*)aColor
-{
-    CGRect rect = CGRectMake(0, 0, image.size.width, image.size.height);
-    UIGraphicsBeginImageContext(rect.size);
-    
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGContextTranslateCTM(context, 0, image.size.height);
-    CGContextScaleCTM(context, 1.0, -1.0);
-    CGContextClipToMask(context, rect, image.CGImage);
-    CGContextSetFillColorWithColor(context, [aColor CGColor]);
-    CGContextFillRect(context, rect);
-    
-    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return img;
-}
 
 - (void) viewDidLoad
 {
@@ -96,8 +79,7 @@
     
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
-    
-    
+
     // Design on the view
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(appearsSearchBar)];
     
@@ -160,6 +142,19 @@
     self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     
+    //Message for empty search
+    UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, screenWidth, 90)];
+    emptyResultLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:26.0f];
+    emptyResultLabel.text = @"No results";
+    emptyResultLabel.textColor = [UIColor whiteColor];
+    emptyResultLabel.numberOfLines = 0;
+    emptyResultLabel.textAlignment = NSTextAlignmentCenter;
+    emptyResultLabel.tag = 7;
+    emptyResultLabel.hidden = YES;
+    [self.searchResultsController.view addSubview:emptyResultLabel];
+
+    
+    // Message for empty list taste
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"Appuyez sur   pour remplir votre liste"];
     UIImage *lensIcon = [self changeImg:[UIImage imageNamed:@"lens-icon"] forColor:[UIColor whiteColor]];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
@@ -167,8 +162,6 @@
     textAttachment.bounds = CGRectMake(150, -15, lensIcon.size.width, lensIcon.size.height);
     
     NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
-    
-//    [attributedString replaceCharactersInRange:NSMakeRange(3, 1) withAttributedString:attrStringWithImage];
     
     NSRange r = [[attributedString string] rangeOfString:@"Appuyez sur  "];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
@@ -184,19 +177,6 @@
     emptyUserTasteLabel.tag = 8;
     emptyUserTasteLabel.hidden = YES;
     [self.view addSubview:emptyUserTasteLabel];
-    
-    //Message for empty search
-    UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, screenWidth, 90)];
-    emptyResultLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:26.0f];
-    emptyResultLabel.text = @"No results";
-    emptyResultLabel.textColor = [UIColor whiteColor];
-    emptyResultLabel.numberOfLines = 0;
-    emptyResultLabel.textAlignment = NSTextAlignmentCenter;
-    emptyResultLabel.tag = 7;
-    emptyResultLabel.hidden = YES;
-    [self.searchResultsController.view addSubview:emptyResultLabel];
-
-
     
     
     // Definition of uisearchcontroller
@@ -568,6 +548,15 @@
         
         return [categoryList count];
     } else {
+        // User have no list of taste
+        UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
+        if ([[userTasteDict allKeys] count] == 0) {
+            emptyUserTasteLabel.hidden = NO;
+            
+            return 0;
+        }
+        emptyUserTasteLabel.hidden = YES;
+        
         return userTasteDict.count;
     }
 }
@@ -1030,9 +1019,29 @@
 //    self.searchController.view.backgroundColor = [UIColor colorWithWhite:1.0 alpha:.05f];
 }
 
+// When the user starts to scroll we hide the keyboard
 - (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
     [self.searchController.searchBar resignFirstResponder];
+}
+
+- (UIImage*) changeImg:(UIImage*)image forColor:(UIColor*)aColor
+{
+    CGRect rect = CGRectMake(0, 0, image.size.width, image.size.height);
+    UIGraphicsBeginImageContext(rect.size);
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    //Avoid img flip after CGContextClipToMask method
+    CGContextTranslateCTM(context, 0, image.size.height);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    CGContextClipToMask(context, rect, image.CGImage);
+    CGContextSetFillColorWithColor(context, [aColor CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return img;
 }
 
 # pragma mark - Delegate methods

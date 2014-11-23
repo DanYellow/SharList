@@ -132,10 +132,21 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
                                               withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
-    userTasteDict = [NSMutableDictionary new];
-    userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
-
+    userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                     [NSNull null], @"book",
+                     [NSNull null], @"movie",
+                     [NSNull null], @"serie",
+                     nil];
     
+    
+    
+    
+    // This statement is hre for prevent empty user list
+    // Because it corrupt the NSMutableDictionary
+    // And you're not able to update it
+    if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] != nil) {
+        userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+    }
     
     CGFloat imgMediaHeight = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:470 forDimension:screenHeight];
     
@@ -236,7 +247,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIButton *addToFavsButton = [UIButton buttonWithType:UIButtonTypeCustom];
     
     // The media profile seen is amongst user fav list
-    if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas] == YES) {
+    
+    if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] != [NSNull null] && [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas] == YES) {
         [addToFavsButton addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [addToFavsButton setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
     } else {
@@ -508,14 +520,22 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addMediaToUserList:(UIButton*) sender
 {
-    [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] addObject:self.mediaDatas];
-
-    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-    NSArray *sortedCategory = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
-    
-    [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
-    [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
-
+    if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] == [NSNull null]) {
+        NSArray *foo = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];
+        [userTasteDict setObject:foo forKey:[self.mediaDatas valueForKey:@"type"]];
+    } else {
+        
+        NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] mutableCopy];
+        [updatedUserTaste addObject:self.mediaDatas];
+        
+        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+        NSArray *sortedCategory = [updatedUserTaste sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
+//
+        [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
+        [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
+        
+        NSLog(@"foo : %@", userTasteDict);
+    }
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
@@ -523,6 +543,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
         userTaste.taste = arrayData;
     } completion:^(BOOL success, NSError *error) {
+        [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
+        
         // Update listeners for the button
         [sender removeTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [sender addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
@@ -537,7 +559,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) removeMediaToUserList:(UIButton*)sender
 {
-    [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] removeObject:self.mediaDatas];
+    NSLog(@"%@", userTasteDict);
+//    [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] removeObject:self.mediaDatas];
     
 //    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
 //    NSArray *sortedCategory = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
@@ -545,25 +568,25 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
 //    [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     
-    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
-    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
-        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-        userTaste.taste = arrayData;
-    } completion:^(BOOL success, NSError *error) {
-        [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
-        
-        // Update listeners for the button
-        [sender removeTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-        [sender addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-        [sender setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
-        
-        
-    }];
+//    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+//        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+//        userTaste.taste = arrayData;
+//    } completion:^(BOOL success, NSError *error) {
+//        [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
+//        
+//        // Update listeners for the button
+//        [sender removeTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+//        [sender addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+//        [sender setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+//        
+//        
+//    }];
     
-    if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
-        [self.delegate userListHaveBeenUpdate:userTasteDict];
-    }
+//    if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
+//        [self.delegate userListHaveBeenUpdate:userTasteDict];
+//    }
 }
 
 // This methods allows to retrieve and send (?) user datas from the server
@@ -582,7 +605,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } else {
         userTasteJSON = @"";
     }
-    
+    NSLog(@"synchronize with server");
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@", userfbID, userTasteJSON];
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
@@ -599,6 +622,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     //Getting your response string
     
     if (self.responseData != nil) {
+        
         self.responseData = nil;
         self.responseData = [NSMutableData new];
     }
