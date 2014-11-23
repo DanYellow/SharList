@@ -51,6 +51,25 @@
     self.searchController.searchBar.hidden = YES;
 }
 
+- (UIImage*) changeImg:(UIImage*)image forColor:(UIColor*)aColor
+{
+    CGRect rect = CGRectMake(0, 0, image.size.width, image.size.height);
+    UIGraphicsBeginImageContext(rect.size);
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextTranslateCTM(context, 0, image.size.height);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    CGContextClipToMask(context, rect, image.CGImage);
+    CGContextSetFillColorWithColor(context, [aColor CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return img;
+}
+
 - (void) viewDidLoad
 {
     [super viewDidLoad];
@@ -141,26 +160,38 @@
     self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"No   results"];
-    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"Appuyez sur   pour remplir votre liste"];
+    UIImage *lensIcon = [self changeImg:[UIImage imageNamed:@"lens-icon"] forColor:[UIColor whiteColor]];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-    textAttachment.image = [UIImage imageNamed:@"reveal-icon"];
-//    textAttachment.image.l
+    textAttachment.image = lensIcon;
+    textAttachment.bounds = CGRectMake(150, -15, lensIcon.size.width, lensIcon.size.height);
     
     NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
     
-    [attributedString replaceCharactersInRange:NSMakeRange(3, 1) withAttributedString:attrStringWithImage];
+//    [attributedString replaceCharactersInRange:NSMakeRange(3, 1) withAttributedString:attrStringWithImage];
+    
+    NSRange r = [[attributedString string] rangeOfString:@"Appuyez sur  "];
+    [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
+    
+    CGFloat emptyUserTasteLabelPosY = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
+    
+    UILabel *emptyUserTasteLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
+    emptyUserTasteLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    emptyUserTasteLabel.attributedText = attributedString;
+    emptyUserTasteLabel.textColor = [UIColor whiteColor];
+    emptyUserTasteLabel.numberOfLines = 0;
+    emptyUserTasteLabel.textAlignment = NSTextAlignmentCenter;
+    emptyUserTasteLabel.tag = 8;
+    emptyUserTasteLabel.hidden = YES;
+    [self.view addSubview:emptyUserTasteLabel];
     
     //Message for empty search
     UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, screenWidth, 90)];
     emptyResultLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:26.0f];
-//    emptyResultLabel.text = @"No results";
-    emptyResultLabel.attributedText = attributedString;
+    emptyResultLabel.text = @"No results";
     emptyResultLabel.textColor = [UIColor whiteColor];
-//    emptyResultLabel.numberOfLines = 0;
+    emptyResultLabel.numberOfLines = 0;
     emptyResultLabel.textAlignment = NSTextAlignmentCenter;
-    
-//    [emptyResultLabel sizeToFit];
     emptyResultLabel.tag = 7;
     emptyResultLabel.hidden = YES;
     [self.searchResultsController.view addSubview:emptyResultLabel];
