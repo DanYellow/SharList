@@ -6,10 +6,11 @@
 //  Copyright (c) 2014 Jean-Louis Danielo. All rights reserved.
 //
 
+// DO NOT IMPORT AppDelegate.h
+
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
-#import "AppDelegate.h"
 
 //Vendors
 #import "AFNetworking.h"
@@ -22,7 +23,7 @@
 //Models
 #import "UserTaste.h"
 
-@protocol DetailsMediaViewControllerDelegate;
+@protocol UpdateUserTasteListDelegate;
 
 @interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate>
 {
@@ -56,12 +57,12 @@
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
 @property (nonatomic, strong) id mediaDatas;
 @property (retain, nonatomic) NSMutableData *responseData;
-@property (nonatomic, assign) id<DetailsMediaViewControllerDelegate> delegate;
+@property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;
 
 @end
 
 
-@protocol DetailsMediaViewControllerDelegate <NSObject>
+@protocol UpdateUserTasteListDelegate <NSObject>
 
 @required
 

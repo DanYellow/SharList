@@ -166,7 +166,7 @@
     NSRange r = [[attributedString string] rangeOfString:@"Appuyez sur  "];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
-    CGFloat emptyUserTasteLabelPosY = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
+    CGFloat emptyUserTasteLabelPosY = 45;// [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
     
     UILabel *emptyUserTasteLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
     emptyUserTasteLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
@@ -233,6 +233,8 @@
      [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
     if (!FBSession.activeSession.isOpen) {
+        // We don't want message for empty user list for no fb connexion
+        emptyUserTasteLabel.hidden = YES;
         [self.view addSubview:fbLoginButton];
     } else {
 //        if ([userPreferences boolForKey:@"appHasBeenLaunched"]) {
@@ -806,9 +808,13 @@
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
 {
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-    userSelectionTableView.hidden = NO;
-    [userSelectionTableView reloadData];
+
+//    userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+//    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+//    userSelectionTableView.hidden = NO;
+//    [userSelectionTableView reloadData];
+    
+    NSLog(@"%@", [self.userTaste fbid]);
 }
 
 
@@ -913,14 +919,15 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    //Getting your response string
-   
+
+    // Server sends back some datas
     if (self.responseData != nil) {
         // This solved a weird issue with php
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
 //        responseString = [responseString substringToIndex:[responseString length] - 1];
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
+        
         userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         
         // We order the NSDictionary key
@@ -934,14 +941,16 @@
             }
         }
         
-//        self.navigationController.navigationBar.hidden = NO;
+
         [self.navigationController setNavigationBarHidden:NO animated:YES];
         self.tabBarController.tabBar.hidden = NO;
         
         
         UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                         withValue:[userPreferences objectForKey:@"fbUserID"]];
-        NSLog(@"isNewUser : %@, %@", isNewUser, [userPreferences objectForKey:@"fbUserID"]);
+        self.responseData = nil;
+        self.responseData = [NSMutableData new];
+        
         // This is the first time for user
         if (isNewUser == nil) {
             UserTaste *userTaste = [UserTaste MR_createEntity];
@@ -949,11 +958,12 @@
             userTaste.taste = arrayData;
             userTaste.fbid = [userPreferences objectForKey:@"fbUserID"];
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+            
+            return;
         }
         
         
-        self.responseData = nil;
-        self.responseData = [NSMutableData new];
+        
         
         UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
         userSelectionTableView.hidden = NO;

@@ -57,8 +57,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [layer removeFromSuperlayer];
         }
     }
-    
-
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -148,12 +146,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
     }
     
-    CGFloat imgMediaHeight = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:470 forDimension:screenHeight];
+    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     
     UIView *infoMediaView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, imgMediaHeight)];
     infoMediaView.tag = 2;
     
-    CGFloat mediaTitleLabelY = imgMediaHeight - [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:108 forDimension:imgMediaHeight];
+    CGFloat mediaTitleLabelY = imgMediaHeight - [self computeRatio:108 forDimension:imgMediaHeight];
     UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabelY, screenWidth, 20)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
@@ -187,7 +185,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [imgMedia setImageWithURL:
          [NSURL URLWithString:data[@"Poster"]]
                  placeholderImage:[UIImage imageNamed:@"bb"]];
-    CGFloat imgMediaHeight = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:470 forDimension:screenHeight];
+    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     imgMedia.frame = CGRectMake(0, 9, screenWidth, imgMediaHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
     imgMedia.clipsToBounds = YES;
@@ -208,9 +206,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [imgMedia.layer insertSublayer:radialGradientLayer atIndex:0];
     
     
-    CGFloat mediaDescriptionWidth = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:608 forDimension:screenWidth];
-    CGFloat mediaDescriptionX = [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:16 forDimension:screenWidth];
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame), mediaDescriptionWidth, [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:376 forDimension:screenHeight])];
+    CGFloat mediaDescriptionWidth = [self computeRatio:608 forDimension:screenWidth];
+    CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame), mediaDescriptionWidth, [self computeRatio:376 forDimension:screenHeight])];
     mediaDescription.text = data[@"Plot"];
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
@@ -260,7 +258,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     addToFavsButton.contentEdgeInsets = UIEdgeInsetsMake(0, 36, 0, 0);
     addToFavsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     addToFavsButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:15.0f];
-    addToFavsButton.frame = CGRectMake(0, screenHeight - [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:222.0 forDimension:screenHeight], screenWidth, 43);
+    addToFavsButton.frame = CGRectMake(0, screenHeight - [self computeRatio:222.0 forDimension:screenHeight], screenWidth, 43);
     addToFavsButton.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:addToFavsButton];
     
@@ -350,7 +348,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      completion:nil];
     
 
-    UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(0, [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:86 forDimension:screenHeight], screenWidth, 16.0f)];
+    UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(0, [self computeRatio:86 forDimension:screenHeight], screenWidth, 16.0f)];
     titleBuyMedia.textColor = [UIColor whiteColor];
     titleBuyMedia.backgroundColor = [UIColor clearColor];
     titleBuyMedia.text = [[NSString stringWithFormat:@"Acheter %@", self.mediaDatas[@"name"]] uppercaseString];
@@ -359,8 +357,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [displayBuyView addSubview:titleBuyMedia];
     
     UIFont *buttonFont = [UIFont fontWithName:@"Helvetica" size:18.0f];
-    CGSize buttonSize = CGSizeMake([(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:574 forDimension:screenWidth], 41.0f);
-    CGPoint buttonPos = CGPointMake([(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:34 forDimension:screenWidth], [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:190 forDimension:screenHeight]);
+    CGSize buttonSize = CGSizeMake([self computeRatio:574 forDimension:screenWidth], 41.0f);
+    CGPoint buttonPos = CGPointMake([self computeRatio:34 forDimension:screenWidth], [self computeRatio:190 forDimension:screenHeight]);
     
     
     UIColor *amazonOrange = [UIColor colorWithRed:1 green:(124.0f/255.0f) blue:(2.0f/255.0f) alpha:1.0f];
@@ -404,7 +402,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     UIButton *crossButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    crossButton.frame = CGRectMake([(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:250 forDimension:screenWidth], screenHeight - [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:116 forDimension:screenHeight], 50, 50);
+    crossButton.frame = CGRectMake([self computeRatio:250 forDimension:screenWidth], screenHeight - [self computeRatio:116 forDimension:screenHeight], 50, 50);
     [crossButton addTarget:self action:@selector(hideBuyScreen) forControlEvents:UIControlEventTouchUpInside];
     crossButton.backgroundColor = [UIColor clearColor];
     crossButton.layer.borderColor = [UIColor whiteColor].CGColor;
@@ -432,8 +430,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     if (self.isPhysicsAdded == NO) {
         for (ShopButton *shopButton in displayBuyView.subviews) {
             if ([shopButton isKindOfClass:[ShopButton class]]) {
-                // [NSValue valueWithCGRect:shopButton.frame]
-                NSLog(@"start : %@", NSStringFromCGRect(shopButton.frame));
                 [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:shopButton.frame]];
             }
         }
@@ -520,21 +516,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addMediaToUserList:(UIButton*) sender
 {
+    // If the value of the key is nil so we create an new NSArray that contains the first elmt of the category
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] == [NSNull null]) {
-        NSArray *foo = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];
-        [userTasteDict setObject:foo forKey:[self.mediaDatas valueForKey:@"type"]];
+        NSArray *firstEntryToCategory = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];
+        [userTasteDict setObject:firstEntryToCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     } else {
-        
         NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] mutableCopy];
         [updatedUserTaste addObject:self.mediaDatas];
         
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
         NSArray *sortedCategory = [updatedUserTaste sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
-//
+
         [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
         [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
-        
-        NSLog(@"foo : %@", userTasteDict);
     }
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
@@ -550,17 +544,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [sender addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [sender setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
         
-//        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
-//            [self.delegate userListHaveBeenUpdate:userTasteDict];
-//        }
+        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
+            [self.delegate userListHaveBeenUpdate:userTasteDict];
+        }
     }];
 
 }
 
 - (void) removeMediaToUserList:(UIButton*)sender
 {
-    NSLog(@"%@", userTasteDict);
-//    [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] removeObject:self.mediaDatas];
+    NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] mutableCopy];
+    [updatedUserTaste removeObject:self.mediaDatas];
+    [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
+    [userTasteDict setObject:updatedUserTaste forKey:[self.mediaDatas valueForKey:@"type"]];
     
 //    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
 //    NSArray *sortedCategory = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
@@ -568,25 +564,24 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
 //    [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     
-//    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
-//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-//        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
-//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-//        userTaste.taste = arrayData;
-//    } completion:^(BOOL success, NSError *error) {
-//        [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
-//        
-//        // Update listeners for the button
-//        [sender removeTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-//        [sender addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-//        [sender setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
-//        
-//        
-//    }];
+    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+        userTaste.taste = arrayData;
+    } completion:^(BOOL success, NSError *error) {
+        [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
+        
+        // Update listeners for the button
+        [sender removeTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+        [sender addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
+        [sender setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+        
+        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
+            [self.delegate userListHaveBeenUpdate:userTasteDict];
+        }
+    }];
     
-//    if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
-//        [self.delegate userListHaveBeenUpdate:userTasteDict];
-//    }
 }
 
 // This methods allows to retrieve and send (?) user datas from the server
@@ -650,6 +645,22 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.duckduckgo.com"]];
 }
 
+- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension
+{
+    CGFloat ratio = 0;
+    ratio = ((aNumber * 100)/aDimension);
+    ratio = ((ratio*aDimension)/100);
+    
+    if ([UIScreen mainScreen].scale > 2.1) {
+        
+        ratio = ratio/3; // Because we are in retina HD
+        
+    } else {
+        ratio = ratio/2; // Because we are in retina
+    }
+    
+    return roundf(ratio);
+}
 
 
 - (void)didReceiveMemoryWarning {
