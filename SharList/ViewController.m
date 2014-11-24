@@ -36,6 +36,10 @@
     
     self.searchController.searchBar.hidden = NO;
     
+    // Animate background of cell selected on press back button
+    UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
+    NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
+    [tableView deselectRowAtIndexPath:tableSelection animated:YES];
     
     if (!FBSession.activeSession.isOpen) {
 //        [self.view addSubview:fbLoginButton];
