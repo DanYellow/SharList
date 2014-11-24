@@ -24,9 +24,6 @@
 
 #import "UserTaste.h"
 
-//#import "AddTaskViewController.h"
-
-
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate>
 {    

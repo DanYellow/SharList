@@ -30,6 +30,9 @@
     SettingsViewController *settingsViewController = [[SettingsViewController alloc] init];
     settingsViewController.title = @"Paramètres";
     
+    MeetingsListViewController *meetingsListViewController = [[MeetingsListViewController alloc] init];
+    meetingsListViewController.title = @"Rencontres";
+    
     
     self.tabBarController = [[UITabBarController alloc] init];
     
@@ -41,6 +44,11 @@
                                              initWithRootViewController:settingsViewController];
     navControllerSettings.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     navControllerSettings.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    
+    UINavigationController* navControllerMeetingList = [[UINavigationController alloc]
+                                                     initWithRootViewController:meetingsListViewController];
+    navControllerMeetingList.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
+    navControllerMeetingList.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     
     // Contains first view of the app
     UINavigationController* navController = [[UINavigationController alloc]
@@ -64,6 +72,13 @@
     bottomBorder2.frame = bottomBorderFrame;
     [navControllerSettings.navigationBar.layer addSublayer:bottomBorder2];
     
+    CALayer *bottomBorder3 = [CALayer layer];
+    bottomBorder3.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+    bottomBorder3.borderWidth = 1;
+    bottomBorder3.name = @"bottomBorderLayer";
+    bottomBorder3.frame = bottomBorderFrame;
+    [navControllerMeetingList.navigationBar.layer addSublayer:bottomBorder3];
+    
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:1.0f]];
     NSMutableDictionary *titleBarAttributes = [NSMutableDictionary dictionaryWithDictionary: [[UINavigationBar appearance] titleTextAttributes]];
@@ -72,7 +87,7 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
     
     
-    NSArray* controllers = @[navController, navControllerSettings];
+    NSArray* controllers = @[navController, navControllerMeetingList, navControllerSettings];
     
     self.tabBarController.viewControllers = controllers;
     

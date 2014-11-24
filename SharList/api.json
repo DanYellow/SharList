@@ -36,28 +36,31 @@
   },
   {
     "id": 5,
-    "name": "I am Charlotte Simmons",
-    "type": "book",
-    "year": 2012,
-    "imdbID": "tt0182576"
+    "name": "Manhattan",
+    "type": "serie",
+    "year": 2014,
+    "imdbID": "tt3231564"
   },
   {
     "id": 6,
     "name": "Silicon Valley",
     "type": "serie",
-    "year": 2014
+    "year": 2014,
+    "imdbID": "tt2575988"
   },
   {
     "id": 7,
-    "name": "I am Charlotte Simmons",
+    "name": "Masters of Sex",
     "type": "serie",
-    "year": 2008
+    "year": 2013,
+    "imdbID": "tt2137109"
   },
   {
     "id": 8,
-    "name": "I am Charlotte Simmons",
-    "type": "movie",
-    "year": 2008
+    "name": "Modern Family",
+    "type": "serie",
+    "year": 2008,
+    "imdbID": "tt1442437"
   },
   {
     "id": 9,
@@ -90,31 +93,36 @@
     "id": 13,
     "name": "Futurama",
     "type": "serie",
-    "year": 2008
+    "year": 2008,
+    "imdbID": "tt0149460"
   },
   {
     "id": 14,
-    "name": "I am Charlotte Simmons",
+    "name": "Broadchurch",
     "type": "serie",
-    "year": 2008
+    "year": 2013,
+    "imdbID": "tt2249364"
   },
   {
     "id": 15,
-    "name": "I am Charlotte Simmons",
+    "name": "How I Met You Mother",
     "type": "serie",
-    "year": 2008
+    "year": 2008,
+    "imdbID": "tt0460649"
   },
   {
     "id": 16,
-    "name": "I am Charlotte Simmons",
+    "name": "Utopia",
     "type": "serie",
-    "year": 2008
+    "year": 2008,
+    "imdbID": "tt2384811"
   },
   {
     "id": 17,
-    "name": "I am Charlotte Simmons",
+    "name": "SpongBob SquarePants",
     "type": "serie",
-    "year": 2008
+    "year": 1999,
+    "imdbID": "tt0206512"
   },
   {
     "id": 18,
@@ -169,13 +177,15 @@
     "id": 25,
     "name": "Castle",
     "type": "serie",
-    "year": 2008
+    "year": 2008,
+    "imdbID": "tt1219024"
   },
   {
     "id": 26,
     "name": "Bones",
     "type": "serie",
-    "year": 2008
+    "year": 2008,
+    "imdbID": "tt0460627"
   },
   {
     "id": 27,
@@ -288,5 +298,7 @@
     "type": "serie",
     "year": 2008,
     "imdbID": "tt0364845"
-  }
+  },
+
+
 ]

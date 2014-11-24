@@ -13,6 +13,7 @@
 
 #import "ViewController.h"
 #import "SettingsViewController.h"
+#import "MeetingsListViewController.h"
 
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>

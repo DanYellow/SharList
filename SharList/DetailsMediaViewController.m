@@ -248,7 +248,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [addToFavsButton addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [addToFavsButton setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
         
-        if ([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] count] >= 2) {
+        if ([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] count] >= 5) {
 //            [addToFavsButton setBackgroundImage:<#(UIImage *)#> forState:<#(UIControlState)#>]
             addToFavsButton.enabled = NO;
         }

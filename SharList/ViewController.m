@@ -13,7 +13,7 @@
 @end
 
 
-
+#pragma mark - tag list references
 // Tag list
 // 1 : Facebook button for connect
 // 2 : appMottoText (UILabel)
@@ -42,7 +42,6 @@
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
     
     if (!FBSession.activeSession.isOpen) {
-//        [self.view addSubview:fbLoginButton];
         self.navigationController.navigationBar.hidden = YES;
     }
 }
@@ -87,12 +86,12 @@
     // Design on the view
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(appearsSearchBar)];
     
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame = self.view.bounds;
+    CAGradientLayer *gradientBGView = [CAGradientLayer layer];
+    gradientBGView.frame = self.view.bounds;
     UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
     UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
-    gradient.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
-    [self.view.layer insertSublayer:gradient atIndex:0];
+    gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
+    [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
     CALayer *bgLayer = [CALayer layer];
     bgLayer.frame = self.view.bounds;
@@ -141,9 +140,6 @@
     userSelectionTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:userSelectionTableViewController.tableView];
-    
-    UIView *foo = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-    foo.backgroundColor = [UIColor orangeColor];
     
     // UITableview of results
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
@@ -556,7 +552,7 @@
     }
 }
 
-- (NSInteger )numberOfSectionsInTableView:(UITableView *)tableView
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         UILabel *emptyResultLabel = (UILabel*)[self.searchResultsController.view viewWithTag:7];

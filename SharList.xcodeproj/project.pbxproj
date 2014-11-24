@@ -32,6 +32,7 @@
 		1A4953D41A1EBB9500A0C232 /* ShopButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4953D31A1EBB9500A0C232 /* ShopButton.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		1ACDC9041A23D3AA0032B857 /* app.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* app.plist */; };
+		1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */; };
 		C972540DD50E496DAA79453E /* libPods-SharList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C05C0F3990854370BFE3C1AC /* libPods-SharList.a */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +85,8 @@
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
 		1ACDC9031A23D3AA0032B857 /* app.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = app.plist; sourceTree = "<group>"; };
+		1ACDC9051A23E6720032B857 /* MeetingsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingsListViewController.h; sourceTree = "<group>"; };
+		1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingsListViewController.m; sourceTree = "<group>"; };
 		A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SharList.xcconfig"; path = "Pods/Pods-SharList.xcconfig"; sourceTree = "<group>"; };
 		C05C0F3990854370BFE3C1AC /* libPods-SharList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SharList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -141,6 +144,7 @@
 			children = (
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
+				1ACDC9081A23E6780032B857 /* MeetingsListViewController */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
@@ -247,6 +251,15 @@
 				1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */,
 			);
 			name = CustomViews;
+			sourceTree = "<group>";
+		};
+		1ACDC9081A23E6780032B857 /* MeetingsListViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1ACDC9051A23E6720032B857 /* MeetingsListViewController.h */,
+				1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */,
+			);
+			name = MeetingsListViewController;
 			sourceTree = "<group>";
 		};
 		58C2B6CA8DD147B7BE564C25 /* Frameworks */ = {
@@ -403,6 +416,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */,
 				1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */,
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
 				1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */,
