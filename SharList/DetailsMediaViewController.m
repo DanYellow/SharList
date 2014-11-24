@@ -137,8 +137,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      nil];
     
     
-    
-    
     // This statement is hre for prevent empty user list
     // Because it corrupt the NSMutableDictionary
     // And you're not able to update it
@@ -214,9 +212,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
-    //    mediaDescription.scrollEnabled = NO;
-//    [mediaDescription sizeToFit];
-//    [mediaDescription layoutIfNeeded];
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
@@ -252,6 +247,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } else {
         [addToFavsButton addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [addToFavsButton setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+        
+        if ([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] count] >= 2) {
+//            [addToFavsButton setBackgroundImage:<#(UIImage *)#> forState:<#(UIControlState)#>]
+            addToFavsButton.enabled = NO;
+        }
     }
     
     [addToFavsButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];

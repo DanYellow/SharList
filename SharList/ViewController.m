@@ -96,6 +96,15 @@
     bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"triangles-bg.png"]].CGColor;
 //    [self.view.layer insertSublayer:bgLayer atIndex:1];
     
+    
+//    NSString *path = [[NSBundle mainBundle] pathForResource:
+//                      @"app" ofType:@"plist"];
+//    // Build the array from the plist
+//    NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:path];
+//    
+//    NSArray *value = [dict valueForKey:@"apiURL"];
+//    NSLog(@"foo : %@", value );
+    
     // Motto of the app
     CGFloat appMottoYPos = [self computeRatio:260.0 forDimension:screenHeight];
 
@@ -149,6 +158,12 @@
     emptyResultLabel.textColor = [UIColor whiteColor];
     emptyResultLabel.numberOfLines = 0;
     emptyResultLabel.textAlignment = NSTextAlignmentCenter;
+    emptyResultLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+    emptyResultLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    emptyResultLabel.layer.shadowRadius = 2.5;
+    emptyResultLabel.layer.shadowOpacity = 0.75;
+    emptyResultLabel.clipsToBounds = NO;
+    emptyResultLabel.layer.masksToBounds = NO;
     emptyResultLabel.tag = 7;
     emptyResultLabel.hidden = YES;
     [self.searchResultsController.view addSubview:emptyResultLabel];
@@ -234,9 +249,9 @@
     // Detect if user not is connected
     if (!FBSession.activeSession.isOpen) {
         // We don't want message for empty user list for no fb connexion
-        emptyUserTasteLabel.hidden = YES;
         [self.view addSubview:fbLoginButton];
     } else {
+
 //        if ([userPreferences boolForKey:@"appHasBeenLaunched"]) {
 //            [self userConnectionForFbID:[userPreferences objectForKey:@"fbUserID"]];
 //        }
@@ -369,7 +384,7 @@
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] init];
     
-    if ((NO)/*self.userTaste*/) {
+    if (self.userTaste) {
         //
         // then put it into the NSDictionary of "taste"
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
@@ -552,7 +567,7 @@
     } else {
         // User have no list of taste
         UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
-        if ([[userTasteDict allKeys] count] == 0) {
+        if ([[userTasteDict allKeys] count] == 0 && FBSession.activeSession.isOpen) {
             emptyUserTasteLabel.hidden = NO;
             
             return 0;
@@ -764,7 +779,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"foof");
+//    NSLog(@"foof");
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -809,12 +824,10 @@
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
 {
 
-//    userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
-//    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-//    userSelectionTableView.hidden = NO;
-//    [userSelectionTableView reloadData];
-    
-    NSLog(@"%@", [self.userTaste fbid]);
+    userTasteDict = [dict mutableCopy];
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+    userSelectionTableView.hidden = NO;
+    [userSelectionTableView reloadData];
 }
 
 
@@ -922,28 +935,29 @@
 
     // Server sends back some datas
     if (self.responseData != nil) {
-        // This solved a weird issue with php
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+        self.tabBarController.tabBar.hidden = NO;
+        
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-//        responseString = [responseString substringToIndex:[responseString length] - 1];
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         
-        userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        
-        // We order the NSDictionary key
-        for (NSString* key in [userTasteDict allKeys])
-        {
-            if ([userTasteDict objectForKey:key] != [NSNull null]) {
-                NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-                NSArray *sortedCategory = [[userTasteDict objectForKey:key] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
-                [userTasteDict removeObjectForKey:key];
-                [userTasteDict setObject:sortedCategory forKey:key];
-            }
-        }
-        
+        if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
+            userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
 
-        [self.navigationController setNavigationBarHidden:NO animated:YES];
-        self.tabBarController.tabBar.hidden = NO;
+            // We order the NSDictionary key
+            for (NSString* key in [userTasteDict allKeys])
+            {
+                if ([userTasteDict objectForKey:key] != [NSNull null]) {
+                    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+                    NSArray *sortedCategory = [[userTasteDict objectForKey:key] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
+                    [userTasteDict removeObjectForKey:key];
+                    [userTasteDict setObject:sortedCategory forKey:key];
+                }
+            }
+        } else {
+            NSLog(@"no user datas");
+        }
         
         
         UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
@@ -958,19 +972,11 @@
             userTaste.taste = arrayData;
             userTaste.fbid = [userPreferences objectForKey:@"fbUserID"];
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-            
-            return;
         }
-        
-        
-        
         
         UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
         userSelectionTableView.hidden = NO;
         [userSelectionTableView reloadData];
-        
-        
-        
     }
 }
 

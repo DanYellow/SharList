@@ -31,6 +31,7 @@
 		1A3C228F1A11AAAC005B31E4 /* invisible-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */; };
 		1A4953D41A1EBB9500A0C232 /* ShopButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4953D31A1EBB9500A0C232 /* ShopButton.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
+		1ACDC9041A23D3AA0032B857 /* app.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* app.plist */; };
 		C972540DD50E496DAA79453E /* libPods-SharList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C05C0F3990854370BFE3C1AC /* libPods-SharList.a */; };
 /* End PBXBuildFile section */
 
@@ -82,6 +83,7 @@
 		1A4953D31A1EBB9500A0C232 /* ShopButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopButton.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
+		1ACDC9031A23D3AA0032B857 /* app.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = app.plist; sourceTree = "<group>"; };
 		A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SharList.xcconfig"; path = "Pods/Pods-SharList.xcconfig"; sourceTree = "<group>"; };
 		C05C0F3990854370BFE3C1AC /* libPods-SharList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SharList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -161,6 +163,7 @@
 			children = (
 				1A076DB71A0FE20900CD725A /* Info.plist */,
 				1A076DB81A0FE20900CD725A /* main.m */,
+				1ACDC9031A23D3AA0032B857 /* app.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1ACDC9041A23D3AA0032B857 /* app.plist in Resources */,
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
 				1A0A045D1A12A58400B6F844 /* appBG-2.png in Resources */,
 				1A130A9E1A227ED600CB16F2 /* lens-icon.png in Resources */,
