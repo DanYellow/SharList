@@ -109,16 +109,30 @@
 //    NSLog(@"foo : %@", value );
     
     // Motto of the app
-    CGFloat appMottoYPos = [self computeRatio:260.0 forDimension:screenHeight];
-
-    UILabel *appMottoText = [[UILabel alloc] initWithFrame:CGRectMake(0, appMottoYPos, screenWidth, 20)];
-    appMottoText.text = @"Partagez ce que vous aimez avec l'inconnu";
-    appMottoText.font = [UIFont fontWithName:@"Helvetica" size:14.0];
-    appMottoText.textAlignment = NSTextAlignmentCenter;
-    appMottoText.textColor = [UIColor blackColor];
-    appMottoText.tag = 2;
+    UIView *appnameView = [[UIView alloc] initWithFrame:CGRectMake([self computeRatio:44.0 forDimension:screenWidth],
+                                                                  [self computeRatio:104.0 forDimension:screenHeight],
+                                                                  screenWidth, 61)];
+    appnameView.tag = 2;
+    appnameView.backgroundColor = [UIColor clearColor];
+    appnameView.opaque = YES;
+    [self.view addSubview:appnameView];
     
-    [self.view addSubview:appMottoText];
+    UILabel *appnameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
+    appnameLabel.text = @"Shike";
+    appnameLabel.font = [UIFont fontWithName:@"Helvetica" size:50.0];
+    appnameLabel.textColor = [UIColor whiteColor];
+    appnameLabel.textAlignment = NSTextAlignmentLeft;
+    [appnameView addSubview:appnameLabel];
+    
+    UILabel *appMottoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 51, screenWidth, 15)];
+    appMottoLabel.text = [@"Faites découvrir au monde ce que vous aimez" uppercaseString];
+    appMottoLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0];
+    appMottoLabel.textColor = [UIColor whiteColor];
+    appMottoLabel.textAlignment = NSTextAlignmentLeft;
+    [appnameView addSubview:appMottoLabel];
+    
+    
+
     
     // Facebook login
     FBLoginView *fbLoginButton = [FBLoginView new];
@@ -388,19 +402,32 @@
         //
         // then put it into the NSDictionary of "taste"
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
-        
+        [self displayUserTasteList];
     } else {
         [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:NO];
     }
-    
+}
+
+- (void) displayUserTasteList
+{
     [self.view addSubview: self.searchController.searchBar];
     
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-    userSelectionTableView.hidden = NO;
-    [userSelectionTableView reloadData];
+    UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
     
-    [[self navigationController] setNavigationBarHidden:NO animated:YES];
-    self.tabBarController.tabBar.hidden = NO;
+    [UIView animateWithDuration:0.5 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         appnameView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+                         userSelectionTableView.hidden = NO;
+                         [userSelectionTableView reloadData];
+                         
+                         [[self navigationController] setNavigationBarHidden:NO animated:YES];
+                         self.tabBarController.tabBar.hidden = NO;
+                         appnameView.hidden = true;
+                     }];
 }
 
 
@@ -456,28 +483,7 @@
     //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
     [self userConnectionForFbID:fbIDNumber];
-
-    UILabel *appMottoText = (UILabel*)[self.view viewWithTag:2];
-    CGFloat endTransitionY = appMottoText.frame.origin.y;
-    endTransitionY = endTransitionY - (endTransitionY/2);
     
-    [UIView animateWithDuration:0.5 delay:0.0
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         appMottoText.frame = CGRectMake(0, endTransitionY, appMottoText.frame.size.width, appMottoText.frame.size.height);
-                         
-                         [UIView animateWithDuration:0.4 delay:0.2
-                                             options: UIViewAnimationOptionCurveEaseOut
-                                          animations:^{
-                                              appMottoText.alpha = 0;
-                                          }
-                                          completion:^(BOOL finished){
-//                                              NSLog(@"Done!");
-                                          }];
-                     }
-                     completion:^(BOOL finished){
-//                         NSLog(@"Done!");
-                     }];
     self.FirstFBLoginDone = NO;
 }
 
@@ -956,7 +962,6 @@
             NSLog(@"no user datas");
         }
         
-        
         UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                         withValue:[userPreferences objectForKey:@"fbUserID"]];
         self.responseData = nil;
@@ -971,9 +976,7 @@
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }
         
-        UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-        userSelectionTableView.hidden = NO;
-        [userSelectionTableView reloadData];
+        [self displayUserTasteList];
     }
 }
 
