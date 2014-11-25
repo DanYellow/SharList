@@ -412,6 +412,11 @@
 {
     [self.view addSubview: self.searchController.searchBar];
     
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+    userSelectionTableView.alpha = 0;
+    userSelectionTableView.hidden = NO;
+    [userSelectionTableView reloadData];
+    
     UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
     
     [UIView animateWithDuration:0.5 delay:0.0
@@ -420,13 +425,17 @@
                          appnameView.alpha = 0;
                      }
                      completion:^(BOOL finished){
-                         UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-                         userSelectionTableView.hidden = NO;
-                         [userSelectionTableView reloadData];
+                         [UIView animateWithDuration:0.5 delay:0.2
+                                             options: UIViewAnimationOptionCurveEaseOut
+                                          animations:^{
+                                              userSelectionTableView.alpha = 1;
+                                          }
+                                          completion:nil];
                          
                          [[self navigationController] setNavigationBarHidden:NO animated:YES];
                          self.tabBarController.tabBar.hidden = NO;
-                         appnameView.hidden = true;
+                         appnameView.hidden = YES;
+                         appnameView.alpha = 0;
                      }];
 }
 
@@ -434,13 +443,34 @@
 - (void) userLoggedOutOffb
 {
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-    userSelectionTableView.hidden = YES;
     
-    [[self navigationController] setNavigationBarHidden:YES animated:YES];
-    self.tabBarController.tabBar.hidden = YES;
     
-    [self.searchController.searchBar removeFromSuperview];
+
     [userTasteDict removeAllObjects];
+    
+    UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
+    appnameView.hidden = NO;
+    
+    [UIView animateWithDuration:0.5 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         userSelectionTableView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [UIView animateWithDuration:0.5 delay:0.2
+                                             options: UIViewAnimationOptionCurveEaseOut
+                                          animations:^{
+                                              appnameView.alpha = 1;
+                                          }
+                                          completion:nil];
+                         
+                         [[self navigationController] setNavigationBarHidden:YES animated:YES];
+                         self.tabBarController.tabBar.hidden = YES;
+                         
+                         [self.searchController.searchBar removeFromSuperview];
+
+                         userSelectionTableView.hidden = YES;
+                     }];
     
     // user logged out so we remove his key into the NSUserdefault
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"fbUserID"];
@@ -938,13 +968,11 @@
 
     // Server sends back some datas
     if (self.responseData != nil) {
-        [self.navigationController setNavigationBarHidden:NO animated:YES];
-        self.tabBarController.tabBar.hidden = NO;
-        
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
-        
+    
+        // There is some datas from the server
         if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
             userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
 
