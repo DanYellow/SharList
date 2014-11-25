@@ -24,4 +24,7 @@
     NSUserDefaults *userPreferences;
 }
 
+
+- (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
+
 @end

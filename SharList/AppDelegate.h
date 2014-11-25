@@ -15,11 +15,16 @@
 #import "SettingsViewController.h"
 #import "MeetingsListViewController.h"
 
+//Vendors
+#import "LocationTracker.h"
+
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic,strong) NSManagedObjectContext* managedObjectContext;
+@property LocationTracker *locationTracker;
+@property (nonatomic) NSTimer* locationUpdateTimer;
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
 

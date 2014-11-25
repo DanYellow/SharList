@@ -76,18 +76,35 @@
 
 #pragma mark - Tableview configuration
 
-- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return 1;
-}
-
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 2;
 }
 
 - (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return @"Gentoo";
+    return @"25/11/2014";
+}
+
+// Title of categories
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    CGFloat fontSize = 18.0f;
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
+    headerView.opaque = YES;
+    
+//    NSString *title = [[categoryList objectAtIndex:section] uppercaseString];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
+    label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+    label.text = @"title";
+    
+
+    headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
+    label.textColor = [UIColor whiteColor];
+    
+    [headerView addSubview:label];
+    
+    return headerView;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -95,7 +112,7 @@
     return 69.0;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+- (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
     } else {
@@ -103,8 +120,47 @@
     }
 }
 
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 1;
+}
 
-- (void)didReceiveMemoryWarning {
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
+{
+    NSLog(@"Install Gentoo");
+}
+
+
+- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"Cell";
+    
+
+    UITableViewCell *cell;
+    cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+    }
+    
+    cell.textLabel.text = @"title";
+    cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
+    cell.textLabel.textColor = [UIColor whiteColor];
+    
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
+    UIView *bgColorView = [UIView new];
+    [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
+    [cell setSelectedBackgroundView:bgColorView];
+    
+    return cell;
+}
+
+
+#pragma mark - Fetch Datas in background
+
+
+- (void) didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }

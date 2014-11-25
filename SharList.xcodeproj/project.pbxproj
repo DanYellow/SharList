@@ -33,6 +33,9 @@
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		1ACDC9041A23D3AA0032B857 /* app.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* app.plist */; };
 		1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */; };
+		1ACDC9101A23FC3D0032B857 /* LocationTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC90B1A23FC3D0032B857 /* LocationTracker.m */; };
+		1ACDC9111A23FC3D0032B857 /* BackgroundTaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC90D1A23FC3D0032B857 /* BackgroundTaskManager.m */; };
+		1ACDC9121A23FC3D0032B857 /* LocationShareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC90F1A23FC3D0032B857 /* LocationShareModel.m */; };
 		C972540DD50E496DAA79453E /* libPods-SharList.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C05C0F3990854370BFE3C1AC /* libPods-SharList.a */; };
 /* End PBXBuildFile section */
 
@@ -87,6 +90,13 @@
 		1ACDC9031A23D3AA0032B857 /* app.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = app.plist; sourceTree = "<group>"; };
 		1ACDC9051A23E6720032B857 /* MeetingsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingsListViewController.h; sourceTree = "<group>"; };
 		1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingsListViewController.m; sourceTree = "<group>"; };
+		1ACDC90A1A23FC3D0032B857 /* LocationTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationTracker.h; sourceTree = "<group>"; };
+		1ACDC90B1A23FC3D0032B857 /* LocationTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationTracker.m; sourceTree = "<group>"; };
+		1ACDC90C1A23FC3D0032B857 /* BackgroundTaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundTaskManager.h; sourceTree = "<group>"; };
+		1ACDC90D1A23FC3D0032B857 /* BackgroundTaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundTaskManager.m; sourceTree = "<group>"; };
+		1ACDC90E1A23FC3D0032B857 /* LocationShareModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationShareModel.h; sourceTree = "<group>"; };
+		1ACDC90F1A23FC3D0032B857 /* LocationShareModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationShareModel.m; sourceTree = "<group>"; };
+		1ACDC9161A24086A0032B857 /* DetailsMediaViewControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMediaViewControllerProtocol.h; sourceTree = "<group>"; };
 		A1973845151A40A393F3C152 /* Pods-SharList.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SharList.xcconfig"; path = "Pods/Pods-SharList.xcconfig"; sourceTree = "<group>"; };
 		C05C0F3990854370BFE3C1AC /* libPods-SharList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SharList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -144,6 +154,8 @@
 			children = (
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
+				1ACDC9161A24086A0032B857 /* DetailsMediaViewControllerProtocol.h */,
+				1ACDC9091A23FC240032B857 /* BackgroundTaskManager */,
 				1ACDC9081A23E6780032B857 /* MeetingsListViewController */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
@@ -262,6 +274,19 @@
 			name = MeetingsListViewController;
 			sourceTree = "<group>";
 		};
+		1ACDC9091A23FC240032B857 /* BackgroundTaskManager */ = {
+			isa = PBXGroup;
+			children = (
+				1ACDC90A1A23FC3D0032B857 /* LocationTracker.h */,
+				1ACDC90B1A23FC3D0032B857 /* LocationTracker.m */,
+				1ACDC90C1A23FC3D0032B857 /* BackgroundTaskManager.h */,
+				1ACDC90D1A23FC3D0032B857 /* BackgroundTaskManager.m */,
+				1ACDC90E1A23FC3D0032B857 /* LocationShareModel.h */,
+				1ACDC90F1A23FC3D0032B857 /* LocationShareModel.m */,
+			);
+			name = BackgroundTaskManager;
+			sourceTree = "<group>";
+		};
 		58C2B6CA8DD147B7BE564C25 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -321,6 +346,11 @@
 				TargetAttributes = {
 					1A076DB21A0FE20900CD725A = {
 						CreatedOnToolsVersion = 6.0.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					1A076DCB1A0FE20900CD725A = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -421,11 +451,14 @@
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
 				1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */,
 				1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */,
+				1ACDC9101A23FC3D0032B857 /* LocationTracker.m in Sources */,
+				1ACDC9111A23FC3D0032B857 /* BackgroundTaskManager.m in Sources */,
 				1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */,
 				1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */,
 				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,
 				1A3C22821A114339005B31E4 /* UserTaste.m in Sources */,
 				1A076DB91A0FE20900CD725A /* main.m in Sources */,
+				1ACDC9121A23FC3D0032B857 /* LocationShareModel.m in Sources */,
 				1A4953D41A1EBB9500A0C232 /* ShopButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

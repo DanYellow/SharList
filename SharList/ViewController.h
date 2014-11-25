@@ -43,6 +43,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     BOOL USERALREADYMADEARESEARCH;
 }
 
+@property (nonatomic, weak) id<DetailsMediaViewControllerProtocol> delegate;
+
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) UITableViewController *searchResultsController;
 @property (strong, nonatomic) UserTaste *userTaste;
