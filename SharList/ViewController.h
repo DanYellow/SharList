@@ -41,6 +41,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     NSMutableDictionary *fooDict;
     
     BOOL USERALREADYMADEARESEARCH;
+    
+    UIActivityIndicatorView *loadingIndicator;
 }
 
 @property (nonatomic, weak) id<DetailsMediaViewControllerProtocol> delegate;

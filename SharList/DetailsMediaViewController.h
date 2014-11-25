@@ -42,7 +42,7 @@
     NSMutableArray *buyButtonsInitPositions;
     NSMutableDictionary *userTasteDict;
     
-    UIActivityIndicatorView *indicator;
+    UIActivityIndicatorView *loadingIndicator;
 }
 
 - (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;

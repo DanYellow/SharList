@@ -199,12 +199,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     [self.view addSubview:infoMediaView];
     
-    indicator = [[UIActivityIndicatorView alloc] init];
-    indicator.center = self.view.center;
-    indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-    [indicator startAnimating];
-    indicator.hidesWhenStopped = YES;
-    [self.view addSubview:indicator];
+    loadingIndicator = [[UIActivityIndicatorView alloc] init];
+    loadingIndicator.center = self.view.center;
+    loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    [loadingIndicator startAnimating];
+    loadingIndicator.hidesWhenStopped = YES;
+    loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    [self.view addSubview:loadingIndicator];
 }
 
 - (void) setMediaViewForData:(NSDictionary*)data
@@ -308,7 +309,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
     [self.view addSubview:buyButton];
     
-    [indicator stopAnimating];
+    [loadingIndicator stopAnimating];
 }
 
 
@@ -580,7 +581,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
         
-        UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.navigationController.navigationBar viewWithTag:2];
+        UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.view viewWithTag:2];
         addMediaBtnItem.enabled = NO;
         
         if ([NSStringFromClass([sender class]) isEqualToString:@"UIBarButtonItem"]) {
@@ -619,7 +620,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
         
-        UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.navigationController.navigationBar viewWithTag:2];
+        UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.view viewWithTag:2];
         addMediaBtnItem.enabled = YES;
         
         if ([NSStringFromClass([sender class]) isEqualToString:@"UIBarButtonItem"]) {

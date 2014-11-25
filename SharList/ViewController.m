@@ -10,6 +10,9 @@
 
 @interface ViewController ()
 
+@property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
+
+
 @end
 
 
@@ -61,7 +64,25 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-
+    NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
+    
+    NSOperationQueue *operationQueue = manager.operationQueue;
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        switch (status) {
+            case AFNetworkReachabilityStatusReachableViaWWAN:
+            case AFNetworkReachabilityStatusReachableViaWiFi:
+                [operationQueue setSuspended:NO];
+                self.ConnectedToInternet = YES;
+                break;
+            case AFNetworkReachabilityStatusNotReachable:
+            default:
+                [operationQueue setSuspended:YES];
+                self.ConnectedToInternet = NO;
+                break;
+        }
+    }];
     
     // Variables init
     USERALREADYMADEARESEARCH = NO;
@@ -280,20 +301,38 @@
     
 //    [UserTaste MR_truncateAll];
     
-//    NSArray *fooArray = @[@"I am Charlotte Simmons",
-//                           @"I am Charlotte Simmons",
-//                           @"I am Charlotte Simmons",
-//                           @"I am Charlotte Simmons",
-//                          @"I am Charlotte Simmons"];
-//    NSDictionary *productManagers = @{@"serie": fooArray, @"movie": fooArray, @"book": fooArray};
-//    
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    
+
+    NSDateComponents *comps = [[NSDateComponents alloc] init];
+    [comps setDay:24];
+    [comps setMonth:11];
+    [comps setYear:2014];
+    [comps setMinute:10];
+    [comps setHour:10];
+
+    NSDate *newDate = [cal dateFromComponents:comps];
+    
+    NSArray *fooArray = @[
+                          @{ @"imdbID": @"tt1486217", @"id": @21, @"year": @2008, @"name" : @"Archer", @"type" : @"serie" },
+                          @{ @"imdbID": @"tt2372162", @"id": @23, @"year": @2008, @"name" : @"Orange is the new Black", @"type" : @"serie" },
+                          @{ @"imdbID": @"tt1826940", @"id": @27, @"year": @2008, @"name" : @"New Girl", @"type" : @"serie" },
+                         ];
+
+    NSArray *moviesArray = @[
+                      @{ @"imdbID": @"tt0848228", @"id": @24, @"year": @2008, @"name" : @"The Avengers", @"type" : @"serie" },
+                      @{ @"imdbID": @"tt0114709", @"id": @39, @"year": @2008, @"name" : @"Toy Story", @"type" : @"serie" }
+                      ];
+    NSDictionary *productManagers = @{@"serie": fooArray, @"movie": moviesArray, @"book": fooArray};
+//
 //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
 //    
 //    } completion:nil];
-//        UserTaste *userTaste = [UserTaste  MR_createEntity];
-//        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-//        userTaste.taste = arrayData;
-//        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
+        UserTaste *userTaste = [UserTaste  MR_createEntity];
+        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+        userTaste.taste = arrayData;
+        userTaste.fbid = [NSNumber numberWithLong:1387984218159373];
+        userTaste.lastMeeting = newDate; //[NSDate date];
 //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
 //    
@@ -305,7 +344,13 @@
     
 //    NSMutableDictionary *array = [NSKeyedUnarchiver unarchiveObjectWithData:[[people objectAtIndex:0] taste]];
     
-
+    loadingIndicator = [[UIActivityIndicatorView alloc] init];
+    loadingIndicator.center = self.view.center;
+    loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    loadingIndicator.hidesWhenStopped = YES;
+    loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    
+    [self.view addSubview:loadingIndicator];
 }
 
 - (void) fetchUserDatas {
@@ -436,6 +481,7 @@
                          self.tabBarController.tabBar.hidden = NO;
                          appnameView.hidden = YES;
                          appnameView.alpha = 0;
+                         [loadingIndicator stopAnimating];
                      }];
 }
 

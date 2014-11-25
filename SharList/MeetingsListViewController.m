@@ -74,18 +74,48 @@
     userMeetingsListTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userMeetingsListTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:userMeetingsListTableViewController.tableView];
+    
+    
+    // Fetching datas
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:YES withPredicate:meetingsFilter]; // Order by date of meeting
+    
+    NSMutableArray *listOfDistinctDays = [NSMutableArray new];
+    for (UserTaste *userTaste in meetings) {
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        dateFormatter.dateFormat = @"MM/dd/yy";
+        NSString *dateString = [dateFormatter stringFromDate: [userTaste lastMeeting]];
+
+        [listOfDistinctDays addObject: dateString];
+    }
+    
+//    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"beginDate" ascending:NO];
+    [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
+
+    
+    distinctDays = [[NSSet alloc] initWithArray:listOfDistinctDays];
+    
+
+//    NSDateFormatter *timeFormatter = [[[NSDateFormatter alloc]init]autorelease];
+//    timeFormatter.dateFormat = @"HH:mm:ss";
+//    
+//    
+//    NSString *dateString = [timeFormatter stringFromDate: localDate];
+    
+
 }
 
 #pragma mark - Tableview configuration
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return [[distinctDays allObjects] count];
 }
 
-- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return @"25/11/2014";
-}
+//- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//    return [[distinctDays allObjects] objectAtIndex:section];
+//}
 
 // Title of categories
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -94,11 +124,11 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
     
-//    NSString *title = [[categoryList objectAtIndex:section] uppercaseString];
+    NSString *title = [[distinctDays allObjects] objectAtIndex:section];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-    label.text = @"title";
+    label.text = title;
     
 
     headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];

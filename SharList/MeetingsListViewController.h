@@ -16,12 +16,17 @@
 #import "UIImageView+AFNetworking.h"
 #import "SWTableViewCell.h"
 
+//Models
+#import "UserTaste.h"
+
 @interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
     
     NSUserDefaults *userPreferences;
+    
+    NSSet *distinctDays;
 }
 
 
