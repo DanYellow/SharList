@@ -614,8 +614,6 @@
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
-            
-            
         }
         
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
@@ -657,8 +655,10 @@
             [self getImageCellForData:imdbID aCell:cell];
         }
         
-        
-        
+        UIView *bgColorView = [UIView new];
+        [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.7f]];
+        [cell setSelectedBackgroundView:bgColorView];
+
         cell.textLabel.text = title;
     }
 
@@ -674,9 +674,6 @@
         cell.detailTextLabel.text = year;
 //    }
     
-    UIView *bgColorView = [UIView new];
-    [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
-    [cell setSelectedBackgroundView:bgColorView];
 
     return cell;
 }

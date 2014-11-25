@@ -545,14 +545,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } completion:^(BOOL success, NSError *error) {
         [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
         
+        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
+            [self.delegate userListHaveBeenUpdate:userTasteDict];
+        }
+        
+        if ([NSStringFromClass([sender class]) isEqualToString:@"UIBarButtonItem"]) {
+            return;
+        }
         // Update listeners for the button
         [sender removeTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [sender addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [sender setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
-        
-        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
-            [self.delegate userListHaveBeenUpdate:userTasteDict];
-        }
     }];
 
 }
@@ -578,14 +581,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } completion:^(BOOL success, NSError *error) {
         [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
         
+        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
+            [self.delegate userListHaveBeenUpdate:userTasteDict];
+        }
+        
+        if ([NSStringFromClass([sender class]) isEqualToString:@"UIBarButtonItem"]) {
+            return;
+        }
         // Update listeners for the button
         [sender removeTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [sender addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [sender setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
-        
-        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
-            [self.delegate userListHaveBeenUpdate:userTasteDict];
-        }
     }];
     
 }
