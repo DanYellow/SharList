@@ -11,6 +11,7 @@
 @interface DetailsMediaViewController ()
 
 @property (strong, nonatomic) UserTaste *userTaste;
+@property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
 
 @end
 
@@ -25,7 +26,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 // Tag list
 // 1 : displayBuyView (blurred view)
-// 2 :
+// 2 : addMediaBtnItem
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -84,6 +85,28 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    self.ConnectedToInternet = YES;
+    
+    NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
+    
+    NSOperationQueue *operationQueue = manager.operationQueue;
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        switch (status) {
+            case AFNetworkReachabilityStatusReachableViaWWAN:
+            case AFNetworkReachabilityStatusReachableViaWiFi:
+                [operationQueue setSuspended:NO];
+                self.ConnectedToInternet = YES;
+                break;
+            case AFNetworkReachabilityStatusNotReachable:
+            default:
+                [operationQueue setSuspended:YES];
+                self.ConnectedToInternet = NO;
+                break;
+        }
+    }];
+    
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
@@ -111,10 +134,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = YES;
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMediaToUserList:)];
+    
+    UIBarButtonItem *addMediaBtnItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMediaToUserList:)];
+    addMediaBtnItem.tag = 2;
+    addMediaBtnItem.enabled = NO;
+    self.navigationItem.rightBarButtonItem = addMediaBtnItem;
     
     __block NSDictionary *datasFromServer;
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
     NSString *linkAPI = @"http://www.omdbapi.com/?i=";
@@ -245,14 +272,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIButton *addToFavsButton = [UIButton buttonWithType:UIButtonTypeCustom];
     
-    // The media profile seen is amongst user fav list
+    UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.navigationController.navigationBar viewWithTag:2];
     
+    // User have this media amongst their list
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] != [NSNull null] && [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas] == YES) {
         [addToFavsButton addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [addToFavsButton setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
+        addMediaBtnItem.enabled = NO;
+        
     } else {
         [addToFavsButton addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [addToFavsButton setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+        addMediaBtnItem.enabled = YES;
         
         if ([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] count] >= 5) {
 //            [addToFavsButton setBackgroundImage:<#(UIImage *)#> forState:<#(UIControlState)#>]
@@ -549,6 +580,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
         
+        UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.navigationController.navigationBar viewWithTag:2];
+        addMediaBtnItem.enabled = NO;
+        
         if ([NSStringFromClass([sender class]) isEqualToString:@"UIBarButtonItem"]) {
             return;
         }
@@ -584,6 +618,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
+        
+        UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.navigationController.navigationBar viewWithTag:2];
+        addMediaBtnItem.enabled = YES;
         
         if ([NSStringFromClass([sender class]) isEqualToString:@"UIBarButtonItem"]) {
             return;

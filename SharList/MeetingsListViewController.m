@@ -39,6 +39,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+
+    
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
