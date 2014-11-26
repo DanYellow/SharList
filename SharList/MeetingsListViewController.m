@@ -63,8 +63,8 @@
     
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
-    segmentedControlView.backgroundColor = [UIColor clearColor];
-//    segmentedControlView.opaque = NO;
+    segmentedControlView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
+    segmentedControlView.opaque = NO;
     
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"All", @"Favorites"]];
     segmentedControl.frame = CGRectMake(10, 5, screenWidth - 20, 30);
@@ -76,29 +76,25 @@
     
     
     // Uitableview of user selection (what user likes)
-    UITableView *userMeetingsListTableViewController = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 47) style:UITableViewStylePlain];
-    userMeetingsListTableViewController.dataSource = self;
-    userMeetingsListTableViewController.delegate = self;
-    userMeetingsListTableViewController.backgroundColor = [UIColor clearColor];
-    userMeetingsListTableViewController.tag = 1;
-    userMeetingsListTableViewController.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    UITableView *userMeetingsListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 47) style:UITableViewStylePlain];
+    userMeetingsListTableView.dataSource = self;
+    userMeetingsListTableView.delegate = self;
+    userMeetingsListTableView.backgroundColor = [UIColor clearColor];
+    userMeetingsListTableView.tag = 1;
+    userMeetingsListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
-    userMeetingsListTableViewController.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    userMeetingsListTableViewController.tableHeaderView = segmentedControlView;
-    [self.view addSubview:userMeetingsListTableViewController];
-    [userMeetingsListTableViewController setContentOffset:CGPointMake(0, 40)];
-//    [userMeetingsListTableViewController scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
-    
+    userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    userMeetingsListTableView.tableHeaderView = segmentedControlView;
+    userMeetingsListTableView.contentOffset = CGPointMake(0, 40);
+
+    [self.view addSubview:userMeetingsListTableView];
     
     
     // Fetching datas
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:meetingsFilter]; // Order by date of meeting
-//    NSLog(@"GENTOO : %li", meetings.count);
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
-    
-//    NSMutableDictionary *foo2 = [NSMutableDictionary new];
     
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -107,26 +103,12 @@
 
         [listOfDistinctDays addObject: dateString];
         [foo addObject:[userTaste lastMeeting]];
-        
-        NSLog(@"ftru : %@", [userTaste lastMeeting]);
-
     }
     
-//    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"beginDate" ascending:NO];
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
 
     daysList = [[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]]; //foo
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
-    
-//    NSArray * uniqueArray = ;
-    NSLog(@"%@, %@", daysList, distinctDays);
-//    NSDateFormatter *timeFormatter = [[[NSDateFormatter alloc]init]autorelease];
-//    timeFormatter.dateFormat = @"HH:mm:ss";
-//    
-//    
-//    NSString *dateString = [timeFormatter stringFromDate: localDate];
-    
-
 }
 
 - (void) doAction:(id)sender
@@ -143,7 +125,7 @@
 }
 
 // Title of categories
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     CGFloat fontSize = 18.0f;
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
