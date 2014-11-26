@@ -534,7 +534,7 @@
         return;
     }
     
-    FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
+//    FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
     
     // We format the user id (NSString) to an NSNumber to be stored in NSUserDefault key
     NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
@@ -652,7 +652,17 @@
     } else {
         // User have no list of taste
         UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
-        if ([[userTasteDict allKeys] count] == 0 && FBSession.activeSession.isOpen) {
+        BOOL IsTableViewEmpty = YES;
+        // This loop is here to check the value of all keys
+        for (int i = 0; i < [[userTasteDict allKeys] count]; i++) {
+            if (![[userTasteDict objectForKey:[[userTasteDict allKeys] objectAtIndex:i]] isKindOfClass:[NSNull class]]) {
+                if ([[userTasteDict objectForKey:[[userTasteDict allKeys] objectAtIndex:i]] count] != 0) {
+                    IsTableViewEmpty = NO;
+                }
+            }
+        }
+    
+        if (IsTableViewEmpty == YES && FBSession.activeSession.isOpen) {
             emptyUserTasteLabel.hidden = NO;
             
             return 0;
@@ -905,7 +915,6 @@
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
 {
-
     userTasteDict = [dict mutableCopy];
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
