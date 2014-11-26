@@ -305,11 +305,11 @@
     
 
     NSDateComponents *comps = [[NSDateComponents alloc] init];
-    [comps setDay:24];
-    [comps setMonth:11];
-    [comps setYear:2014];
+    [comps setDay:13];
+    [comps setMonth:10];
+    [comps setYear:2015];
     [comps setMinute:10];
-    [comps setHour:10];
+    [comps setHour:9];
 
     NSDate *newDate = [cal dateFromComponents:comps];
     
@@ -331,8 +331,8 @@
         UserTaste *userTaste = [UserTaste  MR_createEntity];
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
         userTaste.taste = arrayData;
-        userTaste.fbid = [NSNumber numberWithLong:1387984218159373];
-        userTaste.lastMeeting = newDate; //[NSDate date];
+        userTaste.fbid = [NSNumber numberWithLong:1387984218159351];
+    userTaste.lastMeeting = newDate; //[NSDate date];
 //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
 //    
@@ -353,7 +353,8 @@
     [self.view addSubview:loadingIndicator];
 }
 
-- (void) fetchUserDatas {
+- (void) fetchUserDatas
+{
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:6];
     [userSelectRefresh endRefreshing];
 }
@@ -448,8 +449,10 @@
         // then put it into the NSDictionary of "taste"
         userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
         [self displayUserTasteList];
+        NSLog(@"fetch local datas");
     } else {
         [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:NO];
+        NSLog(@"fetch server datas");
     }
 }
 
@@ -686,7 +689,7 @@
     static NSString *CellIdentifier = @"Cell";
     
     NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
-    NSString *title, *description, *year, *imdbID;
+    NSString *title, *year, *imdbID;
     ShareListMediaTableViewCell *cell;
     
     //Search results tableview
@@ -863,7 +866,7 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
-    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
+//    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
     
     ShareListMediaTableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
     
@@ -993,7 +996,7 @@
     // We send the json to the server only when we need it
     NSString *userTasteJSON;
     if (isUpdate == YES) {
-        userTasteJSON = [self updateTasteToServer];
+        userTasteJSON = [self updateTasteForServer];
     } else {
         userTasteJSON = @"";
     }

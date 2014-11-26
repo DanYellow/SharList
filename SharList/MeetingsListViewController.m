@@ -63,25 +63,26 @@
     
     
     // Uitableview of user selection (what user likes)
-    UITableViewController *userMeetingsListTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userMeetingsListTableViewController.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight - 49); //[self computeRatio:800.0 forDimension:screenHeight] + 44
-    userMeetingsListTableViewController.tableView.dataSource = self;
-    userMeetingsListTableViewController.tableView.delegate = self;
-    userMeetingsListTableViewController.tableView.backgroundColor = [UIColor clearColor];
-    userMeetingsListTableViewController.tableView.tag = 1;
-    userMeetingsListTableViewController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    UITableView *userMeetingsListTableViewController = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 49) style:UITableViewStylePlain];
+    userMeetingsListTableViewController.dataSource = self;
+    userMeetingsListTableViewController.delegate = self;
+    userMeetingsListTableViewController.backgroundColor = [UIColor clearColor];
+    userMeetingsListTableViewController.tag = 1;
+    userMeetingsListTableViewController.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
-    userMeetingsListTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    userMeetingsListTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
-    [self.view addSubview:userMeetingsListTableViewController.tableView];
+    userMeetingsListTableViewController.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    userMeetingsListTableViewController.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:userMeetingsListTableViewController];
     
     
     // Fetching datas
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:meetingsFilter]; // Order by date of meeting
-    
+//    NSLog(@"GENTOO : %li", meetings.count);
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
+    
+//    NSMutableDictionary *foo2 = [NSMutableDictionary new];
     
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -90,17 +91,17 @@
 
         [listOfDistinctDays addObject: dateString];
         [foo addObject:[userTaste lastMeeting]];
-        
-        NSLog(@"%@", [userTaste lastMeeting]);
+
     }
     
 //    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"beginDate" ascending:NO];
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
 
-    daysList = [[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]];
-    distinctDays = [[NSSet alloc] initWithArray:listOfDistinctDays];
+    daysList = [[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]]; //foo
+    distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
     
-    NSLog(@"%@", daysList);
+//    NSArray * uniqueArray = ;
+    NSLog(@"%@, %@", daysList, distinctDays);
 //    NSDateFormatter *timeFormatter = [[[NSDateFormatter alloc]init]autorelease];
 //    timeFormatter.dateFormat = @"HH:mm:ss";
 //    
@@ -114,35 +115,36 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [[distinctDays allObjects] count];
+//    NSLog(@"distint key : %@", [distinctDays allObjects]);
+    return [distinctDays count];
 }
 
-//- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//    return [[distinctDays allObjects] objectAtIndex:section];
-//}
+- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [distinctDays objectAtIndex:section];
+}
 
 // Title of categories
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    CGFloat fontSize = 18.0f;
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
-    headerView.opaque = YES;
-    
-    NSString *title = [[distinctDays allObjects] objectAtIndex:section];
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
-    label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-    label.text = title;
-    
-
-    headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
-    label.textColor = [UIColor whiteColor];
-    
-    [headerView addSubview:label];
-    
-    return headerView;
-}
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    CGFloat fontSize = 18.0f;
+//    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
+//    headerView.opaque = YES;
+//    
+//    NSString *title = [[distinctDays allObjects] objectAtIndex:section];
+//    
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
+//    label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+//    label.text = title;
+//    
+//
+//    headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
+//    label.textColor = [UIColor whiteColor];
+//    
+//    [headerView addSubview:label];
+//    
+//    return headerView;
+//}
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -159,21 +161,22 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    
-//    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-//    dateFormatter.dateFormat = @"MM/dd/yy"; //MM/dd/yy
-//    NSString *stringDate = (NSString*)[[distinctDays allObjects] objectAtIndex:section];
-    
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", [daysList objectAtIndex:section], [daysList objectAtIndex:section]];
-//    NSPredicate *datePredicate = [NSPredicate predicateWithFormat:@"lastMeeting == %@", [daysList objectAtIndex:section] ];
     
-    NSCompoundPredicate *supe = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, predicate]];
+    NSCalendar *calendar = [NSCalendar currentCalendar]; // gets default calendar
+    NSDateComponents *components = [calendar components:(NSCalendarUnitYear | NSCalendarUnitMonth |  NSCalendarUnitDay) fromDate:[daysList objectAtIndex:section]]; // gets the year, month, and day for today's date
+    NSDate *firstDate = [calendar dateFromComponents:components]; // makes a new NSDate keeping only the year, month, and day
+    
+//    NSLog(@"firstDate : %@", [daysList objectAtIndex:section]);
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", [daysList objectAtIndex:section], [daysList objectAtIndex:section]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"lastMeeting == %@", [daysList objectAtIndex:0]];
+    
+    NSCompoundPredicate *supe = [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate]];
     
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:supe];
     
-    NSLog(@"%@ | %li", @"", meetings.count);
+    NSLog(@"%@ | %li", [daysList objectAtIndex:0], section);
  
     return meetings.count;
 }

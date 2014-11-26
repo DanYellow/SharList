@@ -26,11 +26,8 @@
     
     NSUserDefaults *userPreferences;
     
-    NSSet *distinctDays;
+    NSArray *distinctDays;
     NSMutableArray *daysList;
 }
-
-
-- (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
 @end
