@@ -78,24 +78,29 @@
     
     // Fetching datas
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
-    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:YES withPredicate:meetingsFilter]; // Order by date of meeting
+    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:meetingsFilter]; // Order by date of meeting
     
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
+    NSMutableArray *foo = [NSMutableArray new];
+    
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         dateFormatter.dateFormat = @"MM/dd/yy";
         NSString *dateString = [dateFormatter stringFromDate: [userTaste lastMeeting]];
 
         [listOfDistinctDays addObject: dateString];
+        [foo addObject:[userTaste lastMeeting]];
+        
+        NSLog(@"%@", [userTaste lastMeeting]);
     }
     
 //    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"beginDate" ascending:NO];
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
 
-    
+    daysList = [[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]];
     distinctDays = [[NSSet alloc] initWithArray:listOfDistinctDays];
     
-
+    NSLog(@"%@", daysList);
 //    NSDateFormatter *timeFormatter = [[[NSDateFormatter alloc]init]autorelease];
 //    timeFormatter.dateFormat = @"HH:mm:ss";
 //    
@@ -154,7 +159,23 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    
+//    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+//    dateFormatter.dateFormat = @"MM/dd/yy"; //MM/dd/yy
+//    NSString *stringDate = (NSString*)[[distinctDays allObjects] objectAtIndex:section];
+    
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", [daysList objectAtIndex:section], [daysList objectAtIndex:section]];
+//    NSPredicate *datePredicate = [NSPredicate predicateWithFormat:@"lastMeeting == %@", [daysList objectAtIndex:section] ];
+    
+    NSCompoundPredicate *supe = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, predicate]];
+    
+    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:supe];
+    
+    NSLog(@"%@ | %li", @"", meetings.count);
+ 
+    return meetings.count;
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath

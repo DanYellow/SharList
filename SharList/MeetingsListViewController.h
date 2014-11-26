@@ -27,6 +27,7 @@
     NSUserDefaults *userPreferences;
     
     NSSet *distinctDays;
+    NSMutableArray *daysList;
 }
 
 
