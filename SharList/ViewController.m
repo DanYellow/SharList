@@ -314,9 +314,9 @@
     NSDate *newDate = [cal dateFromComponents:comps];
     
     NSArray *fooArray = @[
-                          @{ @"imdbID": @"tt1486217", @"id": @21, @"year": @2008, @"name" : @"Archer", @"type" : @"serie" },
-                          @{ @"imdbID": @"tt2372162", @"id": @23, @"year": @2008, @"name" : @"Orange is the new Black", @"type" : @"serie" },
-                          @{ @"imdbID": @"tt1826940", @"id": @27, @"year": @2008, @"name" : @"New Girl", @"type" : @"serie" },
+                          @{ @"imdbID": @"tt1486217", @"id": @21, @"year": @2010, @"name" : @"Archer", @"type" : @"serie" },
+                          @{ @"imdbID": @"tt2372162", @"id": @23, @"year": @2009, @"name" : @"Orange is the new Black", @"type" : @"serie" },
+                          @{ @"imdbID": @"tt1826940", @"id": @27, @"year": @2007, @"name" : @"New Girl", @"type" : @"serie" },
                          ];
 
     NSArray *moviesArray = @[
@@ -331,7 +331,7 @@
         UserTaste *userTaste = [UserTaste  MR_createEntity];
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
         userTaste.taste = arrayData;
-        userTaste.fbid = [NSNumber numberWithLong:1387984218159351];
+        userTaste.fbid = [NSNumber numberWithLong:1387984218159367];
     userTaste.lastMeeting = newDate; //[NSDate date];
 //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
@@ -868,7 +868,7 @@
 {
 //    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
     
-    ShareListMediaTableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+    ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
     detailsMediaViewController.mediaDatas = selectedCell.model;

@@ -91,6 +91,8 @@
 
         [listOfDistinctDays addObject: dateString];
         [foo addObject:[userTaste lastMeeting]];
+        
+        NSLog(@"ftru : %@", [userTaste lastMeeting]);
 
     }
     
@@ -186,7 +188,9 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
-    NSLog(@"Install Gentoo");
+    ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
+
+    NSLog(@"%@", selectedCell.model);
 }
 
 
@@ -195,16 +199,44 @@
     static NSString *CellIdentifier = @"Cell";
     
 
-    UITableViewCell *cell;
+    ShareListMediaTableViewCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
-    cell.textLabel.text = @"title";
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.dateFormat = @"MM-dd-yy";
+    
+    NSDate *currentDate = [NSDate new];
+    currentDate = [dateFormatter dateFromString:[distinctDays objectAtIndex:indexPath.section]];
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:currentDate];
+    
+    NSMutableArray *foo = [NSMutableArray new];
+    for (int i = 0; i < [daysList count]; i++) {
+        NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[daysList objectAtIndex:i] ];
+        
+        
+        if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
+            [foo addObject:[daysList objectAtIndex:i]];
+        }
+    }
+    
+    UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
+                                           withValue:[foo objectAtIndex:indexPath.row]];
+    
+    
+    NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
+    cellDateFormatter.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
+    
+    cell.textLabel.text = [cellDateFormatter stringFromDate:[foo objectAtIndex:indexPath.row]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
+    cell.model = [NSKeyedUnarchiver unarchiveObjectWithData:currentUserTaste.taste];
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 

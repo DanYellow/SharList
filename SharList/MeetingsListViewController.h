@@ -14,7 +14,7 @@
 //Vendors
 #import "AFNetworking.h"
 #import "UIImageView+AFNetworking.h"
-#import "SWTableViewCell.h"
+#import "ShareListMediaTableViewCell.h"
 
 //Models
 #import "UserTaste.h"
