@@ -324,18 +324,19 @@
                       @{ @"imdbID": @"tt0114709", @"id": @39, @"year": @2008, @"name" : @"Toy Story", @"type" : @"serie" }
                       ];
     NSDictionary *productManagers = @{@"serie": fooArray, @"movie": moviesArray, @"book": fooArray};
-//
-//    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-//    
-//    } completion:nil];
-        UserTaste *userTaste = [UserTaste  MR_createEntity];
-        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-        userTaste.taste = arrayData;
-        userTaste.fbid = [NSNumber numberWithLong:1387984218159367];
-    userTaste.lastMeeting = newDate; //[NSDate date];
-//        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-
-//    
+    //
+    //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+    //
+    //    } completion:nil]; //[NSDate date];
+    UserTaste *userTaste = [UserTaste  MR_createEntity];
+    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+    userTaste.taste = arrayData;
+    userTaste.fbid = [NSNumber numberWithLong:1387984218150367];
+    userTaste.lastMeeting = newDate;
+    userTaste.isFavorite = YES;
+    //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
+    //
 //    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
 //                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
 //    
@@ -661,7 +662,7 @@
                 }
             }
         }
-    
+        
         if (IsTableViewEmpty == YES && FBSession.activeSession.isOpen) {
             emptyUserTasteLabel.hidden = NO;
             
@@ -886,31 +887,6 @@
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
     [self.searchController setActive:NO];
-//    NSLog(@"cell : %@", [tableView indexPathForSelectedRow]);
-//    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-//    cell.alpha = .5f;
-//
-//    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
-//    
-//    [[userTasteDict objectForKey:@"movie"] removeObject:cell.textLabel.text];
-//    NSLog(@"%@", cell.textLabel.text);
-////    NSLog(@"cell: %@, %@, %li, %@, %@", cell.textLabel.text, titleForHeader, (long)indexPath.row, [userTasteDict objectForKey:@"serie"], [userPreferences objectForKey:@"fbUserID"]);
-////    NSLog(@"string : %@", [[userTasteDict objectForKey:@"serie"] isKindOfClass:[NSMutableArray class]]);
-//    
-//    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"fbUserID"]];
-//
-//
-////    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-////        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
-////        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-////        userTaste.taste = arrayData;
-////    } completion:^(BOOL success, NSError *error) {
-//        [tableView reloadData];
-////    }];
-//
-//
-//    cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
-
 }
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
@@ -1059,6 +1035,7 @@
             NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
             userTaste.taste = arrayData;
             userTaste.fbid = [userPreferences objectForKey:@"fbUserID"];
+            userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }
         

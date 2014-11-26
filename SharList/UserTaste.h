@@ -15,5 +15,6 @@
 @property (nonatomic, retain) NSNumber *fbid;
 @property (nonatomic, retain) NSData *taste;
 @property (nonatomic, retain) NSDate *lastMeeting;
+@property (nonatomic, assign) BOOL isFavorite;
 
 @end

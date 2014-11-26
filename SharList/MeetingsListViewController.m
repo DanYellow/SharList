@@ -193,7 +193,10 @@
 {
     ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
 
-    NSLog(@"%@", selectedCell.model);
+    DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
+    detailsMeetingViewController.meetingDatas = selectedCell.model;
+    [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
+
 }
 
 

@@ -14,5 +14,6 @@
 @dynamic fbid;
 @dynamic taste;
 @dynamic lastMeeting;
+@dynamic isFavorite;
 
 @end

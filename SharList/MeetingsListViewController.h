@@ -19,6 +19,8 @@
 //Models
 #import "UserTaste.h"
 
+#import "DetailsMeetingViewController.h"
+
 @interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate>
 {
     CGFloat screenWidth;

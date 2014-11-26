@@ -60,11 +60,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
 }
 
-- (void)doSomething
-{
-    NSLog(@"Hello FirstViewController");
-}
-
 
 - (void)viewWillDisappear:(BOOL)animated
 {
@@ -81,7 +76,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.navigationController.navigationBar.layer addSublayer:bottomBorder];
 }
 
-- (void)viewDidLoad {
+- (void) viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
