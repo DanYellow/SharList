@@ -305,11 +305,11 @@
     
 
     NSDateComponents *comps = [[NSDateComponents alloc] init];
-    [comps setDay:13];
-    [comps setMonth:10];
-    [comps setYear:2015];
-    [comps setMinute:10];
-    [comps setHour:9];
+    [comps setDay:24];
+    [comps setMonth:11];
+    [comps setYear:2014];
+    [comps setMinute:9];
+    [comps setHour:43];
 
     NSDate *newDate = [cal dateFromComponents:comps];
     

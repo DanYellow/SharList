@@ -119,32 +119,27 @@
     return [distinctDays count];
 }
 
-- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    return [distinctDays objectAtIndex:section];
-}
-
 // Title of categories
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    CGFloat fontSize = 18.0f;
-//    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
-//    headerView.opaque = YES;
-//    
-//    NSString *title = [[distinctDays allObjects] objectAtIndex:section];
-//    
-//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
-//    label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-//    label.text = title;
-//    
-//
-//    headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
-//    label.textColor = [UIColor whiteColor];
-//    
-//    [headerView addSubview:label];
-//    
-//    return headerView;
-//}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    CGFloat fontSize = 18.0f;
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
+    headerView.opaque = YES;
+    
+    NSString *title = [distinctDays objectAtIndex:section];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
+    label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
+    label.text = title;
+    
+
+    headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
+    label.textColor = [UIColor whiteColor];
+    
+    [headerView addSubview:label];
+    
+    return headerView;
+}
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -162,23 +157,31 @@
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+
+    // We don't want the taste of the current user
+    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:meetingsFilter];
     
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.dateFormat = @"MM-dd-yy";
+
+    NSDate *currentDate = [NSDate new];
+    currentDate = [dateFormatter dateFromString:[distinctDays objectAtIndex:section]];
+
+    NSCalendar *calendar = [NSCalendar currentCalendar];
     
-    NSCalendar *calendar = [NSCalendar currentCalendar]; // gets default calendar
-    NSDateComponents *components = [calendar components:(NSCalendarUnitYear | NSCalendarUnitMonth |  NSCalendarUnitDay) fromDate:[daysList objectAtIndex:section]]; // gets the year, month, and day for today's date
-    NSDate *firstDate = [calendar dateFromComponents:components]; // makes a new NSDate keeping only the year, month, and day
+    NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:currentDate];
     
-//    NSLog(@"firstDate : %@", [daysList objectAtIndex:section]);
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", [daysList objectAtIndex:section], [daysList objectAtIndex:section]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"lastMeeting == %@", [daysList objectAtIndex:0]];
-    
-    NSCompoundPredicate *supe = [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate]];
-    
-    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:supe];
-    
-    NSLog(@"%@ | %li", [daysList objectAtIndex:0], section);
- 
-    return meetings.count;
+    int j = 0;
+    for (int i = 0; i < [meetings count]; i++) {
+        NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
+        
+        
+        if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
+            j++;
+        }
+    }
+
+    return j;
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
