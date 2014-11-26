@@ -62,8 +62,21 @@
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
     
+    UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
+    segmentedControlView.backgroundColor = [UIColor clearColor];
+//    segmentedControlView.opaque = NO;
+    
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"All", @"Favorites"]];
+    segmentedControl.frame = CGRectMake(10, 5, screenWidth - 20, 30);
+    [segmentedControl addTarget:self action:@selector(doAction:) forControlEvents: UIControlEventValueChanged];
+    segmentedControl.selectedSegmentIndex = 0;
+    segmentedControl.tintColor = [UIColor whiteColor];
+    [segmentedControlView addSubview:segmentedControl];
+    
+    
+    
     // Uitableview of user selection (what user likes)
-    UITableView *userMeetingsListTableViewController = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 49) style:UITableViewStylePlain];
+    UITableView *userMeetingsListTableViewController = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 47) style:UITableViewStylePlain];
     userMeetingsListTableViewController.dataSource = self;
     userMeetingsListTableViewController.delegate = self;
     userMeetingsListTableViewController.backgroundColor = [UIColor clearColor];
@@ -71,8 +84,11 @@
     userMeetingsListTableViewController.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userMeetingsListTableViewController.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    userMeetingsListTableViewController.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    userMeetingsListTableViewController.tableHeaderView = segmentedControlView;
     [self.view addSubview:userMeetingsListTableViewController];
+    [userMeetingsListTableViewController setContentOffset:CGPointMake(0, 40)];
+//    [userMeetingsListTableViewController scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    
     
     
     // Fetching datas
@@ -111,6 +127,11 @@
 //    NSString *dateString = [timeFormatter stringFromDate: localDate];
     
 
+}
+
+- (void) doAction:(id)sender
+{
+    NSLog(@"Do action");
 }
 
 #pragma mark - Tableview configuration
@@ -225,15 +246,16 @@
             [foo addObject:[daysList objectAtIndex:i]];
         }
     }
-    
+
+//    NSLog(@"%@", [foo objectAtIndex:(([foo count] - indexPath.row) - 1)]);
     UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
-                                           withValue:[foo objectAtIndex:indexPath.row]];
+                                           withValue:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
     
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
     
-    cell.textLabel.text = [cellDateFormatter stringFromDate:[foo objectAtIndex:indexPath.row]];
+    cell.textLabel.text = [cellDateFormatter stringFromDate:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.model = [NSKeyedUnarchiver unarchiveObjectWithData:currentUserTaste.taste];
@@ -243,6 +265,8 @@
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
+    
+    
     
     return cell;
 }
