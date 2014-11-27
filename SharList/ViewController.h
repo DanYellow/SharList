@@ -45,7 +45,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     UIActivityIndicatorView *loadingIndicator;
 }
 
-@property (nonatomic, weak) id<DetailsMediaViewControllerProtocol> delegate;
+//@property (nonatomic, weak) id<DetailsMediaViewControllerProtocol> delegate;
 
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) UITableViewController *searchResultsController;

@@ -23,11 +23,11 @@
 //Models
 #import "UserTaste.h"
 
-#import "DetailsMediaViewControllerProtocol.h"
+//#import "DetailsMediaViewControllerProtocol.h"
 
 @protocol UpdateUserTasteListDelegate;
 
-@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate, DetailsMediaViewControllerProtocol>
+@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

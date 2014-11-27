@@ -133,7 +133,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIBarButtonItem *addMediaBtnItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMediaToUserList:)];
     addMediaBtnItem.tag = 2;
-    addMediaBtnItem.enabled = NO;
+    addMediaBtnItem.enabled = YES;
     self.navigationItem.rightBarButtonItem = addMediaBtnItem;
     
     __block NSDictionary *datasFromServer;
@@ -269,22 +269,27 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIButton *addToFavsButton = [UIButton buttonWithType:UIButtonTypeCustom];
     
-    UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.navigationController.navigationBar viewWithTag:2];
-    
     // User have this media amongst their list
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] != [NSNull null] && [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas] == YES) {
         [addToFavsButton addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [addToFavsButton setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
-        addMediaBtnItem.enabled = NO;
+//        addMediaBtnItem.enabled = NO;
+        
+        self.navigationItem.rightBarButtonItem.enabled = NO;
         
     } else {
         [addToFavsButton addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
         [addToFavsButton setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
-        addMediaBtnItem.enabled = YES;
+//        addMediaBtnItem.enabled = YES;
         
-        if ([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] count] >= 5) {
-//            [addToFavsButton setBackgroundImage:<#(UIImage *)#> forState:<#(UIControlState)#>]
-            addToFavsButton.enabled = NO;
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+        
+//        NSLog(@"%@", NSStringFromClass([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] class]));
+        if ([userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] != [NSNull null]) {
+            if ([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] count] >= 5) {
+                //            [addToFavsButton setBackgroundImage:<#(UIImage *)#> forState:<#(UIControlState)#>]
+                addToFavsButton.enabled = NO;
+            }
         }
     }
     
@@ -550,6 +555,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addMediaToUserList:(UIButton*) sender
 {
+    NSLog(@"ggg");
     // If the value of the key is nil so we create an new NSArray that contains the first elmt of the category
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] == [NSNull null]) {
         NSArray *firstEntryToCategory = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];

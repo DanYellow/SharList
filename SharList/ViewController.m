@@ -32,20 +32,24 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
-    [self.tabBarController.tabBar setHidden:NO];
+    
     [super viewWillAppear:animated];
     
-    self.navigationController.navigationBar.translucent = NO;
-    
-    self.searchController.searchBar.hidden = NO;
-    
-    // Animate background of cell selected on press back button
-    UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
-    NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
-    [tableView deselectRowAtIndexPath:tableSelection animated:YES];
-    
+//    self.navigationController.navigationBar.hidden = YES;
+//    [self.tabBarController.tabBar setHidden:YES];
     if (!FBSession.activeSession.isOpen) {
         self.navigationController.navigationBar.hidden = YES;
+        [self.tabBarController.tabBar setHidden:YES];
+    } else {
+        self.navigationController.navigationBar.translucent = NO;
+        
+        self.searchController.searchBar.hidden = NO;
+        
+        // Animate background of cell selected on press back button
+        UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
+        NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
+        [tableView deselectRowAtIndexPath:tableSelection animated:YES];
+
     }
 }
 
@@ -278,7 +282,7 @@
 //    NSLog(@"APIdatas : %@", APIdatas);
     categoryList = [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     
-    filteredTableDatas = [[NSMutableDictionary alloc] init];
+    filteredTableDatas = [NSMutableDictionary new];
     
      [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
@@ -321,9 +325,9 @@
 
     NSArray *moviesArray = @[
                       @{ @"imdbID": @"tt0848228", @"id": @24, @"year": @2008, @"name" : @"The Avengers", @"type" : @"serie" },
-                      @{ @"imdbID": @"tt0114709", @"id": @39, @"year": @2008, @"name" : @"Toy Story", @"type" : @"serie" }
+                      @{ @"imdbID": @"tt0114709", @"id": @39, @"year": @2008, @"name" : @"Toy Story 2", @"type" : @"serie" }
                       ];
-    NSDictionary *productManagers = @{@"serie": fooArray, @"movie": moviesArray, @"book": fooArray};
+    NSDictionary *productManagers = @{@"book": fooArray, @"movie": moviesArray, @"serie": fooArray};
     //
     //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
     //
@@ -334,7 +338,7 @@
     userTaste.fbid = [NSNumber numberWithLong:1387984218150367];
     userTaste.lastMeeting = newDate;
     userTaste.isFavorite = YES;
-    //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //
 //    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
@@ -443,12 +447,19 @@
     // We retrieve user taste if it exists in local
     self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
                                               withValue:userfbID];
-    userTasteDict = [[NSMutableDictionary alloc] init];
-    
+    userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                       [NSNull null], @"book",
+                       [NSNull null], @"movie",
+                       [NSNull null], @"serie",
+                       nil];
+
+    [loadingIndicator startAnimating];
     if (self.userTaste) {
-        //
-        // then put it into the NSDictionary of "taste"
-        userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+        // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
+        if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] != nil) {
+            userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+        }
+        
         [self displayUserTasteList];
         NSLog(@"fetch local datas");
     } else {
@@ -1029,9 +1040,11 @@
         self.responseData = nil;
         self.responseData = [NSMutableData new];
         
+        
         // This is the first time for user
         if (isNewUser == nil) {
             UserTaste *userTaste = [UserTaste MR_createEntity];
+            
             NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
             userTaste.taste = arrayData;
             userTaste.fbid = [userPreferences objectForKey:@"fbUserID"];

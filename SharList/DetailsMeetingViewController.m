@@ -23,6 +23,7 @@
 {
     [super viewWillAppear:animated];
     [self.tabBarController.tabBar setHidden:YES];
+    self.navigationController.navigationBar.translucent = NO;
     
     // Animate background of cell selected on press back button
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
