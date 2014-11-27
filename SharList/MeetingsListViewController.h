@@ -32,4 +32,6 @@
     NSMutableArray *daysList;
 }
 
+@property (nonatomic, assign, getter=isFilterEnabled) BOOL FilterEnabled;
+
 @end

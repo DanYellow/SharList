@@ -335,9 +335,9 @@
     UserTaste *userTaste = [UserTaste  MR_createEntity];
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
     userTaste.taste = arrayData;
-    userTaste.fbid = [NSNumber numberWithLong:1387984218150367];
+    userTaste.fbid = [NSNumber numberWithLong:1387984218180367];
     userTaste.lastMeeting = newDate;
-    userTaste.isFavorite = YES;
+    userTaste.isFavorite = NO;
 //    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //

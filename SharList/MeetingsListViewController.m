@@ -26,7 +26,7 @@
     self.navigationController.navigationBar.translucent = NO;
     
     // Animate background of cell selected on press back button
-    UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
+    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
     
@@ -47,6 +47,7 @@
     screenHeight = screenRect.size.height;
     
     userPreferences = [NSUserDefaults standardUserDefaults];
+    self.FilterEnabled = NO;
 
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
@@ -113,7 +114,10 @@
 
 - (void) doAction:(id)sender
 {
-    NSLog(@"Do action");
+    self.FilterEnabled = !self.FilterEnabled;
+    
+    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
+    [tableView reloadData];
 }
 
 #pragma mark - Tableview configuration
@@ -162,9 +166,18 @@
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    
+    NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
+    
+    NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
+    if (self.isFilterEnabled) {
+        filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[favoritesMeetingsFilter, meetingsFilter]];
+    }
 
+    
+    
     // We don't want the taste of the current user
-    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:meetingsFilter];
+    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = @"MM-dd-yy";

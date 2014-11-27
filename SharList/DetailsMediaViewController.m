@@ -132,7 +132,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     UIBarButtonItem *addMediaBtnItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMediaToUserList:)];
-    addMediaBtnItem.tag = 2;
     addMediaBtnItem.enabled = YES;
     self.navigationItem.rightBarButtonItem = addMediaBtnItem;
     
@@ -153,7 +152,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [self setMediaViewForData:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
-//        UIAlertView
     }];
     
     
