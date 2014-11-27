@@ -12,6 +12,7 @@
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"
 
+
 @interface DetailsMeetingViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate>
 {
     CGFloat screenWidth;
@@ -22,5 +23,6 @@
 
 
 @property (nonatomic, strong) id meetingDatas;
+
 
 @end

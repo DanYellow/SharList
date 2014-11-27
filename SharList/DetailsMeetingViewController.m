@@ -10,6 +10,8 @@
 
 @interface DetailsMeetingViewController ()
 
+@property (nonatomic, copy) NSMutableDictionary *metUserTasteDict;
+
 @end
 
 
@@ -53,6 +55,8 @@
     screenHeight = screenRect.size.height;
     
     userPreferences = [NSUserDefaults standardUserDefaults];
+    self.metUserTasteDict = [NSMutableDictionary new];
+    self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas taste]] mutableCopy];
     
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
@@ -68,15 +72,26 @@
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
     
-    UIBarButtonItem *addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(doit)];
+    UIBarButtonItem *addMeetingToFavoriteBtnItem;
+    NSLog([self.meetingDatas isFavorite] ? @"YES" :@"NO");
+    // This list is not among user's favorites
+    if (![self.meetingDatas isFavorite]) {
+        addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
+    } else {
+        addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
+    }
     addMeetingToFavoriteBtnItem.tag = 2;
     addMeetingToFavoriteBtnItem.enabled = YES;
+    
     self.navigationItem.rightBarButtonItem = addMeetingToFavoriteBtnItem;
     
-    NSLog(@"%@", self.meetingDatas);
+
+    NSDateFormatter *foo = [NSDateFormatter new];
+    foo.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
+    foo.dateStyle = kCFDateFormatterMediumStyle;
+    NSLog(@"truc : %@", [foo stringFromDate:[self.meetingDatas lastMeeting]]);
     
-    
-    //___________________ [[UITableViewController alloc] initWithStyle:]
+    //___________________
     // Uitableview of user selection (what user likes)
     UITableView *userSelectionTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
     userSelectionTableView.dataSource = self;
@@ -94,8 +109,8 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSString *sectionTitle = [[[self.meetingDatas allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
-    NSArray *sectionElements = [self.meetingDatas objectForKey:sectionTitle];
+    NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+    NSArray *sectionElements = [self.metUserTasteDict objectForKey:sectionTitle];
     // If the category is empty so the section not appears
     if ([sectionElements isKindOfClass:[NSNull class]]) {
         return 0;
@@ -111,9 +126,9 @@
     UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
     BOOL IsTableViewEmpty = YES;
     // This loop is here to check the value of all keys
-    for (int i = 0; i < [[self.meetingDatas allKeys] count]; i++) {
-        if (![[self.meetingDatas objectForKey:[[self.meetingDatas allKeys] objectAtIndex:i]] isKindOfClass:[NSNull class]]) {
-            if ([[self.meetingDatas objectForKey:[[self.meetingDatas allKeys] objectAtIndex:i]] count] != 0) {
+    for (int i = 0; i < [[self.metUserTasteDict allKeys] count]; i++) {
+        if (![[self.metUserTasteDict objectForKey:[[self.metUserTasteDict allKeys] objectAtIndex:i]] isKindOfClass:[NSNull class]]) {
+            if ([[self.metUserTasteDict objectForKey:[[self.metUserTasteDict allKeys] objectAtIndex:i]] count] != 0) {
                 IsTableViewEmpty = NO;
             }
         }
@@ -126,7 +141,7 @@
     }
     emptyUserTasteLabel.hidden = YES;
     
-    return [self.meetingDatas count];
+    return [self.metUserTasteDict count];
 }
 
 // Title of categories
@@ -136,7 +151,7 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
     
-    NSString *title = [[[self.meetingDatas allKeys] objectAtIndex:section] uppercaseString];
+    NSString *title = [[[self.metUserTasteDict allKeys] objectAtIndex:section] uppercaseString];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
@@ -167,12 +182,12 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    NSString *sectionTitle = [[self.meetingDatas allKeys] objectAtIndex:indexPath.section];
+    NSString *sectionTitle = [[self.metUserTasteDict allKeys] objectAtIndex:indexPath.section];
     NSString *title, *year, *imdbID;
     ShareListMediaTableViewCell *cell;
     
     cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    NSArray *rowsOfSection = [self.meetingDatas objectForKey:sectionTitle];
+    NSArray *rowsOfSection = [self.metUserTasteDict objectForKey:sectionTitle];
     CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
     
     title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
@@ -278,10 +293,17 @@
 }
 
 
-
-- (void) doit
+- (void) addAsFavorite:(UIBarButtonItem*)sender
 {
-    NSLog(@"foo");
+    
+    if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
+        sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        [self.meetingDatas setIsFavorite:YES];
+    }else{
+        sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
+        [self.meetingDatas setIsFavorite:NO];
+    }
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
 /*

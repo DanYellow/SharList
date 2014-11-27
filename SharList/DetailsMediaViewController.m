@@ -553,7 +553,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addMediaToUserList:(UIButton*) sender
 {
-    NSLog(@"ggg");
     // If the value of the key is nil so we create an new NSArray that contains the first elmt of the category
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] == [NSNull null]) {
         NSArray *firstEntryToCategory = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];

@@ -309,35 +309,37 @@
     
 
     NSDateComponents *comps = [[NSDateComponents alloc] init];
-    [comps setDay:24];
-    [comps setMonth:11];
+    [comps setDay:15];
+    [comps setMonth:2];
     [comps setYear:2014];
-    [comps setMinute:9];
-    [comps setHour:43];
+    
+    [comps setHour:14];
+    [comps setMinute:30];
+    
 
     NSDate *newDate = [cal dateFromComponents:comps];
     
     NSArray *fooArray = @[
-                          @{ @"imdbID": @"tt1486217", @"id": @21, @"year": @2010, @"name" : @"Archer", @"type" : @"serie" },
+                          @{ @"imdbID": @"tt0773262", @"id": @21, @"year": @2010, @"name" : @"Dexter", @"type" : @"serie" },
                           @{ @"imdbID": @"tt2372162", @"id": @23, @"year": @2009, @"name" : @"Orange is the new Black", @"type" : @"serie" },
-                          @{ @"imdbID": @"tt1826940", @"id": @27, @"year": @2007, @"name" : @"New Girl", @"type" : @"serie" },
+                          @{ @"imdbID": @"tt0455275", @"id": @27, @"year": @2007, @"name" : @"Prison Break", @"type" : @"serie" },
                          ];
 
     NSArray *moviesArray = @[
-                      @{ @"imdbID": @"tt0848228", @"id": @24, @"year": @2008, @"name" : @"The Avengers", @"type" : @"serie" },
-                      @{ @"imdbID": @"tt0114709", @"id": @39, @"year": @2008, @"name" : @"Toy Story 2", @"type" : @"serie" }
+                      @{ @"imdbID": @"tt0848228", @"id": @24, @"year": @2008, @"name" : @"The Avengers", @"type" : @"movie" },
+                      @{ @"imdbID": @"tt2322441", @"id": @43, @"year": @2008, @"name" : @"50 Nuances de Grey", @"type" : @"movie" }
                       ];
     NSDictionary *productManagers = @{@"book": fooArray, @"movie": moviesArray, @"serie": fooArray};
     //
     //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
     //
     //    } completion:nil]; //[NSDate date];
-    UserTaste *userTaste = [UserTaste  MR_createEntity];
-    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-    userTaste.taste = arrayData;
-    userTaste.fbid = [NSNumber numberWithLong:1387984218180367];
-    userTaste.lastMeeting = newDate;
-    userTaste.isFavorite = NO;
+//    UserTaste *userTaste = [UserTaste  MR_createEntity];
+//    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+//    userTaste.taste = arrayData;
+//    userTaste.fbid = [NSNumber numberWithLong:1387984218150397];
+//    userTaste.lastMeeting = newDate;
+//    userTaste.isFavorite = YES;
 //    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //
@@ -505,12 +507,12 @@
 {
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     
-    
-
     [userTasteDict removeAllObjects];
     
     UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
     appnameView.hidden = NO;
+    
+    UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
     
     [UIView animateWithDuration:0.5 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -529,7 +531,7 @@
                          self.tabBarController.tabBar.hidden = YES;
                          
                          [self.searchController.searchBar removeFromSuperview];
-
+                         emptyUserTasteLabel.hidden = YES;
                          userSelectionTableView.hidden = YES;
                      }];
     

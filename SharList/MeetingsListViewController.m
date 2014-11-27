@@ -256,14 +256,15 @@
     cell.textLabel.text = [cellDateFormatter stringFromDate:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
-    cell.model = [NSKeyedUnarchiver unarchiveObjectWithData:currentUserTaste.taste];
+    cell.model = currentUserTaste;
+    
+    NSLog([currentUserTaste isFavorite] ? @"YES" : @"NO");
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
-    
     
     
     return cell;
