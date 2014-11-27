@@ -99,7 +99,6 @@
 		1ACDC90D1A23FC3D0032B857 /* BackgroundTaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundTaskManager.m; sourceTree = "<group>"; };
 		1ACDC90E1A23FC3D0032B857 /* LocationShareModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationShareModel.h; sourceTree = "<group>"; };
 		1ACDC90F1A23FC3D0032B857 /* LocationShareModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationShareModel.m; sourceTree = "<group>"; };
-		1ACDC9161A24086A0032B857 /* DetailsMediaViewControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMediaViewControllerProtocol.h; sourceTree = "<group>"; };
 		1AE9E7A51A2683700072EF91 /* DetailsMeetingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMeetingViewController.h; sourceTree = "<group>"; };
 		1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsMeetingViewController.m; sourceTree = "<group>"; };
 		1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetingFavoriteSelected@2x.png"; sourceTree = "<group>"; };
@@ -161,7 +160,6 @@
 			children = (
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
-				1ACDC9161A24086A0032B857 /* DetailsMediaViewControllerProtocol.h */,
 				1ACDC9091A23FC240032B857 /* BackgroundTaskManager */,
 				1ACDC9081A23E6780032B857 /* MeetingsListViewController */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,

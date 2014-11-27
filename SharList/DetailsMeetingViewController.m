@@ -89,7 +89,6 @@
     NSDateFormatter *foo = [NSDateFormatter new];
     foo.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
     foo.dateStyle = kCFDateFormatterMediumStyle;
-    NSLog(@"truc : %@", [foo stringFromDate:[self.meetingDatas lastMeeting]]);
     
     //___________________
     // Uitableview of user selection (what user likes)
@@ -102,6 +101,7 @@
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userSelectionTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    userSelectionTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:userSelectionTableView];
 }
 

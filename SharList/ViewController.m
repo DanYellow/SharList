@@ -729,7 +729,7 @@
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
         year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
         cell.textLabel.text = title;
-        cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
+        cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.60];
         cell.textLabel.textColor = [UIColor whiteColor];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -770,18 +770,11 @@
 
         cell.textLabel.text = title;
     }
-
     
-    //            NSPredicate *typePredicate = [NSPredicate predicateWithFormat:@"type == %@", sectionTitle];
-    //            NSPredicate *namePredicate = [NSPredicate predicateWithFormat:@"name == %@", title];
-    
-    
-    //             NSLog(@"row :%ld, section : %ld, %@", (long)indexPath.row, (long)indexPath.section, [[[APIdatas filteredArrayUsingPredicate:typePredicate] filteredArrayUsingPredicate:namePredicate] valueForKey:@"year"]);
-
-    
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        cell.detailTextLabel.text = year;
-//    }
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.detailTextLabel.text = year;
+    cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
+    cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
     
 
     return cell;
@@ -894,8 +887,10 @@
     
     ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     
+    NSObject *object = selectedCell.model;
+    
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
-    detailsMediaViewController.mediaDatas = selectedCell.model;
+    detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.delegate = self;
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
@@ -904,7 +899,7 @@
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
 {
-    userTasteDict = [dict mutableCopy];
+//    userTasteDict = [dict mutableCopy];
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
@@ -1137,6 +1132,8 @@
     
     return img;
 }
+
+
 
 # pragma mark - Delegate methods
 

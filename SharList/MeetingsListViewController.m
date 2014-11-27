@@ -87,6 +87,7 @@
     userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userMeetingsListTableView.tableHeaderView = segmentedControlView;
     userMeetingsListTableView.contentOffset = CGPointMake(0, 40);
+    userMeetingsListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
 
     [self.view addSubview:userMeetingsListTableView];
     
@@ -124,7 +125,6 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-//    NSLog(@"distint key : %@", [distinctDays allObjects]);
     return [distinctDays count];
 }
 
@@ -253,13 +253,10 @@
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
     
-    cell.textLabel.text = [cellDateFormatter stringFromDate:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
+    cell.textLabel.text = [NSString stringWithFormat:@"Rencontré à %@", [cellDateFormatter stringFromDate:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.model = currentUserTaste;
-    
-    NSLog([currentUserTaste isFavorite] ? @"YES" : @"NO");
-    
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     UIView *bgColorView = [UIView new];
@@ -272,6 +269,13 @@
 
 
 #pragma mark - Fetch Datas in background
+
+- (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    
+    
+    completionHandler(UIBackgroundFetchResultNewData);
+}
 
 
 - (void) didReceiveMemoryWarning {

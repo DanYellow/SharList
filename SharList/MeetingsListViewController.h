@@ -34,4 +34,7 @@
 
 @property (nonatomic, assign, getter=isFilterEnabled) BOOL FilterEnabled;
 
+- (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
+
+
 @end

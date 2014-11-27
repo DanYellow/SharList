@@ -42,18 +42,18 @@
     [UITabBar appearance].tintColor = [UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:.95f];
     
     
-    UINavigationController* navControllerSettings = [[UINavigationController alloc]
+    UINavigationController *navControllerSettings = [[UINavigationController alloc]
                                              initWithRootViewController:settingsViewController];
     navControllerSettings.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     navControllerSettings.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     
-    UINavigationController* navControllerMeetingList = [[UINavigationController alloc]
+    UINavigationController *navControllerMeetingList = [[UINavigationController alloc]
                                                      initWithRootViewController:meetingsListViewController];
     navControllerMeetingList.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     navControllerMeetingList.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     
     // Contains first view of the app
-    UINavigationController* navController = [[UINavigationController alloc]
+    UINavigationController *navController = [[UINavigationController alloc]
                                              initWithRootViewController:viewController];
     navController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     navController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
@@ -98,7 +98,25 @@
     [self.window setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [self.window makeKeyAndVisible];
     
+    NSLog(@"UIApplicationBackgroundFetchIntervalMinimum: %f", UIApplicationBackgroundFetchIntervalMinimum);
+    [application setMinimumBackgroundFetchInterval:UIApplicationBackgroundFetchIntervalMinimum];
+    
     return YES;
+}
+
+- (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void  (^)(UIBackgroundFetchResult))completionHandler
+{
+    MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
+    NSDate *fetchStart = [NSDate date];
+    [meetingsListViewController fetchNewDataWithCompletionHandler:^(UIBackgroundFetchResult result) {
+        completionHandler(result);
+        
+        NSDate *fetchEnd = [NSDate date];
+        NSTimeInterval timeElapsed = [fetchEnd timeIntervalSinceDate:fetchStart];
+        NSLog(@"Background Fetch Duration: %f seconds", timeElapsed);
+    }];
+    
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

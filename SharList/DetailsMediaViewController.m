@@ -132,7 +132,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     UIBarButtonItem *addMediaBtnItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMediaToUserList:)];
-    addMediaBtnItem.enabled = YES;
+    // The add button is disabled by defaut to avoid some weirdo behaviour
+    addMediaBtnItem.enabled = NO;
     self.navigationItem.rightBarButtonItem = addMediaBtnItem;
     
     __block NSDictionary *datasFromServer;
@@ -177,7 +178,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     infoMediaView.tag = 2;
     
     CGFloat mediaTitleLabelY = imgMediaHeight - [self computeRatio:108 forDimension:imgMediaHeight];
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabelY, screenWidth, 20)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabelY, screenWidth, 25)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentCenter;
@@ -187,7 +188,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.layer.shadowOpacity = 0.75;
     mediaTitleLabel.clipsToBounds = NO;
     mediaTitleLabel.layer.masksToBounds = NO;
-    mediaTitleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:26.0];
+    mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
     [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
@@ -262,7 +263,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //                         imgMedia.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
                      }
                      completion:^(BOOL finished){
-                         //                         NSLog(@"Done!");
                      }];
     
     UIButton *addToFavsButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -309,12 +309,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view addSubview:buyButton];
     
     [loadingIndicator stopAnimating];
-}
-
-
-- (void) aMethod:(UIButton*)sender
-{
-    NSLog(@"foo");
 }
 
 
@@ -681,6 +675,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"Got an error: %@", error);
+        UIAlertView *errorServer = [[UIAlertView alloc] initWithTitle:@"Erreur" message:@"La synchronisation avec le serveur n'a pas pu avoir lieu" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [errorServer show];
         return nil;
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
