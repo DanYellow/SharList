@@ -38,11 +38,14 @@
 //    self.navigationController.navigationBar.hidden = YES;
 //    [self.tabBarController.tabBar setHidden:YES];
     if (!FBSession.activeSession.isOpen) {
-        self.navigationController.navigationBar.hidden = YES;
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.tabBarController.tabBar setHidden:YES];
         
         FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-        fbLoginButton.hidden = NO;
+        BOOL doesContain = [self.view.subviews containsObject:fbLoginButton];
+        if (doesContain) {
+            fbLoginButton.hidden = NO;
+        }
     } else {
         self.navigationController.navigationBar.translucent = NO;
         
@@ -294,7 +297,6 @@
     if (!FBSession.activeSession.isOpen) {
         // We don't want message for empty user list for no fb connexion
         fbLoginButton.hidden = NO;
-        NSLog(@"not logged");
     } else {
         fbLoginButton.hidden = YES;
     }
@@ -302,7 +304,8 @@
     // Test if it's the first use
     if (![userPreferences boolForKey:@"firstTime"]) {
         // Display and extra button for
-        [userPreferences setBool:YES forKey:@"firstTime"];
+        //[userPreferences setBool:YES forKey:@"firstTime"];
+        NSLog(@"Log tutorial");
     }
     
     
@@ -900,7 +903,7 @@
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
 {
-//    userTasteDict = [dict mutableCopy];
+    userTasteDict = [dict mutableCopy];
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
