@@ -12,6 +12,8 @@
 
 #import "DetailsMediaViewController.h"
 
+#import "ViewController.h"
+
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate>
 {

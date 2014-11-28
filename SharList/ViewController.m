@@ -35,28 +35,15 @@
     
     [super viewWillAppear:animated];
     
-//    self.navigationController.navigationBar.hidden = YES;
-//    [self.tabBarController.tabBar setHidden:YES];
-    if (!FBSession.activeSession.isOpen) {
-        [self.navigationController setNavigationBarHidden:YES animated:YES];
-        [self.tabBarController.tabBar setHidden:YES];
-        
-        FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-        BOOL doesContain = [self.view.subviews containsObject:fbLoginButton];
-        if (doesContain) {
-            fbLoginButton.hidden = NO;
-        }
-    } else {
-        self.navigationController.navigationBar.translucent = NO;
-        
-        self.searchController.searchBar.hidden = NO;
-        
-        // Animate background of cell selected on press back button
-        UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
-        NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
-        [tableView deselectRowAtIndexPath:tableSelection animated:YES];
-
-    }
+    
+    self.navigationController.navigationBar.translucent = NO;
+    
+    self.searchController.searchBar.hidden = NO;
+    
+    // Animate background of cell selected on press back button
+    UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
+    NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
+    [tableView deselectRowAtIndexPath:tableSelection animated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -171,7 +158,7 @@
     fbLoginButton.tag = 1;
     fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
     
-    [self.view addSubview:fbLoginButton];
+    
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
     
@@ -232,7 +219,7 @@
     
     UILabel *emptyUserTasteLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
     emptyUserTasteLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
-    emptyUserTasteLabel.attributedText = attributedString;
+    emptyUserTasteLabel.attributedText = attributedString; //Appuyez {sur la loupe} pour rechercher
     emptyUserTasteLabel.textColor = [UIColor whiteColor];
     emptyUserTasteLabel.numberOfLines = 0;
     emptyUserTasteLabel.textAlignment = NSTextAlignmentCenter;
@@ -292,13 +279,13 @@
     
     filteredTableDatas = [NSMutableDictionary new];
     
-    
+    [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
     if (!FBSession.activeSession.isOpen) {
         // We don't want message for empty user list for no fb connexion
         fbLoginButton.hidden = NO;
     } else {
-        fbLoginButton.hidden = YES;
+//        fbLoginButton.hidden = YES;
     }
     
     // Test if it's the first use
@@ -486,7 +473,7 @@
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.alpha = 0;
     userSelectionTableView.hidden = NO;
-    [userSelectionTableView reloadData];
+    
     
     UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
     
@@ -505,14 +492,14 @@
                          
                          [[self navigationController] setNavigationBarHidden:NO animated:YES];
                          self.tabBarController.tabBar.hidden = NO;
+                         [userSelectionTableView reloadData];
                          appnameView.hidden = YES;
                          appnameView.alpha = 0;
                          [loadingIndicator stopAnimating];
                      }];
 }
 
-
-- (void) userLoggedOutOffb
+- (void) userLoggedOutOffb:(id)uselessObj completion:(void (^)(BOOL success))completionBlock
 {
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     
@@ -548,6 +535,8 @@
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"fbUserID"];
     
     self.FirstFBLoginDone = YES;
+    
+    if (completionBlock != nil) completionBlock(YES);
 }
 
 
@@ -588,7 +577,16 @@
 // When user logged out
 - (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
 {
-    [self userLoggedOutOffb];
+    [self userLoggedOutOffb:nil completion:^(BOOL success) {
+        if (success) {
+            [self.tabBarController setSelectedIndex:0];
+            FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
+            fbLoginButton.hidden = NO;
+        } else {
+            // Could not log in. Display alert to user.
+        }
+    }];
+    
 }
 
 // Manage error for connection
