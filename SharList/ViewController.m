@@ -164,6 +164,8 @@
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
     fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
+    
+    [self.view addSubview:fbLoginButton];
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
     
@@ -284,16 +286,13 @@
     
     filteredTableDatas = [NSMutableDictionary new];
     
-     [self.view addSubview:fbLoginButton];
+    
     // Detect if user not is connected
     if (!FBSession.activeSession.isOpen) {
         // We don't want message for empty user list for no fb connexion
-        [self.view addSubview:fbLoginButton];
+        
     } else {
-
-//        if ([userPreferences boolForKey:@"appHasBeenLaunched"]) {
-//            [self userConnectionForFbID:[userPreferences objectForKey:@"fbUserID"]];
-//        }
+        [fbLoginButton removeFromSuperview];
     }
     
     // Test if it's the first use
@@ -473,7 +472,7 @@
 - (void) displayUserTasteList
 {
     [self.view addSubview: self.searchController.searchBar];
-    
+    NSLog(@"ookf");
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.alpha = 0;
     userSelectionTableView.hidden = NO;
@@ -548,7 +547,7 @@
         return;
     }
     
-//    FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
+    FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
     
     // We format the user id (NSString) to an NSNumber to be stored in NSUserDefault key
     NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
@@ -558,12 +557,10 @@
     userPreferences = [NSUserDefaults standardUserDefaults];
     [userPreferences setObject:fbIDNumber forKey:@"fbUserID"];
     // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
-    [userPreferences setBool:YES forKey:@"appHasBeenLaunched"];
-    
     
     
     // We remove facebook's button into a thread for solve a curious issue
-//    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
 //    NSLog(@"user %@ | %@:", user, user.objectID);
     

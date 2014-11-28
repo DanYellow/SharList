@@ -40,6 +40,13 @@
     self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
+    
+    FBLoginView *fbLoginButton = [FBLoginView new];
+    fbLoginButton.delegate = self;
+    fbLoginButton.tag = 1;
+    fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
+    [self.view addSubview:fbLoginButton];
+    
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

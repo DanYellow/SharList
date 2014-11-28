@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+#import <FacebookSDK/FacebookSDK.h>
+
 #import "DetailsMediaViewController.h"
 
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UINavigationControllerDelegate>
+UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
