@@ -15,6 +15,8 @@
 #pragma mark - tag list references
 // Tag list
 // 1 : Tableview of meeting list
+// 2 : segmentedControl
+// 3 : emptyFavoritesLabel
 
 @implementation MeetingsListViewController
 
@@ -66,14 +68,15 @@
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
     segmentedControlView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
     segmentedControlView.opaque = NO;
+    segmentedControlView.tag = 2;
     
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"All", @"Favorites"]];
+    
     segmentedControl.frame = CGRectMake(10, 5, screenWidth - 20, 30);
-    [segmentedControl addTarget:self action:@selector(doAction:) forControlEvents: UIControlEventValueChanged];
+    [segmentedControl addTarget:self action:@selector(diplayFavoritesMeetings:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tintColor = [UIColor whiteColor];
     [segmentedControlView addSubview:segmentedControl];
-    
     
     
     // Uitableview of user selection (what user likes)
@@ -83,13 +86,36 @@
     userMeetingsListTableView.backgroundColor = [UIColor clearColor];
     userMeetingsListTableView.tag = 1;
     userMeetingsListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userMeetingsListTableView.tableHeaderView = segmentedControlView;
-    userMeetingsListTableView.contentOffset = CGPointMake(0, 40);
     userMeetingsListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
 
     [self.view addSubview:userMeetingsListTableView];
+    
+    // Message for empty list taste
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"Appuyez sur   dans une rencontre pour l'ajouter aux favoris"];
+    UIImage *lensIcon = [UIImage imageNamed:@"lens-icon"];
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = lensIcon;
+    textAttachment.bounds = CGRectMake(150, -15, lensIcon.size.width, lensIcon.size.height);
+    
+    NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
+    
+    NSRange r = [[attributedString string] rangeOfString:@"Appuyez sur  "];
+    [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
+    
+    CGFloat emptyUserTasteLabelPosY = 45;// [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
+    
+    UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
+    emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur la loupe} pour rechercher
+    emptyFavoritesLabel.textColor = [UIColor whiteColor];
+    emptyFavoritesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+    emptyFavoritesLabel.numberOfLines = 0;
+    emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
+    emptyFavoritesLabel.tag = 3;
+    emptyFavoritesLabel.hidden = YES;
+    [userMeetingsListTableView addSubview: emptyFavoritesLabel];
     
     
     // Fetching datas
@@ -98,8 +124,11 @@
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
+    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
+    NSLog(@"user language: %@", language);
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        
         dateFormatter.dateFormat = @"MM/dd/yy";
         NSString *dateString = [dateFormatter stringFromDate: [userTaste lastMeeting]];
 
@@ -113,7 +142,7 @@
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
 }
 
-- (void) doAction:(id)sender
+- (void) diplayFavoritesMeetings:(id)sender
 {
     self.FilterEnabled = !self.FilterEnabled;
     
@@ -156,9 +185,18 @@
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    
+    
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
+        
+        //We hide the segmented control on page load if there is nothing among ALL meetings
+        if (!self.FilterEnabled) {
+            UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
+            segmentedControlView.hidden = YES;
+        }
         return 0;
     } else {
+        
         return 52.0;
     }
 }
@@ -174,10 +212,16 @@
         filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[favoritesMeetingsFilter, meetingsFilter]];
     }
 
-    
-    
     // We don't want the taste of the current user
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
+    
+    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
+    if ([meetings count] == 0) {
+        emptyFavoritesLabel.hidden = NO;
+        return 0;
+    } else {
+        emptyFavoritesLabel.hidden = YES;
+    }
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = @"MM-dd-yy";
@@ -209,7 +253,6 @@
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.meetingDatas = selectedCell.model;
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
-
 }
 
 
@@ -245,7 +288,6 @@
         }
     }
 
-//    NSLog(@"%@", [foo objectAtIndex:(([foo count] - indexPath.row) - 1)]);
     UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
                                            withValue:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
     
@@ -272,8 +314,7 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    
-    
+    NSLog(@"foof");
     completionHandler(UIBackgroundFetchResultNewData);
 }
 

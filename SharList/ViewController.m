@@ -156,7 +156,7 @@
     FBLoginView *fbLoginButton = [FBLoginView new];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
-    fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
+    
     
     
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
@@ -200,7 +200,7 @@
     emptyResultLabel.layer.masksToBounds = NO;
     emptyResultLabel.tag = 7;
     emptyResultLabel.hidden = YES;
-    [self.searchResultsController.view addSubview:emptyResultLabel];
+    [userSelectionTableViewController.tableView addSubview:emptyResultLabel];
 
     
     // Message for empty list taste
@@ -224,6 +224,7 @@
     emptyUserTasteLabel.numberOfLines = 0;
     emptyUserTasteLabel.textAlignment = NSTextAlignmentCenter;
     emptyUserTasteLabel.tag = 8;
+    emptyUserTasteLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyUserTasteLabel.hidden = YES;
     [self.view addSubview:emptyUserTasteLabel];
     
@@ -281,10 +282,13 @@
     
     [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
+    // user is not connected
     if (!FBSession.activeSession.isOpen) {
+        fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
         // We don't want message for empty user list for no fb connexion
         fbLoginButton.hidden = NO;
     } else {
+        fbLoginButton.frame = CGRectMake(51, screenHeight + 150, 218, 46);
 //        fbLoginButton.hidden = YES;
     }
     
@@ -305,11 +309,11 @@
     
 
     NSDateComponents *comps = [[NSDateComponents alloc] init];
-    [comps setDay:15];
-    [comps setMonth:2];
+    [comps setDay:14];
+    [comps setMonth:11];
     [comps setYear:2014];
     
-    [comps setHour:14];
+    [comps setHour:18];
     [comps setMinute:30];
     
 
@@ -317,8 +321,8 @@
     
     NSArray *fooArray = @[
                           @{ @"imdbID": @"tt0773262", @"id": @21, @"year": @2010, @"name" : @"Dexter", @"type" : @"serie" },
-                          @{ @"imdbID": @"tt2372162", @"id": @23, @"year": @2009, @"name" : @"Orange is the new Black", @"type" : @"serie" },
                           @{ @"imdbID": @"tt0455275", @"id": @27, @"year": @2007, @"name" : @"Prison Break", @"type" : @"serie" },
+                          @{ @"imdbID": @"tt2372162", @"id": @23, @"year": @2009, @"name" : @"Orange is the new Black", @"type" : @"serie" }
                          ];
 
     NSArray *moviesArray = @[
@@ -333,9 +337,9 @@
 //    UserTaste *userTaste = [UserTaste  MR_createEntity];
 //    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
 //    userTaste.taste = arrayData;
-//    userTaste.fbid = [NSNumber numberWithLong:1387984218150397];
+//    userTaste.fbid = [NSNumber numberWithLong:1382414218150367];
 //    userTaste.lastMeeting = newDate;
-//    userTaste.isFavorite = YES;
+//    userTaste.isFavorite = NO;
 //    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //
@@ -474,7 +478,6 @@
     userSelectionTableView.alpha = 0;
     userSelectionTableView.hidden = NO;
     
-    
     UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
     
     [UIView animateWithDuration:0.5 delay:0.0
@@ -581,6 +584,7 @@
         if (success) {
             [self.tabBarController setSelectedIndex:0];
             FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
+            fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
             fbLoginButton.hidden = NO;
         } else {
             // Could not log in. Display alert to user.
