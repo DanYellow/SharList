@@ -46,7 +46,14 @@
     fbLoginButton.tag = 1;
     fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
     [self.view addSubview:fbLoginButton];
-    
+}
+
+
+// When user logged out
+- (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
+{
+    // User logged out so we go to the first view
+    [self.tabBarController setSelectedIndex:0];
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

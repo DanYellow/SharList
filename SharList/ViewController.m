@@ -40,6 +40,9 @@
     if (!FBSession.activeSession.isOpen) {
         self.navigationController.navigationBar.hidden = YES;
         [self.tabBarController.tabBar setHidden:YES];
+        
+        FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
+        fbLoginButton.hidden = NO;
     } else {
         self.navigationController.navigationBar.translucent = NO;
         
@@ -290,9 +293,10 @@
     // Detect if user not is connected
     if (!FBSession.activeSession.isOpen) {
         // We don't want message for empty user list for no fb connexion
-        
+        fbLoginButton.hidden = NO;
+        NSLog(@"not logged");
     } else {
-        [fbLoginButton removeFromSuperview];
+        fbLoginButton.hidden = YES;
     }
     
     // Test if it's the first use
@@ -300,6 +304,9 @@
         // Display and extra button for
         [userPreferences setBool:YES forKey:@"firstTime"];
     }
+    
+    
+    
     
     
 //    [UserTaste MR_truncateAll];
@@ -472,7 +479,7 @@
 - (void) displayUserTasteList
 {
     [self.view addSubview: self.searchController.searchBar];
-    NSLog(@"ookf");
+ 
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.alpha = 0;
     userSelectionTableView.hidden = NO;
@@ -548,7 +555,7 @@
     }
     
     FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-    
+    fbLoginButton.hidden = YES;
     // We format the user id (NSString) to an NSNumber to be stored in NSUserDefault key
     NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
     [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -558,9 +565,6 @@
     [userPreferences setObject:fbIDNumber forKey:@"fbUserID"];
     // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
     
-    
-    // We remove facebook's button into a thread for solve a curious issue
-    [fbLoginButton performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
     
 //    NSLog(@"user %@ | %@:", user, user.objectID);
     
