@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Jean-Louis Danielo. All rights reserved.
 //
 
-#import <FacebookSDK/FacebookSDK.h>
 #import <UIKit/UIKit.h>
+#import <FacebookSDK/FacebookSDK.h>
+
 
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"

@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
 
 #import <FacebookSDK/FacebookSDK.h>
+
 
 
 //Vendors
@@ -16,10 +18,10 @@
 #import "UIImageView+AFNetworking.h"
 #import "ShareListMediaTableViewCell.h"
 
+#import "DetailsMeetingViewController.h"
+
 //Models
 #import "UserTaste.h"
-
-#import "DetailsMeetingViewController.h"
 
 @interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate>
 {

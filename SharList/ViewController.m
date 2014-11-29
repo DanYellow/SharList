@@ -335,13 +335,13 @@
     //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
     //
     //    } completion:nil]; //[NSDate date];
-//    UserTaste *userTaste = [UserTaste  MR_createEntity];
-//    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-//    userTaste.taste = arrayData;
-//    userTaste.fbid = [NSNumber numberWithLong:1382414218159367];
-//    userTaste.lastMeeting = newDate;
-//    userTaste.isFavorite = YES;
-//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    UserTaste *userTaste = [UserTaste  MR_createEntity];
+    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+    userTaste.taste = arrayData;
+    userTaste.fbid = [NSNumber numberWithLong:1382410218159367];
+    userTaste.lastMeeting = newDate;
+    userTaste.isFavorite = YES;
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //
 //    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"

@@ -137,7 +137,7 @@
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
-    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
+//    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
 //    NSLog(@"user language: %@", language);
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -310,7 +310,7 @@
     }
 
     UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
-                                           withValue:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
+                                                           withValue:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
     
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
