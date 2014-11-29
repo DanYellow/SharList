@@ -77,16 +77,6 @@
     return 0.0f;
 }
 
-- (NSString*) tableView:(UITableView *) tableView titleForHeaderInSection:(NSInteger)section
-{
-    if (section != 2) {
-        return nil;
-    } else {
-        return @"DANGER ZONE";
-    }
-}
-
-
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return (100.0/2.0);

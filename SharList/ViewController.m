@@ -164,17 +164,17 @@
     
     
     // Uitableview of user selection (what user likes)
-    UITableViewController *userSelectionTableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userSelectionTableViewController.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight - 49); //[self computeRatio:800.0 forDimension:screenHeight] + 44
-    userSelectionTableViewController.tableView.dataSource = self;
-    userSelectionTableViewController.tableView.delegate = self;
-    userSelectionTableViewController.tableView.backgroundColor = [UIColor clearColor];
-    userSelectionTableViewController.tableView.tag = 4;
-    userSelectionTableViewController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 49) style:UITableViewStylePlain];
+    //[self computeRatio:800.0 forDimension:screenHeight] + 44
+    userTasteListTableView.dataSource = self;
+    userTasteListTableView.delegate = self;
+    userTasteListTableView.backgroundColor = [UIColor clearColor];
+    userTasteListTableView.tag = 4;
+    userTasteListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
-    userSelectionTableViewController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    userSelectionTableViewController.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
-    [self.view addSubview:userSelectionTableViewController.tableView];
+    userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:userTasteListTableView];
     
     // UITableview of results
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
@@ -206,7 +206,7 @@
     
     // Message for empty list taste
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"Appuyez sur   pour remplir votre liste"];
-    UIImage *lensIcon = [self changeImg:[UIImage imageNamed:@"lens-icon"] forColor:[UIColor whiteColor]];
+    UIImage *lensIcon = [UIImage imageNamed:@"lens-icon-message"];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = lensIcon;
     textAttachment.bounds = CGRectMake(150, -15, lensIcon.size.width, lensIcon.size.height);
@@ -227,7 +227,7 @@
     emptyUserTasteLabel.tag = 8;
     emptyUserTasteLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyUserTasteLabel.hidden = YES;
-    [self.view addSubview:emptyUserTasteLabel];
+    [userTasteListTableView addSubview:emptyUserTasteLabel];
     
     
     // Definition of uisearchcontroller
@@ -314,7 +314,7 @@
     [comps setMonth:11];
     [comps setYear:2014];
     
-    [comps setHour:18];
+    [comps setHour:19];
     [comps setMinute:30];
     
 
@@ -338,9 +338,9 @@
 //    UserTaste *userTaste = [UserTaste  MR_createEntity];
 //    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
 //    userTaste.taste = arrayData;
-//    userTaste.fbid = [NSNumber numberWithLong:1382414218150367];
+//    userTaste.fbid = [NSNumber numberWithLong:1382414218159367];
 //    userTaste.lastMeeting = newDate;
-//    userTaste.isFavorite = NO;
+//    userTaste.isFavorite = YES;
 //    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //
@@ -455,7 +455,7 @@
                        [NSNull null], @"movie",
                        [NSNull null], @"serie",
                        nil];
-
+    
     [loadingIndicator startAnimating];
     if (self.userTaste) {
         // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
@@ -680,11 +680,10 @@
         if ([[filteredTableDatas allKeys] count] == 0 && [self.searchController.searchBar.text length] != 0) {
             
             emptyResultLabel.hidden = NO;
-            NSLog(@"%@", emptyResultLabel);
             
             return 0;
         }
-//        emptyResultLabel.hidden = YES; gento
+        emptyResultLabel.hidden = YES;
         
         return [categoryList count];
     } else {
@@ -927,6 +926,17 @@
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
+    
+    NSTimer* serverUpdateTimer;
+    [serverUpdateTimer invalidate];
+    serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:25.0 target:self
+                                                       selector:@selector(getServerDatasForFbIDTimer) userInfo: nil repeats: YES];
+}
+
+
+- (void) getServerDatasForFbIDTimer
+{
+    NSLog(@"Monter");
 }
 
 

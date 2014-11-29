@@ -124,17 +124,41 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // Shoud contain raw data from the server
     self.responseData = [NSMutableData new];
     
+    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+                                              withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                     [NSNull null], @"book",
+                     [NSNull null], @"movie",
+                     [NSNull null], @"serie",
+                     nil];
+    
+    
+    // This statement is hre for prevent empty user list
+    // Because it corrupt the NSMutableDictionary
+    // And you're not able to update it
+    if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] != nil) {
+        userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+    }
+    
     //Navigationbarcontroller
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                   forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = YES;
     
+    UIBarButtonItem *addMediaToFavoriteBtnItem;
+    // This media is not among user list
+    if (![[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas]) {
+        self.Added = NO;
+        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+    } else {
+        self.Added = YES;
+        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+    }
+    self.navigationItem.rightBarButtonItem = addMediaToFavoriteBtnItem;
     
-    UIBarButtonItem *addMediaBtnItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMediaToUserList:)];
-    // The add button is disabled by defaut to avoid some weirdo behaviour
-    addMediaBtnItem.enabled = NO;
-    self.navigationItem.rightBarButtonItem = addMediaBtnItem;
+    
+    
     
     __block NSDictionary *datasFromServer;
 //    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -155,22 +179,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         NSLog(@"Error: %@", error);
     }];
     
-    
-    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
-                                              withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
-    userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                     [NSNull null], @"book",
-                     [NSNull null], @"movie",
-                     [NSNull null], @"serie",
-                     nil];
-    
-    
-    // This statement is hre for prevent empty user list
-    // Because it corrupt the NSMutableDictionary
-    // And you're not able to update it
-    if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] != nil) {
-        userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
-    }
     
     CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     
@@ -235,7 +243,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat mediaDescriptionWidth = [self computeRatio:608 forDimension:screenWidth];
     CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame), mediaDescriptionWidth, [self computeRatio:376 forDimension:screenHeight])];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame), mediaDescriptionWidth, [self computeRatio:416 forDimension:screenHeight])];
     mediaDescription.text = data[@"Plot"];
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
@@ -273,14 +281,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [addToFavsButton setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
 //        addMediaBtnItem.enabled = NO;
         
-        self.navigationItem.rightBarButtonItem.enabled = NO;
+//        self.navigationItem.rightBarButtonItem.enabled = NO;
         
     } else {
-        [addToFavsButton addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-        [addToFavsButton setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
+
 //        addMediaBtnItem.enabled = YES;
         
-        self.navigationItem.rightBarButtonItem.enabled = YES;
+//        self.navigationItem.rightBarButtonItem.enabled = YES;
         
 //        NSLog(@"%@", NSStringFromClass([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] class]));
         if ([userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] != [NSNull null]) {
@@ -297,7 +304,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     addToFavsButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:15.0f];
     addToFavsButton.frame = CGRectMake(0, screenHeight - [self computeRatio:222.0 forDimension:screenHeight], screenWidth, 43);
     addToFavsButton.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:addToFavsButton];
+//    [self.view addSubview:addToFavsButton];
     
 
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -545,7 +552,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     return image;
 }
 
-- (void) addMediaToUserList:(UIButton*) sender
+- (void) addAndRemoveMediaToList:(UIBarButtonItem*) sender
+{
+    if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
+        sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        [self addMediaToUserList];
+    }else{
+        sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
+        [self removeMediaToUserList];
+    }
+
+}
+
+- (void) addMediaToUserList
 {
     // If the value of the key is nil so we create an new NSArray that contains the first elmt of the category
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] == [NSNull null]) {
@@ -570,31 +589,22 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } completion:^(BOOL success, NSError *error) {
         [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
         
+
+        
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
-        
-        UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.view viewWithTag:2];
-        addMediaBtnItem.enabled = NO;
-        
-        if ([NSStringFromClass([sender class]) isEqualToString:@"UIBarButtonItem"]) {
-            return;
-        }
-        // Update listeners for the button
-        [sender removeTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-        [sender addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-        [sender setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
     }];
 
 }
 
-- (void) removeMediaToUserList:(UIButton*)sender
+- (void) removeMediaToUserList
 {
     NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] mutableCopy];
     [updatedUserTaste removeObject:self.mediaDatas];
     [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
     [userTasteDict setObject:updatedUserTaste forKey:[self.mediaDatas valueForKey:@"type"]];
-    
+    NSLog(@"userTasteDict : %@", userTasteDict);
 //    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
 //    NSArray *sortedCategory = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
 //    
@@ -608,21 +618,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         userTaste.taste = arrayData;
     } completion:^(BOOL success, NSError *error) {
         [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
+
         
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
-        
-        UIBarButtonItem *addMediaBtnItem = (UIBarButtonItem*)[self.view viewWithTag:2];
-        addMediaBtnItem.enabled = YES;
-        
-        if ([NSStringFromClass([sender class]) isEqualToString:@"UIBarButtonItem"]) {
-            return;
-        }
-        // Update listeners for the button
-        [sender removeTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-        [sender addTarget:self action:@selector(addMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-        [sender setTitle:@"Ajouter à sa liste" forState:UIControlStateNormal];
     }];
     
 }

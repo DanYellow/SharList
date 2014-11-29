@@ -31,6 +31,12 @@
 		1A3C228F1A11AAAC005B31E4 /* invisible-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */; };
 		1A4953D41A1EBB9500A0C232 /* ShopButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4953D31A1EBB9500A0C232 /* ShopButton.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
+		1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470A1A29E3A0002AC281 /* lens-icon-message.png */; };
+		1A95470E1A29E3A0002AC281 /* lens-icon-message@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470B1A29E3A0002AC281 /* lens-icon-message@2x.png */; };
+		1A95470F1A29E3A0002AC281 /* lens-icon-message@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470C1A29E3A0002AC281 /* lens-icon-message@3x.png */; };
+		1A9547131A29E56D002AC281 /* favorite-icon-message.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A9547101A29E56D002AC281 /* favorite-icon-message.png */; };
+		1A9547141A29E56D002AC281 /* favorite-icon-message@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A9547111A29E56D002AC281 /* favorite-icon-message@2x.png */; };
+		1A9547151A29E56D002AC281 /* favorite-icon-message@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A9547121A29E56D002AC281 /* favorite-icon-message@3x.png */; };
 		1ACDC9041A23D3AA0032B857 /* app.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* app.plist */; };
 		1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */; };
 		1ACDC9101A23FC3D0032B857 /* LocationTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC90B1A23FC3D0032B857 /* LocationTracker.m */; };
@@ -38,6 +44,7 @@
 		1ACDC9121A23FC3D0032B857 /* LocationShareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC90F1A23FC3D0032B857 /* LocationShareModel.m */; };
 		1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */; };
 		1AE0E1B01A2949CD002B4829 /* TrianglesBG2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE0E1AF1A2949CD002B4829 /* TrianglesBG2@2x.png */; };
+		1AE0E1B21A296541002B4829 /* favoriteIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE0E1B11A296541002B4829 /* favoriteIcon.png */; };
 		1AE9E7A71A2683700072EF91 /* DetailsMeetingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */; };
 		1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */; };
 		1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7AA1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png */; };
@@ -92,6 +99,12 @@
 		1A4953D31A1EBB9500A0C232 /* ShopButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopButton.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
+		1A95470A1A29E3A0002AC281 /* lens-icon-message.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lens-icon-message.png"; sourceTree = "<group>"; };
+		1A95470B1A29E3A0002AC281 /* lens-icon-message@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lens-icon-message@2x.png"; sourceTree = "<group>"; };
+		1A95470C1A29E3A0002AC281 /* lens-icon-message@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lens-icon-message@3x.png"; sourceTree = "<group>"; };
+		1A9547101A29E56D002AC281 /* favorite-icon-message.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "favorite-icon-message.png"; sourceTree = "<group>"; };
+		1A9547111A29E56D002AC281 /* favorite-icon-message@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "favorite-icon-message@2x.png"; sourceTree = "<group>"; };
+		1A9547121A29E56D002AC281 /* favorite-icon-message@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "favorite-icon-message@3x.png"; sourceTree = "<group>"; };
 		1ACDC9031A23D3AA0032B857 /* app.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = app.plist; sourceTree = "<group>"; };
 		1ACDC9051A23E6720032B857 /* MeetingsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingsListViewController.h; sourceTree = "<group>"; };
 		1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingsListViewController.m; sourceTree = "<group>"; };
@@ -103,6 +116,7 @@
 		1ACDC90F1A23FC3D0032B857 /* LocationShareModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationShareModel.m; sourceTree = "<group>"; };
 		1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrianglesBG@2x.png"; sourceTree = "<group>"; };
 		1AE0E1AF1A2949CD002B4829 /* TrianglesBG2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrianglesBG2@2x.png"; sourceTree = "<group>"; };
+		1AE0E1B11A296541002B4829 /* favoriteIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favoriteIcon.png; sourceTree = "<group>"; };
 		1AE9E7A51A2683700072EF91 /* DetailsMeetingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMeetingViewController.h; sourceTree = "<group>"; };
 		1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsMeetingViewController.m; sourceTree = "<group>"; };
 		1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetingFavoriteSelected@2x.png"; sourceTree = "<group>"; };
@@ -223,6 +237,13 @@
 		1A076DDD1A102B0B00CD725A /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				1A9547101A29E56D002AC281 /* favorite-icon-message.png */,
+				1A9547111A29E56D002AC281 /* favorite-icon-message@2x.png */,
+				1A9547121A29E56D002AC281 /* favorite-icon-message@3x.png */,
+				1A95470A1A29E3A0002AC281 /* lens-icon-message.png */,
+				1A95470B1A29E3A0002AC281 /* lens-icon-message@2x.png */,
+				1A95470C1A29E3A0002AC281 /* lens-icon-message@3x.png */,
+				1AE0E1B11A296541002B4829 /* favoriteIcon.png */,
 				1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */,
 				1AE9E7AA1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png */,
 				1A130A9D1A227ED600CB16F2 /* lens-icon.png */,
@@ -405,16 +426,22 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A95470E1A29E3A0002AC281 /* lens-icon-message@2x.png in Resources */,
+				1A9547141A29E56D002AC281 /* favorite-icon-message@2x.png in Resources */,
 				1ACDC9041A23D3AA0032B857 /* app.plist in Resources */,
+				1A9547151A29E56D002AC281 /* favorite-icon-message@3x.png in Resources */,
+				1A9547131A29E56D002AC281 /* favorite-icon-message.png in Resources */,
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
 				1A0A045D1A12A58400B6F844 /* appBG-2.png in Resources */,
 				1A130A9E1A227ED600CB16F2 /* lens-icon.png in Resources */,
 				1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */,
 				1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */,
+				1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */,
 				1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */,
 				1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */,
 				1AE0E1B01A2949CD002B4829 /* TrianglesBG2@2x.png in Resources */,
 				1A3C228B1A118098005B31E4 /* reveal-icon@2x.png in Resources */,
+				1A95470F1A29E3A0002AC281 /* lens-icon-message@3x.png in Resources */,
 				1A076DDF1A102B1C00CD725A /* appBG.png in Resources */,
 				1A0014EA1A156A5E003430E9 /* bb.png in Resources */,
 				1A2696F51A1D443F002ADC57 /* triangles-bg.png in Resources */,
@@ -422,6 +449,7 @@
 				1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */,
 				1A3C228F1A11AAAC005B31E4 /* invisible-bg.png in Resources */,
 				1A3C228A1A118098005B31E4 /* reveal-icon.png in Resources */,
+				1AE0E1B21A296541002B4829 /* favoriteIcon.png in Resources */,
 				1A2696F31A1D4396002ADC57 /* triangles-bg@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

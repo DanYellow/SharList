@@ -295,7 +295,6 @@
 
 - (void) addAsFavorite:(UIBarButtonItem*)sender
 {
-    
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
         [self.meetingDatas setIsFavorite:YES];

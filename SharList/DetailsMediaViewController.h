@@ -57,6 +57,7 @@
 - (void) addPhysics;
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
+@property (nonatomic, assign, getter=isAdded) BOOL Added;
 @property (nonatomic, strong) id mediaDatas;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;

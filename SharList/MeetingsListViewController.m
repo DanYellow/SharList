@@ -17,6 +17,7 @@
 // 1 : Tableview of meeting list
 // 2 : segmentedControl
 // 3 : emptyFavoritesLabel
+// 4 : emptyMeetingsLabel
 
 @implementation MeetingsListViewController
 
@@ -94,17 +95,17 @@
     
     // Message for empty list taste
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"Appuyez sur   dans une rencontre pour l'ajouter aux favoris"];
-    UIImage *lensIcon = [UIImage imageNamed:@"lens-icon"];
+    UIImage *lensIcon = [UIImage imageNamed:@"favorite-icon-message"];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = lensIcon;
-    textAttachment.bounds = CGRectMake(150, -15, lensIcon.size.width, lensIcon.size.height);
+    textAttachment.bounds = CGRectMake(0, -10, lensIcon.size.width, lensIcon.size.height);
     
     NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
     
     NSRange r = [[attributedString string] rangeOfString:@"Appuyez sur  "];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
-    CGFloat emptyUserTasteLabelPosY = 45;// [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
+    CGFloat emptyUserTasteLabelPosY = 45; // [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
     
     UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
     emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
@@ -118,6 +119,18 @@
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
     
+    UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
+    emptyMeetingsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    emptyMeetingsLabel.text = @"Vous n'avez pas encore rencontré de personnes.";
+    emptyMeetingsLabel.textColor = [UIColor whiteColor];
+    emptyMeetingsLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+    emptyMeetingsLabel.numberOfLines = 0;
+    emptyMeetingsLabel.textAlignment = NSTextAlignmentCenter;
+    emptyMeetingsLabel.tag = 4;
+    emptyMeetingsLabel.hidden = YES;
+    [userMeetingsListTableView addSubview:emptyMeetingsLabel];
+    
+    
     // Fetching datas
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:meetingsFilter]; // Order by date of meeting
@@ -125,7 +138,7 @@
     NSMutableArray *foo = [NSMutableArray new];
     
     NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-    NSLog(@"user language: %@", language);
+//    NSLog(@"user language: %@", language);
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         
@@ -154,6 +167,22 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
+    UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
+    segmentedControlView.hidden = NO;
+    
+    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:4];
+    emptyFavoritesLabel.hidden = YES;
+    // User have made no meetings
+    if ([tableView numberOfSections] == 0) {
+        emptyFavoritesLabel.hidden = NO;
+        
+        //We hide the segmented control on page load
+        // only if there is nothing among ALL meetings
+        // so user can have no favorites but he still has the segmentedControl
+        if (!self.FilterEnabled) {
+            segmentedControlView.hidden = YES;
+        }
+    }
     return [distinctDays count];
 }
 
@@ -185,15 +214,7 @@
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    
-    
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
-        
-        //We hide the segmented control on page load if there is nothing among ALL meetings
-        if (!self.FilterEnabled) {
-            UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
-            segmentedControlView.hidden = YES;
-        }
         return 0;
     } else {
         
