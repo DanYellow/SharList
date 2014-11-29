@@ -113,9 +113,9 @@
     
     CALayer *bgLayer = [CALayer layer];
     bgLayer.frame = self.view.bounds;
-    
-    bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"triangles-bg.png"]].CGColor;
-//    [self.view.layer insertSublayer:bgLayer atIndex:1];
+    bgLayer.opacity = .5f;
+    bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"TrianglesBG"]].CGColor;
+    [self.view.layer insertSublayer:bgLayer atIndex:1];
     
     
 //    NSString *path = [[NSBundle mainBundle] pathForResource:

@@ -43,35 +43,152 @@
     
     FBLoginView *fbLoginButton = [FBLoginView new];
     fbLoginButton.delegate = self;
-    fbLoginButton.tag = 1;
+    fbLoginButton.tag = 2;
     fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
     [self.view addSubview:fbLoginButton];
+    
+    self.settingsItemsList = @[@"Activer la géolocalisation", @"Déconnexion", @"Supprimer le compte"];
+    
+    
+    // Uitableview of user selection (what user likes)
+    UITableView *settingsTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStyleGrouped];
+    settingsTableview.dataSource = self;
+    settingsTableview.delegate = self;
+    settingsTableview.backgroundColor = [UIColor clearColor];
+    settingsTableview.tag = 1;
+    settingsTableview.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    //    userSelectionTableViewController.refreshControl = userSelectRefresh;
+    settingsTableview.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    settingsTableview.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    settingsTableview.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
+    [self.view addSubview:settingsTableview];
+    
+    
 }
+
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 3;
+}
+
+- (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section == 2)
+        return 70.0f;
+    return 0.0f;
+}
+
+- (NSString*) tableView:(UITableView *) tableView titleForHeaderInSection:(NSInteger)section
+{
+    if (section != 2) {
+        return nil;
+    } else {
+        return @"DANGER ZONE";
+    }
+}
+
+
+- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return (100.0/2.0);
+}
+
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 15;
+    return 1;
 }
+
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    UILabel *myLabel;
     if (cell == nil) {
-        
-        NSString *title = @"title";
-        
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        cell.textLabel.text = title;
+        cell.accessoryType = UITableViewCellAccessoryNone;
         
-        UIView *bgColorView = [[UIView alloc] init];
-        [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
-        [cell setSelectedBackgroundView:bgColorView];
         
+        myLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
+        if (indexPath.section == 0) {
+            myLabel.frame = CGRectMake(12.0, 0, screenWidth, 50);
+            myLabel.enabled = NO;
+            UISwitch *geolocSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
+            geolocSwitch.onTintColor = [UIColor colorWithRed:(26.0f/255.0f) green:(79.0f/255.0f) blue:(103.0f/255.0f) alpha:1.0f];
+            geolocSwitch.enabled = NO;
+            cell.accessoryView = geolocSwitch;
+            cell.userInteractionEnabled = NO;
+            cell.textLabel.enabled = NO;
+            cell.detailTextLabel.enabled = NO;
+        }
+        myLabel.font = [UIFont fontWithName:@"Helvetica" size:16.0f];
+        myLabel.backgroundColor = [UIColor clearColor];
+//        myLabel.
+
+        [cell.contentView addSubview:myLabel];
     }
     
+    NSString *title = [self.settingsItemsList objectAtIndex:indexPath.section];
+    
+    myLabel.text = title;
+    myLabel.textColor = [UIColor colorWithRed:(44.0f/255.0f) green:(44.0f/255.0f) blue:(44.0f/255.0f) alpha:1.0];
+    
+    if (indexPath.section == 1 || indexPath.section == 2) {
+        myLabel.textAlignment= NSTextAlignmentCenter;
+    }
+    
+    if (indexPath.section == 2) {
+        myLabel.textColor = [UIColor colorWithRed:(171.0f/255.0f) green:(0/255.0f) blue:(0/255.0f) alpha:1.0];
+    }
+    
+    UIView *bgColorView = [[UIView alloc] init];
+    [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
+    [cell setSelectedBackgroundView:bgColorView];
+    
+    
+    // [button sendActionsForControlEvents:UIControlEventTouchUpInside];
+    
     return cell;
+}
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.row) {
+        case 1:
+            if (indexPath.row == 1) {
+                FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:2];
+                
+                for (id obj in fbLoginButton.subviews)
+                {
+                    if ([obj isKindOfClass:[UIButton class]])
+                    {
+                        [obj sendActionsForControlEvents:UIControlEventTouchUpInside];
+                    }
+                }
+            }
+            break;
+            
+        default:
+            break;
+    }
+    // Facebook log out
+    
+    
+}
+
+- (void)updateSwitchAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    UISwitch *switchView = (UISwitch *)cell.accessoryView;
+    
+    if ([switchView isOn]) {
+        [switchView setOn:NO animated:YES];
+    } else {
+        [switchView setOn:YES animated:YES];
+    }
 }
 
 - (void)didReceiveMemoryWarning {

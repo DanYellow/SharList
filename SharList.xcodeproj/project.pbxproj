@@ -36,6 +36,7 @@
 		1ACDC9101A23FC3D0032B857 /* LocationTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC90B1A23FC3D0032B857 /* LocationTracker.m */; };
 		1ACDC9111A23FC3D0032B857 /* BackgroundTaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC90D1A23FC3D0032B857 /* BackgroundTaskManager.m */; };
 		1ACDC9121A23FC3D0032B857 /* LocationShareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC90F1A23FC3D0032B857 /* LocationShareModel.m */; };
+		1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */; };
 		1AE9E7A71A2683700072EF91 /* DetailsMeetingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */; };
 		1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */; };
 		1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7AA1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png */; };
@@ -99,6 +100,7 @@
 		1ACDC90D1A23FC3D0032B857 /* BackgroundTaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundTaskManager.m; sourceTree = "<group>"; };
 		1ACDC90E1A23FC3D0032B857 /* LocationShareModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationShareModel.h; sourceTree = "<group>"; };
 		1ACDC90F1A23FC3D0032B857 /* LocationShareModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationShareModel.m; sourceTree = "<group>"; };
+		1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrianglesBG@2x.png"; sourceTree = "<group>"; };
 		1AE9E7A51A2683700072EF91 /* DetailsMeetingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMeetingViewController.h; sourceTree = "<group>"; };
 		1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsMeetingViewController.m; sourceTree = "<group>"; };
 		1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetingFavoriteSelected@2x.png"; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 				1A0A045C1A12A58400B6F844 /* appBG-2.png */,
 				1A076DDE1A102B1C00CD725A /* appBG.png */,
 				1A3C228E1A11AAAC005B31E4 /* invisible-bg.png */,
+				1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */,
 				1A0014E91A156A5E003430E9 /* bb.png */,
 			);
 			name = Images;
@@ -403,6 +406,7 @@
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
 				1A0A045D1A12A58400B6F844 /* appBG-2.png in Resources */,
 				1A130A9E1A227ED600CB16F2 /* lens-icon.png in Resources */,
+				1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */,
 				1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */,
 				1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */,
 				1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */,

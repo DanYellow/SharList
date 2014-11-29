@@ -22,5 +22,6 @@ UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate>
 }
 
 @property (strong, nonatomic) UITableViewController *settingsTVController;
+@property (strong, nonatomic) NSArray *settingsItemsList;
 
 @end
