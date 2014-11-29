@@ -44,7 +44,7 @@
     FBLoginView *fbLoginButton = [FBLoginView new];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 2;
-    fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
+    fbLoginButton.frame = CGRectMake(51, screenHeight + 150, 218, 46);
     [self.view addSubview:fbLoginButton];
     
     self.settingsItemsList = @[@"Activer la géolocalisation", @"Déconnexion", @"Supprimer le compte"];
@@ -57,7 +57,6 @@
     settingsTableview.backgroundColor = [UIColor clearColor];
     settingsTableview.tag = 1;
     settingsTableview.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     settingsTableview.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     settingsTableview.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     settingsTableview.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
@@ -108,7 +107,7 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         cell.accessoryType = UITableViewCellAccessoryNone;
-        
+//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
         myLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
         if (indexPath.section == 0) {
@@ -124,10 +123,14 @@
         }
         myLabel.font = [UIFont fontWithName:@"Helvetica" size:16.0f];
         myLabel.backgroundColor = [UIColor clearColor];
-//        myLabel.
+        
 
         [cell.contentView addSubview:myLabel];
     }
+    
+    UIView *bgColorView = [UIView new];
+    [bgColorView setBackgroundColor:[UIColor colorWithRed:(205.0f/255.0f) green:(239.0f/255.0f) blue:(254.0/255.0f) alpha:.75]];
+    cell.selectedBackgroundView = bgColorView;
     
     NSString *title = [self.settingsItemsList objectAtIndex:indexPath.section];
     
@@ -142,9 +145,6 @@
         myLabel.textColor = [UIColor colorWithRed:(171.0f/255.0f) green:(0/255.0f) blue:(0/255.0f) alpha:1.0];
     }
     
-    UIView *bgColorView = [[UIView alloc] init];
-    [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
-    [cell setSelectedBackgroundView:bgColorView];
     
     
     // [button sendActionsForControlEvents:UIControlEventTouchUpInside];
@@ -154,19 +154,19 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch (indexPath.row) {
+    switch (indexPath.section) {
         case 1:
-            if (indexPath.row == 1) {
-                FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:2];
-                
-                for (id obj in fbLoginButton.subviews)
+        {
+            FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:2];
+            
+            for (id obj in fbLoginButton.subviews)
+            {
+                if ([obj isKindOfClass:[UIButton class]])
                 {
-                    if ([obj isKindOfClass:[UIButton class]])
-                    {
-                        [obj sendActionsForControlEvents:UIControlEventTouchUpInside];
-                    }
+                    [obj sendActionsForControlEvents:UIControlEventTouchUpInside];
                 }
             }
+        }
             break;
             
         default:

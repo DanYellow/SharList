@@ -113,7 +113,8 @@
     
     CALayer *bgLayer = [CALayer layer];
     bgLayer.frame = self.view.bounds;
-    bgLayer.opacity = .5f;
+    bgLayer.opacity = .7f;
+    bgLayer.name = @"TrianglesBG";
     bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"TrianglesBG"]].CGColor;
     [self.view.layer insertSublayer:bgLayer atIndex:1];
     
@@ -200,7 +201,7 @@
     emptyResultLabel.layer.masksToBounds = NO;
     emptyResultLabel.tag = 7;
     emptyResultLabel.hidden = YES;
-    [userSelectionTableViewController.tableView addSubview:emptyResultLabel];
+    [self.searchResultsController.tableView addSubview:emptyResultLabel];
 
     
     // Message for empty list taste
@@ -480,6 +481,13 @@
     
     UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
     
+    for (CALayer *layer in [self.view.layer sublayers]) {
+        
+        if ([[layer name] isEqualToString:@"TrianglesBG"]) {
+            layer.opacity = 0;
+        }
+    }
+    
     [UIView animateWithDuration:0.5 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
@@ -512,6 +520,14 @@
     appnameView.hidden = NO;
     
     UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
+    
+    for (CALayer *layer in [self.view.layer sublayers]) {
+        
+        if ([[layer name] isEqualToString:@"TrianglesBG"]) {
+            layer.opacity = 1;
+        }
+    }
+
     
     [UIView animateWithDuration:0.5 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -660,13 +676,15 @@
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-        UILabel *emptyResultLabel = (UILabel*)[self.searchResultsController.view viewWithTag:7];
+        UILabel *emptyResultLabel = (UILabel*)[self.searchResultsController.tableView viewWithTag:7];
         if ([[filteredTableDatas allKeys] count] == 0 && [self.searchController.searchBar.text length] != 0) {
+            
             emptyResultLabel.hidden = NO;
+            NSLog(@"%@", emptyResultLabel);
             
             return 0;
         }
-        emptyResultLabel.hidden = YES;
+//        emptyResultLabel.hidden = YES; gento
         
         return [categoryList count];
     } else {

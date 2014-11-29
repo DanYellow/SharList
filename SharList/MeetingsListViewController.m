@@ -115,7 +115,7 @@
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
     emptyFavoritesLabel.hidden = YES;
-    [userMeetingsListTableView addSubview: emptyFavoritesLabel];
+    [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
     
     // Fetching datas
