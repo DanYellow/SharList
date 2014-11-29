@@ -26,6 +26,7 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+#import <UIKit/UIKit.h>
 
 @interface CCARadialGradientLayer : CALayer
 

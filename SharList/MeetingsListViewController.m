@@ -95,7 +95,7 @@
     
     // Message for empty list taste
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"Appuyez sur   dans une rencontre pour l'ajouter aux favoris"];
-    UIImage *lensIcon = [UIImage imageNamed:@"favorite-icon-message"];
+    UIImage *lensIcon = [UIImage imageNamed:@"favorite-icon-message-alt"];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = lensIcon;
     textAttachment.bounds = CGRectMake(0, -10, lensIcon.size.width, lensIcon.size.height);
@@ -108,7 +108,7 @@
     CGFloat emptyUserTasteLabelPosY = 45; // [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
     
     UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
-    emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0f];
     emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur la loupe} pour rechercher
     emptyFavoritesLabel.textColor = [UIColor whiteColor];
     emptyFavoritesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
