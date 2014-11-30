@@ -35,6 +35,7 @@
 }
 
 @property (nonatomic, assign, getter=isFilterEnabled) BOOL FilterEnabled;
+@property (retain, nonatomic) NSMutableData *responseData;
 
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 

@@ -42,7 +42,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-
+    [self getRandomUserDatas];
     
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -51,6 +51,8 @@
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.FilterEnabled = NO;
+    // Shoud contain raw data from the server
+    self.responseData = [NSMutableData new];
 
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
@@ -335,9 +337,89 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    NSLog(@"foof");
+   
+    [self getRandomUserDatas];
+    
     completionHandler(UIBackgroundFetchResultNewData);
 }
+
+- (void) getRandomUserDatas {
+    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                       timeoutInterval:10.0];
+    [request setHTTPMethod:@"POST"];
+    
+    NSInteger myInt = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
+    
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)myInt];
+    
+    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    
+//    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+//    [conn start];
+//    
+    
+    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        if (error) {
+            NSLog(@"ERROR");
+        } else {
+            [self datas:data];
+        }
+    }];
+}
+
+- (void) datas:(NSData *)objectNotation
+{
+    NSString *responseString = [[NSString alloc] initWithData:objectNotation encoding:NSUTF8StringEncoding];
+    NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
+    
+    
+    NSMutableDictionary *foo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    NSLog(@"newStr : %@", [foo objectForKey:@"user_favs"]);
+}
+
+//- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+//    [self.responseData appendData:data];
+//}
+//
+//
+//- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+//    
+//    NSLog(@"myint %@", self.responseData);
+//    // Server sends back some datas
+//    if (self.responseData != nil) {
+//        NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+//        
+//        NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
+//        
+//        
+//        NSMutableDictionary *foo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+//        NSLog(@"newStr : %@", foo);
+//        
+//        self.responseData = nil;
+//        self.responseData = [NSMutableData new];
+//    }
+//    
+//}
+//
+//- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+//    NSString* responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//    
+//    NSMutableArray *userTasteDict = [NSJSONSerialization JSONObjectWithData:[responseString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
+//    
+//     NSLog(@"newStr : %@", userTasteDict);
+//    
+////        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+////            UserTaste *userTaste = [UserTaste  MR_createEntity];
+////            NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[userTasteDict objectForKey:@"user_favs"]];
+////            userTaste.taste = arrayData;
+////            userTaste.fbid = [NSNumber numberWithLong:1382410218159367];
+////            userTaste.lastMeeting = [NSDate date];
+////            userTaste.isFavorite = NO;
+////        } completion:nil];
+//}
+
 
 
 - (void) didReceiveMemoryWarning {

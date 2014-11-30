@@ -61,6 +61,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+//    [[self navigationController] tabBarItem].badgeValue = @"3";
+    
     NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     
@@ -245,6 +247,13 @@
     self.searchController.searchBar.frame = CGRectMake(0, -60.0,
                                                        self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     self.searchController.view.backgroundColor = [UIColor colorWithRed:(2.0/255.0f) green:(17.0/255.0f) blue:(28.0/255.0f) alpha:.85f]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
+    
+    UILabel *fooText = [[UILabel alloc] initWithFrame:CGRectMake(0, 60, screenWidth, 50)];
+    fooText.text = @"Gentoo";
+    fooText.backgroundColor = [UIColor colorWithRed:1 green:0 blue:0 alpha:1];
+    [self.searchController.view addSubview:fooText];
+    
+    
 //    CALayer *searchControllerBGimgLayer = [CALayer layer];
 //    searchControllerBGimgLayer.contents = (id)[UIImage imageNamed:@"triangles-bg.png"].CGImage;
 //    searchControllerBGimgLayer.masksToBounds = YES;
@@ -335,13 +344,13 @@
     //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
     //
     //    } completion:nil]; //[NSDate date];
-    UserTaste *userTaste = [UserTaste  MR_createEntity];
-    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-    userTaste.taste = arrayData;
-    userTaste.fbid = [NSNumber numberWithLong:1382410218159367];
-    userTaste.lastMeeting = newDate;
-    userTaste.isFavorite = YES;
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+//    UserTaste *userTaste = [UserTaste  MR_createEntity];
+//    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+//    userTaste.taste = arrayData;
+//    userTaste.fbid = [NSNumber numberWithLong:1382410218159367];
+//    userTaste.lastMeeting = newDate; //[NSDate date];
+//    userTaste.isFavorite = YES;
+//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //
 //    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
@@ -915,6 +924,7 @@
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
     detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.delegate = self;
+    detailsMediaViewController.tabBarController.tabBar.hidden = YES;
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
     
     [self.searchController setActive:NO];
@@ -929,8 +939,10 @@
     
     NSTimer* serverUpdateTimer;
     [serverUpdateTimer invalidate];
-    serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:25.0 target:self
-                                                       selector:@selector(getServerDatasForFbIDTimer) userInfo: nil repeats: YES];
+//    serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:25.0 target:self
+//                                                       selector:@selector(getServerDatasForFbIDTimer) userInfo: nil repeats: YES];
+    
+    [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:5.0];
 }
 
 
