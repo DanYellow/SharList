@@ -44,6 +44,12 @@
     UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
+    
+    
+    if (!FBSession.activeSession.isOpen) {
+        [self.navigationController setNavigationBarHidden:YES animated:NO];
+        self.tabBarController.tabBar.hidden = YES;
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -62,7 +68,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     
 //    [[self navigationController] tabBarItem].badgeValue = @"3";
-    
+    NSLog(@"%@", NSLocalizedString(@"Introduce", nil));
     NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     
@@ -146,7 +152,7 @@
     [appnameView addSubview:appnameLabel];
     
     UILabel *appMottoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 51, screenWidth, 15)];
-    appMottoLabel.text = [@"Faites découvrir au monde ce que vous aimez" uppercaseString];
+    appMottoLabel.text = [NSLocalizedString(@"Introduce the world what you love", nil) uppercaseString];
     appMottoLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0];
     appMottoLabel.textColor = [UIColor whiteColor];
     appMottoLabel.textAlignment = NSTextAlignmentLeft;
@@ -166,7 +172,7 @@
     
     
     // Uitableview of user selection (what user likes)
-    UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 49) style:UITableViewStylePlain];
+    UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
     //[self computeRatio:800.0 forDimension:screenHeight] + 44
     userTasteListTableView.dataSource = self;
     userTasteListTableView.delegate = self;
@@ -721,13 +727,14 @@
     }
 }
 
-- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-        return [categoryList objectAtIndex:section];
-    } else {
-        return [[userTasteDict allKeys] objectAtIndex:section];
-    }
-}
+//- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+//    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+//        return [categoryList objectAtIndex:section];
+//    } else {
+//        NSLog(@"%@", NSLocalizedString([[userTasteDict allKeys] objectAtIndex:section], nil));
+//        return NSLocalizedString([[userTasteDict allKeys] objectAtIndex:section], nil);
+//    }
+//}
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -941,8 +948,6 @@
     [self disappearsSearchBar];
     [self.searchController setActive:NO];
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
-    
-    
 }
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
@@ -974,7 +979,7 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
 
-    NSString *title = [[categoryList objectAtIndex:section] uppercaseString];
+    NSString *title = [NSLocalizedString([categoryList objectAtIndex:section], nil) uppercaseString];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];

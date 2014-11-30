@@ -27,14 +27,13 @@
 
     
     ViewController *viewController = [ViewController new];
-    viewController.title = @"Ma liste";
-    
-    SettingsViewController *settingsViewController = [SettingsViewController new];
-    settingsViewController.title = @"Paramètres";
+    viewController.title = [self sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
     
     MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
-    meetingsListViewController.title = @"Rencontres";
+    meetingsListViewController.title = [self sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
     
+    SettingsViewController *settingsViewController = [SettingsViewController new];
+    settingsViewController.title = [self sentenceCapitalizedString:NSLocalizedString(@"settings", nil)];
     
     self.tabBarController = [[UITabBarController alloc] init];
     
@@ -102,6 +101,15 @@
     
     
     return YES;
+}
+
+- (NSString *) sentenceCapitalizedString:(NSString*)string {
+    if (![string length]) {
+        return [NSString string];
+    }
+    NSString *uppercase = [[string substringToIndex:1] uppercaseString];
+    NSString *lowercase = [[string substringFromIndex:1] lowercaseString];
+    return [uppercase stringByAppendingString:lowercase];
 }
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void  (^)(UIBackgroundFetchResult))completionHandler

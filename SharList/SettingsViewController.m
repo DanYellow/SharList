@@ -145,6 +145,7 @@
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
+        // Facebook log out
         case 1:
         {
             FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:2];
@@ -162,8 +163,8 @@
         default:
             break;
     }
-    // Facebook log out
     
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
 }
 

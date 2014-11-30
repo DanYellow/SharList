@@ -1,0 +1,18 @@
+/* 
+  Localizable.strings
+  SharList
+
+  Created by Jean-Louis Danielo on 30/11/2014.
+  Copyright (c) 2014 Jean-Louis Danielo. All rights reserved.
+*/
+
+
+"Introduce the world what you love" = "faites découvrir au monde ce que vous aimez";
+"serie" = "série";
+"movie" = "film";
+"buy" = "acheter";
+"buy %@" = "acheter %@";
+"meetings" = "rencontres";
+"settings" = "paramètres";
+"my list" = "ma liste";
+"Tap on  " = "Appuyez sur  ";

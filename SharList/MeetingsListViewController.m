@@ -305,24 +305,25 @@
     
     NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:currentDate];
     
-    NSMutableArray *foo = [NSMutableArray new];
+    // Contains all meetings of the day
+    NSMutableArray *meetingsOfDay = [NSMutableArray new];
     for (int i = 0; i < [daysList count]; i++) {
         NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[daysList objectAtIndex:i] ];
         
         
         if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
-            [foo addObject:[daysList objectAtIndex:i]];
+            [meetingsOfDay addObject:[daysList objectAtIndex:i]];
         }
     }
-    NSLog(@"%li", ([foo count] - indexPath.row) - 1);
+
     UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
-                                                           withValue:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
+                                                           withValue:[meetingsOfDay objectAtIndex:(([meetingsOfDay count] - indexPath.row) - 1)]];
     
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
     
-    cell.textLabel.text = [NSString stringWithFormat:@"Rencontré à %@", [cellDateFormatter stringFromDate:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]]];
+    cell.textLabel.text = [NSString stringWithFormat:@"Rencontré à %@", [cellDateFormatter stringFromDate:[meetingsOfDay objectAtIndex:(([meetingsOfDay count] - indexPath.row) - 1)]]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
     

@@ -311,7 +311,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton addTarget:self action:@selector(displayBuyScreen) forControlEvents:UIControlEventTouchUpInside];
-    [buyButton setTitle:[@"Acheter" uppercaseString] forState:UIControlStateNormal];
+    [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
     buyButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:17.0f];
     buyButton.frame = CGRectMake(0, screenHeight - 43, screenWidth, 43);
     buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
@@ -391,7 +391,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(0, [self computeRatio:86 forDimension:screenHeight], screenWidth, 16.0f)];
     titleBuyMedia.textColor = [UIColor whiteColor];
     titleBuyMedia.backgroundColor = [UIColor clearColor];
-    titleBuyMedia.text = [[NSString stringWithFormat:@"Acheter %@", self.mediaDatas[@"name"]] uppercaseString];
+    titleBuyMedia.text = [[NSString stringWithFormat:NSLocalizedString(@"buy %@", nil), self.mediaDatas[@"name"]] uppercaseString];
     titleBuyMedia.font = [UIFont fontWithName:@"Helvetica-Neue" size:19.0f];
     titleBuyMedia.textAlignment = NSTextAlignmentCenter;
     [displayBuyView addSubview:titleBuyMedia];
