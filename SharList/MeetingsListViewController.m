@@ -42,8 +42,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [self getRandomUserDatas];
-    
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
@@ -67,6 +65,7 @@
     gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
+    [[self navigationController] tabBarItem].badgeValue = @"3";
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
     segmentedControlView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
@@ -139,8 +138,10 @@
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
+    
+    
 //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-//    NSLog(@"user language: %@", language);
+   
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         
@@ -275,7 +276,10 @@
 
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.meetingDatas = selectedCell.model;
-    [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
+//    [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas taste]] mutableCopy]
+    NSLog(@"%@", [[NSKeyedUnarchiver unarchiveObjectWithData:[selectedCell.model taste]] mutableCopy]);
+
+//    [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
 
 
@@ -321,6 +325,7 @@
     cell.textLabel.text = [NSString stringWithFormat:@"Rencontré à %@", [cellDateFormatter stringFromDate:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
+    
     cell.model = currentUserTaste;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
@@ -364,61 +369,45 @@
         if (error) {
             NSLog(@"ERROR");
         } else {
-            [self datas:data];
+            [self getRandomUserDatas:data];
         }
     }];
 }
 
-- (void) datas:(NSData *)objectNotation
+- (void) getRandomUserDatas:(NSData *)datas
 {
-    NSString *responseString = [[NSString alloc] initWithData:objectNotation encoding:NSUTF8StringEncoding];
+    NSString *responseString = [[NSString alloc] initWithData:datas encoding:NSUTF8StringEncoding];
     NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
     
+    // datas from random user "met"
+    NSMutableDictionary *randomUserDatas = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
     
-    NSMutableDictionary *foo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    NSLog(@"newStr : %@", [foo objectForKey:@"user_favs"]);
+    //    NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
+    //    saveUsingCurrentThreadContextWithBlock:(void (^)(NSManagedObjectContext *localContext))block
+    //    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    NSNumberFormatter *formatNumber = [[NSNumberFormatter alloc] init];
+    [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbiduser"]];
+    
+    
+    // this var contains string raw of user taste. It should be converted to a NSDictionnary
+    NSData *stringData = [[randomUserDatas objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:0 error:nil];
+    
+    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
+    
+    UserTaste *userTaste = [UserTaste MR_createEntity];
+    userTaste.taste = arrayData;
+    userTaste.fbid = randomUserfbID;
+    userTaste.lastMeeting = [NSDate date];
+    userTaste.isFavorite = NO;
+    
+    //        self.tabBarController.tabBarItem.badgeValue = @"1";
+    
+    //     } completion:nil];
+    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 }
 
-//- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-//    [self.responseData appendData:data];
-//}
-//
-//
-//- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-//    
-//    NSLog(@"myint %@", self.responseData);
-//    // Server sends back some datas
-//    if (self.responseData != nil) {
-//        NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-//        
-//        NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
-//        
-//        
-//        NSMutableDictionary *foo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-//        NSLog(@"newStr : %@", foo);
-//        
-//        self.responseData = nil;
-//        self.responseData = [NSMutableData new];
-//    }
-//    
-//}
-//
-//- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-//    NSString* responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-//    
-//    NSMutableArray *userTasteDict = [NSJSONSerialization JSONObjectWithData:[responseString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:nil];
-//    
-//     NSLog(@"newStr : %@", userTasteDict);
-//    
-////        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-////            UserTaste *userTaste = [UserTaste  MR_createEntity];
-////            NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[userTasteDict objectForKey:@"user_favs"]];
-////            userTaste.taste = arrayData;
-////            userTaste.fbid = [NSNumber numberWithLong:1382410218159367];
-////            userTaste.lastMeeting = [NSDate date];
-////            userTaste.isFavorite = NO;
-////        } completion:nil];
-//}
 
 
 

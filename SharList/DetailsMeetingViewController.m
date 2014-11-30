@@ -73,7 +73,6 @@
     
     
     UIBarButtonItem *addMeetingToFavoriteBtnItem;
-    NSLog([self.meetingDatas isFavorite] ? @"YES" :@"NO");
     // This list is not among user's favorites
     if (![self.meetingDatas isFavorite]) {
         addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
