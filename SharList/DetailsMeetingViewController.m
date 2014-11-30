@@ -57,6 +57,9 @@
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.metUserTasteDict = [NSMutableDictionary new];
     self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas taste]] mutableCopy];
+//    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    
+//    NSLog(@"self.metUserTasteDict : %@", self.metUserTasteDict);
     
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
@@ -109,7 +112,11 @@
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+
     NSArray *sectionElements = [self.metUserTasteDict objectForKey:sectionTitle];
+    
+    
+    
     // If the category is empty so the section not appears
     if ([sectionElements isKindOfClass:[NSNull class]]) {
         return 0;
@@ -181,16 +188,17 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    NSString *sectionTitle = [[self.metUserTasteDict allKeys] objectAtIndex:indexPath.section];
+    NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)] objectAtIndex:indexPath.section];
     NSString *title, *year, *imdbID;
     ShareListMediaTableViewCell *cell;
     
     cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     NSArray *rowsOfSection = [self.metUserTasteDict objectForKey:sectionTitle];
     CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
-    
+
     title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
     imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
+    
     
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
@@ -225,7 +233,8 @@
     
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.detailTextLabel.text = year;
+    cell.detailTextLabel.text = @"year";
+    cell.detailTextLabel.textColor = [UIColor whiteColor];
     
     
     return cell;

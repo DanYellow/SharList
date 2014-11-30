@@ -339,7 +339,7 @@
                       @{ @"imdbID": @"tt0848228", @"id": @24, @"year": @2008, @"name" : @"The Avengers", @"type" : @"movie" },
                       @{ @"imdbID": @"tt2322441", @"id": @43, @"year": @2008, @"name" : @"50 Nuances de Grey", @"type" : @"movie" }
                       ];
-    NSDictionary *productManagers = @{@"book": fooArray, @"movie": moviesArray, @"serie": fooArray};
+    NSDictionary *productManagers = @{@"book": [NSNull null], @"movie": moviesArray, @"serie": fooArray};
     //
     //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
     //

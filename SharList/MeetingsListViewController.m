@@ -55,6 +55,8 @@
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
+//    [self getRandomUserDatas];
+    
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     
@@ -276,10 +278,8 @@
 
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.meetingDatas = selectedCell.model;
-//    [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas taste]] mutableCopy]
-    NSLog(@"%@", [[NSKeyedUnarchiver unarchiveObjectWithData:[selectedCell.model taste]] mutableCopy]);
-
-//    [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
+    
+    [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
 
 
@@ -314,7 +314,7 @@
             [foo addObject:[daysList objectAtIndex:i]];
         }
     }
-
+    NSLog(@"%li", ([foo count] - indexPath.row) - 1);
     UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
                                                            withValue:[foo objectAtIndex:(([foo count] - indexPath.row) - 1)]];
     
@@ -367,14 +367,14 @@
     
     [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
-            NSLog(@"ERROR");
+            NSLog(@"%@", error);
         } else {
-            [self getRandomUserDatas:data];
+            [self saveRandomUserDatas:data];
         }
     }];
 }
 
-- (void) getRandomUserDatas:(NSData *)datas
+- (void) saveRandomUserDatas:(NSData *)datas
 {
     NSString *responseString = [[NSString alloc] initWithData:datas encoding:NSUTF8StringEncoding];
     NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
@@ -392,7 +392,7 @@
     
     // this var contains string raw of user taste. It should be converted to a NSDictionnary
     NSData *stringData = [[randomUserDatas objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:0 error:nil];
+    NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
     
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
     
