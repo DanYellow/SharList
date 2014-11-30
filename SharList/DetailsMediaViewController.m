@@ -176,7 +176,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         datasFromServer = [[NSDictionary alloc] initWithDictionary:responseObject];
         [self setMediaViewForData:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
+        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:@"Oups" message:@"Il semblerait qu'on ait du mal à afficher cette fiche. \n Réessayez plus tard." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [errConnectionAlertView show];
+        [loadingIndicator stopAnimating];
     }];
     
     
@@ -604,12 +606,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [updatedUserTaste removeObject:self.mediaDatas];
     [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
     [userTasteDict setObject:updatedUserTaste forKey:[self.mediaDatas valueForKey:@"type"]];
-    NSLog(@"userTasteDict : %@", userTasteDict);
-//    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-//    NSArray *sortedCategory = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
-//    
-//    [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
-//    [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {

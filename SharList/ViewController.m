@@ -187,6 +187,7 @@
     self.searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
     self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    self.searchResultsController.tableView.separatorInset = UIEdgeInsetsZero;
     
     //Message for empty search
     UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, screenWidth, 90)];
@@ -248,10 +249,11 @@
                                                        self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     self.searchController.view.backgroundColor = [UIColor colorWithRed:(2.0/255.0f) green:(17.0/255.0f) blue:(28.0/255.0f) alpha:.85f]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
     
-    UILabel *fooText = [[UILabel alloc] initWithFrame:CGRectMake(0, 60, screenWidth, 50)];
-    fooText.text = @"Gentoo";
-    fooText.backgroundColor = [UIColor colorWithRed:1 green:0 blue:0 alpha:1];
-    [self.searchController.view addSubview:fooText];
+    UILabel *infosAboutSearchLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 60, screenWidth, 50)];
+    infosAboutSearchLabel.text = @"Gentoo";
+    infosAboutSearchLabel.backgroundColor = [UIColor colorWithRed:1 green:0 blue:0 alpha:1];
+    infosAboutSearchLabel.bounds = CGRectInset(infosAboutSearchLabel.frame, 10.0f, 10.0f);
+//    [self.searchController.view addSubview:fooText];
     
     
 //    CALayer *searchControllerBGimgLayer = [CALayer layer];
@@ -758,6 +760,16 @@
         }
         
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
+
+
+//        if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
+//            //         If this row is among user current taste list so we put a star
+//            if ([[userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] containsObject:[rowsOfSection objectAtIndex:indexPath.row]]) {
+////                cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected" ]];
+//            }
+//        }
+        
+        
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
         year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
         cell.textLabel.text = title;
@@ -792,6 +804,7 @@
         //            cell.textLabel.hidden = YES;
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
         
+        
         if (imdbID != nil) {
             [self getImageCellForData:imdbID aCell:cell];
         }
@@ -804,7 +817,7 @@
     }
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.detailTextLabel.text = year;
+//    cell.detailTextLabel.text = year;
     cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
     cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
     
@@ -914,9 +927,7 @@
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
-{
-//    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
-    
+{    
     ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     
     NSObject *object = selectedCell.model;
@@ -924,10 +935,8 @@
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
     detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.delegate = self;
-    detailsMediaViewController.tabBarController.tabBar.hidden = YES;
+    [self disappearsSearchBar];
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
-    
-    [self.searchController setActive:NO];
 }
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict

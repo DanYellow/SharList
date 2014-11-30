@@ -88,9 +88,18 @@
     self.navigationItem.rightBarButtonItem = addMeetingToFavoriteBtnItem;
     
 
-    NSDateFormatter *foo = [NSDateFormatter new];
-    foo.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
-    foo.dateStyle = kCFDateFormatterMediumStyle;
+//    NSDateFormatter *foo = [NSDateFormatter new];
+//    foo.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
+//    foo.dateStyle = kCFDateFormatterMediumStyle;
+    
+    UIView *meetingInfoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 42)];
+    meetingInfoView.backgroundColor = [UIColor redColor];
+
+    
+    UILabel *text = [[UILabel alloc] initWithFrame:meetingInfoView.frame];
+    text.text = @"GENTOO";
+    text.bounds = CGRectInset(meetingInfoView.frame, 10.0f, 10.0f);
+    [meetingInfoView addSubview:text];
     
     //___________________
     // Uitableview of user selection (what user likes)
@@ -188,6 +197,7 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
+    // Keys from NSDict is sorted alphabetically
     NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)] objectAtIndex:indexPath.section];
     NSString *title, *year, *imdbID;
     ShareListMediaTableViewCell *cell;
@@ -202,22 +212,25 @@
     
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
+        cell.textLabel.frame = cellFrame;
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+        cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+        cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+        cell.textLabel.layer.shadowOpacity = .75f;
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
 //    cell.delegate = self;
-    // For "Classic mode" we want a cell's background more opaque
-    cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
+
+    
     
     //            cell.rightUtilityButtons = [self rightButtonsForSearch];
     
     // We hide this part to get easily datas
-    cell.textLabel.frame = cellFrame;
     
-    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
-    cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-    cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-    cell.textLabel.layer.shadowOpacity = .75f;
-    cell.textLabel.textColor = [UIColor whiteColor];
-    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+    
+    
     //            cell.textLabel.hidden = YES;
     cell.model = [rowsOfSection objectAtIndex:indexPath.row];
     
@@ -233,8 +246,8 @@
     
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.detailTextLabel.text = @"year";
-    cell.detailTextLabel.textColor = [UIColor whiteColor];
+//    cell.detailTextLabel.text = @"year";
+//    cell.detailTextLabel.textColor = [UIColor whiteColor];
     
     
     return cell;
