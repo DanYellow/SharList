@@ -927,7 +927,9 @@
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
-{    
+{
+//    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
+    
     ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     
     NSObject *object = selectedCell.model;
@@ -935,8 +937,12 @@
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
     detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.delegate = self;
+    detailsMediaViewController.tabBarController.tabBar.hidden = YES;
     [self disappearsSearchBar];
+    [self.searchController setActive:NO];
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+    
+    
 }
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
