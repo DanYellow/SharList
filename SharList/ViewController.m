@@ -68,7 +68,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     
 //    [[self navigationController] tabBarItem].badgeValue = @"3";
-    NSLog(@"%@", NSLocalizedString(@"Introduce", nil));
+    NSLog(@"%@", NSLocalizedString(@"Introduce the world what you love", nil));
     NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     
@@ -951,26 +951,7 @@
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 
-- (void) userListHaveBeenUpdate:(NSDictionary *)dict
-{
-    userTasteDict = [dict mutableCopy];
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-    userSelectionTableView.hidden = NO;
-    [userSelectionTableView reloadData];
-    
-    NSTimer* serverUpdateTimer;
-    [serverUpdateTimer invalidate];
-//    serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:25.0 target:self
-//                                                       selector:@selector(getServerDatasForFbIDTimer) userInfo: nil repeats: YES];
-    
-    [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:5.0];
-}
 
-
-- (void) getServerDatasForFbIDTimer
-{
-    NSLog(@"Monter");
-}
 
 
 // Title of categories
@@ -1042,6 +1023,24 @@
    
         return jsonString;
     }
+}
+
+- (void) userListHaveBeenUpdate:(NSDictionary *)dict
+{
+    userTasteDict = [dict mutableCopy];
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
+    userSelectionTableView.hidden = NO;
+    [userSelectionTableView reloadData];
+    
+
+    // 7 secondes after update user list we update the database with new datas
+    [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
+}
+
+
+- (void) getServerDatasForFbIDTimer
+{
+    [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:YES];
 }
 
 // This methods allows to retrieve and send (?) user datas from the server

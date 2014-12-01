@@ -55,7 +55,8 @@
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
-//    [self getRandomUserDatas];
+    // Design on the view
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(canIGetRandomUser)];
     
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
@@ -109,14 +110,14 @@
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
     CGFloat emptyUserTasteLabelPosY = 45; // [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
-        
+    
     UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 90)];
     emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0f];
     emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur la loupe} pour rechercher
     emptyFavoritesLabel.textColor = [UIColor whiteColor];
     emptyFavoritesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyFavoritesLabel.numberOfLines = 0;
-    emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 10.0f, 10.0f);
+    emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 10.0f);
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
     emptyFavoritesLabel.hidden = YES;
@@ -124,7 +125,7 @@
     
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
-    
+    // Message for no friends /:
     UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
     emptyMeetingsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyMeetingsLabel.text = NSLocalizedString(@"You haven't met a person yet", nil);
@@ -134,6 +135,7 @@
     emptyMeetingsLabel.textAlignment = NSTextAlignmentCenter;
     emptyMeetingsLabel.tag = 4;
     emptyMeetingsLabel.hidden = YES;
+    emptyMeetingsLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 10.0f);
     [userMeetingsListTableView addSubview:emptyMeetingsLabel];
     
     
@@ -353,6 +355,10 @@
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
+- (void) canIGetRandomUser {
+    NSLog(@"canIGetRandomUser");
+}
+
 - (void) getRandomUserDatas {
     NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
@@ -411,6 +417,7 @@
     
     //     } completion:nil];
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+    NSLog(@"GET NEW USER");
 }
 
 

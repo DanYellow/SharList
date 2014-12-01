@@ -589,10 +589,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
         userTaste.taste = arrayData;
     } completion:^(BOOL success, NSError *error) {
-        [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
-        
-
-        
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
@@ -613,9 +609,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
         userTaste.taste = arrayData;
     } completion:^(BOOL success, NSError *error) {
-        [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
-
-        
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
