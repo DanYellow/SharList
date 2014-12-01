@@ -109,16 +109,19 @@
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
     CGFloat emptyUserTasteLabelPosY = 45; // [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
-    
-    UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
+        
+    UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 90)];
     emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0f];
     emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur la loupe} pour rechercher
     emptyFavoritesLabel.textColor = [UIColor whiteColor];
     emptyFavoritesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyFavoritesLabel.numberOfLines = 0;
+    emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 10.0f, 10.0f);
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
     emptyFavoritesLabel.hidden = YES;
+    
+    
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
     
