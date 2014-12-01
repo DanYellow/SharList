@@ -12,7 +12,25 @@
 "movie" = "film";
 "buy" = "acheter";
 "buy %@" = "acheter %@";
+
+//tab bar controller
 "meetings" = "rencontres";
 "settings" = "paramètres";
 "my list" = "ma liste";
+
+//Viewcontroller
+"e.g." = "ex.";
 "Tap on  " = "Appuyez sur  ";
+"Tap on  to fill your list" = "Appuyez sur   pour remplir votre liste";
+
+// Meetingslistviewcontroller
+"You haven't met a person yet" = "Vous n'avez pas encore rencontré de personnes";
+"All" = "Toutes";
+"Favorites" = "Favoris";
+"Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une rencontre pour l'ajouter aux favoris";
+"Met at %@" = "Rencontré à %";
+
+//Settings view controller
+"Enable geolocation" = "Activer la géolocalisation";
+"Log out" = "Déconnexion";
+"Delete account" = "Supprimer le compte";

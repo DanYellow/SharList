@@ -166,7 +166,7 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
     
-    NSString *title = [[[self.metUserTasteDict allKeys] objectAtIndex:section] uppercaseString];
+    NSString *title = [NSLocalizedString([[self.metUserTasteDict allKeys] objectAtIndex:section], nil) uppercaseString];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];

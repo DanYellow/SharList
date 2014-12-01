@@ -12,7 +12,26 @@
 "movie" = "movie";
 "buy" = "buy";
 "buy %@" = "buy %@";
+
+//tab bar controller
 "meetings" = "meetings";
 "settings" = "settings";
 "my list" = "my list";
+
+//Viewcontroller
 "Tap on  " = "Tap on  ";
+"Tap on  to fill your list" = "Tap on  to fill your list";
+"e.g." = "e.g.";
+
+// Meetinglistviewcontroller
+"Tap on  in a meeting to add it among your favorites" = "Tap on  in a meeting to add it among your favorites";
+"You haven't met a person yet" = "You haven't met a person yet";
+"All" = "All";
+"Favorites" = "Favorites";
+"Met at %@" = "Met at %@";
+
+//Settings view controller
+"Enable geolocation" = "Enable geolocation";
+"Log out" = "Log out";
+"Delete account" = "Delete account";
+

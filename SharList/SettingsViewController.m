@@ -47,7 +47,9 @@
     fbLoginButton.frame = CGRectMake(51, screenHeight + 150, 218, 46);
     [self.view addSubview:fbLoginButton];
     
-    self.settingsItemsList = @[@"Activer la géolocalisation", @"Déconnexion", @"Supprimer le compte"];
+    self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
+                               NSLocalizedString(@"Log out", nil),
+                               NSLocalizedString(@"Delete account", nil)];
     
     
     // Uitableview of user selection (what user likes)

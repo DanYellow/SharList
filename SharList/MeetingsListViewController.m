@@ -74,7 +74,7 @@
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
     
-    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"All", @"Favorites"]];
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"All", nil), NSLocalizedString(@"Favorites", nil)]];
     
     segmentedControl.frame = CGRectMake(10, 5, screenWidth - 20, 30);
     [segmentedControl addTarget:self action:@selector(diplayFavoritesMeetings:) forControlEvents: UIControlEventValueChanged];
@@ -97,7 +97,7 @@
     [self.view addSubview:userMeetingsListTableView];
     
     // Message for empty list taste
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"Appuyez sur   dans une rencontre pour l'ajouter aux favoris"];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  in a meeting to add it among your favorites", nil)];
     UIImage *lensIcon = [UIImage imageNamed:@"favorite-icon-message-alt"];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = lensIcon;
@@ -105,7 +105,7 @@
     
     NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
     
-    NSRange r = [[attributedString string] rangeOfString:@"Appuyez sur  "];
+    NSRange r = [[attributedString string] rangeOfString:NSLocalizedString(@"Tap on  ", nil)];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
     CGFloat emptyUserTasteLabelPosY = 45; // [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
@@ -124,7 +124,7 @@
     
     UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
     emptyMeetingsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
-    emptyMeetingsLabel.text = @"Vous n'avez pas encore rencontré de personnes.";
+    emptyMeetingsLabel.text = NSLocalizedString(@"You haven't met a person yet", nil);
     emptyMeetingsLabel.textColor = [UIColor whiteColor];
     emptyMeetingsLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyMeetingsLabel.numberOfLines = 0;
@@ -322,8 +322,8 @@
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
-    
-    cell.textLabel.text = [NSString stringWithFormat:@"Rencontré à %@", [cellDateFormatter stringFromDate:[meetingsOfDay objectAtIndex:(([meetingsOfDay count] - indexPath.row) - 1)]]];
+  
+    cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[meetingsOfDay objectAtIndex:(([meetingsOfDay count] - indexPath.row) - 1)]]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
     

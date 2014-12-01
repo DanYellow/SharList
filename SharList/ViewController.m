@@ -179,6 +179,8 @@
     userTasteListTableView.backgroundColor = [UIColor clearColor];
     userTasteListTableView.tag = 4;
     userTasteListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    userTasteListTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0); //self.bottomLayoutGuide.length
+    
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -214,7 +216,7 @@
 
     
     // Message for empty list taste
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"Appuyez sur   pour remplir votre liste"];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  to fill your list", nil)];
     UIImage *lensIcon = [UIImage imageNamed:@"lens-icon-message"];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = lensIcon;
@@ -222,7 +224,7 @@
     
     NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
     
-    NSRange r = [[attributedString string] rangeOfString:@"Appuyez sur  "];
+    NSRange r = [[attributedString string] rangeOfString:NSLocalizedString(@"Tap on  ", nil)];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
     CGFloat emptyUserTasteLabelPosY = 45;// [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
@@ -250,9 +252,8 @@
     self.searchController.searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
     self.searchController.searchBar.barTintColor = [UIColor colorWithRed:(2.0/255.0f) green:(17.0/255.0f) blue:(28.0/255.0f) alpha:1.0f];
     self.searchController.searchBar.tintColor = [UIColor whiteColor];
-    self.searchController.searchBar.placeholder = @"Ex. Breaking Bad";
-    self.searchController.searchBar.frame = CGRectMake(0, -60.0,
-                                                       self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    self.searchController.searchBar.placeholder = [NSLocalizedString(@"e.g.", nil) stringByAppendingString:@" Breaking Bad"];
+    self.searchController.searchBar.frame = CGRectMake(0, -60.0, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
     self.searchController.view.backgroundColor = [UIColor colorWithRed:(2.0/255.0f) green:(17.0/255.0f) blue:(28.0/255.0f) alpha:.85f]; //[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
     
     UILabel *infosAboutSearchLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 60, screenWidth, 50)];
