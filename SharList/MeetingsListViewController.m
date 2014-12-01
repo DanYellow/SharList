@@ -145,17 +145,22 @@
 //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
    
     for (UserTaste *userTaste in meetings) {
-        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];
+        [dateFormatter2 setDateStyle:NSDateFormatterShortStyle];
         
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
         dateFormatter.dateFormat = @"MM/dd/yy";
-        NSString *dateString = [dateFormatter stringFromDate: [userTaste lastMeeting]];
-
+        
+        NSString *dateString = [dateFormatter stringFromDate:[userTaste lastMeeting]];
+        
         [listOfDistinctDays addObject: dateString];
         [foo addObject:[userTaste lastMeeting]];
+        
+        
     }
     
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
-
+    
     daysList = [[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]]; //foo
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
 }
@@ -188,6 +193,7 @@
             segmentedControlView.hidden = YES;
         }
     }
+    NSLog(@"title : %@", distinctDays);
     return [distinctDays count];
 }
 
@@ -321,7 +327,7 @@
     
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
-    cellDateFormatter.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
+    cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
   
     cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[meetingsOfDay objectAtIndex:(([meetingsOfDay count] - indexPath.row) - 1)]]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
