@@ -151,12 +151,10 @@
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         dateFormatter.dateFormat = @"MM/dd/yy";
         
-        NSString *dateString = [dateFormatter stringFromDate:[userTaste lastMeeting]];
+        NSString *dateString = [dateFormatter2 stringFromDate:[userTaste lastMeeting]];
         
         [listOfDistinctDays addObject: dateString];
         [foo addObject:[userTaste lastMeeting]];
-        
-        
     }
     
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
@@ -193,7 +191,7 @@
             segmentedControlView.hidden = YES;
         }
     }
-    NSLog(@"title : %@", distinctDays);
+    //NSLog(@"title : %@", distinctDays);
     return [distinctDays count];
 }
 
@@ -256,15 +254,16 @@
     }
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = @"MM-dd-yy";
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
 
     NSDate *currentDate = [NSDate new];
     currentDate = [dateFormatter dateFromString:[distinctDays objectAtIndex:section]];
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
     
-    NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:currentDate];
+    NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]]];
     
+
     int j = 0;
     for (int i = 0; i < [meetings count]; i++) {
         NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
@@ -293,7 +292,6 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-
     ShareListMediaTableViewCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -302,7 +300,7 @@
     }
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = @"MM-dd-yy";
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
     
     NSDate *currentDate = [NSDate new];
     currentDate = [dateFormatter dateFromString:[distinctDays objectAtIndex:indexPath.section]];
@@ -316,15 +314,13 @@
     for (int i = 0; i < [daysList count]; i++) {
         NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[daysList objectAtIndex:i] ];
         
-        
         if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
             [meetingsOfDay addObject:[daysList objectAtIndex:i]];
         }
     }
-
+    
     UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
                                                            withValue:[meetingsOfDay objectAtIndex:(([meetingsOfDay count] - indexPath.row) - 1)]];
-    
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
@@ -339,7 +335,6 @@
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
-    
     
     return cell;
 }
