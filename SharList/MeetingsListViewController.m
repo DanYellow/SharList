@@ -356,7 +356,7 @@
 }
 
 - (void) canIGetRandomUser {
-    NSLog(@"canIGetRandomUser");
+    [self getRandomUserDatas];
 }
 
 - (void) getRandomUserDatas {
@@ -405,18 +405,32 @@
     NSData *stringData = [[randomUserDatas objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
     
-    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
+    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
+    UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
     
-    UserTaste *userTaste = [UserTaste MR_createEntity];
-    userTaste.taste = arrayData;
-    userTaste.fbid = randomUserfbID;
-    userTaste.lastMeeting = [NSDate date];
-    userTaste.isFavorite = NO;
+    // Calc the difference between current date and the object retrieve from the server
+    // If this object is too recent so we need a new one
+    if ([oldUserTaste class] != [NSNull class]) {
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        
+        NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
+        
+        NSInteger days = [conversionInfo day];
+        NSInteger hours = [conversionInfo hour];
+        NSInteger minutes = [conversionInfo minute];
+        
+        NSLog(@"oldUser : %li", (long)hours);
+    }
     
-    //        self.tabBarController.tabBarItem.badgeValue = @"1";
-    
-    //     } completion:nil];
-    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+//    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
+//    
+//    UserTaste *userTaste = [UserTaste MR_createEntity];
+//    userTaste.taste = arrayData;
+//    userTaste.fbid = randomUserfbID;
+//    userTaste.lastMeeting = [NSDate date];
+//    userTaste.isFavorite = NO;
+//    
+//    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
     NSLog(@"GET NEW USER");
 }
 
