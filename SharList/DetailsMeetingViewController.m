@@ -319,11 +319,17 @@
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
         [self.meetingDatas setIsFavorite:YES];
+        
     }else{
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
         [self.meetingDatas setIsFavorite:NO];
     }
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
+    NSDateFormatter *formatter2 = [[NSDateFormatter alloc] init];
+    formatter2.timeStyle = kCFDateFormatterShortStyle;
+    formatter2.dateStyle = kCFDateFormatterShortStyle;
+    NSLog(@"%@, %@", [self.meetingDatas fbid], [formatter2 stringFromDate:[self.meetingDatas lastMeeting]]);
 }
 
 /*

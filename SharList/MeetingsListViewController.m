@@ -288,8 +288,16 @@
 
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.meetingDatas = selectedCell.model;
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.timeStyle = kCFDateFormatterShortStyle;
+    detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model lastMeeting]];
     
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
+    
+    NSDateFormatter *formatter2 = [[NSDateFormatter alloc] init];
+    formatter2.timeStyle = kCFDateFormatterShortStyle;
+    formatter2.dateStyle = kCFDateFormatterShortStyle;
+    NSLog(@"%@, %@", [selectedCell.model fbid], [formatter2 stringFromDate:[selectedCell.model lastMeeting]]);
 }
 
 
@@ -399,18 +407,20 @@
     NSNumberFormatter *formatNumber = [[NSNumberFormatter alloc] init];
     [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbiduser"]];
+    NSLog(@"randomUserfbID : %@", randomUserfbID);
     
     
     // this var contains string raw of user taste. It should be converted to a NSDictionnary
     NSData *stringData = [[randomUserDatas objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
+    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
     UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
     
     // Calc the difference between current date and the object retrieve from the server
     // If this object is too recent so we need a new one
-    if ([oldUserTaste class] != [NSNull class]) {
+    if (oldUserTaste != nil) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
         NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
@@ -420,17 +430,28 @@
         NSInteger minutes = [conversionInfo minute];
         
         NSLog(@"oldUser : %li", (long)hours);
+        
+//        if ((long)hours < 1) {
+//            return;
+//        }
+// If user exists we just update his value like streetpass in 3ds
+        oldUserTaste.taste = arrayData;
+        oldUserTaste.fbid = randomUserfbID;
+        oldUserTaste.lastMeeting = [NSDate date];
+        [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+        
+        return;
     }
     
-//    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
-//    
-//    UserTaste *userTaste = [UserTaste MR_createEntity];
-//    userTaste.taste = arrayData;
-//    userTaste.fbid = randomUserfbID;
-//    userTaste.lastMeeting = [NSDate date];
-//    userTaste.isFavorite = NO;
-//    
-//    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+    
+    
+    UserTaste *userTaste = [UserTaste MR_createEntity];
+    userTaste.taste = arrayData;
+    userTaste.fbid = randomUserfbID;
+    userTaste.lastMeeting = [NSDate date];
+    userTaste.isFavorite = NO;
+    
+    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
     NSLog(@"GET NEW USER");
 }
 
