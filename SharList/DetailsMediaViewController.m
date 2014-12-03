@@ -27,6 +27,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // Tag list
 // 1 : displayBuyView (blurred view)
 // 2 : addMediaBtnItem
+// 3 : addRemoveMediaLabel
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -118,6 +119,20 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
 //    self.edgesForExtendedLayout = UIRectEdgeNone;
     
+    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
+    
+    UIView *infoMediaView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, imgMediaHeight)];
+    infoMediaView.tag = 2;
+    
+    UILabel *addRemoveMediaLabel = [[UILabel alloc] initWithFrame:CGRectMake(-5, 60, screenWidth - 5, 20)];
+    addRemoveMediaLabel.textColor = [UIColor whiteColor];
+    addRemoveMediaLabel.textAlignment = NSTextAlignmentRight;
+    
+    addRemoveMediaLabel.alpha = 0;
+    addRemoveMediaLabel.hidden = YES;
+    addRemoveMediaLabel.tag = 3;
+    [infoMediaView insertSubview:addRemoveMediaLabel atIndex:10];
+    
     // Init vars
     self.PhysicsAdded = NO;
     buyButtonsInitPositions = [NSMutableArray new];
@@ -151,9 +166,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     if (![[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas]) {
         self.Added = NO;
         addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+        addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
     } else {
         self.Added = YES;
         addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+        addRemoveMediaLabel.text = NSLocalizedString(@"Deleted", nil);
     }
     self.navigationItem.rightBarButtonItem = addMediaToFavoriteBtnItem;
     
@@ -182,10 +199,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }];
     
     
-    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     
-    UIView *infoMediaView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, imgMediaHeight)];
-    infoMediaView.tag = 2;
     
     CGFloat mediaTitleLabelY = imgMediaHeight - [self computeRatio:108 forDimension:imgMediaHeight];
     UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabelY, screenWidth, 25)];
@@ -203,6 +217,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     [self.view addSubview:infoMediaView];
+    
+    
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
@@ -556,14 +572,29 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addAndRemoveMediaToList:(UIBarButtonItem*) sender
 {
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    UILabel *addRemoveMediaLabel = (UILabel*)[infoMediaView viewWithTag:3];
+    addRemoveMediaLabel.hidden = NO;
+    addRemoveMediaLabel.alpha = 1;
+    
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
         [self addMediaToUserList];
+        addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
     }else{
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
         [self removeMediaToUserList];
+        addRemoveMediaLabel.text = NSLocalizedString(@"Deleted", nil);
     }
-
+    
+    [UIView animateWithDuration:0.6 delay:0.1
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         addRemoveMediaLabel.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         addRemoveMediaLabel.hidden = YES;
+                     }];
 }
 
 - (void) addMediaToUserList

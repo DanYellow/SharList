@@ -36,4 +36,6 @@
 "Delete account" = "Supprimer le compte";
 
 
-"FBLV:LogInButton" = "Gentoo login";
+// DetailsMediaViewController
+"Added" = "Ajouté";
+"Deleted" = "Supprimé";

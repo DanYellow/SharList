@@ -1044,16 +1044,9 @@
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
-    
-    // We send the json to the server only when we need it
-    NSString *userTasteJSON;
-    if (isUpdate == YES) {
-        userTasteJSON = [self updateTasteForServer];
-    } else {
-        userTasteJSON = @"";
-    }
 
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@", userfbID, userTasteJSON];
+
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", userfbID];
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     

@@ -315,6 +315,8 @@
     detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model lastMeeting]];
     
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
+    
+    NSLog(@"%@", [selectedCell.model numberOfMeetings]);
 }
 
 
