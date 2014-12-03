@@ -132,6 +132,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      [NSNull null], @"serie",
                      nil];
     
+    
     // This statement is hre for prevent empty user list
     // Because it corrupt the NSMutableDictionary
     // And you're not able to update it
@@ -202,15 +203,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     [self.view addSubview:infoMediaView];
-    
-    UILabel *addRemoveFavLabel = [[UILabel alloc] initWithFrame:CGRectMake(-5, 64, screenWidth - 5, 20)];
-    addRemoveFavLabel.text = NSLocalizedString(@"Added", nil);
-    addRemoveFavLabel.textAlignment = NSTextAlignmentRight;
-    addRemoveFavLabel.textColor = [UIColor whiteColor];
-    addRemoveFavLabel.tag = 3;
-    addRemoveFavLabel.alpha = 0;
-    addRemoveFavLabel.hidden = YES; // NO
-    [infoMediaView insertSubview:addRemoveFavLabel atIndex:10];
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
@@ -440,10 +432,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     itunesBuyButton.layer.borderWidth = 2.0f;
     [displayBuyView addSubview:itunesBuyButton];
     
-//    UIView* barrier = [[UIView alloc] initWithFrame:CGRectMake(0, amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + 7, 5, 3)]; // w: 25
-//    barrier.tag = 2;
-//    barrier.backgroundColor = [UIColor colorWithWhite:1 alpha:.15];
-//    [displayBuyView addSubview:barrier];
+    UIView* barrier = [[UIView alloc] initWithFrame:CGRectMake(0, amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + 7, 5, 3)]; // w: 25
+    barrier.tag = 2;
+    barrier.backgroundColor = [UIColor colorWithWhite:1 alpha:.15];
+    [displayBuyView addSubview:barrier];
     
     
     CGRect lineFrame = CGRectMake(0, 18, 35, 4);
@@ -564,30 +556,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addAndRemoveMediaToList:(UIBarButtonItem*) sender
 {
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    
-    UILabel *addRemoveFavLabel = (UILabel*)[infoMediaView viewWithTag:3];
-    addRemoveFavLabel.hidden = NO;
-    addRemoveFavLabel.alpha = 1;
-    
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
         [self addMediaToUserList];
-        addRemoveFavLabel.text = NSLocalizedString(@"Added", nil);
     }else{
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
         [self removeMediaToUserList];
-        addRemoveFavLabel.text = NSLocalizedString(@"Deleted", nil);
     }
-    
-    [UIView animateWithDuration:0.7 delay:0.1
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         addRemoveFavLabel.alpha = 0;
-                     }
-                     completion:^(BOOL finished){
-                         addRemoveFavLabel.hidden = @1;
-                     }];
+
 }
 
 - (void) addMediaToUserList

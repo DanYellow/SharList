@@ -104,26 +104,7 @@
     // Reset the badge notification number
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     
-    UIAlertView * alert;
-    //We have to make sure that the Background App Refresh is enable for the Location updates to work in the background.
-    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied) {
-        
-        alert = [[UIAlertView alloc]initWithTitle:@""
-                                          message:@"The app doesn't work without the Background App Refresh enabled. To turn it on, go to Settings > General > Background App Refresh"
-                                         delegate:nil
-                                cancelButtonTitle:@"Ok"
-                                otherButtonTitles:nil, nil];
-        [alert show];
-        
-    }else if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted) {
-        alert = [[UIAlertView alloc]initWithTitle:@""
-                                          message:@"The functions of this app are limited because the Background App Refresh is disable."
-                                         delegate:nil
-                                cancelButtonTitle:@"Ok"
-                                otherButtonTitles:nil, nil];
-        [alert show];
-    }
-    
+    [FBSettings setResourceBundleName:@"FacebookSDKOverrides"];
     
     return YES;
 }
@@ -142,7 +123,7 @@
     // If user is not connected to facebook, no bg task for him
     // and said to iOS's algorithm to "push" back manage
     if (!FBSession.activeSession.isOpen) {
-//        completionHandler(UIBackgroundFetchResultNoData);
+        completionHandler(UIBackgroundFetchResultNoData);
         return;
     }
     MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
@@ -157,19 +138,22 @@
 }
 
 - (void)registerForRemoteNotification {
-    UIUserNotificationType types = UIUserNotificationTypeBadge;
+    UIUserNotificationType types = UIUserNotificationTypeSound | UIUserNotificationTypeBadge | UIUserNotificationTypeAlert;
     UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
     [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
 }
 
+#ifdef __IPHONE_8_0
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
     [application registerForRemoteNotifications];
 }
-
+#endif
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    
+
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6252" systemVersion="13F34" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="UserTaste" representedClassName="UserTaste" syncable="YES">
-        <attribute name="fbid" optional="YES" attributeType="Integer 64" syncable="YES"/>
+        <attribute name="fbid" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="isFavorite" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="lastMeeting" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="numberOfMeetings" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>

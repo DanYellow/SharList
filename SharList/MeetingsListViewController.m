@@ -374,7 +374,7 @@
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     [self getRandomUserDatas];
-    [[self navigationController] tabBarItem].badgeValue = @"3";
+    
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
@@ -385,34 +385,34 @@
 - (void) getRandomUserDatas {
     //https://github.com/tmdvs/TDBadgedCell
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-//    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
 
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Title" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
+//    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+//                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+//                                                       timeoutInterval:10.0];
+//    [request setHTTPMethod:@"POST"];
 //    
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Title" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-//    [alert show];
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:10.0];
-    [request setHTTPMethod:@"POST"];
-    
-    NSInteger myInt = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
-    
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)myInt];
-    
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-    
-//    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-//    [conn start];
+//    NSInteger myInt = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
 //    
-    
-    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if (error) {
-            NSLog(@"%@", error);
-        } else {
-            [self saveRandomUserDatas:data];
-        }
-    }];
+//    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)myInt];
+//    
+//    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+//    
+////    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+////    [conn start];
+////    
+//    
+//    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+//        if (error) {
+//            NSLog(@"%@", error);
+//        } else {
+//            [self saveRandomUserDatas:data];
+//        }
+//    }];
 }
 
 - (void) saveRandomUserDatas:(NSData *)datas
