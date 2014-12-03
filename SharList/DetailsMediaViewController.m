@@ -614,19 +614,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     }
     
-    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
-    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
-        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-        userTaste.taste = arrayData;
-    } completion:^(BOOL success, NSError *error) {
-        if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
-            [self.delegate userListHaveBeenUpdate:userTasteDict];
-        }
-        // 7 secondes after update user list we update the database with new datas
-        [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
-    }];
-
+    [self saveMediaUpdate];
 }
 
 - (void) removeMediaToUserList
@@ -636,6 +624,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
     [userTasteDict setObject:updatedUserTaste forKey:[self.mediaDatas valueForKey:@"type"]];
     
+    [self saveMediaUpdate];
+}
+
+- (void) saveMediaUpdate
+{
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
         UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
@@ -645,7 +638,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
-
+        
         // 7 secondes after update user list we update the database with new datas
         [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
     }];
@@ -653,7 +646,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) getServerDatasForFbIDTimer
 {
-    [self getServerDatasForFbID:[[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] objectForKey:@"fbUserID"] isUpdate:YES];
+    [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
 }
 
 // This methods allows to retrieve and send (?) user datas from the server

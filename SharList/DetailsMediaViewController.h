@@ -45,6 +45,14 @@
     UIActivityIndicatorView *loadingIndicator;
 }
 
+@property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
+@property (nonatomic, assign, getter=isAdded) BOOL Added;
+@property (nonatomic, strong) id mediaDatas;
+@property (retain, nonatomic) NSMutableData *responseData;
+@property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;
+
+
+
 - (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;
 - (UIImage *) takeSnapshotOfView:(UIView *)view;
 
@@ -55,12 +63,8 @@
 - (void) openStore:(UIButton*)sender;
 
 - (void) addPhysics;
+- (void) saveMediaUpdate;
 
-@property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
-@property (nonatomic, assign, getter=isAdded) BOOL Added;
-@property (nonatomic, strong) id mediaDatas;
-@property (retain, nonatomic) NSMutableData *responseData;
-@property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;
 
 @end
 
@@ -70,5 +74,6 @@
 @required
 
 - (void) userListHaveBeenUpdate:(NSMutableDictionary *)dict;
+
 
 @end

@@ -4,10 +4,10 @@
         <attribute name="fbid" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="isFavorite" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="lastMeeting" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="numberOfMeetings" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="numberOfMeetings" optional="YES" attributeType="Integer 16" defaultValueString="1" syncable="YES"/>
         <attribute name="taste" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
     <elements>
-        <element name="UserTaste" positionX="-63" positionY="-18" width="128" height="118"/>
+        <element name="UserTaste" positionX="-63" positionY="-18" width="128" height="120"/>
     </elements>
 </model>

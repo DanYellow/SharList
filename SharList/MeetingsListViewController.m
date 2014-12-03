@@ -153,23 +153,25 @@
     
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates]; // Order by date of meeting
     
-    
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
+
     //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-    
     for (UserTaste *userTaste in meetings) {
-        NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];
-        [dateFormatter2 setDateStyle:NSDateFormatterShortStyle];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateStyle:NSDateFormatterShortStyle];
         
-        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-        dateFormatter.dateFormat = @"MM/dd/yy";
+//        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+//        dateFormatter.dateFormat = @"MM/dd/yy";
         
-        NSString *dateString = [dateFormatter2 stringFromDate:[userTaste lastMeeting]];
+        NSString *dateString = [dateFormatter stringFromDate:[userTaste lastMeeting]];
         
-        [listOfDistinctDays addObject: dateString];
-        [foo addObject:[userTaste lastMeeting]];
+        if (dateString != nil) {
+            [listOfDistinctDays addObject: dateString];
+            [foo addObject:[userTaste lastMeeting]];
+        }
+        
     }
     
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
@@ -252,7 +254,6 @@
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
     } else {
-        
         return 52.0;
     }
 }
@@ -386,8 +387,10 @@
 
 - (void) getRandomUserDatas {
     //https://github.com/tmdvs/TDBadgedCell
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+//    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+//    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Nat" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
 
     NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
@@ -450,12 +453,11 @@
         NSInteger hours = [conversionInfo hour];
 //        NSInteger minutes = [conversionInfo minute];
         
-        NSLog(@"oldUser : %li", (long)hours);
         
         // If the meeting have been made less than one hour ago we do nothing
         if ((long)hours < 1) {
             NSLog(@"Does nothing");
-            return;
+//            return;
         }
         
         oldUserTaste.taste = arrayData;
@@ -473,7 +475,7 @@
     userTaste.fbid = randomUserfbID;
     userTaste.lastMeeting = [NSDate date];
     userTaste.isFavorite = NO;
-    userTaste.numberOfMeetings = 0;
+    userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 }

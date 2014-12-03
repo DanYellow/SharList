@@ -97,7 +97,7 @@
     [self.window setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [self.window makeKeyAndVisible];
     
-    [application setMinimumBackgroundFetchInterval:300]; //(3600/4)
+    [application setMinimumBackgroundFetchInterval:60]; //(3600/4)
     
     // Ask for remote notification
     [self registerForRemoteNotification];
