@@ -68,7 +68,6 @@
     gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
-    [[self navigationController] tabBarItem].badgeValue = @"3";
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
     segmentedControlView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
@@ -117,7 +116,7 @@
     emptyFavoritesLabel.textColor = [UIColor whiteColor];
     emptyFavoritesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyFavoritesLabel.numberOfLines = 0;
-    emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 10.0f);
+    emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, -10.0f);
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
     emptyFavoritesLabel.hidden = YES;
@@ -133,7 +132,7 @@
     emptyMeetingsLabel.textAlignment = NSTextAlignmentCenter;
     emptyMeetingsLabel.tag = 4;
     emptyMeetingsLabel.hidden = YES;
-    emptyMeetingsLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 10.0f);
+    emptyMeetingsLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 20.0f);
     [userMeetingsListTableView addSubview:emptyMeetingsLabel];
     
     
@@ -384,6 +383,11 @@
 }
 
 - (void) getRandomUserDatas {
+    //https://github.com/tmdvs/TDBadgedCell
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+
+    
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Title" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [alert show];
 //    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
@@ -450,17 +454,18 @@
         
         // If the meeting have been made less than one hour ago we do nothing
         if ((long)hours < 1) {
+            NSLog(@"Does nothing");
             return;
         }
         
         oldUserTaste.taste = arrayData;
         oldUserTaste.fbid = randomUserfbID;
         oldUserTaste.lastMeeting = [NSDate date];
+        oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
         [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
         
         return;
     }
-    
     
     
     UserTaste *userTaste = [UserTaste MR_createEntity];
@@ -468,6 +473,7 @@
     userTaste.fbid = randomUserfbID;
     userTaste.lastMeeting = [NSDate date];
     userTaste.isFavorite = NO;
+    userTaste.numberOfMeetings = 0;
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 }

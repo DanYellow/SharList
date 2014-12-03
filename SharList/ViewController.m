@@ -141,6 +141,7 @@
     appnameView.tag = 2;
     appnameView.backgroundColor = [UIColor clearColor];
     appnameView.opaque = YES;
+    appnameView.hidden = NO;
     [self.view addSubview:appnameView];
     
     UILabel *appnameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
@@ -308,6 +309,7 @@
     } else {
         fbLoginButton.frame = CGRectMake(51, screenHeight + 150, 218, 46);
 //        fbLoginButton.hidden = YES;
+        appnameView.hidden = YES;
     }
     
     // Test if it's the first use
