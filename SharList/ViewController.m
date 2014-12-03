@@ -1028,21 +1028,13 @@
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
 {
+    // We update the view behind the user like this when he comes back the view is updated
     userTasteDict = [dict mutableCopy];
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
-    
-
-    // 7 secondes after update user list we update the database with new datas
-    [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
 }
 
-
-- (void) getServerDatasForFbIDTimer
-{
-    [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:YES];
-}
 
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate

@@ -592,6 +592,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
+        // 7 secondes after update user list we update the database with new datas
+        [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
     }];
 
 }
@@ -612,8 +614,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
+
+        // 7 secondes after update user list we update the database with new datas
+        [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
     }];
-    
+}
+
+- (void) getServerDatasForFbIDTimer
+{
+    [self getServerDatasForFbID:[[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] objectForKey:@"fbUserID"] isUpdate:YES];
 }
 
 // This methods allows to retrieve and send (?) user datas from the server
@@ -622,20 +631,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     if (self.isConnectedToInternet == NO)
         return;
         
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
+    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/updateDatas.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
     
     // We send the json to the server only when we need it
-    NSString *userTasteJSON;
-    if (isUpdate == YES) {
-        userTasteJSON = [self updateTasteForServer];
-    } else {
-        userTasteJSON = @"";
-    }
-    NSLog(@"synchronize with server");
+    NSString *userTasteJSON = [self updateTasteForServer];
+
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@", userfbID, userTasteJSON];
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
