@@ -33,14 +33,16 @@
 	<string>1557139914519856</string>
 	<key>FacebookDisplayName</key>
 	<string>Shar</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 	</array>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<key>FacebookBundleName</key>
+	<string>FacebookSDKOverrides</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

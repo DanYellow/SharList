@@ -34,3 +34,6 @@
 "Enable geolocation" = "Activer la géolocalisation";
 "Log out" = "Déconnexion";
 "Delete account" = "Supprimer le compte";
+
+
+"FBLV:LogInButton" = "Gentoo login";

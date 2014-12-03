@@ -15,5 +15,7 @@
 @dynamic taste;
 @dynamic lastMeeting;
 @dynamic isFavorite;
+@dynamic numberOfMeetings;
+
 
 @end
