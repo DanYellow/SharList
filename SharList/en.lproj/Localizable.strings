@@ -36,3 +36,9 @@
 "Log out" = "Log out";
 "Delete account" = "Delete account";
 
+"FBLV:LogInButton" = "Gentoo login";
+
+
+// DetailsMediaViewController
+"Added" = "Added";
+"Deleted" = "Deleted";

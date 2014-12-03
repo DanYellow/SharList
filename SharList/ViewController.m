@@ -378,6 +378,9 @@
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     
     [self.view addSubview:loadingIndicator];
+    
+//    [FBSettings setResourceBundleName:@"FacebookSDKOverrides"];
+
 }
 
 - (void) fetchUserDatas
@@ -1029,6 +1032,7 @@
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
 {
     userTasteDict = [dict mutableCopy];
+
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
@@ -1060,7 +1064,7 @@
     } else {
         userTasteJSON = @"";
     }
-
+    NSLog(@"userTasteDict / : %@", userTasteJSON);
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@", userfbID, userTasteJSON];
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1080,7 +1084,13 @@
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
-    
+        NSString* newStr = [NSString stringWithUTF8String:[data bytes]];
+        NSLog(@"%@", newStr);
+        if ([newStr isEqualToString:@"done"]) {
+            [self displayUserTasteList];
+            return;
+        }
+        
         // There is some datas from the server
         if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
             userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
@@ -1095,6 +1105,7 @@
                     [userTasteDict setObject:sortedCategory forKey:key];
                 }
             }
+            
         } else {
             NSLog(@"no user datas");
         }
@@ -1124,6 +1135,10 @@
 - (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     NSLog(@"Connection failed: %@", [error description]);
+}
+
+- (void) fetchDatasForConnection {
+    
 }
 
 
