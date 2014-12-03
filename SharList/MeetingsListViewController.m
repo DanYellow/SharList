@@ -113,7 +113,7 @@
     
     UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 90)];
     emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0f];
-    emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur la loupe} pour rechercher
+    emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur l'étoile} pour ajouter aux favoris
     emptyFavoritesLabel.textColor = [UIColor whiteColor];
     emptyFavoritesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyFavoritesLabel.numberOfLines = 0;
@@ -121,8 +121,6 @@
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
     emptyFavoritesLabel.hidden = YES;
-    
-    
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
     // Message for no friends /:
@@ -139,16 +137,29 @@
     [userMeetingsListTableView addSubview:emptyMeetingsLabel];
     
     
+    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];//[[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]]; //foo
+}
+
+- (NSArray*) fetchDatas {
     // Fetching datas
-    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
-    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:meetingsFilter]; // Order by date of meeting
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]]
+;
+    
+    NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
+    
+    NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
+    if (self.isFilterEnabled) {
+        filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
+    }
+    
+    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates]; // Order by date of meeting
+    
+    
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
+    //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
     
-    
-//    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-   
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];
         [dateFormatter2 setDateStyle:NSDateFormatterShortStyle];
@@ -163,15 +174,17 @@
     }
     
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
-    
-    daysList = [[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]]; //foo
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
+    
+    
+    return [[foo reverseObjectEnumerator] allObjects];
 }
 
 - (void) diplayFavoritesMeetings:(id)sender
 {
     self.FilterEnabled = !self.FilterEnabled;
     
+    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     [tableView reloadData];
 }
@@ -183,20 +196,29 @@
     UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
     segmentedControlView.hidden = NO;
     
-    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:4];
+    // Vous n'avez pas rencontré de personnes
+    UILabel *emptyMeetingsLabel = (UILabel*)[tableView viewWithTag:4];
+    emptyMeetingsLabel.hidden = YES;
+    
+    // Vous n'avez pas rencontré de favoris user
+    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
     emptyFavoritesLabel.hidden = YES;
+    
     // User have made no meetings
-    if ([tableView numberOfSections] == 0) {
-        emptyFavoritesLabel.hidden = NO;
+    if ([distinctDays count] == 0) {
+        
         
         //We hide the segmented control on page load
         // only if there is nothing among ALL meetings
         // so user can have no favorites but he still has the segmentedControl
         if (!self.FilterEnabled) {
             segmentedControlView.hidden = YES;
+            emptyMeetingsLabel.hidden = NO;
+        } else {
+            emptyFavoritesLabel.hidden = NO;
         }
     }
-    //NSLog(@"title : %@", distinctDays);
+//    NSLog(@"title : %@, %li", distinctDays, [distinctDays count]);
     return [distinctDays count];
 }
 
@@ -244,19 +266,21 @@
     
     NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
     if (self.isFilterEnabled) {
-        filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[favoritesMeetingsFilter, meetingsFilter]];
+        filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
     }
 
     // We don't want the taste of the current user
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
+
+
     
-    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
-    if ([meetings count] == 0) {
-        emptyFavoritesLabel.hidden = NO;
-        return 0;
-    } else {
-        emptyFavoritesLabel.hidden = YES;
-    }
+//    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
+//    if ([meetings count] == 0) {
+//        emptyFavoritesLabel.hidden = NO;
+//        return 0;
+//    } else {
+//        emptyFavoritesLabel.hidden = YES;
+//    }
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     [dateFormatter setDateStyle:NSDateFormatterShortStyle];
@@ -268,7 +292,6 @@
     
     NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]]];
     
-
     int j = 0;
     for (int i = 0; i < [meetings count]; i++) {
         NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
@@ -293,20 +316,14 @@
     detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model lastMeeting]];
     
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
-    
-    NSDateFormatter *formatter2 = [[NSDateFormatter alloc] init];
-    formatter2.timeStyle = kCFDateFormatterShortStyle;
-    formatter2.dateStyle = kCFDateFormatterShortStyle;
-    NSLog(@"%@, %@", [selectedCell.model fbid], [formatter2 stringFromDate:[selectedCell.model lastMeeting]]);
 }
 
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *CellIdentifier = @"myCell";
     
-    ShareListMediaTableViewCell *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
@@ -321,7 +338,7 @@
     NSCalendar *calendar = [NSCalendar currentCalendar];
     
     NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:currentDate];
-    
+
     // Contains all meetings of the day
     NSMutableArray *meetingsOfDay = [NSMutableArray new];
     for (int i = 0; i < [daysList count]; i++) {
@@ -357,7 +374,6 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-   
     [self getRandomUserDatas];
     
     completionHandler(UIBackgroundFetchResultNewData);
@@ -368,29 +384,31 @@
 }
 
 - (void) getRandomUserDatas {
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:10.0];
-    [request setHTTPMethod:@"POST"];
-    
-    NSInteger myInt = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
-    
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)myInt];
-    
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-    
-//    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-//    [conn start];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Title" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
+//    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+//                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+//                                                       timeoutInterval:10.0];
+//    [request setHTTPMethod:@"POST"];
 //    
-    
-    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if (error) {
-            NSLog(@"%@", error);
-        } else {
-            [self saveRandomUserDatas:data];
-        }
-    }];
+//    NSInteger myInt = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
+//    
+//    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)myInt];
+//    
+//    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+//    
+////    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+////    [conn start];
+////    
+//    
+//    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+//        if (error) {
+//            NSLog(@"%@", error);
+//        } else {
+//            [self saveRandomUserDatas:data];
+//        }
+//    }];
 }
 
 - (void) saveRandomUserDatas:(NSData *)datas
@@ -407,7 +425,6 @@
     NSNumberFormatter *formatNumber = [[NSNumberFormatter alloc] init];
     [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbiduser"]];
-    NSLog(@"randomUserfbID : %@", randomUserfbID);
     
     
     // this var contains string raw of user taste. It should be converted to a NSDictionnary
@@ -418,23 +435,24 @@
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
     UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
     
-    // Calc the difference between current date and the object retrieve from the server
-    // If this object is too recent so we need a new one
+
+    // If user exists we just update his value like streetpass in 3ds
     if (oldUserTaste != nil) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
         NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
         
-        NSInteger days = [conversionInfo day];
+//        NSInteger days = [conversionInfo day];
         NSInteger hours = [conversionInfo hour];
-        NSInteger minutes = [conversionInfo minute];
+//        NSInteger minutes = [conversionInfo minute];
         
         NSLog(@"oldUser : %li", (long)hours);
         
-//        if ((long)hours < 1) {
-//            return;
-//        }
-// If user exists we just update his value like streetpass in 3ds
+        // If the meeting have been made less than one hour ago we do nothing
+        if ((long)hours < 1) {
+            return;
+        }
+        
         oldUserTaste.taste = arrayData;
         oldUserTaste.fbid = randomUserfbID;
         oldUserTaste.lastMeeting = [NSDate date];
@@ -452,7 +470,6 @@
     userTaste.isFavorite = NO;
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
-    NSLog(@"GET NEW USER");
 }
 
 

@@ -68,7 +68,6 @@
     // Do any additional setup after loading the view, typically from a nib.
     
 //    [[self navigationController] tabBarItem].badgeValue = @"3";
-    NSLog(@"%@", NSLocalizedString(@"Introduce the world what you love", nil));
     NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     
