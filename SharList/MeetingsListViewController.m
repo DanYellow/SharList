@@ -186,8 +186,8 @@
     self.FilterEnabled = !self.FilterEnabled;
     
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
-    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
-    [tableView reloadData];
+    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+    [userMeetingsListTableView reloadData];
 }
 
 #pragma mark - Tableview configuration
@@ -307,17 +307,24 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
-    ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
+    ShikeBadgedCell *selectedCell = (ShikeBadgedCell*)[tableView cellForRowAtIndexPath:indexPath];
 
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.meetingDatas = selectedCell.model;
+    detailsMeetingViewController.delegate = self;
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.timeStyle = kCFDateFormatterShortStyle;
     detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model lastMeeting]];
     
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
-    
-    NSLog(@"%@", [selectedCell.model numberOfMeetings]);
+}
+
+- (void) meetingsListHaveBeenUpdate
+{
+    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
+    // We update the view behind the user like this when he comes back the view is updated
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
+    [userSelectionTableView reloadData];
 }
 
 
@@ -325,10 +332,10 @@
 {
     static NSString *CellIdentifier = @"myCell";
     
-    ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    ShikeBadgedCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[ShikeBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -362,6 +369,12 @@
     cell.textLabel.textColor = [UIColor whiteColor];
     
     cell.model = currentUserTaste;
+    if ([currentUserTaste.numberOfMeetings integerValue] > 1) {
+        cell.badgeString = [currentUserTaste.numberOfMeetings stringValue];
+    }
+    
+    cell.badgeTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
+    cell.badgeColor = [UIColor whiteColor];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     UIView *bgColorView = [UIView new];
@@ -387,34 +400,34 @@
 
 - (void) getRandomUserDatas {
     //https://github.com/tmdvs/TDBadgedCell
-//    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-//    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Based god" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    [alert show];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Based god" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//    [alert show];
 
-//    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
-//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-//                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
-//                                                       timeoutInterval:10.0];
-//    [request setHTTPMethod:@"POST"];
+    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                       timeoutInterval:10.0];
+    [request setHTTPMethod:@"POST"];
+    
+    NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
+    
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)randomUserFacebookID];
+    
+    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    
+//    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+//    [conn start];
 //    
-//    NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
-//    
-//    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)randomUserFacebookID];
-//    
-//    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-//    
-////    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-////    [conn start];
-////    
-//    
-//    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-//        if (error) {
-//            NSLog(@"%@", error);
-//        } else {
-//            [self saveRandomUserDatas:data];
-//        }
-//    }];
+    
+    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        if (error) {
+            NSLog(@"%@", error);
+        } else {
+            [self saveRandomUserDatas:data];
+        }
+    }];
     
 }
 
@@ -464,20 +477,17 @@
         oldUserTaste.fbid = randomUserfbID;
         oldUserTaste.lastMeeting = [NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
-        [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
-        
-        return;
+    } else {
+        UserTaste *userTaste = [UserTaste MR_createEntity];
+        userTaste.taste = arrayData;
+        userTaste.fbid = randomUserfbID;
+        userTaste.lastMeeting = [NSDate date];
+        userTaste.isFavorite = NO;
+        userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
     }
     
-    
-    UserTaste *userTaste = [UserTaste MR_createEntity];
-    userTaste.taste = arrayData;
-    userTaste.fbid = randomUserfbID;
-    userTaste.lastMeeting = [NSDate date];
-    userTaste.isFavorite = NO;
-    userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
-    
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+
     
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     [tableView reloadData];

@@ -75,5 +75,4 @@
 
 - (void) userListHaveBeenUpdate:(NSMutableDictionary *)dict;
 
-
 @end

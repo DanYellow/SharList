@@ -16,14 +16,14 @@
 //Vendors
 #import "AFNetworking.h"
 #import "UIImageView+AFNetworking.h"
-#import "ShareListMediaTableViewCell.h"
+#import "ShikeBadgedCell.h"
 
 #import "DetailsMeetingViewController.h"
 
 //Models
 #import "UserTaste.h"
 
-@interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate>
+@interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

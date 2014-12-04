@@ -686,6 +686,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
 }
 
+
 // This method retrieve an readable json of user taste for the database
 - (NSString *) updateTasteForServer
 {

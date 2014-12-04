@@ -13,6 +13,7 @@
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"
 
+@protocol UpdateMeetingsListDelegate;
 
 @interface DetailsMeetingViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate>
 {
@@ -24,6 +25,16 @@
 
 
 @property (nonatomic, strong) id meetingDatas;
+@property (nonatomic, assign) id<UpdateMeetingsListDelegate> delegate;
 
+
+
+@end
+
+@protocol UpdateMeetingsListDelegate <NSObject>
+
+@required
+
+- (void) meetingsListHaveBeenUpdate;
 
 @end

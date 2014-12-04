@@ -325,6 +325,10 @@
         [self.meetingDatas setIsFavorite:NO];
     }
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
+    if ([self.delegate respondsToSelector:@selector(meetingsListHaveBeenUpdate)]) {
+        [self.delegate meetingsListHaveBeenUpdate];
+    }
 }
 
 /*
