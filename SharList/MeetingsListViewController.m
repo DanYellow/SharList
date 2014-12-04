@@ -389,32 +389,32 @@
     //https://github.com/tmdvs/TDBadgedCell
 //    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
 //    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Nat" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Based god" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [alert show];
 
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:10.0];
-    [request setHTTPMethod:@"POST"];
-    
-    NSInteger myInt = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
-    
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)myInt];
-    
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-    
-//    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-//    [conn start];
+//    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+//                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+//                                                       timeoutInterval:10.0];
+//    [request setHTTPMethod:@"POST"];
 //    
-    
-    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if (error) {
-            NSLog(@"%@", error);
-        } else {
-            [self saveRandomUserDatas:data];
-        }
-    }];
+//    NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
+//    
+//    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)randomUserFacebookID];
+//    
+//    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+//    
+////    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+////    [conn start];
+////    
+//    
+//    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+//        if (error) {
+//            NSLog(@"%@", error);
+//        } else {
+//            [self saveRandomUserDatas:data];
+//        }
+//    }];
     
 }
 
@@ -478,6 +478,9 @@
     userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+    
+    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
+    [tableView reloadData];
 }
 
 

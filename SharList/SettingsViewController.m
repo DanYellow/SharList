@@ -48,8 +48,7 @@
     [self.view addSubview:fbLoginButton];
     
     self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
-                               NSLocalizedString(@"Log out", nil),
-                               NSLocalizedString(@"Delete account", nil)];
+                               NSLocalizedString(@"Log out", nil)]; //NSLocalizedString(@"Delete account", nil)
     
     
     // Uitableview of user selection (what user likes)
@@ -69,7 +68,7 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 3;
+    return self.settingsItemsList.count;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

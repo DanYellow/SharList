@@ -1059,17 +1059,17 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-
+    
     // Server sends back some datas
     if (self.responseData != nil) {
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
-    
+        
         // There is some datas from the server
         if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
             userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-
+            
             // We order the NSDictionary key
             for (NSString* key in [userTasteDict allKeys])
             {
@@ -1080,6 +1080,7 @@
                     [userTasteDict setObject:sortedCategory forKey:key];
                 }
             }
+            [self displayUserTasteList];
         } else {
             NSLog(@"no user datas");
         }
@@ -1101,7 +1102,6 @@
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }
         
-        [self displayUserTasteList];
     }
 }
 
