@@ -19,6 +19,8 @@
 
 //Vendors
 
+#import "NSString+SentenceCapitalizedString.h"
+
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 

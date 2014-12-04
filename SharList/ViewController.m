@@ -784,11 +784,11 @@
         
 //        if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
             //         If this row is among user current taste list so we put a star
-            if ([[userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] containsObject:[rowsOfSection objectAtIndex:indexPath.row]]) {
-                cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-            } else {
-                cell.imageView.image = nil;
-            }
+        if ([[userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] containsObject:[rowsOfSection objectAtIndex:indexPath.row]]) {
+            cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        } else {
+            cell.imageView.image = nil;
+        }
 //        }
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];

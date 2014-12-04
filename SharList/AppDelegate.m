@@ -27,13 +27,13 @@
 
     
     ViewController *viewController = [ViewController new];
-    viewController.title = [self sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
+    viewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
     
     MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
-    meetingsListViewController.title = [self sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
+    meetingsListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
     
     SettingsViewController *settingsViewController = [SettingsViewController new];
-    settingsViewController.title = [self sentenceCapitalizedString:NSLocalizedString(@"settings", nil)];
+    settingsViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"settings", nil)];
     
     self.tabBarController = [[UITabBarController alloc] init];
     
@@ -101,20 +101,12 @@
     
     // Ask for remote notification
     [self registerForRemoteNotification];
-    
+    // Reset the badge notification number
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     
     [FBSettings setResourceBundleName:@"FacebookSDKOverrides"];
     
     return YES;
-}
-
-- (NSString *) sentenceCapitalizedString:(NSString*)string {
-    if (![string length]) {
-        return [NSString string];
-    }
-    NSString *uppercase = [[string substringToIndex:1] uppercaseString];
-    NSString *lowercase = [[string substringFromIndex:1] lowercaseString];
-    return [uppercase stringByAppendingString:lowercase];
 }
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void  (^)(UIBackgroundFetchResult))completionHandler
