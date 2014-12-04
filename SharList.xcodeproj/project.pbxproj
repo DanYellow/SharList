@@ -208,6 +208,7 @@
 				1A076DB71A0FE20900CD725A /* Info.plist */,
 				1A076DB81A0FE20900CD725A /* main.m */,
 				1ACDC9031A23D3AA0032B857 /* app.plist */,
+				1AB9775D1A2BC69200F41313 /* Localizable.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -224,7 +225,6 @@
 		1A076DD01A0FE20900CD725A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				1AB9775D1A2BC69200F41313 /* Localizable.strings */,
 				1A076DD11A0FE20900CD725A /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -569,7 +569,6 @@
 				1AB977601A2BCC8100F41313 /* fr */,
 			);
 			name = Localizable.strings;
-			path = ../SharList;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

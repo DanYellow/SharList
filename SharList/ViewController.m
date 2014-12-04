@@ -200,7 +200,7 @@
     //Message for empty search
     UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, screenWidth, 90)];
     emptyResultLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:26.0f];
-    emptyResultLabel.text = @"No results";
+    emptyResultLabel.text = NSLocalizedString(@"No results", nil);
     emptyResultLabel.textColor = [UIColor whiteColor];
     emptyResultLabel.numberOfLines = 0;
     emptyResultLabel.textAlignment = NSTextAlignmentCenter;
@@ -771,12 +771,7 @@
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
 
 
-//        if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
-//            //         If this row is among user current taste list so we put a star
-//            if ([[userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] containsObject:[rowsOfSection objectAtIndex:indexPath.row]]) {
-////                cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected" ]];
-//            }
-//        }
+
         
         
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
@@ -784,6 +779,17 @@
         cell.textLabel.text = title;
         cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.60];
         cell.textLabel.textColor = [UIColor whiteColor];
+        
+        cell.textLabel.layer.contents = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        
+//        if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
+            //         If this row is among user current taste list so we put a star
+            if ([[userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] containsObject:[rowsOfSection objectAtIndex:indexPath.row]]) {
+                cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+            } else {
+                cell.imageView.image = nil;
+            }
+//        }
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];

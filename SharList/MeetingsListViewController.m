@@ -399,9 +399,9 @@
 }
 
 - (void) getRandomUserDatas {
-    //https://github.com/tmdvs/TDBadgedCell
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-    [[self navigationController] tabBarItem].badgeValue = @"3"; //[NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    NSLog(@"regr");
+    
+
 //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Based god" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 //    [alert show];
 
@@ -489,8 +489,9 @@
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 
     
-    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
-    [tableView reloadData];
+    [self meetingsListHaveBeenUpdate];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    [[self navigationController] tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
 }
 
 

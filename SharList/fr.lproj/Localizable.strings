@@ -22,6 +22,7 @@
 "e.g." = "ex.";
 "Tap on  " = "Appuyez sur  ";
 "Tap on  to fill your list" = "Appuyez sur   pour remplir votre liste";
+"No results" = "Aucun résultats";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore rencontré de personnes";

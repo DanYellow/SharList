@@ -101,8 +101,7 @@
     
     // Ask for remote notification
     [self registerForRemoteNotification];
-    // Reset the badge notification number
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    
     
     [FBSettings setResourceBundleName:@"FacebookSDKOverrides"];
     
@@ -164,6 +163,9 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    
+    // Reset the badge notification number
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
