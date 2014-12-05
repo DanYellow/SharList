@@ -154,6 +154,7 @@
     [loadingIndicator startAnimating];
     [self.view addSubview:loadingIndicator];
     
+    // This method is called when user
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
 }
 
@@ -230,14 +231,13 @@
     
     // User have made no meetings
     if ([distinctDays count] == 0) {
-        
-        
         //We hide the segmented control on page load
         // only if there is nothing among ALL meetings
         // so user can have no favorites but he still has the segmentedControl
         if (!self.FilterEnabled) {
             segmentedControlView.hidden = YES;
             emptyMeetingsLabel.hidden = NO;
+            [loadingIndicator stopAnimating];
         } else {
             emptyFavoritesLabel.hidden = NO;
         }

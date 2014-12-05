@@ -637,11 +637,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } completion:^(BOOL success, NSError *error) {
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
+        } else {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"endSave" object:nil userInfo:userTasteDict];
         }
-//        else {
-//            ViewController *vc = [[ViewController alloc] init];
-//            [vc userListHaveBeenUpdate:userTasteDict];
-//        }
         // 7 secondes after update user list we update the database with new datas
         [self performSelector:@selector(updateServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
     }];

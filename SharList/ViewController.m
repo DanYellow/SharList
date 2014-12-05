@@ -101,6 +101,7 @@
     // Shoud contain raw data from the server
     self.responseData = [NSMutableData new];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(userListHaveBeenUpdateNotificationEvent:) name: @"endSave" object: nil];
     
 //    self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeAll;
@@ -378,12 +379,9 @@
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     
     [self.view addSubview:loadingIndicator];
-    
-    // All instances of TestClass will be notified
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"endSave"
-     object:self];
+
 }
+
 
 - (void) fetchUserDatas
 {
@@ -1037,6 +1035,12 @@
         return jsonString;
     }
 }
+
+- (void) userListHaveBeenUpdateNotificationEvent:(NSNotification *)note
+{
+    [self userListHaveBeenUpdate:[note userInfo]];
+}
+
 
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict
 {
