@@ -64,6 +64,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 
 - (NSString*) updateTasteForServer;
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate;
+- (void) userListHaveBeenUpdate:(NSDictionary *)dict;
 
 
 

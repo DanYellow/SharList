@@ -97,12 +97,11 @@
     [self.window setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [self.window makeKeyAndVisible];
     
-    [application setMinimumBackgroundFetchInterval:180]; //(3600/4)
+    [application setMinimumBackgroundFetchInterval:300]; //(3600/4)
     
     // Ask for remote notification
     [self registerForRemoteNotification];
-    // Reset the badge notification number
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    
     
     [FBSettings setResourceBundleName:@"FacebookSDKOverrides"];
     
@@ -150,14 +149,13 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-//    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+
+    // Notify all listner that application have been put in background
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"didEnterBackground" object: nil userInfo: nil];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-    
-    // Reset the badge notification number
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

@@ -32,6 +32,8 @@
     
     NSArray *distinctDays;
     NSMutableArray *daysList;
+    
+    UIActivityIndicatorView *loadingIndicator;
 }
 
 @property (nonatomic, assign, getter=isFilterEnabled) BOOL FilterEnabled;

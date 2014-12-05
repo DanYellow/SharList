@@ -638,24 +638,28 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];
         }
-        
+//        else {
+//            ViewController *vc = [[ViewController alloc] init];
+//            [vc userListHaveBeenUpdate:userTasteDict];
+//        }
         // 7 secondes after update user list we update the database with new datas
-        [self performSelector:@selector(getServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
+        [self performSelector:@selector(updateServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
     }];
 }
 
-- (void) getServerDatasForFbIDTimer
+
+- (void) updateServerDatasForFbIDTimer
 {
-    [self getServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] isUpdate:YES];
+    [self updateServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
 }
 
 // This methods allows to retrieve and send (?) user datas from the server
-- (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
+- (void) updateServerDatasForFbID:(NSNumber*)userfbID
 {
     if (self.isConnectedToInternet == NO)
         return;
         
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/updateDatas.php"];
+    NSURL *aUrl = [NSURL URLWithString:@"http://192.168.1.55:8888/Share/updateDatas.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];

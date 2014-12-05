@@ -23,7 +23,7 @@
 //Models
 #import "UserTaste.h"
 
-//#import "DetailsMediaViewControllerProtocol.h"
+//#import "ViewController.h"
 
 @protocol UpdateUserTasteListDelegate;
 
@@ -64,6 +64,7 @@
 
 - (void) addPhysics;
 - (void) saveMediaUpdate;
+- (void) updateServerDatasForFbID:(NSNumber*)userfbID;
 
 
 @end

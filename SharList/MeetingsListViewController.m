@@ -38,6 +38,14 @@
     }
 }
 
+- (void) viewWillDisappear:(BOOL)animated
+{
+    // Reset the badge notification number
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+}
+
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -137,6 +145,16 @@
     
     
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];//[[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]]; //foo
+    
+    loadingIndicator = [[UIActivityIndicatorView alloc] init];
+    loadingIndicator.center = self.view.center;
+    loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    loadingIndicator.hidesWhenStopped = YES;
+    loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    [loadingIndicator startAnimating];
+    [self.view addSubview:loadingIndicator];
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
 }
 
 - (NSArray*) fetchDatas {
@@ -179,6 +197,11 @@
     
     
     return [[foo reverseObjectEnumerator] allObjects];
+}
+
+- (void) appEnteredBackground
+{
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 }
 
 - (void) diplayFavoritesMeetings:(id)sender
@@ -384,26 +407,54 @@
     return cell;
 }
 
+- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
+        [loadingIndicator stopAnimating];
+    }
+}
+
 
 #pragma mark - Fetch Datas in background
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    [self getRandomUserDatas];
+//    [self getRandomUserDatas];
     
-    completionHandler(UIBackgroundFetchResultNewData);
+    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                       timeoutInterval:30.0];
+    [request setHTTPMethod:@"POST"];
+    
+    NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
+    
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)randomUserFacebookID];
+    
+    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    
+//    NSLog(@"postString : %@", postString);
+    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        if (error) {
+            completionHandler(UIBackgroundFetchResultFailed);
+            NSLog(@"%@", error);
+        } else {
+            [self saveRandomUserDatas:data];
+            completionHandler(UIBackgroundFetchResultNewData);
+        }
+    }];
+    
+//    completionHandler(UIBackgroundFetchResultNewData);
 }
 
 - (void) canIGetRandomUser {
     [self getRandomUserDatas];
 }
 
-- (void) getRandomUserDatas {
-    NSLog(@"regr");
-    
-
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Based god" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    [alert show];
+- (void) getRandomUserDatas
+{
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Based god" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//    [alert show];
 
     NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
@@ -422,6 +473,7 @@
         if (error) {
             NSLog(@"%@", error);
         } else {
+            NSLog(@"datas : %@", data);
             [self saveRandomUserDatas:data];
         }
     }];
@@ -429,6 +481,7 @@
 
 - (void) saveRandomUserDatas:(NSData *)datas
 {
+   
     NSString *responseString = [[NSString alloc] initWithData:datas encoding:NSUTF8StringEncoding];
     NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -484,10 +537,11 @@
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 
-    
+
     [self meetingsListHaveBeenUpdate];
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-    [[self navigationController] tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    NSString *badgeValueStr = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
+    [[self navigationController] tabBarItem].badgeValue = badgeValueStr;
 }
 
 

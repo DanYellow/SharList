@@ -378,6 +378,11 @@
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     
     [self.view addSubview:loadingIndicator];
+    
+    // All instances of TestClass will be notified
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName:@"endSave"
+     object:self];
 }
 
 - (void) fetchUserDatas
@@ -525,7 +530,6 @@
                          [userSelectionTableView reloadData];
                          appnameView.hidden = YES;
                          appnameView.alpha = 0;
-                         [loadingIndicator stopAnimating];
                      }];
 }
 
@@ -771,9 +775,6 @@
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
 
 
-
-        
-        
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
         year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
         cell.textLabel.text = title;
@@ -836,8 +837,14 @@
     cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
     cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
     
-
     return cell;
+}
+
+-(void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
+        [loadingIndicator stopAnimating];
+    }
 }
 
 - (void) getImageCellForData:(NSString*)imdbID aCell:(UITableViewCell*)cell
@@ -952,14 +959,13 @@
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
     detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.delegate = self;
+//    // Trick for weird issue about present view and pushview
     detailsMediaViewController.tabBarController.tabBar.hidden = YES;
+    
     [self disappearsSearchBar];
     [self.searchController setActive:NO];
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
-
-
-
 
 // Title of categories
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
