@@ -35,8 +35,13 @@
 "Enable geolocation" = "Activer la géolocalisation";
 "Log out" = "Déconnexion";
 "Delete account" = "Supprimer le compte";
-
+"Geoloc explain" = "This option is not available currently because we just launch this app and we don't have many users to fetch users around you. So talk about Shike to your friends, family, co-workers...";
 
 // DetailsMediaViewController
 "Added" = "Ajouté";
 "Deleted" = "Supprimé";
+"Liked by %@ people" = "Aimé par %@ personnes";
+"%@" = "%@";
+
+
+"FBLV:LogInButton" = "Gentoo login";

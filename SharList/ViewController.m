@@ -67,7 +67,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-//    [[self navigationController] tabBarItem].badgeValue = @"3";
+
+    //    [UserTaste MR_truncateAll];
+    
+    // Permatenly checks if user is connected to Internet
     NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     
@@ -159,8 +162,6 @@
     appMottoLabel.textAlignment = NSTextAlignmentLeft;
     [appnameView addSubview:appMottoLabel];
     
-    
-
     
     // Facebook login
     FBLoginView *fbLoginButton = [FBLoginView new];
@@ -320,57 +321,6 @@
         NSLog(@"Log tutorial");
     }
     
-    
-    
-    
-    
-//    [UserTaste MR_truncateAll];
-    
-    NSCalendar *cal = [NSCalendar currentCalendar];
-    
-
-    NSDateComponents *comps = [[NSDateComponents alloc] init];
-    [comps setDay:14];
-    [comps setMonth:11];
-    [comps setYear:2014];
-    
-    [comps setHour:19];
-    [comps setMinute:30];
-    
-
-    NSDate *newDate = [cal dateFromComponents:comps];
-    
-    NSArray *fooArray = @[
-                          @{ @"imdbID": @"tt0773262", @"id": @21, @"year": @2010, @"name" : @"Dexter", @"type" : @"serie" },
-                          @{ @"imdbID": @"tt0455275", @"id": @27, @"year": @2007, @"name" : @"Prison Break", @"type" : @"serie" },
-                          @{ @"imdbID": @"tt2372162", @"id": @23, @"year": @2009, @"name" : @"Orange is the new Black", @"type" : @"serie" }
-                         ];
-
-    NSArray *moviesArray = @[
-                      @{ @"imdbID": @"tt0848228", @"id": @24, @"year": @2008, @"name" : @"The Avengers", @"type" : @"movie" },
-                      @{ @"imdbID": @"tt2322441", @"id": @43, @"year": @2008, @"name" : @"50 Nuances de Grey", @"type" : @"movie" }
-                      ];
-    NSDictionary *productManagers = @{@"book": [NSNull null], @"movie": moviesArray, @"serie": fooArray};
-    //
-    //    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-    //
-    //    } completion:nil]; //[NSDate date];
-//    UserTaste *userTaste = [UserTaste  MR_createEntity];
-//    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-//    userTaste.taste = arrayData;
-//    userTaste.fbid = [NSNumber numberWithLong:1382410218159367];
-//    userTaste.lastMeeting = newDate; //[NSDate date];
-//    userTaste.isFavorite = YES;
-//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    
-    //
-//    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
-//                                                 withValue:[NSNumber numberWithLong:1387984218159370]]; //1387984218159370
-//    
-//    userTasteDict = [NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]];
-//    NSLog(@"userTasteDict : %@, %lu", userTasteDict , (unsigned long)userTasteDict.count);
-    
-//    NSMutableDictionary *array = [NSKeyedUnarchiver unarchiveObjectWithData:[[people objectAtIndex:0] taste]];
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;

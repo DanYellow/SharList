@@ -344,6 +344,7 @@
 
 - (void) meetingsListHaveBeenUpdate
 {
+    NSLog(@"GENTOO");
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     // We update the view behind the user like this when he comes back the view is updated
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
@@ -538,6 +539,7 @@
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 
 
+    
     [self meetingsListHaveBeenUpdate];
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     NSString *badgeValueStr = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
