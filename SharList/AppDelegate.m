@@ -36,6 +36,7 @@
     settingsViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"settings", nil)];
     
     self.tabBarController = [[UITabBarController alloc] init];
+
     
     [UITabBar appearance].barTintColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.95f];
     [UITabBar appearance].tintColor = [UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:.95f];
@@ -50,6 +51,7 @@
                                                      initWithRootViewController:meetingsListViewController];
     navControllerMeetingList.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     navControllerMeetingList.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+//    [navControllerMeetingList tabBarItem].badgeValue = @"43";
     
     // Contains first view of the app
     UINavigationController *navController = [[UINavigationController alloc]
@@ -102,6 +104,7 @@
     // Ask for remote notification
     [self registerForRemoteNotification];
     
+    NSLog(@"FOOFEFREE");
     
     return YES;
 }

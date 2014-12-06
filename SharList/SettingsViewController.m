@@ -91,9 +91,10 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    if(section != 0) {
+    if(section >= 0) {
         return nil;
     }
+    // We don't want this message currently
     UIView *tempView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, 100)];
     tempView.backgroundColor = [UIColor clearColor];
     
@@ -105,17 +106,15 @@
     footerSectionLabel.textAlignment = NSTextAlignmentCenter;
     footerSectionLabel.lineBreakMode = NSLineBreakByWordWrapping;
     footerSectionLabel.numberOfLines = 0;
-    
-
     [tempView addSubview:footerSectionLabel];
     
     return tempView;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    return 85.0;
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+//{
+//    return 85.0;
+//}
 
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

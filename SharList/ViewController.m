@@ -167,21 +167,6 @@
     FBLoginView *fbLoginButton = [FBLoginView new];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
-    
-    UIPageControl *pageControlSample = [[UIPageControl alloc] init];
-    pageControlSample.currentPage = 0;
-    pageControlSample.frame = CGRectMake(0, 12, 40, 10);
-    pageControlSample.numberOfPages = 2;
-    pageControlSample.opaque = YES;
-    
-    ShikeTutsScrollView *tutsScrollView = [[ShikeTutsScrollView alloc] initWithFrame:CGRectMake(0, 0, 60, 200)]; // width 544
-    tutsScrollView.pageControl = pageControlSample;
-    [self.view addSubview:tutsScrollView];
-    
-
-    
-    
-    
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
     // Loading indicator of the app
@@ -207,7 +192,7 @@
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
-//    [self.view addSubview:userTasteListTableView];
+    [self.view addSubview:userTasteListTableView];
     
     // UITableview of results
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
@@ -341,9 +326,6 @@
         //[userPreferences setBool:YES forKey:@"firstTime"];
         NSLog(@"Log tutorial");
     }
-    
-    
-
 }
 
 
@@ -795,9 +777,10 @@
     }
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//    cell.detailTextLabel.text = year;
+    cell.detailTextLabel.text = year;
     cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
     cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
+    cell.indentationLevel = 1;
     
     return cell;
 }

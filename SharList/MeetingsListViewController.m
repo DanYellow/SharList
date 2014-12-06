@@ -33,6 +33,8 @@
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
     
+    [[self navigationController] tabBarItem].badgeValue = nil;
+    
     if (!FBSession.activeSession.isOpen) {
         self.navigationController.navigationBar.hidden = YES;
     }
@@ -42,6 +44,7 @@
 {
     // Reset the badge notification number
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [[self navigationController] tabBarItem].badgeValue = nil;
 }
 
 
@@ -78,7 +81,7 @@
     
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
-    segmentedControlView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
+    segmentedControlView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
     
@@ -87,7 +90,7 @@
     segmentedControl.frame = CGRectMake(10, 5, screenWidth - 20, 30);
     [segmentedControl addTarget:self action:@selector(diplayFavoritesMeetings:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
-    segmentedControl.tintColor = [UIColor whiteColor];
+    segmentedControl.tintColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f];
     [segmentedControlView addSubview:segmentedControl];
     
     
@@ -154,11 +157,13 @@
     [loadingIndicator startAnimating];
     [self.view addSubview:loadingIndicator];
     
-    // This method is called when user
+    // This method is called when user quit the app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
-    
+    // This method is called when user go back to app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didForeground" object: nil];
     
+//    NSString *badgeValueStr = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
+//    [[self navigationController] tabBarItem].badgeValue = badgeValueStr;
 }
 
 - (NSArray*) fetchDatas {
@@ -254,17 +259,16 @@
     CGFloat fontSize = 18.0f;
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
+    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
     
     NSString *title = [distinctDays objectAtIndex:section];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
     label.text = title;
+    label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
     
 
-    headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
-    label.textColor = [UIColor whiteColor];
-    
     [headerView addSubview:label];
     
     return headerView;
@@ -391,14 +395,7 @@
     cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[meetingsOfDay objectAtIndex:(([meetingsOfDay count] - indexPath.row) - 1)]]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
-    
     cell.model = currentUserTaste;
-    if ([currentUserTaste.numberOfMeetings integerValue] > 1) {
-        cell.badgeString = [currentUserTaste.numberOfMeetings stringValue];
-    }
-    
-    cell.badgeTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
-    cell.badgeColor = [UIColor whiteColor];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     UIView *bgColorView = [UIView new];
@@ -540,8 +537,6 @@
 
 
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-    NSString *badgeValueStr = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
-    [[self navigationController] tabBarItem].badgeValue = badgeValueStr;
 }
 
 
