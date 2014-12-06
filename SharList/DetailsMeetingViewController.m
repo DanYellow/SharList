@@ -66,6 +66,8 @@
     
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
+//    CGFloat verticalOffset = -4;
+//    [[UINavigationBar appearance] setTitleVerticalPositionAdjustment:verticalOffset forBarMetrics:UIBarMetricsDefault];
     
     CAGradientLayer *gradientBGView = [CAGradientLayer layer];
     gradientBGView.frame = self.view.bounds;
@@ -101,6 +103,15 @@
     text.bounds = CGRectInset(meetingInfoView.frame, 10.0f, 10.0f);
     [meetingInfoView addSubview:text];
     
+  
+    UILabel *tableFooter = [[UILabel alloc] initWithFrame:CGRectMake(0, 15.0, screenWidth, 60)];
+    tableFooter.textColor = [UIColor whiteColor];
+    tableFooter.textAlignment = NSTextAlignmentCenter;
+    tableFooter.opaque = YES;
+    tableFooter.font = [UIFont boldSystemFontOfSize:15];
+    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [self.meetingDatas numberOfMeetings]]];
+    
+//    NSLog(@"foo : %@", [self.meetingDatas numberOfMeetings]);
     //___________________
     // Uitableview of user selection (what user likes)
     UITableView *userSelectionTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
@@ -110,7 +121,7 @@
     userSelectionTableView.tag = 1;
     userSelectionTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
-    userSelectionTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    userSelectionTableView.tableFooterView = tableFooter; //[[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:userSelectionTableView];

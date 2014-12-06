@@ -36,6 +36,7 @@
 "Log out" = "Déconnexion";
 "Delete account" = "Supprimer le compte";
 "Geoloc explain" = "Cette option n'est pas accessible présentement parce que nous venons de lancer cette application et qu'il n'y a pas beaucoup d'utilisateurs autour de vous. Donc parlez de Shike à vos amis, votre famille, vos collègues...";
+"met %@ times" = "rencontré %@ fois";
 
 // DetailsMediaViewController
 "Added" = "Ajouté";

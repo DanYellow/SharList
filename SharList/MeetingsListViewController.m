@@ -64,7 +64,7 @@
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
     // Design on the view
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(canIGetRandomUser)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(canIGetRandomUser)];
     
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
@@ -156,6 +156,9 @@
     
     // This method is called when user
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didForeground" object: nil];
+    
 }
 
 - (NSArray*) fetchDatas {
@@ -318,7 +321,6 @@
     for (int i = 0; i < [meetings count]; i++) {
         NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
         
-        
         if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
             j++;
         }
@@ -343,7 +345,6 @@
 
 - (void) meetingsListHaveBeenUpdate
 {
-    NSLog(@"GENTOO");
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     // We update the view behind the user like this when he comes back the view is updated
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
@@ -538,8 +539,6 @@
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 
 
-    
-    [self meetingsListHaveBeenUpdate];
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     NSString *badgeValueStr = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
     [[self navigationController] tabBarItem].badgeValue = badgeValueStr;

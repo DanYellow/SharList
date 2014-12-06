@@ -13,6 +13,8 @@
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"
 
+#import "NSString+SentenceCapitalizedString.h"
+
 @protocol UpdateMeetingsListDelegate;
 
 @interface DetailsMeetingViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate>

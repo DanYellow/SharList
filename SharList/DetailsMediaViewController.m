@@ -241,7 +241,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    NSLocalizedString(@"Met at %@", nil)
     
     
-    
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
