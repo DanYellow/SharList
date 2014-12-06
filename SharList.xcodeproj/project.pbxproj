@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1A0014EA1A156A5E003430E9 /* bb.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A0014E91A156A5E003430E9 /* bb.png */; };
 		1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */; };
+		1A037B111A33238F00124FA8 /* ShikeTutsScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A037B101A33238F00124FA8 /* ShikeTutsScrollView.m */; };
 		1A076DB91A0FE20900CD725A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DB81A0FE20900CD725A /* main.m */; };
 		1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DBB1A0FE20900CD725A /* AppDelegate.m */; };
 		1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DBE1A0FE20900CD725A /* ViewController.m */; };
@@ -66,6 +67,8 @@
 		1A0014E91A156A5E003430E9 /* bb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bb.png; sourceTree = "<group>"; };
 		1A0014EB1A157C0F003430E9 /* CCARadialGradientLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCARadialGradientLayer.h; sourceTree = "<group>"; };
 		1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCARadialGradientLayer.m; sourceTree = "<group>"; };
+		1A037B0F1A33238F00124FA8 /* ShikeTutsScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShikeTutsScrollView.h; sourceTree = "<group>"; };
+		1A037B101A33238F00124FA8 /* ShikeTutsScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShikeTutsScrollView.m; sourceTree = "<group>"; };
 		1A076DB31A0FE20900CD725A /* SharList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A076DB71A0FE20900CD725A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A076DB81A0FE20900CD725A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -314,6 +317,8 @@
 				1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */,
 				1A9666411A30EB2D006969A7 /* ShikeBadgedCell.h */,
 				1A9666421A30EB2D006969A7 /* ShikeBadgedCell.m */,
+				1A037B0F1A33238F00124FA8 /* ShikeTutsScrollView.h */,
+				1A037B101A33238F00124FA8 /* ShikeTutsScrollView.m */,
 			);
 			name = CustomViews;
 			sourceTree = "<group>";
@@ -526,6 +531,7 @@
 				1A9666431A30EB2D006969A7 /* ShikeBadgedCell.m in Sources */,
 				1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */,
 				1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */,
+				1A037B111A33238F00124FA8 /* ShikeTutsScrollView.m in Sources */,
 				1A9666461A312302006969A7 /* NSString+SentenceCapitalizedString.m in Sources */,
 				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,
 				1A3C22821A114339005B31E4 /* UserTaste.m in Sources */,

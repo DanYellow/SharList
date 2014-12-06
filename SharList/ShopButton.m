@@ -18,4 +18,8 @@
 }
 */
 
+/*
+Currently this class exist only for test loop in DetailMediaViewController
+*/
+
 @end

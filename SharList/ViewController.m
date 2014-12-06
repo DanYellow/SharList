@@ -168,6 +168,18 @@
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
     
+    UIPageControl *pageControlSample = [[UIPageControl alloc] init];
+    pageControlSample.currentPage = 0;
+    pageControlSample.frame = CGRectMake(0, 12, 40, 10);
+    pageControlSample.numberOfPages = 2;
+    pageControlSample.opaque = YES;
+    
+    ShikeTutsScrollView *tutsScrollView = [[ShikeTutsScrollView alloc] initWithFrame:CGRectMake(0, 0, 60, 200)]; // width 544
+    tutsScrollView.pageControl = pageControlSample;
+    [self.view addSubview:tutsScrollView];
+    
+
+    
     
     
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
@@ -195,7 +207,7 @@
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
-    [self.view addSubview:userTasteListTableView];
+//    [self.view addSubview:userTasteListTableView];
     
     // UITableview of results
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];

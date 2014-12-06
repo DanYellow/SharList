@@ -29,7 +29,7 @@
 "All" = "Toutes";
 "Favorites" = "Favoris";
 "Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une rencontre pour l'ajouter aux favoris";
-"Met at %i" = "Rencontré à %i";
+"Met at %@" = "Rencontré à %@";
 
 //Settings view controller
 "Enable geolocation" = "Activer la géolocalisation";

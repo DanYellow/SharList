@@ -33,8 +33,6 @@
 - (void) setModel:(id)s
 {
     _model = s;
-    
-    // do some more stuff
 }
 
 - (id) model {
