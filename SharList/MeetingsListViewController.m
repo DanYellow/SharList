@@ -397,6 +397,7 @@
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.model = currentUserTaste;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.indentationLevel = 1;
 
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
