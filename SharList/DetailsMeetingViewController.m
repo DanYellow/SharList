@@ -17,6 +17,7 @@
 
 // Tag list
 // 1 : userSelectionTableView (blurred view)
+// 2 : UIRefreshControl
 
 
 @implementation DetailsMeetingViewController
@@ -123,7 +124,39 @@
     userSelectionTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:userSelectionTableView];
+    
+    // If the current user list is among user's favorites
+    // He can fetch his update to follow him
+    if ([self.meetingDatas isFavorite]) {
+        UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
+        userSelectRefresh.backgroundColor = [UIColor whiteColor];
+        userSelectRefresh.tintColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.9f];
+        userSelectRefresh.tag = 2;
+        [userSelectRefresh addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
+//        userSelectionTableView.
+        [userSelectionTableView addSubview:userSelectRefresh];
+    }
 }
+
+
+
+- (void) updateCurrentUser
+{
+    UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
+    [userSelectRefresh endRefreshing];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MMM d, h:mm a"];
+    NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
+    NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
+                                                                forKey:NSForegroundColorAttributeName];
+    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
+    userSelectRefresh.attributedTitle = attributedTitle;
+    
+//    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
+//    [tableView reloadData];
+}
+
 
 #pragma mark - tableview definition
 
