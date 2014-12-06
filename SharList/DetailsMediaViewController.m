@@ -204,7 +204,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     
-    CGFloat mediaTitleLabelY = imgMediaHeight - [self computeRatio:108 forDimension:imgMediaHeight];
+    CGFloat mediaTitleLabelY = imgMediaHeight - [self computeRatio:88 forDimension:imgMediaHeight];
     UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabelY, screenWidth, 25)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
@@ -228,7 +228,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         
         UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
         mediaLikeNumberLabel.text = mediaLikeNumberString;
-        mediaLikeNumberLabel.textColor = [UIColor whiteColor];
+        mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.7 alpha:1];
         mediaLikeNumberLabel.textAlignment = NSTextAlignmentCenter;
         mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
         mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
@@ -260,30 +260,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) setMediaViewForData:(NSDictionary*)data
 {
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    
-    // Design of the page
-    UIImageView *imgMedia = [UIImageView new];
-        [imgMedia setImageWithURL:
-         [NSURL URLWithString:data[@"Poster"]]
-                 placeholderImage:[UIImage imageNamed:@"bb"]];
-    
-    
-    
-    
-    
-    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
-    imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
-    imgMedia.contentMode = UIViewContentModeScaleAspectFill;
-    imgMedia.clipsToBounds = YES;
-    imgMedia.alpha = 0;
-//    imgMedia.transform = CGAffineTransformScale(CGAffineTransformIdentity, .7, .7);
-    
-    
+
     
     // Blurred background
-    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:data[@"Poster"]]]]];
-    bluredImageView.alpha = .95f;
-    [bluredImageView setFrame:imgMedia.frame];
+    UIImageView *bluredBackgroundImageView = [[UIImageView alloc] initWithImage: [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:data[@"Poster"]]]]];
+    bluredBackgroundImageView.alpha = 0;
+    [bluredBackgroundImageView setFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
     
     UIVisualEffect *blurEffect;
     blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -291,35 +273,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIVisualEffectView *visualEffectView;
     visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
     
-    visualEffectView.frame = bluredImageView.bounds;
-    [bluredImageView addSubview:visualEffectView];
+    visualEffectView.frame = bluredBackgroundImageView.bounds;
+    [bluredBackgroundImageView addSubview:visualEffectView];
     
-//    self.searchResultsController.tableView.backgroundView = bluredImageView;
+    [infoMediaView insertSubview:bluredBackgroundImageView atIndex:0];
+
     
-    [infoMediaView insertSubview:bluredImageView atIndex:0];
-    
-    CCARadialGradientLayer *radialGradientLayer = [CCARadialGradientLayer layer];
-    radialGradientLayer.gradientOrigin = imgMedia.center;
-    radialGradientLayer.gradientRadius = 196;
-    radialGradientLayer.colors = @[
-                                   (id)[[UIColor colorWithRed:0 green:0 blue:0 alpha:.001] CGColor],
-                                   (id)[[UIColor colorWithRed:0 green:0 blue:0 alpha:.35] CGColor],
-                                   (id)UIColorFromRGB(0x000000).CGColor
-                                   ];
-    radialGradientLayer.locations = @[@0, @0.3, @1];
-    radialGradientLayer.frame = imgMedia.bounds;
-//    [imgMedia.layer insertSublayer:radialGradientLayer atIndex:0];
-    
-    CALayer *overlayLayer = [CALayer layer];
-    overlayLayer.frame = imgMedia.frame;
-    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.83].CGColor;
-//    [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
-    
-    
+    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     CGFloat mediaDescriptionWidth = [self computeRatio:608 forDimension:screenWidth];
     CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
-    CGFloat mediaDescriptionY = imgMediaHeight - [self computeRatio:108 forDimension:imgMediaHeight];
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, mediaDescriptionY + 50, mediaDescriptionWidth, [self computeRatio:516 forDimension:screenHeight])];
+    CGFloat mediaDescriptionY = imgMediaHeight - [self computeRatio:88 forDimension:imgMediaHeight] + 60;
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, mediaDescriptionY, mediaDescriptionWidth, [self computeRatio:516 forDimension:screenHeight])];
     mediaDescription.text = data[@"Plot"];
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
@@ -339,12 +303,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          mediaDescription.alpha = 1;
-//                         mediaDescription.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
-                         mediaDescription.transform = CGAffineTransformMakeScale(1, 1);
                          
-                         imgMedia.alpha = 1;
-                         imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
-//                         imgMedia.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+                         bluredBackgroundImageView.alpha = .95f;
                      }
                      completion:^(BOOL finished){
                      }];

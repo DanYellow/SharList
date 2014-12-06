@@ -103,8 +103,7 @@
     
     // Ask for remote notification
     [self registerForRemoteNotification];
-    
-    NSLog(@"FOOFEFREE");
+
     
     return YES;
 }

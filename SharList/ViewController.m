@@ -727,14 +727,16 @@
         
         cell.textLabel.layer.contents = [UIImage imageNamed:@"meetingFavoriteSelected"];
         
-//        if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
+        // This statement is here for empty key
+        // Or else we'll try to compare a NSNull object
+        if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
             //         If this row is among user current taste list so we put a star
-        if ([[userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] containsObject:[rowsOfSection objectAtIndex:indexPath.row]]) {
-            cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-        } else {
-            cell.imageView.image = nil;
+            if ([[userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] containsObject:[rowsOfSection objectAtIndex:indexPath.row]]) {
+                cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+            } else {
+                cell.imageView.image = nil;
+            }
         }
-//        }
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
