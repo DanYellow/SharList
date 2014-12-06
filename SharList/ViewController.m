@@ -347,7 +347,7 @@
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"api" ofType:@"json"];
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-    
+ 
     return json;
 }
 

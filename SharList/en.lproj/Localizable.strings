@@ -42,7 +42,7 @@
 // DetailsMediaViewController
 "Added" = "Added";
 "Deleted" = "Deleted";
-"Liked by %@ people" = "Liked by %@ people";
+"Liked by %i people" = "Liked by %i people";
 
 
 

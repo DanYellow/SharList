@@ -29,7 +29,7 @@
 "All" = "Toutes";
 "Favorites" = "Favoris";
 "Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une rencontre pour l'ajouter aux favoris";
-"Met at %@" = "Rencontré à %@";
+"Met at %i" = "Rencontré à %i";
 
 //Settings view controller
 "Enable geolocation" = "Activer la géolocalisation";
@@ -41,7 +41,7 @@
 // DetailsMediaViewController
 "Added" = "Ajouté";
 "Deleted" = "Supprimé";
-"Liked by %@ people" = "Aimé par %@ personnes";
+"Liked by %i people" = "Aimé par %i personnes";
 "%@" = "%@";
 
 

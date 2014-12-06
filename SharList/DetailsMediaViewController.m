@@ -217,23 +217,27 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
     
+    NSInteger mediaLikeNumber = [self.mediaDatas[@"hits"] integerValue];
     
-    NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %@ people", nil), [NSNumber numberWithInt:42]];
+    if (mediaLikeNumber > 1) {
+        // Aimé par X personnes
+        NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), mediaLikeNumber];
+        
+        UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
+        mediaLikeNumberLabel.text = mediaLikeNumberString;
+        mediaLikeNumberLabel.textColor = [UIColor whiteColor];
+        mediaLikeNumberLabel.textAlignment = NSTextAlignmentCenter;
+        mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+        mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        mediaLikeNumberLabel.layer.shadowRadius = 2.5;
+        mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
+        mediaLikeNumberLabel.clipsToBounds = NO;
+        mediaLikeNumberLabel.layer.masksToBounds = NO;
+        mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0];
+        [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+        [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
+    }
 
-    UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
-    mediaLikeNumberLabel.text = mediaLikeNumberString;
-    mediaLikeNumberLabel.textColor = [UIColor whiteColor];
-    mediaLikeNumberLabel.textAlignment = NSTextAlignmentCenter;
-    mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-    mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-    mediaLikeNumberLabel.layer.shadowRadius = 2.5;
-    mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
-    mediaLikeNumberLabel.clipsToBounds = NO;
-    mediaLikeNumberLabel.layer.masksToBounds = NO;
-    mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0];
-    [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
-    
-    [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
     
     [self.view addSubview:infoMediaView];
     
