@@ -121,7 +121,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     
-    UIView *infoMediaView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, imgMediaHeight)];
+    UIView *infoMediaView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    infoMediaView.backgroundColor = [UIColor clearColor];
+    infoMediaView.opaque = NO;
+    infoMediaView.hidden = NO;
     infoMediaView.tag = 2;
     
     UILabel *addRemoveMediaLabel = [[UILabel alloc] initWithFrame:CGRectMake(-5, 60, screenWidth - 5, 20)];
@@ -263,13 +266,37 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [imgMedia setImageWithURL:
          [NSURL URLWithString:data[@"Poster"]]
                  placeholderImage:[UIImage imageNamed:@"bb"]];
+    
+    
+    
+    
+    
     CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
-    imgMedia.frame = CGRectMake(0, 9, screenWidth, imgMediaHeight);
+    imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
     imgMedia.clipsToBounds = YES;
     imgMedia.alpha = 0;
 //    imgMedia.transform = CGAffineTransformScale(CGAffineTransformIdentity, .7, .7);
-    [infoMediaView insertSubview:imgMedia atIndex:0];
+    
+    
+    
+    // Blurred background
+    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:data[@"Poster"]]]]];
+    bluredImageView.alpha = .95f;
+    [bluredImageView setFrame:imgMedia.frame];
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    
+    visualEffectView.frame = bluredImageView.bounds;
+    [bluredImageView addSubview:visualEffectView];
+    
+//    self.searchResultsController.tableView.backgroundView = bluredImageView;
+    
+    [infoMediaView insertSubview:bluredImageView atIndex:0];
     
     CCARadialGradientLayer *radialGradientLayer = [CCARadialGradientLayer layer];
     radialGradientLayer.gradientOrigin = imgMedia.center;
@@ -281,12 +308,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                    ];
     radialGradientLayer.locations = @[@0, @0.3, @1];
     radialGradientLayer.frame = imgMedia.bounds;
-    [imgMedia.layer insertSublayer:radialGradientLayer atIndex:0];
+//    [imgMedia.layer insertSublayer:radialGradientLayer atIndex:0];
+    
+    CALayer *overlayLayer = [CALayer layer];
+    overlayLayer.frame = imgMedia.frame;
+    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.83].CGColor;
+//    [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
     
     
     CGFloat mediaDescriptionWidth = [self computeRatio:608 forDimension:screenWidth];
     CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, CGRectGetMinY(imgMedia.frame) + CGRectGetHeight(imgMedia.frame), mediaDescriptionWidth, [self computeRatio:416 forDimension:screenHeight])];
+    CGFloat mediaDescriptionY = imgMediaHeight - [self computeRatio:108 forDimension:imgMediaHeight];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, mediaDescriptionY + 50, mediaDescriptionWidth, [self computeRatio:516 forDimension:screenHeight])];
     mediaDescription.text = data[@"Plot"];
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
@@ -310,7 +343,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                          mediaDescription.transform = CGAffineTransformMakeScale(1, 1);
                          
                          imgMedia.alpha = 1;
-                         imgMedia.frame = CGRectMake(0, 0, screenWidth, imgMediaHeight);
+                         imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
 //                         imgMedia.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
                      }
                      completion:^(BOOL finished){

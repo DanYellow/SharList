@@ -199,7 +199,8 @@
             NSDictionary *allDatasFromServerDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
             NSData *stringData = [[allDatasFromServerDict objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
             NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
-                        
+            
+            // This user has really updated is data we udpdate locals datas
             if (![self.metUserTasteDict isEqualToDictionary: [randomUserTaste mutableCopy] ]) {
                 // We update the current data from the server
                 self.metUserTasteDict = [randomUserTaste mutableCopy];
@@ -213,8 +214,6 @@
                 UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
                 [tableView reloadData];
             }
-        } else {
-            NSLog(@"no user datas");
         }
         
         self.responseData = nil;
