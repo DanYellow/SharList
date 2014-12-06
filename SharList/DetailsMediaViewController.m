@@ -345,13 +345,20 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     addToFavsButton.backgroundColor = [UIColor whiteColor];
 //    [self.view addSubview:addToFavsButton];
     
-
+    
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton addTarget:self action:@selector(displayBuyScreen) forControlEvents:UIControlEventTouchUpInside];
     [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
     buyButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:17.0f];
     buyButton.frame = CGRectMake(0, screenHeight - 43, screenWidth, 43);
     buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
+
+    [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
+    [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
+    [buyButton setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+    [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buyButton setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+    
     [self.view addSubview:buyButton];
     
     [loadingIndicator stopAnimating];
@@ -469,11 +476,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     itunesBuyButton.layer.borderWidth = 2.0f;
     [displayBuyView addSubview:itunesBuyButton];
     
-    UIView* barrier = [[UIView alloc] initWithFrame:CGRectMake(0, amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + 7, 5, 3)]; // w: 25
-    barrier.tag = 2;
-    barrier.backgroundColor = [UIColor colorWithWhite:1 alpha:.15];
-    [displayBuyView addSubview:barrier];
-    
+ 
     
     CGRect lineFrame = CGRectMake(0, 18, 35, 4);
     
@@ -516,7 +519,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) addPhysics
 {
 //    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
-    UIView *barrier = (UIView*)[self.view viewWithTag:2];
+
     
     ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
     ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
@@ -534,14 +537,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [animator addBehavior:gravity];
     [animator addBehavior:itemBehaviour];
     [animator addBehavior:collision];
-    
-
-    CGPoint rightEdge = CGPointMake(barrier.frame.origin.x +
-                                    barrier.frame.size.width, barrier.frame.origin.y);
-    [collision addBoundaryWithIdentifier:@"barrier"
-                               fromPoint:barrier.frame.origin
-                                 toPoint:rightEdge];
-    
+        
     self.PhysicsAdded = YES;
 }
 

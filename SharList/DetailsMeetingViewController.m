@@ -110,8 +110,7 @@
     tableFooter.opaque = YES;
     tableFooter.font = [UIFont boldSystemFontOfSize:15];
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [self.meetingDatas numberOfMeetings]]];
-    
-//    NSLog(@"foo : %@", [self.meetingDatas numberOfMeetings]);
+
     //___________________
     // Uitableview of user selection (what user likes)
     UITableView *userSelectionTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
@@ -120,7 +119,6 @@
     userSelectionTableView.backgroundColor = [UIColor clearColor];
     userSelectionTableView.tag = 1;
     userSelectionTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userSelectionTableView.tableFooterView = tableFooter; //[[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
@@ -274,7 +272,6 @@
     detailsMediaViewController.mediaDatas = selectedCell.model;
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
-
 
 - (void) getImageCellForData:(NSString*)imdbID aCell:(UITableViewCell*)cell
 {

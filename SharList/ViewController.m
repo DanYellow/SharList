@@ -172,6 +172,15 @@
     
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
+    // Loading indicator of the app
+    loadingIndicator = [[UIActivityIndicatorView alloc] init];
+    loadingIndicator.center = self.view.center;
+    loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    loadingIndicator.hidesWhenStopped = YES;
+    loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    
+    [self.view addSubview:loadingIndicator];
+    
     
     // Uitableview of user selection (what user likes)
     UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
@@ -322,13 +331,6 @@
     }
     
     
-    loadingIndicator = [[UIActivityIndicatorView alloc] init];
-    loadingIndicator.center = self.view.center;
-    loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-    loadingIndicator.hidesWhenStopped = YES;
-    loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
-    
-    [self.view addSubview:loadingIndicator];
 
 }
 
