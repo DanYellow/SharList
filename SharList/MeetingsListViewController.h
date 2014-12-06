@@ -23,7 +23,7 @@
 //Models
 #import "UserTaste.h"
 
-@interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate>
+@interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate, CLLocationManagerDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -34,10 +34,12 @@
     NSMutableArray *daysList;
     
     UIActivityIndicatorView *loadingIndicator;
+    CLLocation *theLastLocation;
 }
 
-@property (nonatomic, assign, getter=isFilterEnabled) BOOL FilterEnabled;
+@property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;
 @property (retain, nonatomic) NSMutableData *responseData;
+@property (nonatomic, strong) CLLocationManager *locationManager;
 
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 

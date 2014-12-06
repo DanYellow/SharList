@@ -157,13 +157,33 @@
     [loadingIndicator startAnimating];
     [self.view addSubview:loadingIndicator];
     
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+        self.locationManager = [[CLLocationManager alloc] init];
+        self.locationManager.delegate = self;
+        self.locationManager.distanceFilter = 200;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+//      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
+        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            [self.locationManager requestAlwaysAuthorization];
+        }
+        [self.locationManager startUpdatingLocation];
+//        self.locationManager.
+//        [self.locationManager stopUpdatingLocation];
+    }
+    
+    
     // This method is called when user quit the app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
     // This method is called when user go back to app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didForeground" object: nil];
-    
-//    NSString *badgeValueStr = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
-//    [[self navigationController] tabBarItem].badgeValue = badgeValueStr;
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    theLastLocation = [locations lastObject];
+    NSLog(@"%@", [locations lastObject]);
 }
 
 - (NSArray*) fetchDatas {
@@ -171,7 +191,6 @@
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]]
 ;
 
-    
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
     
     NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
@@ -418,9 +437,7 @@
 #pragma mark - Fetch Datas in background
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-{
-//    [self getRandomUserDatas];
-    
+{    
     NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
@@ -430,10 +447,12 @@
     NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
     
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"Yes" : @"No"];
-    NSLog(@"POST STRING : %@", postString);
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+        postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", theLastLocation.coordinate.latitude, theLastLocation.coordinate.longitude]];
+    }
+
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
-//    NSLog(@"postString : %@", postString);
     [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             completionHandler(UIBackgroundFetchResultFailed);

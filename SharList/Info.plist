@@ -31,18 +31,21 @@
 	<string>1</string>
 	<key>FacebookAppID</key>
 	<string>1557139914519856</string>
-	<key>FacebookDisplayName</key>
-	<string>Shar</string>
 	<key>FacebookBundleName</key>
 	<string>FacebookSDKOverrides</string>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<key>FacebookDisplayName</key>
+	<string>Shar</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
+		<string>location</string>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>With the geolocation you can get user&apos;s taste around you</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

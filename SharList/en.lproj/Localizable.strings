@@ -32,12 +32,15 @@
 "Favorites" = "Favorites";
 "Met at %@" = "Met at %@";
 
+// DetailsMeetingsViewController
+"met %@ times" = "met %@ times";
+
 //Settings view controller
 "Enable geolocation" = "Enable geolocation";
 "Log out" = "Log out";
 "Delete account" = "Delete account";
 "Geoloc explain" = "This option is not available currently because we just launch this app and we don't have many users to fetch users around you. So talk about Shike to your friends, family, co-workers...";
-"met %@ times" = "met %@ times";
+"Location purpose" = "Shike needs your location to get user's taste around you";
 
 // DetailsMediaViewController
 "Added" = "Added";

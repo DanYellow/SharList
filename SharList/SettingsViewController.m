@@ -210,15 +210,67 @@
     
     if ([switchControl isOn]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"geoLocEnabled"];
+        CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+        if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            [locationManager requestAlwaysAuthorization];
+        }
+        
+        // If user try to enable geoloc but he doesn't enable it
+        // He gets an error and the switch is set to false
+        if (![self userLocationAuthorization]) {
+            switchControl.on = NO;
+            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
+        }
     } else {
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
     }
 }
 
+
+- (BOOL) userLocationAuthorization
+{
+    BOOL aBool = YES;
+    UIAlertView *alert;
+    if ([CLLocationManager locationServicesEnabled]) {
+        switch ([CLLocationManager authorizationStatus]) {
+            case kCLAuthorizationStatusDenied:
+            {
+                alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"App level settings has been denied" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+                aBool = NO;
+            }
+                break;
+            case kCLAuthorizationStatusNotDetermined:
+            {
+                alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"The user is yet to provide the permission" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+                aBool = NO;
+            }
+                break;
+            case kCLAuthorizationStatusRestricted:
+            {
+                alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"The app is recstricted from using location services." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+                aBool = NO;
+            }
+                break;
+                
+            default:
+                break;
+        }
+    } else {
+        alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"The location services seems to be disabled from the settings." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        aBool = NO;
+    }
+    
+    [alert show];
+    alert = nil;
+    
+    return aBool;
+}
+
 //- (void)updateSwitchAtIndexPath:(NSIndexPath *)indexPath
 //{
 //    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
-//    
+//
 //    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
 //    UISwitch *switchView = (UISwitch *)cell.accessoryView;
 //    
