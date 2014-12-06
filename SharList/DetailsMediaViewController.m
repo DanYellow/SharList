@@ -261,22 +261,37 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
 
+    UIImageView *imgMedia = [UIImageView new];
+    [imgMedia setImageWithURL:
+     [NSURL URLWithString:data[@"Poster"]]
+             placeholderImage:[UIImage imageNamed:@"bb"]];
+    imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
+    imgMedia.contentMode = UIViewContentModeScaleAspectFill;
+    imgMedia.clipsToBounds = YES;
+    imgMedia.alpha = 0;
+    [infoMediaView insertSubview:imgMedia atIndex:0];
     
-    // Blurred background
-    UIImageView *bluredBackgroundImageView = [[UIImageView alloc] initWithImage: [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:data[@"Poster"]]]]];
-    bluredBackgroundImageView.alpha = 0;
-    [bluredBackgroundImageView setFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    CALayer *overlayLayer = [CALayer layer];
+    overlayLayer.frame = imgMedia.frame;
+    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.83].CGColor;
+    [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
     
-    UIVisualEffect *blurEffect;
-    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     
-    UIVisualEffectView *visualEffectView;
-    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    
-    visualEffectView.frame = bluredBackgroundImageView.bounds;
-    [bluredBackgroundImageView addSubview:visualEffectView];
-    
-    [infoMediaView insertSubview:bluredBackgroundImageView atIndex:0];
+//    // Blurred background
+//    UIImageView *bluredBackgroundImageView = [[UIImageView alloc] initWithImage: [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:data[@"Poster"]]]]];
+//    bluredBackgroundImageView.alpha = 0;
+//    [bluredBackgroundImageView setFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+//    
+//    UIVisualEffect *blurEffect;
+//    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+//    
+//    UIVisualEffectView *visualEffectView;
+//    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+//    
+//    visualEffectView.frame = bluredBackgroundImageView.bounds;
+//    [bluredBackgroundImageView addSubview:visualEffectView];
+//    
+//    [infoMediaView insertSubview:bluredBackgroundImageView atIndex:0];
 
     
     CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
@@ -304,7 +319,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      animations:^{
                          mediaDescription.alpha = 1;
                          
-                         bluredBackgroundImageView.alpha = .95f;
+                         imgMedia.alpha = .95f;
                      }
                      completion:^(BOOL finished){
                      }];
