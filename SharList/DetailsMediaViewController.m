@@ -204,18 +204,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     
-    CGFloat mediaTitleLabelY = imgMediaHeight - [self computeRatio:88 forDimension:imgMediaHeight];
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabelY, screenWidth, 25)];
+    CGFloat mediaTitleLabelY = [self computeRatio:260 forDimension:imgMediaHeight];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth, 25)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
-    mediaTitleLabel.textAlignment = NSTextAlignmentCenter;
+    mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
     mediaTitleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
     mediaTitleLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
     mediaTitleLabel.layer.shadowRadius = 2.5;
     mediaTitleLabel.layer.shadowOpacity = 0.75;
     mediaTitleLabel.clipsToBounds = NO;
     mediaTitleLabel.layer.masksToBounds = NO;
-    mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
+    mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
     [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
@@ -226,17 +226,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // Aimé par X personnes
         NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), mediaLikeNumber];
         
-        UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
+        UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
         mediaLikeNumberLabel.text = mediaLikeNumberString;
-        mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.7 alpha:1];
-        mediaLikeNumberLabel.textAlignment = NSTextAlignmentCenter;
+        mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
+        mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
         mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
         mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
         mediaLikeNumberLabel.layer.shadowRadius = 2.5;
         mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
         mediaLikeNumberLabel.clipsToBounds = NO;
         mediaLikeNumberLabel.layer.masksToBounds = NO;
-        mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0];
+        mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
         [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
         [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
     }
@@ -297,13 +297,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     CGFloat mediaDescriptionWidth = [self computeRatio:608 forDimension:screenWidth];
     CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
-    CGFloat mediaDescriptionY = imgMediaHeight - [self computeRatio:88 forDimension:imgMediaHeight] + 60;
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, mediaDescriptionY, mediaDescriptionWidth, [self computeRatio:516 forDimension:screenHeight])];
+    CGFloat mediaDescriptionY = imgMediaHeight - [self computeRatio:88 forDimension:imgMediaHeight] + 20;
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, mediaDescriptionY, mediaDescriptionWidth, [self computeRatio:526 forDimension:screenHeight])];
     mediaDescription.text = data[@"Plot"];
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
+    mediaDescription.textAlignment = NSTextAlignmentRight;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
@@ -617,7 +618,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
     
     [UIView animateWithDuration:0.6 delay:0.1
-                        options: UIViewAnimationOptionCurveEaseOut
+                        options: UIViewAnimationOptionCurveLinear
                      animations:^{
                          addRemoveMediaLabel.alpha = 0;
                      }
