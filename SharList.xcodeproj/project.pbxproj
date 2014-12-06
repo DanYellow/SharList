@@ -186,14 +186,13 @@
 			children = (
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
-				1A9666441A312302006969A7 /* NSString+SentenceCapitalizedString.h */,
-				1A9666451A312302006969A7 /* NSString+SentenceCapitalizedString.m */,
+				1A0EFAAD1A32736700FEA01D /* Categories */,
 				1ACDC9081A23E6780032B857 /* MeetingsListViewController */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1AE9E7A81A2683770072EF91 /* DetailsMeetingViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
-				1A1D6E461A1099C60090C598 /* SettingsVieWControllerViewController */,
+				1A1D6E461A1099C60090C598 /* SettingsViewController */,
 				1A3C22831A114345005B31E4 /* CoreData */,
 				1A076DDC1A10113000CD725A /* FirstViewController */,
 				1A0014EE1A15819A003430E9 /* Vendors */,
@@ -272,13 +271,22 @@
 			name = Images;
 			sourceTree = "<group>";
 		};
-		1A1D6E461A1099C60090C598 /* SettingsVieWControllerViewController */ = {
+		1A0EFAAD1A32736700FEA01D /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				1A9666441A312302006969A7 /* NSString+SentenceCapitalizedString.h */,
+				1A9666451A312302006969A7 /* NSString+SentenceCapitalizedString.m */,
+			);
+			name = Categories;
+			sourceTree = "<group>";
+		};
+		1A1D6E461A1099C60090C598 /* SettingsViewController */ = {
 			isa = PBXGroup;
 			children = (
 				1A1D6E431A1099C00090C598 /* SettingsViewController.h */,
 				1A1D6E441A1099C00090C598 /* SettingsViewController.m */,
 			);
-			name = SettingsVieWControllerViewController;
+			name = SettingsViewController;
 			sourceTree = "<group>";
 		};
 		1A3C22791A11303E005B31E4 /* DetailsMediaViewController */ = {

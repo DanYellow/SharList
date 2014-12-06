@@ -175,7 +175,6 @@
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
-
     //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];

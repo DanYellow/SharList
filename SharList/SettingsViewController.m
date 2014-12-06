@@ -89,6 +89,34 @@
     return 1;
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    if(section != 0) {
+        return nil;
+    }
+    UIView *tempView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, 100)];
+    tempView.backgroundColor = [UIColor clearColor];
+    
+    UILabel *footerSectionLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 0, screenWidth-30, 100)];
+    footerSectionLabel.backgroundColor = [UIColor clearColor];
+    footerSectionLabel.textColor = [UIColor whiteColor];
+    footerSectionLabel.font = [UIFont fontWithName:@"Helvetica" size:13.0];
+    footerSectionLabel.text = NSLocalizedString(@"Geoloc explain", nil);
+    footerSectionLabel.textAlignment = NSTextAlignmentCenter;
+    footerSectionLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    footerSectionLabel.numberOfLines = 0;
+    
+
+    [tempView addSubview:footerSectionLabel];
+    
+    return tempView;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 85.0;
+}
+
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
