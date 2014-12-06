@@ -452,9 +452,6 @@
 
 - (void) getRandomUserDatas
 {
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Based god" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-//    [alert show];
-
     NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy

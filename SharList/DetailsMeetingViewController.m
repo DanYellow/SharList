@@ -16,7 +16,7 @@
 
 
 // Tag list
-// 1 : userSelectionTableView (blurred view)
+// 1 : userSelectionTableView
 // 2 : UIRefreshControl
 
 
@@ -114,27 +114,31 @@
 
     //___________________
     // Uitableview of user selection (what user likes)
-    UITableView *userSelectionTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
-    userSelectionTableView.dataSource = self;
-    userSelectionTableView.delegate = self;
-    userSelectionTableView.backgroundColor = [UIColor clearColor];
-    userSelectionTableView.tag = 1;
-    userSelectionTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    userSelectionTableView.tableFooterView = tableFooter; //[[UIView alloc] initWithFrame:CGRectZero];
-    userSelectionTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
-    userSelectionTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
-    [self.view addSubview:userSelectionTableView];
+    UITableViewController *userSelectionTableView = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    userSelectionTableView.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight);
+    userSelectionTableView.tableView.dataSource = self;
+    userSelectionTableView.tableView.delegate = self;
+    userSelectionTableView.tableView.backgroundColor = [UIColor clearColor];
+    userSelectionTableView.tableView.tag = 1;
+    userSelectionTableView.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    userSelectionTableView.tableView.tableFooterView = tableFooter; //[[UIView alloc] initWithFrame:CGRectZero];
+    userSelectionTableView.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    userSelectionTableView.tableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
+    [self.view addSubview:userSelectionTableView.tableView];
     
     // If the current user list is among user's favorites
     // He can fetch his update to follow him
     if ([self.meetingDatas isFavorite]) {
+        // Shoud contain raw data from the server
+        self.responseData = [NSMutableData new];
+        
         UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
         userSelectRefresh.backgroundColor = [UIColor whiteColor];
-        userSelectRefresh.tintColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.9f];
+        userSelectRefresh.tintColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:1];
         userSelectRefresh.tag = 2;
         [userSelectRefresh addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
-//        userSelectionTableView.
-        [userSelectionTableView addSubview:userSelectRefresh];
+        userSelectionTableView.refreshControl = userSelectRefresh;
+//        [userSelectionTableView addSubview:userSelectRefresh];
     }
 }
 
@@ -144,19 +148,82 @@
 {
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
     [userSelectRefresh endRefreshing];
-    
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"MMM d, h:mm a"];
     NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
+    
     NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
                                                                 forKey:NSForegroundColorAttributeName];
-    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
-    userSelectRefresh.attributedTitle = attributedTitle;
     
-//    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
-//    [tableView reloadData];
+    NSMutableAttributedString *attributedTitle = [[NSMutableAttributedString alloc] initWithString:title attributes:attrsDictionary];
+    [attributedTitle addAttribute:NSForegroundColorAttributeName
+                            value:[UIColor redColor]
+                            range:NSMakeRange(0, [title length])];
+    
+    userSelectRefresh.attributedTitle = attributedTitle;
+
+    [self getServerDatasForFbID:[self.meetingDatas fbid]];
 }
 
+// This methods allows to retrieve and send (?) user datas from the server
+- (void) getServerDatasForFbID:(NSNumber*)userfbID
+{
+    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+                                                       timeoutInterval:10.0];
+    [request setHTTPMethod:@"POST"];
+    
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&isrand=%@", userfbID, @"true"];
+    
+    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+    [conn start];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [self.responseData appendData:data];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    
+    // Server sends back some datas
+    if (self.responseData != nil) {
+        NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+        
+        NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
+        
+        // There is some datas from the server
+        if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
+            NSDictionary *allDatasFromServerDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            NSData *stringData = [[allDatasFromServerDict objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
+                        
+            if (![self.metUserTasteDict isEqualToDictionary: [randomUserTaste mutableCopy] ]) {
+                // We update the current data from the server
+                self.metUserTasteDict = [randomUserTaste mutableCopy];
+                NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
+                
+                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [self.meetingDatas fbid]];
+                UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
+                oldUserTaste.taste = arrayData;
+//                oldUserTaste.lastMeeting = [NSDate date];
+                
+                UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
+                [tableView reloadData];
+            }
+        } else {
+            NSLog(@"no user datas");
+        }
+        
+        self.responseData = nil;
+        self.responseData = [NSMutableData new];
+        
+        UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
+        [userSelectRefresh endRefreshing];
+    }
+}
 
 #pragma mark - tableview definition
 
@@ -165,8 +232,6 @@
     NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
 
     NSArray *sectionElements = [self.metUserTasteDict objectForKey:sectionTitle];
-    
-    
     
     // If the category is empty so the section not appears
     if ([sectionElements isKindOfClass:[NSNull class]]) {
@@ -262,6 +327,7 @@
         cell.textLabel.layer.shadowOpacity = .75f;
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        cell.indentationLevel = 1;
     }
 //    cell.delegate = self;
 

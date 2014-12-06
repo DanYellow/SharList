@@ -27,6 +27,7 @@
 
 
 @property (nonatomic, strong) id meetingDatas;
+@property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateMeetingsListDelegate> delegate;
 
 

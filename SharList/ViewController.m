@@ -922,7 +922,7 @@
     NSString *title = [NSLocalizedString([categoryList objectAtIndex:section], nil) uppercaseString];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
-    label.font = [UIFont fontWithName:@"Helvetica-Medium" size:fontSize];
+    label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
     label.text = title;
     
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
