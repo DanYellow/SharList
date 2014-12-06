@@ -429,8 +429,8 @@
     
     NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
     
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)randomUserFacebookID];
-    
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"Yes" : @"No"];
+    NSLog(@"POST STRING : %@", postString);
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
 //    NSLog(@"postString : %@", postString);

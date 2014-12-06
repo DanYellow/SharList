@@ -100,7 +100,12 @@
     screenHeight = screenRect.size.height;
     
     userPreferences = [NSUserDefaults standardUserDefaults];
-
+    
+    // If NSUserDefaults' geoLocEnabled key is not set we set it to no
+    if ([userPreferences objectForKey:@"geoLocEnabled"] == nil) {
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
+    }
+    
     // Shoud contain raw data from the server
     self.responseData = [NSMutableData new];
     

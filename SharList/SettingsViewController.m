@@ -130,14 +130,22 @@
         myLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
         if (indexPath.section == 0) {
             myLabel.frame = CGRectMake(12.0, 0, screenWidth, 50);
-            myLabel.enabled = NO;
+            myLabel.enabled = YES;
+            
             UISwitch *geolocSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
             geolocSwitch.onTintColor = [UIColor colorWithRed:(26.0f/255.0f) green:(79.0f/255.0f) blue:(103.0f/255.0f) alpha:1.0f];
-            geolocSwitch.enabled = NO;
+            geolocSwitch.enabled = YES;
+            [geolocSwitch addTarget:self action:@selector(geolocSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+            if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+                geolocSwitch.on = NO;
+            } else {
+                geolocSwitch.on = YES;
+            }
+            
             cell.accessoryView = geolocSwitch;
-            cell.userInteractionEnabled = NO;
-            cell.textLabel.enabled = NO;
-            cell.detailTextLabel.enabled = NO;
+            cell.userInteractionEnabled = YES;
+            cell.textLabel.enabled = YES;
+            cell.detailTextLabel.enabled = YES;
         }
         myLabel.font = [UIFont fontWithName:@"Helvetica" size:16.0f];
         myLabel.backgroundColor = [UIColor clearColor];
@@ -196,19 +204,34 @@
     
 }
 
-- (void)updateSwitchAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
+
+- (void) geolocSwitchChanged:(id)sender {
+    UISwitch *switchControl = sender;
     
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    UISwitch *switchView = (UISwitch *)cell.accessoryView;
-    
-    if ([switchView isOn]) {
-        [switchView setOn:NO animated:YES];
+    if ([switchControl isOn]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"geoLocEnabled"];
     } else {
-        [switchView setOn:YES animated:YES];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
     }
 }
+
+//- (void)updateSwitchAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
+//    
+//    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//    UISwitch *switchView = (UISwitch *)cell.accessoryView;
+//    
+//    if ([switchView isOn]) {
+//        [switchView setOn:NO animated:YES];
+//        [[NSUserDefaults standardUserDefaults] setBool:@0 forKey:@"geoLocEnabled"];
+//        NSLog(@"NO");
+//    } else {
+//        [switchView setOn:YES animated:YES];
+//        [[NSUserDefaults standardUserDefaults] setBool:@1 forKey:@"geoLocEnabled"];
+//        NSLog(@"YES");
+//    }
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
