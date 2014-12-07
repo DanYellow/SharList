@@ -26,6 +26,7 @@
 // 6 : UIRefreshControl for userTaste
 // 7 : emptyResult : Message for no results
 // 8 : emptyUserTasteLabel : Message for no user taste
+// 9 : searchLoadingIndicator of search
 
 
 @implementation ViewController
@@ -92,9 +93,6 @@
     }];
     
     // Variables init
-    USERALREADYMADEARESEARCH = NO;
-    
-    
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
@@ -181,7 +179,6 @@
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     loadingIndicator.hidesWhenStopped = YES;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
-    
     [self.view addSubview:loadingIndicator];
     
     
@@ -210,6 +207,14 @@
     self.searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     self.searchResultsController.tableView.separatorInset = UIEdgeInsetsZero;
+    
+    UIActivityIndicatorView *searchLoadingIndicator = [[UIActivityIndicatorView alloc] init];
+    searchLoadingIndicator.center = self.searchResultsController.tableView.center;
+    searchLoadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    searchLoadingIndicator.hidesWhenStopped = YES;
+    searchLoadingIndicator.tag = 9;
+    searchLoadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    [self.searchResultsController.tableView addSubview:searchLoadingIndicator];
     
     //Message for empty search
     UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, screenWidth, 90)];
@@ -312,7 +317,6 @@
     categoryList = [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     
     filteredTableDatas = [NSMutableDictionary new];
-    gentoo = [NSMutableDictionary new];
     
     [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
@@ -373,13 +377,21 @@
     if ([query length] == 0) {
         return;
     }
-    
-    NSString *linkAPI = @"http://192.168.1.55:8888/Share/search.php";
-    __block NSMutableArray *json = [NSMutableArray new];
 
+    UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
+    [searchLoadingIndicator startAnimating];
+    NSString *linkAPI = @"http://192.168.1.55:8888/Share/search.php";
+   // Loading indicator of the app
+    loadingIndicator = [[UIActivityIndicatorView alloc] init];
+    loadingIndicator.center = self.view.center;
+    loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    loadingIndicator.hidesWhenStopped = YES;
+    loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    
+    [self.view insertSubview:loadingIndicator aboveSubview:self.searchController.searchBar];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] init];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    [manager POST:linkAPI parameters:@{@"query" : query } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:linkAPI parameters:@{ @"query" : query } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (completion)
             completion(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -1152,6 +1164,7 @@
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController
 {
+    
     self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
     
     NSString *searchString = [searchController.searchBar text];
@@ -1159,13 +1172,13 @@
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
     
     [filteredTableDatas removeAllObjects];
-    [gentoo removeAllObjects];
     
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
-//    NSLog(@"%@, %@", [self fetchDatasFromServerWithQuery: @"B"], APIdatas);
-//    __block NSMutableDictionary *gentoo = [NSMutableDictionary new];
 
     [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
+        UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
+        [searchLoadingIndicator stopAnimating];
+        
         for (int i = 0; i < [[result valueForKey:@"type"] count]; i++) {
             NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[result valueForKey:@"type"] objectAtIndex:i]];
             
@@ -1175,13 +1188,14 @@
             NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
             [filteredTableDatas setValue:sortedDatas forKey:[[result valueForKey:@"type"] objectAtIndex:i]];
         }
-       NSLog(@"gentoo : %@", filteredTableDatas);
+        
         [self.searchResultsController.tableView reloadData];
     }];
     
     
 //    [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
-//NSLog(@"filteredTableDatas : %@", filteredDatas);
+//    UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
+//    [searchLoadingIndicator stopAnimating];
 //    for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
 //        
 //        // This predicate manage a media in several categories
@@ -1191,7 +1205,6 @@
 //        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
 //        NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
 //        NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
-////         NSLog(@"sortedDatas B : %@", sortedDatas);
 //        [filteredTableDatas setValue:sortedDatas forKey:[[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
 //    }
     
