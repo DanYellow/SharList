@@ -172,8 +172,6 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     theLastLocation = [locations lastObject];
-    
-    NSLog(@"theLastLocation = %@", theLastLocation);
 }
 
 - (NSArray*) fetchDatas {

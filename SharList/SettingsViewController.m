@@ -62,8 +62,6 @@
     settingsTableview.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     settingsTableview.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:settingsTableview];
-    
-    
 }
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
@@ -135,6 +133,7 @@
             UISwitch *geolocSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
             geolocSwitch.onTintColor = [UIColor colorWithRed:(26.0f/255.0f) green:(79.0f/255.0f) blue:(103.0f/255.0f) alpha:1.0f];
             geolocSwitch.enabled = YES;
+            geolocSwitch.tag = 3;
             [geolocSwitch addTarget:self action:@selector(geolocSwitchChanged:) forControlEvents:UIControlEventValueChanged];
             if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
                 geolocSwitch.on = NO;
@@ -210,17 +209,34 @@
     
     if ([switchControl isOn]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"geoLocEnabled"];
-        // If user try to enable geoloc but he doesn't enable it
-        // He gets an error and the switch is set to false
-        if (![self userLocationAuthorization]) {
-            switchControl.on = NO;
-            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
+        self.locationManager = [[CLLocationManager alloc] init];
+        self.locationManager.delegate = self;
+        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            [self.locationManager requestAlwaysAuthorization];
         }
+        [self.locationManager startUpdatingLocation];
+//            // If user try to enable geoloc but he doesn't enable it
+//            // He gets an error and the switch is set to false
+            if (![self userLocationAuthorization]) {}
     } else {
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
     }
 }
 
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+    UISwitch *geolocSwitch = (UISwitch*)[self.view viewWithTag:3];
+    geolocSwitch.on = NO;
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
+    
+//    [self userLocationAuthorization];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    [self.locationManager stopUpdatingLocation];
+}
 
 - (BOOL) userLocationAuthorization
 {
@@ -229,23 +245,17 @@
     if ([CLLocationManager locationServicesEnabled]) {
         switch ([CLLocationManager authorizationStatus]) {
             case kCLAuthorizationStatusDenied:
-            {
-                alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"App level settings has been denied" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-                aBool = NO;
-            }
-                break;
             case kCLAuthorizationStatusRestricted:
             {
-                alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"The app is recstricted from using location services." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+                alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc denied", nil) delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
                 aBool = NO;
             }
-                break;
-                
+                break;                
             default:
                 break;
         }
     } else {
-        alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"The location services seems to be disabled from the settings." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc disabled", nil) delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         aBool = NO;
     }
     

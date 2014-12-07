@@ -14,7 +14,7 @@
 #import "ViewController.h"
 
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate>
+UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate, CLLocationManagerDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -22,5 +22,6 @@ UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate>
 
 @property (strong, nonatomic) UITableViewController *settingsTVController;
 @property (strong, nonatomic) NSArray *settingsItemsList;
+@property (nonatomic, strong) CLLocationManager *locationManager;
 
 @end
