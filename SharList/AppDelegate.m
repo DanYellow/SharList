@@ -36,7 +36,7 @@
     settingsViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"settings", nil)];
     
     self.tabBarController = [[UITabBarController alloc] init];
-
+    
     
     [UITabBar appearance].barTintColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.95f];
     [UITabBar appearance].tintColor = [UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:.95f];
@@ -160,8 +160,10 @@
     // Notify all listener that application have been put in foreground
     [[NSNotificationCenter defaultCenter] postNotificationName: @"didEnterForeground" object:nil userInfo:nil];
     
-    [[UIApplication sharedApplication] applicationIconBadgeNumber];
-    [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
+    if ([[UIApplication sharedApplication] applicationIconBadgeNumber] > 0) {
+        [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
+    }
+    
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

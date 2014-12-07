@@ -44,7 +44,7 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-	<key>NSLocationAlwaysUsageDescription</key>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>With the geolocation you can get user&apos;s taste around you</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
