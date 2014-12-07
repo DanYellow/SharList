@@ -312,6 +312,7 @@
     categoryList = [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     
     filteredTableDatas = [NSMutableDictionary new];
+    gentoo = [NSMutableDictionary new];
     
     [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
@@ -367,27 +368,25 @@
     return json;
 }
 
-- (NSMutableArray*) fetchDatasFromServerWithQuery:(NSString*)query completion:(void (^)(NSArray *result))completion
+- (void) fetchDatasFromServerWithQuery:(NSString*)query completion:(void (^)(id result))completion
 {
+    if ([query length] == 0) {
+        return;
+    }
+    
     NSString *linkAPI = @"http://192.168.1.55:8888/Share/search.php";
     __block NSMutableArray *json = [NSMutableArray new];
 
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] init];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     [manager POST:linkAPI parameters:@{@"query" : query } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        json = [NSMutableArray arrayWithObject:responseObject];
         if (completion)
-            completion(json);
+            completion(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:@"Oups" message:@"Il semblerait qu'on ait du mal à afficher cette fiche. \n Réessayez plus tard." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
 //        [errConnectionAlertView show];
 //        [loadingIndicator stopAnimating];
-        NSString *results = [NSString stringWithFormat:@"Error"];
-        if (completion)
-            completion(results);
     }];
-    
-    return json;
 }
 
 - (void) appearsSearchBar
@@ -1145,6 +1144,12 @@
 
 #pragma mark - Content filtering
 
+- (NSArray*) arrayFromBlock:(NSArray*)array
+{
+    NSArray *returnArray = [[NSArray alloc] initWithArray:array];
+    return returnArray;
+}
+
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController
 {
     self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
@@ -1152,29 +1157,45 @@
     NSString *searchString = [searchController.searchBar text];
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
+    
     [filteredTableDatas removeAllObjects];
+    [gentoo removeAllObjects];
     
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
 //    NSLog(@"%@, %@", [self fetchDatasFromServerWithQuery: @"B"], APIdatas);
-    [self fetchDatasFromServerWithQuery: searchString completion:^(NSArray *result){
-        NSLog(@"Results: %@", result);
+//    __block NSMutableDictionary *gentoo = [NSMutableDictionary new];
+
+    [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
+        for (int i = 0; i < [[result valueForKey:@"type"] count]; i++) {
+            NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[result valueForKey:@"type"] objectAtIndex:i]];
+            
+            // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
+            NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+            NSArray *datasToSort = [[NSArray alloc] initWithArray:[[result filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
+            NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
+            [filteredTableDatas setValue:sortedDatas forKey:[[result valueForKey:@"type"] objectAtIndex:i]];
+        }
+       NSLog(@"gentoo : %@", filteredTableDatas);
+        [self.searchResultsController.tableView reloadData];
     }];
-    [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
-
-    for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
-        
-        // This predicate manage a media in several categories
-        NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
-
-        // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-        NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
-        NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
     
-        [filteredTableDatas setValue:sortedDatas forKey:[[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
-    }
     
-    [self.searchResultsController.tableView reloadData];
+//    [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
+//NSLog(@"filteredTableDatas : %@", filteredDatas);
+//    for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
+//        
+//        // This predicate manage a media in several categories
+//        NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
+//
+//        // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
+//        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+//        NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
+//        NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
+////         NSLog(@"sortedDatas B : %@", sortedDatas);
+//        [filteredTableDatas setValue:sortedDatas forKey:[[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
+//    }
+    
+    
     
     // Blurred background
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];

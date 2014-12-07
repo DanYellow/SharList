@@ -33,7 +33,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     // Datas from API
     NSArray *APIdatas;
 //    NSMutableArray *filteredDatas;
-    NSMutableDictionary *filteredTableDatas;
+    __block NSMutableDictionary *filteredTableDatas;
     NSArray *categoryList;
     NSMutableDictionary *userTasteDict;
     NSUserDefaults *userPreferences;
@@ -45,6 +45,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     UIActivityIndicatorView *loadingIndicator;
     
     CLLocation *theLastLocation;
+    
+    __block NSMutableDictionary *gentoo;
 }
 
 //@property (nonatomic, weak) id<DetailsMediaViewControllerProtocol> delegate;
