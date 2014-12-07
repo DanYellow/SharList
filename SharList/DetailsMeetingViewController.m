@@ -133,8 +133,8 @@
         self.responseData = [NSMutableData new];
         
         UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
-        userSelectRefresh.backgroundColor = [UIColor whiteColor];
-        userSelectRefresh.tintColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:1];
+        userSelectRefresh.backgroundColor = [UIColor clearColor];
+        userSelectRefresh.tintColor = [UIColor whiteColor];
         userSelectRefresh.tag = 2;
         [userSelectRefresh addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
         userSelectionTableView.refreshControl = userSelectRefresh;
@@ -148,19 +148,6 @@
 {
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
     [userSelectRefresh endRefreshing];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"MMM d, h:mm a"];
-    NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
-    
-    NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
-                                                                forKey:NSForegroundColorAttributeName];
-    
-    NSMutableAttributedString *attributedTitle = [[NSMutableAttributedString alloc] initWithString:title attributes:attrsDictionary];
-    [attributedTitle addAttribute:NSForegroundColorAttributeName
-                            value:[UIColor redColor]
-                            range:NSMakeRange(0, [title length])];
-    
-    userSelectRefresh.attributedTitle = attributedTitle;
 
     [self getServerDatasForFbID:[self.meetingDatas fbid]];
 }

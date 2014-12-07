@@ -331,6 +331,20 @@
         //[userPreferences setBool:YES forKey:@"firstTime"];
         NSLog(@"Log tutorial");
     }
+    
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+        self.locationManager = [[CLLocationManager alloc] init];
+        self.locationManager.delegate = self;
+        self.locationManager.distanceFilter = 200;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        //      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
+        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            [self.locationManager requestAlwaysAuthorization];
+        }
+        [self.locationManager startUpdatingLocation];
+    }
 }
 
 
@@ -442,6 +456,8 @@
         [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:NO];
         NSLog(@"fetch server datas");
     }
+    
+    [self updateUserLocation:[userPreferences objectForKey:@"fbUserID"]];
 }
 
 - (void) displayUserTasteList
@@ -1005,11 +1021,30 @@
     [userSelectionTableView reloadData];
 }
 
+- (void) updateUserLocation:(NSNumber*)userfbID
+{
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+        return;
+    }
+    
+    NSURL *aUrl = [NSURL URLWithString:@"http://192.168.1.55:8888/Share/updateUserLocation.php"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+                                                       timeoutInterval:10.0];
+    [request setHTTPMethod:@"POST"];
+    
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&latitude=%f&longitude=%f", userfbID, theLastLocation.coordinate.latitude, theLastLocation.coordinate.longitude];
+
+    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+    [conn start];
+}
 
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
 {
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
+    NSURL *aUrl = [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
@@ -1033,6 +1068,11 @@
     // Server sends back some datas
     if (self.responseData != nil) {
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+        
+        // User juste update his location
+        if ([responseString isEqualToString:@"UpdateLocation"]) {
+            return;
+        }
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         
@@ -1155,7 +1195,10 @@
     return img;
 }
 
-
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    theLastLocation = [locations lastObject];
+}
 
 # pragma mark - Delegate methods
 

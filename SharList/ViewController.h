@@ -25,7 +25,7 @@
 #import "UserTaste.h"
 
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate>
+UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate, CLLocationManagerDelegate>
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -43,6 +43,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     BOOL USERALREADYMADEARESEARCH;
     
     UIActivityIndicatorView *loadingIndicator;
+    
+    CLLocation *theLastLocation;
 }
 
 //@property (nonatomic, weak) id<DetailsMediaViewControllerProtocol> delegate;
@@ -52,6 +54,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 @property (strong, nonatomic) UserTaste *userTaste;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign, getter=isFirstFBLoginDone) BOOL FirstFBLoginDone;
+@property (nonatomic, strong) CLLocationManager *locationManager;
 
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;

@@ -169,8 +169,6 @@
             [self.locationManager requestAlwaysAuthorization];
         }
         [self.locationManager startUpdatingLocation];
-//        self.locationManager.
-//        [self.locationManager stopUpdatingLocation];
     }
     
     
@@ -183,7 +181,8 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     theLastLocation = [locations lastObject];
-    NSLog(@"%@", [locations lastObject]);
+    
+    NSLog(@"theLastLocation : %@", theLastLocation);
 }
 
 - (NSArray*) fetchDatas {
@@ -452,6 +451,11 @@
     }
 
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+         NSLog(@"theLastLocation : %@", theLastLocation);
+        [self.locationManager startUpdatingLocation];
+    }
     
     [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
