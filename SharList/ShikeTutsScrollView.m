@@ -27,7 +27,7 @@
     if ((self = [super initWithFrame:frame])) {
         CGRect screenRect = [[UIScreen mainScreen] bounds];
         CGFloat screenWidth = screenRect.size.width;
-        CGFloat screenHeight = screenRect.size.height;
+//        CGFloat screenHeight = screenRect.size.height;
         
         self.backgroundColor = [UIColor clearColor];
         self.opaque = YES;

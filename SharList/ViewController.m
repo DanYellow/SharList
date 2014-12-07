@@ -172,6 +172,7 @@
     FBLoginView *fbLoginButton = [FBLoginView new];
     fbLoginButton.delegate = self;
     fbLoginButton.tag = 1;
+//    fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
 //    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
     // Loading indicator of the app
@@ -316,11 +317,11 @@
     // Detect if user not is connected
     // user is not connected
     if (!FBSession.activeSession.isOpen) {
-        fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
+        fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
         // We don't want message for empty user list for no fb connexion
         fbLoginButton.hidden = NO;
     } else {
-        fbLoginButton.frame = CGRectMake(51, screenHeight + 150, 218, 46);
+        fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight + 350, 218, 46);
 //        fbLoginButton.hidden = YES;
         appnameView.hidden = YES;
     }
@@ -589,7 +590,7 @@
         if (success) {
             [self.tabBarController setSelectedIndex:0];
             FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-            fbLoginButton.frame = CGRectMake(51, screenHeight - 150, 218, 46);
+            fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
             fbLoginButton.hidden = NO;
         } else {
             // Could not log in. Display alert to user.

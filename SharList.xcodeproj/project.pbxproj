@@ -14,7 +14,6 @@
 		1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DBE1A0FE20900CD725A /* ViewController.m */; };
 		1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC01A0FE20900CD725A /* Main.storyboard */; };
 		1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC31A0FE20900CD725A /* Images.xcassets */; };
-		1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC51A0FE20900CD725A /* LaunchScreen.xib */; };
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewController.m */; };
 		1A1D6E481A10AE930090C598 /* api.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A1D6E471A10AE930090C598 /* api.json */; };
@@ -75,7 +74,6 @@
 		1A076DBE1A0FE20900CD725A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		1A076DC11A0FE20900CD725A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1A076DC31A0FE20900CD725A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		1A076DC61A0FE20900CD725A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		1A076DCC1A0FE20900CD725A /* SharListTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SharListTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A076DD11A0FE20900CD725A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A076DD21A0FE20900CD725A /* SharListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharListTests.m; sourceTree = "<group>"; };
@@ -107,7 +105,6 @@
 		1A9666441A312302006969A7 /* NSString+SentenceCapitalizedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SentenceCapitalizedString.h"; sourceTree = "<group>"; };
 		1A9666451A312302006969A7 /* NSString+SentenceCapitalizedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SentenceCapitalizedString.m"; sourceTree = "<group>"; };
 		1AB977591A2BC60000F41313 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
-		1AB9775A1A2BC60100F41313 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		1AB9775C1A2BC69200F41313 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1AB977601A2BCC8100F41313 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1ACDC9031A23D3AA0032B857 /* app.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = app.plist; sourceTree = "<group>"; };
@@ -195,7 +192,6 @@
 				1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */,
 				1A076DC01A0FE20900CD725A /* Main.storyboard */,
 				1A076DC31A0FE20900CD725A /* Images.xcassets */,
-				1A076DC51A0FE20900CD725A /* LaunchScreen.xib */,
 				1A1D6E471A10AE930090C598 /* api.json */,
 				1A076DB61A0FE20900CD725A /* Supporting Files */,
 			);
@@ -454,7 +450,6 @@
 				1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */,
 				1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */,
 				1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */,
-				1A076DC71A0FE20900CD725A /* LaunchScreen.xib in Resources */,
 				1AFE13741A32EEAB006F2366 /* cart-icon@3x.png in Resources */,
 				1AE0E1B01A2949CD002B4829 /* TrianglesBG2@2x.png in Resources */,
 				1AFE13731A32EEAB006F2366 /* cart-icon@2x.png in Resources */,
@@ -559,15 +554,6 @@
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		1A076DC51A0FE20900CD725A /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1A076DC61A0FE20900CD725A /* Base */,
-				1AB9775A1A2BC60100F41313 /* fr */,
-			);
-			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
 		1AB9775D1A2BC69200F41313 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -661,6 +647,7 @@
 			baseConfigurationReference = E63C45D672D13D6A370E3582 /* Pods-SharList.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = SharList/PrefixHeader.pch;
 				INFOPLIST_FILE = SharList/Info.plist;
@@ -675,6 +662,7 @@
 			baseConfigurationReference = 5C3B6509700276B65733896C /* Pods-SharList.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = SharList/PrefixHeader.pch;
 				INFOPLIST_FILE = SharList/Info.plist;

@@ -210,12 +210,6 @@
     
     if ([switchControl isOn]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"geoLocEnabled"];
-        CLLocationManager *locationManager = [[CLLocationManager alloc] init];
-        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
-        if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-            [locationManager requestAlwaysAuthorization];
-        }
-        
         // If user try to enable geoloc but he doesn't enable it
         // He gets an error and the switch is set to false
         if (![self userLocationAuthorization]) {
@@ -237,12 +231,6 @@
             case kCLAuthorizationStatusDenied:
             {
                 alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"App level settings has been denied" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-                aBool = NO;
-            }
-                break;
-            case kCLAuthorizationStatusNotDetermined:
-            {
-                alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"The user is yet to provide the permission" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
                 aBool = NO;
             }
                 break;
