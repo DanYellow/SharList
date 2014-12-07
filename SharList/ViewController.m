@@ -193,7 +193,7 @@
     userTasteListTableView.tag = 4;
     userTasteListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userTasteListTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0); //self.bottomLayoutGuide.length
-    
+    userTasteListTableView.hidden = YES;
     //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -442,7 +442,8 @@
                        [NSNull null], @"movie",
                        [NSNull null], @"serie",
                        nil];
-    
+    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
+    userTasteListTableView.hidden = YES;
     [loadingIndicator startAnimating];
     if (self.userTaste) {
         // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
@@ -687,7 +688,6 @@
                 }
             }
         }
-        
         if (IsTableViewEmpty == YES && FBSession.activeSession.isOpen) {
             emptyUserTasteLabel.hidden = NO;
             [loadingIndicator stopAnimating];
@@ -699,15 +699,6 @@
     }
 }
 
-
-//- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-//    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-//        return [categoryList objectAtIndex:section];
-//    } else {
-//        NSLog(@"%@", NSLocalizedString([[userTasteDict allKeys] objectAtIndex:section], nil));
-//        return NSLocalizedString([[userTasteDict allKeys] objectAtIndex:section], nil);
-//    }
-//}
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -998,7 +989,7 @@
 {
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userTasteDict
-                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                       options:0 // Pass 0 if you don't care about the readability of the generated string
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"Got an error: %@", error);
@@ -1082,7 +1073,7 @@
         if ([responseString isEqualToString:@"UpdateLocation"]) {
             return;
         }
-        NSLog(@"responseString : %@", responseString);
+
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         
         // There is some datas from the server
