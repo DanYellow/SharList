@@ -679,7 +679,7 @@
         // User have no list of taste
         UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
         BOOL IsTableViewEmpty = YES;
-        // This loop is here to check the value of all keys
+        // This loop is here to check the content of all NSDict keys
         for (int i = 0; i < [[userTasteDict allKeys] count]; i++) {
             if (![[userTasteDict objectForKey:[[userTasteDict allKeys] objectAtIndex:i]] isKindOfClass:[NSNull class]]) {
                 if ([[userTasteDict objectForKey:[[userTasteDict allKeys] objectAtIndex:i]] count] != 0) {
@@ -690,7 +690,7 @@
         
         if (IsTableViewEmpty == YES && FBSession.activeSession.isOpen) {
             emptyUserTasteLabel.hidden = NO;
-            
+            [loadingIndicator stopAnimating];
             return 0;
         }
         emptyUserTasteLabel.hidden = YES;
@@ -698,6 +698,7 @@
         return userTasteDict.count;
     }
 }
+
 
 //- (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
 //    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
@@ -850,7 +851,7 @@
         
         [imgBackground setImageWithURL:
          [NSURL URLWithString:imgDistURL]
-                      placeholderImage:[UIImage imageNamed:@"bb"]];
+                      placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
         [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -937,7 +938,7 @@
 }
 
 // Title of categories
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     CGFloat fontSize = 18.0f;
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
@@ -989,6 +990,8 @@
     
     return image;
 }
+
+#pragma mark - update/fetch datas
 
 // This method retrieve an readable json of user taste for the database
 - (NSString *) updateTasteForServer
@@ -1051,7 +1054,7 @@
                                                        timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
 
-
+    NSLog(@"getServerDatasForFbID");
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", userfbID];
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1060,21 +1063,26 @@
     [conn start];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
     [self.responseData appendData:data];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
     // Server sends back some datas
     if (self.responseData != nil) {
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+        
+        // When responseString var gets the raw data from the server we clear it
+        self.responseData = nil;
+        self.responseData = [NSMutableData new];
         
         // User juste update his location
         if ([responseString isEqualToString:@"UpdateLocation"]) {
             return;
         }
-        
+        NSLog(@"responseString : %@", responseString);
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         
         // There is some datas from the server
@@ -1098,8 +1106,7 @@
         
         UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                         withValue:[userPreferences objectForKey:@"fbUserID"]];
-        self.responseData = nil;
-        self.responseData = [NSMutableData new];
+        
         
         
         // This is the first time for user

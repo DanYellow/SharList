@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A0014EA1A156A5E003430E9 /* bb.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A0014E91A156A5E003430E9 /* bb.png */; };
 		1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */; };
 		1A037B111A33238F00124FA8 /* ShikeTutsScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A037B101A33238F00124FA8 /* ShikeTutsScrollView.m */; };
 		1A076DB91A0FE20900CD725A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DB81A0FE20900CD725A /* main.m */; };
@@ -64,7 +63,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1A0014E91A156A5E003430E9 /* bb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bb.png; sourceTree = "<group>"; };
 		1A0014EB1A157C0F003430E9 /* CCARadialGradientLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCARadialGradientLayer.h; sourceTree = "<group>"; };
 		1A0014EC1A157C0F003430E9 /* CCARadialGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCARadialGradientLayer.m; sourceTree = "<group>"; };
 		1A037B0F1A33238F00124FA8 /* ShikeTutsScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShikeTutsScrollView.h; sourceTree = "<group>"; };
@@ -261,7 +259,6 @@
 				1A2696F41A1D443F002ADC57 /* triangles-bg.png */,
 				1A2696F21A1D4396002ADC57 /* triangles-bg@2x.png */,
 				1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */,
-				1A0014E91A156A5E003430E9 /* bb.png */,
 				1AE0E1AF1A2949CD002B4829 /* TrianglesBG2@2x.png */,
 				1AFE136F1A32EEAB006F2366 /* cart-icon@2x.png */,
 				1AFE13701A32EEAB006F2366 /* cart-icon@3x.png */,
@@ -467,7 +464,6 @@
 				1AE0E1B01A2949CD002B4829 /* TrianglesBG2@2x.png in Resources */,
 				1AFE13731A32EEAB006F2366 /* cart-icon@2x.png in Resources */,
 				1A95470F1A29E3A0002AC281 /* lens-icon-message@3x.png in Resources */,
-				1A0014EA1A156A5E003430E9 /* bb.png in Resources */,
 				1A2696F51A1D443F002ADC57 /* triangles-bg.png in Resources */,
 				1A1D6E481A10AE930090C598 /* api.json in Resources */,
 				1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */,

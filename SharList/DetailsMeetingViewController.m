@@ -392,7 +392,7 @@
         
         [imgBackground setImageWithURL:
          [NSURL URLWithString:imgDistURL]
-                      placeholderImage:[UIImage imageNamed:@"bb"]];
+                      placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
         [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

@@ -264,7 +264,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIImageView *imgMedia = [UIImageView new];
     [imgMedia setImageWithURL:
      [NSURL URLWithString:data[@"Poster"]]
-             placeholderImage:[UIImage imageNamed:@"bb"]];
+             placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
     imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
     imgMedia.clipsToBounds = YES;
