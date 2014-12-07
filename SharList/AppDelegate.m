@@ -47,11 +47,11 @@
     navControllerSettings.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     navControllerSettings.navigationBar.barStyle = UIBarStyleBlackTranslucent;
     
-    UINavigationController *navControllerMeetingList = [[UINavigationController alloc]
+    navControllerMeetingsList = [[UINavigationController alloc]
                                                      initWithRootViewController:meetingsListViewController];
-    navControllerMeetingList.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
-    navControllerMeetingList.navigationBar.barStyle = UIBarStyleBlackTranslucent;
-//    [navControllerMeetingList tabBarItem].badgeValue = @"43";
+    navControllerMeetingsList.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
+    navControllerMeetingsList.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    
     
     // Contains first view of the app
     UINavigationController *navController = [[UINavigationController alloc]
@@ -80,7 +80,7 @@
     bottomBorder3.borderWidth = 1;
     bottomBorder3.name = @"bottomBorderLayer";
     bottomBorder3.frame = bottomBorderFrame;
-    [navControllerMeetingList.navigationBar.layer addSublayer:bottomBorder3];
+    [navControllerMeetingsList.navigationBar.layer addSublayer:bottomBorder3];
     
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:1.0f]];
@@ -90,7 +90,7 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
     
     
-    NSArray* controllers = @[navController, navControllerMeetingList, navControllerSettings];
+    NSArray* controllers = @[navController, navControllerMeetingsList, navControllerSettings];
     
     self.tabBarController.viewControllers = controllers;
     
@@ -116,6 +116,7 @@
         completionHandler(UIBackgroundFetchResultNoData);
         return;
     }
+    
     MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
     NSDate *fetchStart = [NSDate date];
     [meetingsListViewController fetchNewDataWithCompletionHandler:^(UIBackgroundFetchResult result) {
@@ -157,7 +158,10 @@
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     
     // Notify all listener that application have been put in foreground
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"didForeground" object:nil userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"didEnterForeground" object:nil userInfo:nil];
+    
+    [[UIApplication sharedApplication] applicationIconBadgeNumber];
+    [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

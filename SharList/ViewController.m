@@ -457,6 +457,7 @@
         NSLog(@"fetch server datas");
     }
     
+    // Update location from server
     [self updateUserLocation:[userPreferences objectForKey:@"fbUserID"]];
 }
 

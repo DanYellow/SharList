@@ -175,14 +175,12 @@
     // This method is called when user quit the app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
     // This method is called when user go back to app
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didForeground" object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     theLastLocation = [locations lastObject];
-    
-    NSLog(@"theLastLocation : %@", theLastLocation);
 }
 
 - (NSArray*) fetchDatas {
