@@ -31,6 +31,7 @@
 "All" = "All";
 "Favorites" = "Favorites";
 "Met at %@" = "Met at %@";
+"nomeetings" = "So it looks like there is none around you to get new discoveries. Talk to them about Shike";
 
 // DetailsMeetingsViewController
 "met %@ times" = "met %@ times";

@@ -351,8 +351,6 @@
         }
         [self.locationManager startUpdatingLocation];
     }
-    
-//    [self fetchDatasFromServerWithQuery: @"B"];
 }
 
 
@@ -798,7 +796,7 @@
         }
         cell.delegate = self;
         // For "Classic mode" we want a cell's background more opaque
-        cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
+        cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.35];; //[UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
         
         //            cell.rightUtilityButtons = [self rightButtonsForSearch];
         
@@ -951,7 +949,7 @@
     
     NSObject *object = selectedCell.model;
     
-    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+    DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
     detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.delegate = self;
 //    // Trick for weird issue about present view and pushview
@@ -1128,9 +1126,7 @@
         
         UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                         withValue:[userPreferences objectForKey:@"fbUserID"]];
-        
-        
-        
+    
         // This is the first time for user
         if (isNewUser == nil) {
             UserTaste *userTaste = [UserTaste MR_createEntity];
@@ -1154,18 +1150,13 @@
 
 #pragma mark - Content filtering
 
-- (NSArray*) arrayFromBlock:(NSArray*)array
-{
-    NSArray *returnArray = [[NSArray alloc] initWithArray:array];
-    return returnArray;
-}
-
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController
 {
     UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
     [searchLoadingIndicator startAnimating];
     
-    [self performSelector:@selector(getDatasFromServerForSearchController:) withObject:searchController afterDelay:1.0];
+    //We wait X seconds before query the server for performances and limit the bandwith
+    [self performSelector:@selector(getDatasFromServerForSearchController:) withObject:searchController afterDelay:1.7];
 }
 
 - (void) getDatasFromServerForSearchController:(UISearchController *) searchController {
@@ -1179,40 +1170,40 @@
     
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
 
-    [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
-        UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
-        [searchLoadingIndicator stopAnimating];
-        
-        for (int i = 0; i < [[result valueForKey:@"type"] count]; i++) {
-            NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[result valueForKey:@"type"] objectAtIndex:i]];
-            
-            // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
-            NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-            NSArray *datasToSort = [[NSArray alloc] initWithArray:[[result filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
-            NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
-            [filteredTableDatas setValue:sortedDatas forKey:[[result valueForKey:@"type"] objectAtIndex:i]];
-        }
-        
-        [self.searchResultsController.tableView reloadData];
-    }];
-    
-    
-//    [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
-//    UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
-//    [searchLoadingIndicator stopAnimating];
-//    for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
+//    [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
+//        UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
+//        [searchLoadingIndicator stopAnimating];
 //        
-//        // This predicate manage a media in several categories
-//        NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
-//
-//        // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
-//        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-//        NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
-//        NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
-//        [filteredTableDatas setValue:sortedDatas forKey:[[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
-//    }
+//        for (int i = 0; i < [[result valueForKey:@"type"] count]; i++) {
+//            NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[result valueForKey:@"type"] objectAtIndex:i]];
+//            
+//            // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
+//            NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+//            NSArray *datasToSort = [[NSArray alloc] initWithArray:[[result filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
+//            NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
+//            [filteredTableDatas setValue:sortedDatas forKey:[[result valueForKey:@"type"] objectAtIndex:i]];
+//        }
+//        
+//        [self.searchResultsController.tableView reloadData];
+//    }];
     
     
+    [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
+    UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
+    [searchLoadingIndicator stopAnimating];
+    for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
+        
+        // This predicate manage a media in several categories
+        NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
+
+        // For each category we add an alphabetical ordered NSArray of medias which match with the NSPredicate above
+        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+        NSArray *datasToSort = [[NSArray alloc] initWithArray:[[filteredDatas filteredArrayUsingPredicate:nameForTypePredicate] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]]];
+        NSArray *sortedDatas = [[NSArray alloc] initWithArray:[datasToSort copy]];
+        [filteredTableDatas setValue:sortedDatas forKey:[[filteredDatas valueForKey:@"type"] objectAtIndex:i]];
+    }
+    
+    [self.searchResultsController.tableView reloadData];
     
     // Blurred background
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];

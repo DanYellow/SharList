@@ -103,7 +103,6 @@
     
     // Ask for remote notification
     [self registerForRemoteNotification];
-
     
     return YES;
 }
@@ -161,9 +160,8 @@
     [[NSNotificationCenter defaultCenter] postNotificationName: @"didEnterForeground" object:nil userInfo:nil];
     
     if ([[UIApplication sharedApplication] applicationIconBadgeNumber] > 0) {
-        [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", [[UIApplication sharedApplication] applicationIconBadgeNumber]];
+        [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", (long)[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     }
-    
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

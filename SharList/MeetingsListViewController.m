@@ -62,6 +62,10 @@
     self.FilterEnabled = NO;
     // Shoud contain raw data from the server
     self.responseData = [NSMutableData new];
+    
+    if ([userPreferences objectForKey:@"noresultsgeoloc"] == nil) {
+        [userPreferences setInteger:0 forKey:@"noresultsgeoloc"];
+    }
 
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
@@ -467,35 +471,6 @@
 //    completionHandler(UIBackgroundFetchResultNewData);
 }
 
-- (void) canIGetRandomUser {
-    [self getRandomUserDatas];
-}
-
-- (void) getRandomUserDatas
-{
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:30.0];
-    [request setHTTPMethod:@"POST"];
-    
-    NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
-    
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li", (long)randomUserFacebookID];
-    
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-
-    
-    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if (error) {
-            NSLog(@"%@", error);
-        } else {
-            NSLog(@"datas : %@", data);
-            [self saveRandomUserDatas:data];
-        }
-    }];
-}
-
 - (void) saveRandomUserDatas:(NSData *)datas
 {
    
@@ -505,9 +480,34 @@
     // datas from random user "met"
     NSMutableDictionary *randomUserDatas = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
     
-    //    NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
-    //    saveUsingCurrentThreadContextWithBlock:(void (^)(NSManagedObjectContext *localContext))block
-    //    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    // No datas retrieve from server
+    // Maybe for geoloc
+    if (randomUserDatas == nil) {
+        NSInteger numberOfNoResults = [[NSUserDefaults standardUserDefaults] integerForKey:@"noresultsgeoloc"];
+        
+        // User have fetch 5 times empty json (no data so)
+        // An Notification is displayed to indicate user to talk about the app
+        // Thx Carlos
+        if (numberOfNoResults >= 5) {
+            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
+            numberOfNoResults = 0;
+            
+            UILocalNotification *localNotif = [[UILocalNotification alloc] init];
+            
+            localNotif.fireDate = [[NSDate date] dateByAddingTimeInterval: 60];
+            
+            localNotif.timeZone = [NSTimeZone defaultTimeZone];
+            localNotif.alertBody = NSLocalizedString(@"nomeetings", nil);
+            localNotif.soundName = nil;
+            [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+        } else {
+            numberOfNoResults += 1;
+            [[NSUserDefaults standardUserDefaults] setInteger:numberOfNoResults forKey:@"noresultsgeoloc"];
+        }
+        
+        return;
+    }
+    
     NSNumberFormatter *formatNumber = [[NSNumberFormatter alloc] init];
     [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbiduser"]];

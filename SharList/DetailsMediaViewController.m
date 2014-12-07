@@ -28,6 +28,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 1 : displayBuyView (blurred view)
 // 2 : addMediaBtnItem
 // 3 : addRemoveMediaLabel
+// 4 : title label
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -204,8 +205,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     
-    CGFloat mediaTitleLabelY = [self computeRatio:260 forDimension:imgMediaHeight];
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth, 25)];
+    CGFloat mediaTitleLabelY = [self computeRatio:240 forDimension:imgMediaHeight];
+    
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth, 65)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
@@ -215,9 +217,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.layer.shadowOpacity = 0.75;
     mediaTitleLabel.clipsToBounds = NO;
     mediaTitleLabel.layer.masksToBounds = NO;
+    mediaTitleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    mediaTitleLabel.numberOfLines = 0;
+    mediaTitleLabel.backgroundColor = [UIColor clearColor];
+    mediaTitleLabel.opaque = NO;
+    mediaTitleLabel.alpha = .85f;
     mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
+    mediaTitleLabel.tag = 4;
+    [mediaTitleLabel sizeToFit];
     [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+    
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
+    
     
     
     NSInteger mediaLikeNumber = [self.mediaDatas[@"hits"] integerValue];
@@ -293,15 +304,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    
 //    [infoMediaView insertSubview:bluredBackgroundImageView atIndex:0];
 
+    UILabel *mediaTitleLabel = (UILabel*)[self.view viewWithTag:4];
     
-    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
+//    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     CGFloat mediaDescriptionWidth = [self computeRatio:530 forDimension:screenWidth];
 //    CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
-    CGFloat mediaDescriptionY = imgMediaHeight - [self computeRatio:88 forDimension:imgMediaHeight] + 20;
+    CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
+    CGFloat mediaDescriptionHeight = [self computeRatio:406 forDimension:screenWidth];
 
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, [self computeRatio:526 forDimension:screenHeight])];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
     mediaDescription.text = data[@"Plot"];
-//    mediaDescription.contentInset = UIEdgeInsetsMake(0, 0, 0, -16);
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
@@ -309,6 +321,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
+    mediaDescription.contentInset = UIEdgeInsetsMake(-6, -3, 0, 0);
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
     mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
     [self.view addSubview:mediaDescription];
