@@ -62,8 +62,9 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 
 // Manage user
 - (void) userConnectionForFbID:(NSNumber*)userfbID;
-- (void) userLoggedOutOffb:(id)uselessObj;
+//- (void) userLoggedOutOffb:(id)uselessObj;
 - (void) userLoggedOutOffb:(id)uselessObj completion:(void (^)(BOOL success))completionBlock;
+- (void) updateUserLocation:(NSNumber*)userfbID;
 
 - (NSString*) updateTasteForServer;
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate;

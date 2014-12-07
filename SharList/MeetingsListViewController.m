@@ -162,8 +162,19 @@
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
     // This method is called when user go back to app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
+    
+    
+//    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+//        
+//    }
 }
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    theLastLocation = [locations lastObject];
+    
+    NSLog(@"theLastLocation = %@", theLastLocation);
+}
 
 - (NSArray*) fetchDatas {
     // Fetching datas
@@ -425,10 +436,25 @@
     
     NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
     
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"Yes" : @"No"];
-
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+        self.locationManager = [[CLLocationManager alloc] init];
+        self.locationManager.delegate = self;
+        self.locationManager.distanceFilter = 200;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        //      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
+        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            [self.locationManager requestAlwaysAuthorization];
+        }
+        [self.locationManager startUpdatingLocation];
+    }
     
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+        postString = [postString stringByAppendingString:[NSString stringWithFormat:@"latitude=%f&longitude=%f", theLastLocation.coordinate.latitude, theLastLocation.coordinate.longitude]];
+    }
+    
+    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
 
     [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
@@ -520,6 +546,8 @@
         oldUserTaste.lastMeeting = [NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
     } else {
+        // It's a new user
+        // So we create a entity in CD for him
         UserTaste *userTaste = [UserTaste MR_createEntity];
         userTaste.taste = arrayData;
         userTaste.fbid = randomUserfbID;
@@ -532,6 +560,7 @@
 
 
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    [self.locationManager stopUpdatingLocation];
 }
 
 
