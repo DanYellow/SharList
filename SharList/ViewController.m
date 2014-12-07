@@ -378,8 +378,6 @@
         return;
     }
 
-    UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
-    [searchLoadingIndicator startAnimating];
     NSString *linkAPI = @"http://192.168.1.55:8888/Share/search.php";
    // Loading indicator of the app
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
@@ -1164,7 +1162,13 @@
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController
 {
+    UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
+    [searchLoadingIndicator startAnimating];
     
+    [self performSelector:@selector(getDatasFromServerForSearchController:) withObject:searchController afterDelay:1.0];
+}
+
+- (void) getDatasFromServerForSearchController:(UISearchController *) searchController {
     self.searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(self.searchResultsController.tableView.frame), CGRectGetHeight(self.searchResultsController.tableView.frame));
     
     NSString *searchString = [searchController.searchBar text];
