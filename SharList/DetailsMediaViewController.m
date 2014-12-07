@@ -295,16 +295,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     
     CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
-    CGFloat mediaDescriptionWidth = [self computeRatio:608 forDimension:screenWidth];
-    CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
+    CGFloat mediaDescriptionWidth = [self computeRatio:530 forDimension:screenWidth];
+//    CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
     CGFloat mediaDescriptionY = imgMediaHeight - [self computeRatio:88 forDimension:imgMediaHeight] + 20;
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(mediaDescriptionX, mediaDescriptionY, mediaDescriptionWidth, [self computeRatio:526 forDimension:screenHeight])];
+
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, [self computeRatio:526 forDimension:screenHeight])];
     mediaDescription.text = data[@"Plot"];
+//    mediaDescription.contentInset = UIEdgeInsetsMake(0, 0, 0, -16);
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
-    mediaDescription.textAlignment = NSTextAlignmentRight;
+    mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
@@ -423,7 +425,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIFont *buttonFont = [UIFont fontWithName:@"Helvetica" size:18.0f];
     CGSize buttonSize = CGSizeMake([self computeRatio:574 forDimension:screenWidth], 41.0f);
-    CGPoint buttonPos = CGPointMake([self computeRatio:34 forDimension:screenWidth], [self computeRatio:190 forDimension:screenHeight]);
+    CGPoint buttonPos = CGPointMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:190 forDimension:screenHeight]);
     
     
     UIColor *amazonOrange = [UIColor colorWithRed:1 green:(124.0f/255.0f) blue:(2.0f/255.0f) alpha:1.0f];

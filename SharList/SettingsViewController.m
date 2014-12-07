@@ -135,7 +135,9 @@
             geolocSwitch.enabled = YES;
             geolocSwitch.tag = 3;
             [geolocSwitch addTarget:self action:@selector(geolocSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-            if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+            if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ||
+                [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied ||
+                [CLLocationManager authorizationStatus] == kCLAuthorizationStatusRestricted) {
                 geolocSwitch.on = NO;
             } else {
                 geolocSwitch.on = YES;
@@ -216,9 +218,9 @@
             [self.locationManager requestAlwaysAuthorization];
         }
         [self.locationManager startUpdatingLocation];
-//            // If user try to enable geoloc but he doesn't enable it
-//            // He gets an error and the switch is set to false
-            if (![self userLocationAuthorization]) {}
+        // If user try to enable geoloc but he doesn't enable it
+        // He gets an error and the switch is set to false
+        if (![self userLocationAuthorization]) {}
     } else {
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
     }
@@ -229,8 +231,7 @@
     UISwitch *geolocSwitch = (UISwitch*)[self.view viewWithTag:3];
     geolocSwitch.on = NO;
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
-    
-//    [self userLocationAuthorization];
+
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
