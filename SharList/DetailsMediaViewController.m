@@ -325,38 +325,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      completion:^(BOOL finished){
                      }];
     
-    UIButton *addToFavsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    
-    // User have this media amongst their list
-    if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] != [NSNull null] && [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas] == YES) {
-        [addToFavsButton addTarget:self action:@selector(removeMediaToUserList:) forControlEvents:UIControlEventTouchUpInside];
-        [addToFavsButton setTitle:@"Retirer à sa liste" forState:UIControlStateNormal];
-//        addMediaBtnItem.enabled = NO;
-        
-//        self.navigationItem.rightBarButtonItem.enabled = NO;
-        
-    } else {
-
-//        addMediaBtnItem.enabled = YES;
-        
-//        self.navigationItem.rightBarButtonItem.enabled = YES;
-        
-//        NSLog(@"%@", NSStringFromClass([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] class]));
-        if ([userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] != [NSNull null]) {
-            if ([[userTasteDict objectForKey:[self.mediaDatas objectForKey:@"type"]] count] >= 5) {
-                //            [addToFavsButton setBackgroundImage:<#(UIImage *)#> forState:<#(UIControlState)#>]
-                addToFavsButton.enabled = NO;
-            }
-        }
-    }
-    
-    [addToFavsButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    addToFavsButton.contentEdgeInsets = UIEdgeInsetsMake(0, 36, 0, 0);
-    addToFavsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    addToFavsButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:15.0f];
-    addToFavsButton.frame = CGRectMake(0, screenHeight - [self computeRatio:222.0 forDimension:screenHeight], screenWidth, 43);
-    addToFavsButton.backgroundColor = [UIColor whiteColor];
-//    [self.view addSubview:addToFavsButton];
     
     
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];

@@ -126,9 +126,13 @@
     userSelectionTableView.tableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:userSelectionTableView.tableView];
     
-    // If the current user list is among user's favorites
+    // If the current user list is among user's favorites and the meeting have been made one hour ago
     // He can fetch his update to follow him
-    if ([self.meetingDatas isFavorite]) {
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
+    NSInteger hours = [conversionInfo hour];
+    if ([self.meetingDatas isFavorite] && (long)hours > 1) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
         
@@ -292,7 +296,7 @@
     
     // Keys from NSDict is sorted alphabetically
     NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)] objectAtIndex:indexPath.section];
-    NSString *title, *year, *imdbID;
+    NSString *title, *imdbID; // year
     ShareListMediaTableViewCell *cell;
     
     cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -315,17 +319,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.indentationLevel = 1;
     }
-//    cell.delegate = self;
 
-    
-    
-    //            cell.rightUtilityButtons = [self rightButtonsForSearch];
-    
-    // We hide this part to get easily datas
-    
-    
-    
-    //            cell.textLabel.hidden = YES;
     cell.model = [rowsOfSection objectAtIndex:indexPath.row];
     
     if (imdbID != nil) {

@@ -35,7 +35,6 @@
 		1A95471A1A29E7DD002AC281 /* favorite-icon-message-alt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A9547171A29E7DD002AC281 /* favorite-icon-message-alt@2x.png */; };
 		1A95471D1A29E8B6002AC281 /* favorite-icon-message-alt@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95471C1A29E8B6002AC281 /* favorite-icon-message-alt@3x.png */; };
 		1A95471F1A29F829002AC281 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A95471E1A29F829002AC281 /* CoreData.framework */; };
-		1A9666431A30EB2D006969A7 /* ShikeBadgedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9666421A30EB2D006969A7 /* ShikeBadgedCell.m */; };
 		1A9666461A312302006969A7 /* NSString+SentenceCapitalizedString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9666451A312302006969A7 /* NSString+SentenceCapitalizedString.m */; };
 		1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AB9775D1A2BC69200F41313 /* Localizable.strings */; };
 		1ACDC9041A23D3AA0032B857 /* app.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* app.plist */; };
@@ -105,8 +104,6 @@
 		1A9547171A29E7DD002AC281 /* favorite-icon-message-alt@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "favorite-icon-message-alt@2x.png"; sourceTree = "<group>"; };
 		1A95471C1A29E8B6002AC281 /* favorite-icon-message-alt@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "favorite-icon-message-alt@3x.png"; sourceTree = "<group>"; };
 		1A95471E1A29F829002AC281 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		1A9666411A30EB2D006969A7 /* ShikeBadgedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShikeBadgedCell.h; sourceTree = "<group>"; };
-		1A9666421A30EB2D006969A7 /* ShikeBadgedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShikeBadgedCell.m; sourceTree = "<group>"; };
 		1A9666441A312302006969A7 /* NSString+SentenceCapitalizedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SentenceCapitalizedString.h"; sourceTree = "<group>"; };
 		1A9666451A312302006969A7 /* NSString+SentenceCapitalizedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SentenceCapitalizedString.m"; sourceTree = "<group>"; };
 		1AB977591A2BC60000F41313 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
@@ -187,8 +184,8 @@
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
 				1A0EFAAD1A32736700FEA01D /* Categories */,
 				1ACDC9081A23E6780032B857 /* MeetingsListViewController */,
-				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1AE9E7A81A2683770072EF91 /* DetailsMeetingViewController */,
+				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
 				1A1D6E461A1099C60090C598 /* SettingsViewController */,
@@ -312,8 +309,6 @@
 				1A4953D31A1EBB9500A0C232 /* ShopButton.m */,
 				1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */,
 				1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */,
-				1A9666411A30EB2D006969A7 /* ShikeBadgedCell.h */,
-				1A9666421A30EB2D006969A7 /* ShikeBadgedCell.m */,
 				1A037B0F1A33238F00124FA8 /* ShikeTutsScrollView.h */,
 				1A037B101A33238F00124FA8 /* ShikeTutsScrollView.m */,
 			);
@@ -524,7 +519,6 @@
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
 				1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */,
 				1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */,
-				1A9666431A30EB2D006969A7 /* ShikeBadgedCell.m in Sources */,
 				1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */,
 				1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */,
 				1A037B111A33238F00124FA8 /* ShikeTutsScrollView.m in Sources */,

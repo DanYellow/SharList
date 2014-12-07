@@ -450,7 +450,6 @@
         if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] != nil) {
             userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
         }
-        
         [self displayUserTasteList];
         NSLog(@"fetch local datas");
     } else {

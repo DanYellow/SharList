@@ -56,8 +56,8 @@
 - (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;
 - (UIImage *) takeSnapshotOfView:(UIView *)view;
 
-- (void) addMediaToUserList:(UIButton*)sender;
-- (void) removeMediaToUserList:(UIButton*)sender;
+- (void) addMediaToUserList;
+- (void) removeMediaToUserList;
 - (void) displayBuyScreen;
 - (void) hideBuyScreen;
 - (void) openStore:(UIButton*)sender;

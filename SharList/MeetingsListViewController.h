@@ -16,7 +16,7 @@
 //Vendors
 #import "AFNetworking.h"
 #import "UIImageView+AFNetworking.h"
-#import "ShikeBadgedCell.h"
+#import "ShareListMediaTableViewCell.h"
 
 #import "DetailsMeetingViewController.h"
 

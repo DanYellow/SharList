@@ -345,7 +345,7 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
-    ShikeBadgedCell *selectedCell = (ShikeBadgedCell*)[tableView cellForRowAtIndexPath:indexPath];
+    ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
 
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.meetingDatas = selectedCell.model;
@@ -370,10 +370,10 @@
 {
     static NSString *CellIdentifier = @"myCell";
     
-    ShikeBadgedCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
-        cell = [[ShikeBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];

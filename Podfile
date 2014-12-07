@@ -6,7 +6,7 @@ target "SharList" do
 	pod 'MagicalRecord', '~> 2.2'
 	pod 'Facebook-iOS-SDK', '~> 3.13'
 	pod 'SWTableViewCell', '~> 0.3.6'
-	pod 'TDBadgedCell', '~> 2.6'
+	# pod 'TDBadgedCell', '~> 2.6'
 	pod 'CRGradientNavigationBar'
 end
 

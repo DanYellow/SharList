@@ -28,7 +28,6 @@ PODS:
     - MagicalRecord/Core (= 2.2)
   - MagicalRecord/Core (2.2)
   - SWTableViewCell (0.3.6)
-  - TDBadgedCell (2.6)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.4)
@@ -36,7 +35,6 @@ DEPENDENCIES:
   - Facebook-iOS-SDK (~> 3.13)
   - MagicalRecord (~> 2.2)
   - SWTableViewCell (~> 0.3.6)
-  - TDBadgedCell (~> 2.6)
 
 SPEC CHECKSUMS:
   AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
@@ -45,6 +43,5 @@ SPEC CHECKSUMS:
   Facebook-iOS-SDK: 5854404b4b651f612a8ef79ca06d766858f4cb8e
   MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224
   SWTableViewCell: f5cbe30c49c4e5b97231c076f17331caaf3f6244
-  TDBadgedCell: e683b5557d12ea4e28a8d6ac20b6e394abc2c1fe
 
 COCOAPODS: 0.35.0
