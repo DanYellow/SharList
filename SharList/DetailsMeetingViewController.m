@@ -161,7 +161,7 @@
                                                        timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
     
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&isrand=%@", userfbID, @"true"];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&isspecificuser=%@", userfbID, @"true"];
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     

@@ -212,8 +212,8 @@
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"geoLocEnabled"];
         CLLocationManager *locationManager = [[CLLocationManager alloc] init];
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
-        if ([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-            [locationManager requestWhenInUseAuthorization];
+        if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            [locationManager requestAlwaysAuthorization];
         }
         
         // If user try to enable geoloc but he doesn't enable it
