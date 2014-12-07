@@ -346,6 +346,8 @@
         }
         [self.locationManager startUpdatingLocation];
     }
+    
+//    [self fetchDatasFromServerWithQuery: @"B"];
 }
 
 
@@ -362,6 +364,29 @@
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
  
+    return json;
+}
+
+- (NSMutableArray*) fetchDatasFromServerWithQuery:(NSString*)query completion:(void (^)(NSArray *result))completion
+{
+    NSString *linkAPI = @"http://192.168.1.55:8888/Share/search.php";
+    __block NSMutableArray *json = [NSMutableArray new];
+
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] init];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    [manager POST:linkAPI parameters:@{@"query" : query } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        json = [NSMutableArray arrayWithObject:responseObject];
+        if (completion)
+            completion(json);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:@"Oups" message:@"Il semblerait qu'on ait du mal à afficher cette fiche. \n Réessayez plus tard." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//        [errConnectionAlertView show];
+//        [loadingIndicator stopAnimating];
+        NSString *results = [NSString stringWithFormat:@"Error"];
+        if (completion)
+            completion(results);
+    }];
+    
     return json;
 }
 
@@ -459,7 +484,7 @@
     }
     
     // Update location from server
-    [self updateUserLocation:[userPreferences objectForKey:@"fbUserID"]];
+//    [self updateUserLocation:[userPreferences objectForKey:@"fbUserID"]];
 }
 
 - (void) displayUserTasteList
@@ -961,9 +986,7 @@
     ratio = ((ratio*aDimension)/100);
     
     if ([UIScreen mainScreen].scale > 2.1) {
-        
         ratio = ratio/3; // Because we are in retina HD
-        
     } else {
         ratio = ratio/2; // Because we are in retina
     }
@@ -1045,7 +1068,6 @@
                                                        timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
 
-    NSLog(@"getServerDatasForFbID");
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", userfbID];
     
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1133,7 +1155,10 @@
     [filteredTableDatas removeAllObjects];
     
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
-    
+//    NSLog(@"%@, %@", [self fetchDatasFromServerWithQuery: @"B"], APIdatas);
+    [self fetchDatasFromServerWithQuery: searchString completion:^(NSArray *result){
+        NSLog(@"Results: %@", result);
+    }];
     [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
 
     for (int i = 0; i < [[filteredDatas valueForKey:@"type"] count]; i++) {
