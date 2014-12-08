@@ -26,6 +26,7 @@
 {
     [super viewWillAppear:animated];
     [self.tabBarController.tabBar setHidden:YES];
+
     self.navigationController.navigationBar.translucent = NO;
     
     // Animate background of cell selected on press back button
@@ -115,7 +116,7 @@
     //___________________
     // Uitableview of user selection (what user likes)
     UITableViewController *userSelectionTableView = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userSelectionTableView.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight);
+    userSelectionTableView.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height);
     userSelectionTableView.tableView.dataSource = self;
     userSelectionTableView.tableView.delegate = self;
     userSelectionTableView.tableView.backgroundColor = [UIColor clearColor];

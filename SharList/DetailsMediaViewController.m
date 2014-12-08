@@ -196,8 +196,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [manager GET:linkAPI parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         datasFromServer = [[NSDictionary alloc] initWithDictionary:responseObject];
         [self setMediaViewForData:responseObject];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:@"Oups" message:@"Il semblerait qu'on ait du mal à afficher cette fiche. \n Réessayez plus tard." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) { 
+        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [errConnectionAlertView show];
         [loadingIndicator stopAnimating];
     }];
@@ -279,13 +279,22 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
     imgMedia.clipsToBounds = YES;
-    imgMedia.alpha = 0;
+    imgMedia.alpha = 1;
     [infoMediaView insertSubview:imgMedia atIndex:0];
+    
     
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = imgMedia.frame;
     overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.83].CGColor;
     [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
+    
+    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    overlayAlphaAnim.fromValue = @0;
+    overlayAlphaAnim.toValue   = @1;
+    overlayAlphaAnim.duration = 0.42;
+//    overlayAlphaAnim.beginTime = .4;
+    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    [overlayLayer addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
     
     
 //    // Blurred background

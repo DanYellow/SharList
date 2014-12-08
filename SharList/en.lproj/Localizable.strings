@@ -52,6 +52,7 @@
 "Added" = "Added";
 "Deleted" = "Deleted";
 "Liked by %i people" = "Liked by %i people";
+"noconnection" = "It's looks like you're not connected to Internet. \nConnect your device and try again.";
 
 
 

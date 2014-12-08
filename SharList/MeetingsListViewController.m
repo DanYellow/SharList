@@ -452,6 +452,7 @@
     }
     
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
+
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"latitude=%f&longitude=%f", theLastLocation.coordinate.latitude, theLastLocation.coordinate.longitude]];
     }
@@ -479,7 +480,6 @@
     
     // datas from random user "met"
     NSMutableDictionary *randomUserDatas = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    
     // No datas retrieve from server
     // Maybe for geoloc
     if (randomUserDatas == nil) {

@@ -52,6 +52,7 @@
 "Deleted" = "Supprimé";
 "Liked by %i people" = "Aimé par %i personnes";
 "%@" = "%@";
+"noconnection" = "Il semblerait que vous ne soyez pas connecté à Internet. \nConnectez-vous et réessayez.";
 
 
 "FBLV:LogInButton" = "Gentoo login";
