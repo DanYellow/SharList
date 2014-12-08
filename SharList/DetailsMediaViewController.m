@@ -427,13 +427,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }
                      completion:nil];
     
-
-    UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(0, [self computeRatio:86 forDimension:screenHeight], screenWidth, 16.0f)];
+    
+    UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:86 forDimension:screenHeight], [self computeRatio:574 forDimension:screenWidth], 16.0f)];
     titleBuyMedia.textColor = [UIColor whiteColor];
     titleBuyMedia.backgroundColor = [UIColor clearColor];
+    titleBuyMedia.opaque = NO;
     titleBuyMedia.text = [[NSString stringWithFormat:NSLocalizedString(@"buy %@", nil), self.mediaDatas[@"name"]] uppercaseString];
     titleBuyMedia.font = [UIFont fontWithName:@"Helvetica-Neue" size:19.0f];
     titleBuyMedia.textAlignment = NSTextAlignmentCenter;
+    titleBuyMedia.numberOfLines = 0;
+    titleBuyMedia.lineBreakMode = NSLineBreakByWordWrapping;
+    [titleBuyMedia heightToFit];
+    
     [displayBuyView addSubview:titleBuyMedia];
     
     UIFont *buttonFont = [UIFont fontWithName:@"Helvetica" size:18.0f];
@@ -449,7 +454,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [amazonBuyButton setTitle:[@"Amazon" uppercaseString] forState:UIControlStateNormal];
     [amazonBuyButton setTitleColor:amazonOrange forState:UIControlStateNormal];
     amazonBuyButton.titleLabel.font = buttonFont;
-    amazonBuyButton.frame = CGRectMake(buttonPos.x, buttonPos.y, buttonSize.width, buttonSize.height);
+    amazonBuyButton.frame = CGRectMake(buttonPos.x, buttonPos.y + 30, buttonSize.width, buttonSize.height);
     amazonBuyButton.backgroundColor = [UIColor clearColor];
     amazonBuyButton.layer.borderColor = amazonOrange.CGColor;
     amazonBuyButton.layer.borderWidth = 2.0f;
@@ -742,6 +747,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     return roundf(ratio);
 }
+
 
 
 - (void)didReceiveMemoryWarning {

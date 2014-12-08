@@ -23,7 +23,7 @@
 //Models
 #import "UserTaste.h"
 
-//#import "ViewController.h"
+#import "UILabel+HeightToFit.h"
 
 @protocol UpdateUserTasteListDelegate;
 

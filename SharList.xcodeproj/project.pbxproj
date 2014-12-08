@@ -43,6 +43,7 @@
 		1AE9E7A71A2683700072EF91 /* DetailsMeetingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */; };
 		1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */; };
 		1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7AA1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png */; };
+		1AEB8BEC1A3636FA004A94C1 /* UILabel+HeightToFit.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */; };
 		1AFE13731A32EEAB006F2366 /* cart-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AFE136F1A32EEAB006F2366 /* cart-icon@2x.png */; };
 		1AFE13741A32EEAB006F2366 /* cart-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AFE13701A32EEAB006F2366 /* cart-icon@3x.png */; };
 		1AFE13751A32EEAB006F2366 /* meetingFavoriteSelected@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AFE13711A32EEAB006F2366 /* meetingFavoriteSelected@3x.png */; };
@@ -116,6 +117,8 @@
 		1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsMeetingViewController.m; sourceTree = "<group>"; };
 		1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetingFavoriteSelected@2x.png"; sourceTree = "<group>"; };
 		1AE9E7AA1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetingFavoriteUnselected@2x.png"; sourceTree = "<group>"; };
+		1AEB8BEA1A3636FA004A94C1 /* UILabel+HeightToFit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+HeightToFit.h"; sourceTree = "<group>"; };
+		1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+HeightToFit.m"; sourceTree = "<group>"; };
 		1AFE136F1A32EEAB006F2366 /* cart-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cart-icon@2x.png"; sourceTree = "<group>"; };
 		1AFE13701A32EEAB006F2366 /* cart-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cart-icon@3x.png"; sourceTree = "<group>"; };
 		1AFE13711A32EEAB006F2366 /* meetingFavoriteSelected@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetingFavoriteSelected@3x.png"; sourceTree = "<group>"; };
@@ -266,6 +269,8 @@
 			children = (
 				1A9666441A312302006969A7 /* NSString+SentenceCapitalizedString.h */,
 				1A9666451A312302006969A7 /* NSString+SentenceCapitalizedString.m */,
+				1AEB8BEA1A3636FA004A94C1 /* UILabel+HeightToFit.h */,
+				1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -516,6 +521,7 @@
 				1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */,
 				1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */,
 				1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */,
+				1AEB8BEC1A3636FA004A94C1 /* UILabel+HeightToFit.m in Sources */,
 				1A037B111A33238F00124FA8 /* ShikeTutsScrollView.m in Sources */,
 				1A9666461A312302006969A7 /* NSString+SentenceCapitalizedString.m in Sources */,
 				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,
