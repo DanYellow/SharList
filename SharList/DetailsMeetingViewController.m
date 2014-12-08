@@ -148,8 +148,6 @@
     }
 }
 
-
-
 - (void) updateCurrentUser
 {
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];

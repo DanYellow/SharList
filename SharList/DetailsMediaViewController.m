@@ -144,7 +144,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     self.responseData = [NSMutableData new];
     
     self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
-                                              withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+                                              withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                      [NSNull null], @"book",
                      [NSNull null], @"movie",
@@ -532,14 +532,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     
     ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
-    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
+//    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
     
     animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
     gravity = [[UIGravityBehavior alloc] initWithItems:@[amazonBuyButton]];
-    collision = [[UICollisionBehavior alloc] initWithItems:@[amazonBuyButton, itunesBuyButton]];
+    collision = [[UICollisionBehavior alloc] initWithItems:@[amazonBuyButton]]; //itunesBuyButton
     collision.collisionDelegate = self;
     
-    UIDynamicItemBehavior* itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[amazonBuyButton, itunesBuyButton]];
+    UIDynamicItemBehavior* itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[amazonBuyButton]]; //itunesBuyButton
     itemBehaviour.elasticity = 0.9;
     itemBehaviour.allowsRotation = NO;
     itemBehaviour.density = .4000;
@@ -656,7 +656,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) saveMediaUpdateForAdding:(BOOL)isAdding
 {
-    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
         UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
@@ -675,7 +675,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding
 {
-    [self updateServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] forAdding:isAdding];
+    [self updateServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] forAdding:isAdding];
 }
 
 // This methods allows to retrieve and send (?) user datas from the server

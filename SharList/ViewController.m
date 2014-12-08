@@ -486,12 +486,12 @@
         [self displayUserTasteList];
         NSLog(@"fetch local datas");
     } else {
-        [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:NO];
+        [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
         NSLog(@"fetch server datas");
     }
     
     // Update location from server
-//    [self updateUserLocation:[userPreferences objectForKey:@"fbUserID"]];
+//    [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
 }
 
 - (void) displayUserTasteList
@@ -573,7 +573,7 @@
                      }];
     
     // user logged out so we remove his key into the NSUserdefault
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"fbUserID"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
     
     self.FirstFBLoginDone = YES;
     
@@ -595,7 +595,7 @@
     NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
     
     userPreferences = [NSUserDefaults standardUserDefaults];
-    [userPreferences setObject:fbIDNumber forKey:@"fbUserID"];
+    [userPreferences setObject:fbIDNumber forKey:@"currentUserfbID"];
     // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
     
     
@@ -914,7 +914,7 @@
             NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
             [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] removeObject:cell.model];
             
-            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"fbUserID"]];
+            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"currentUserfbID"]];
             [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
                 UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
@@ -922,7 +922,7 @@
             } completion:^(BOOL success, NSError *error) {
                 [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
                            withRowAnimation:UITableViewRowAnimationFade];
-                [self getServerDatasForFbID:[userPreferences objectForKey:@"fbUserID"] isUpdate:YES];
+                [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:YES];
             }];
             break;
         }
@@ -1125,7 +1125,7 @@
         }
         
         UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
-                                                        withValue:[userPreferences objectForKey:@"fbUserID"]];
+                                                        withValue:[userPreferences objectForKey:@"currentUserfbID"]];
     
         // This is the first time for user
         if (isNewUser == nil) {
@@ -1133,7 +1133,7 @@
             
             NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
             userTaste.taste = arrayData;
-            userTaste.fbid = [userPreferences objectForKey:@"fbUserID"];
+            userTaste.fbid = [userPreferences objectForKey:@"currentUserfbID"];
             userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }

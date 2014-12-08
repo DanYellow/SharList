@@ -180,7 +180,7 @@
 
 - (NSArray*) fetchDatas {
     // Fetching datas
-    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]]
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]]
 ;
 
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
@@ -301,7 +301,7 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
     
@@ -436,7 +436,7 @@
                                                        timeoutInterval:30.0];
     [request setHTTPMethod:@"POST"];
     
-    NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"fbUserID"];
+    NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
         self.locationManager = [[CLLocationManager alloc] init];
