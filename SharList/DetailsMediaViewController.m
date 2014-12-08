@@ -484,7 +484,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     itunesBuyButton.backgroundColor = [UIColor clearColor];
     itunesBuyButton.layer.borderColor = itunesGray.CGColor;
     itunesBuyButton.layer.borderWidth = 2.0f;
-    [displayBuyView addSubview:itunesBuyButton];
+//    [displayBuyView addSubview:itunesBuyButton];
     
  
     

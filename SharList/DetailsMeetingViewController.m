@@ -133,7 +133,8 @@
     
     NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
     NSInteger hours = [conversionInfo hour];
-    if ([self.meetingDatas isFavorite] && (long)hours > 1) {
+
+    if ([self.meetingDatas isFavorite] && (long)hours >= 1) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
         
