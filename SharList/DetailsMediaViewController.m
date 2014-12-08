@@ -292,7 +292,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     overlayAlphaAnim.fromValue = @0;
     overlayAlphaAnim.toValue   = @1;
     overlayAlphaAnim.duration = 0.42;
-//    overlayAlphaAnim.beginTime = .4;
     overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
     [overlayLayer addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
     
@@ -319,7 +318,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionWidth = [self computeRatio:530 forDimension:screenWidth];
 //    CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
-    CGFloat mediaDescriptionHeight = [self computeRatio:406 forDimension:screenWidth];
+    CGFloat mediaDescriptionHeight = (screenHeight * 47.53521127) / 100; //(280 * 100) / 568
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
     mediaDescription.text = data[@"Plot"];
@@ -327,6 +326,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
+    mediaDescription.showsHorizontalScrollIndicator = NO;
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
@@ -355,7 +355,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [buyButton addTarget:self action:@selector(displayBuyScreen) forControlEvents:UIControlEventTouchUpInside];
     [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
     buyButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:17.0f];
-    buyButton.frame = CGRectMake(0, screenHeight - 43, screenWidth, 43);
+    buyButton.frame = CGRectMake(0, screenHeight - 49, screenWidth, 49);
     buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
 
     [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
