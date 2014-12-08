@@ -641,7 +641,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     }
     
-    [self saveMediaUpdate];
+    [self saveMediaUpdateForAdding:YES];
 }
 
 - (void) removeMediaToUserList
@@ -651,10 +651,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
     [userTasteDict setObject:updatedUserTaste forKey:[self.mediaDatas valueForKey:@"type"]];
     
-    [self saveMediaUpdate];
+    [self saveMediaUpdateForAdding:NO];
 }
 
-- (void) saveMediaUpdate
+- (void) saveMediaUpdateForAdding:(BOOL)isAdding
 {
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
     [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
@@ -668,18 +668,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [[NSNotificationCenter defaultCenter] postNotificationName:@"endSave" object:nil userInfo:userTasteDict];
         }
         // 7 secondes after update user list we update the database with new datas
-        [self performSelector:@selector(updateServerDatasForFbIDTimer) withObject:nil afterDelay:7.0];
+        [self performSelector:@selector(updateServerDatasForFbIDTimer:) withObject:[NSNumber numberWithBool:isAdding] afterDelay:7.0];
     }];
 }
 
 
-- (void) updateServerDatasForFbIDTimer
+- (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding
 {
-    [self updateServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"]];
+    [self updateServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"fbUserID"] forAdding:isAdding];
 }
 
 // This methods allows to retrieve and send (?) user datas from the server
-- (void) updateServerDatasForFbID:(NSNumber*)userfbID
+- (void) updateServerDatasForFbID:(NSNumber*)userfbID forAdding:(NSNumber*)isAdding
 {
     if (self.isConnectedToInternet == NO)
         return;
@@ -693,8 +693,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // We send the json to the server only when we need it
     NSString *userTasteJSON = [self updateTasteForServer];
 
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@", userfbID, userTasteJSON];
-    
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@&isAdding=%@&imdbID=%@", userfbID, userTasteJSON, [isAdding boolValue] ? @"YES" : @"NO", self.mediaDatas[@"imdbID"]];
+
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
