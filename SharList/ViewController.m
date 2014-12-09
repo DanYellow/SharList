@@ -370,6 +370,7 @@
     return json;
 }
 
+// Search system
 - (void) fetchDatasFromServerWithQuery:(NSString*)query completion:(void (^)(id result))completion
 {
     if ([query length] == 0) {
@@ -1137,7 +1138,6 @@
             userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }
-        
     }
 }
 
