@@ -29,6 +29,7 @@
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     
+
     
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame = self.view.bounds;
@@ -62,6 +63,37 @@
     settingsTableview.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     settingsTableview.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:settingsTableview];
+    
+    
+    UIButton *infoButton = [UIButton new];
+    [infoButton setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
+    [infoButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [infoButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
+    infoButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
+    [self.view addSubview:infoButton];
+}
+
+- (void) displayAboutScreen
+{
+    AboutViewController *aboutViewController = [AboutViewController new];
+    
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:aboutViewController];
+//    navigationController.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+//                                                                                                   target:self
+//                                                                                                   action:@selector(dismissModal)];
+//    navigationController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
+//    navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+//    navigationController.delegate = self;
+    
+//    [self.navigationController presentViewController:navigationController animated:YES completion:nil];
+//    [self.navigationController pushViewController:aboutViewController animated:YES];
+
+    // Present AboutViewController
+}
+
+- (void) dismissModal
+{
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
