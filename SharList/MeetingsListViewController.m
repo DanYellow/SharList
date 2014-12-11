@@ -49,7 +49,8 @@
 
 
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
@@ -205,31 +206,29 @@
     [fr setPredicate:meetingsFilter];
     
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates]; // Order by date of meeting
+    
 //    NSArray *meetings = [[NSManagedObjectContext MR_contextForCurrentThread] executeFetchRequest:fr error:nil];
-    NSLog(@"% meetings : %lu", [meetings count]);
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
     //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
+    int i = 0;
+    int fetchLimit = 5;
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
         
-//        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-//        dateFormatter.dateFormat = @"MM/dd/yy";
-        
         NSString *dateString = [dateFormatter stringFromDate:[userTaste lastMeeting]];
         
-        if (dateString != nil) {
+        if (dateString != nil && i < fetchLimit) {
             [listOfDistinctDays addObject: dateString];
             [foo addObject:[userTaste lastMeeting]];
         }
-        
+        i++;
     }
     
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
-    
     
     return [[foo reverseObjectEnumerator] allObjects];
 }
@@ -276,7 +275,7 @@
             emptyFavoritesLabel.hidden = NO;
         }
     }
-//    NSLog(@"title : %@, %li", distinctDays, [distinctDays count]);
+
     return [distinctDays count];
 }
 
@@ -316,17 +315,6 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSFetchRequest *fr = [NSFetchRequest new];
-//    [fr setFetchLimit:2];
-    
-    NSEntityDescription *ed = [NSEntityDescription entityForName:@"UserTaste" inManagedObjectContext:[NSManagedObjectContext MR_contextForCurrentThread]];
-    [fr setEntity:ed];
-    
-    
-    NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"lastMeeting" ascending:NO];
-    [fr setSortDescriptors:@[sd]];
-    
-
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
@@ -336,10 +324,8 @@
         filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
     }
 
-    [fr setPredicate:meetingsFilter];
     // We don't want the taste of the current user
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
-//    NSArray *meetings = [[NSManagedObjectContext MR_contextForCurrentThread] executeFetchRequest:fr error:nil];
 
     
 //    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
@@ -424,15 +410,14 @@
             [meetingsOfDay addObject:[daysList objectAtIndex:i]];
         }
     }
-    NSInteger currentIndex = (([meetingsOfDay count] - indexPath.row) - 1);
-    
+
     UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
-                                                           withValue:[meetingsOfDay objectAtIndex:currentIndex]];
+                                                           withValue:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]];
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
   
-    cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[meetingsOfDay objectAtIndex:currentIndex]]];
+    cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.model = currentUserTaste;
