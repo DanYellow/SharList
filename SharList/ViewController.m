@@ -339,18 +339,18 @@
     }
     
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
-        self.locationManager = [[CLLocationManager alloc] init];
-        self.locationManager.delegate = self;
-        self.locationManager.distanceFilter = 200;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-        //      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
-        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
-        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-            [self.locationManager requestAlwaysAuthorization];
-        }
-        [self.locationManager startUpdatingLocation];
-    }
+//    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+//        self.locationManager = [[CLLocationManager alloc] init];
+//        self.locationManager.delegate = self;
+//        self.locationManager.distanceFilter = 200;
+//        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+//        //      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
+//        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+//        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+//            [self.locationManager requestAlwaysAuthorization];
+//        }
+//        [self.locationManager startUpdatingLocation];
+//    }
 }
 
 
@@ -461,6 +461,12 @@
 
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
 {
+    // Manage
+    if ([userPreferences objectForKey:@"currentUserfbID"] && !FBSession.activeSession.isOpen) {
+        [self userConnectionForFbID:[userPreferences objectForKey:@"currentUserfbID"]];
+        
+        return;
+    }
     self.FirstFBLoginDone = YES;
 }
 
@@ -595,7 +601,7 @@
     [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
     
-    userPreferences = [NSUserDefaults standardUserDefaults];
+    
     [userPreferences setObject:fbIDNumber forKey:@"currentUserfbID"];
     // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
     
@@ -721,7 +727,8 @@
                 }
             }
         }
-        if (IsTableViewEmpty == YES && FBSession.activeSession.isOpen) {
+
+        if (IsTableViewEmpty == YES && (FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"])) {
             emptyUserTasteLabel.hidden = NO;
             [loadingIndicator stopAnimating];
             return 0;
@@ -1170,6 +1177,7 @@
     
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
 
+    // Fetch online datas
 //    [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
 //        UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
 //        [searchLoadingIndicator stopAnimating];
@@ -1187,7 +1195,7 @@
 //        [self.searchResultsController.tableView reloadData];
 //    }];
     
-    
+    // Fetch local datas
     [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
     UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
     [searchLoadingIndicator stopAnimating];

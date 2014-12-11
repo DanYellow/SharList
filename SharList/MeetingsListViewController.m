@@ -178,7 +178,8 @@
     theLastLocation = [locations lastObject];
 }
 
-- (NSArray*) fetchDatas {
+- (NSArray*) fetchDatas
+{
     // Fetching datas
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]]
 ;

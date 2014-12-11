@@ -13,6 +13,8 @@
 
 #import "ViewController.h"
 
+#import "AboutViewController.h"
+
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate, CLLocationManagerDelegate>
 {

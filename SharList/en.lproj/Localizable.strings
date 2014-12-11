@@ -42,6 +42,7 @@
 "Delete account" = "Delete account";
 "Geoloc explain" = "This option is not available currently because we just launch this app and we don't have many users to fetch users around you. So talk about Shike to your friends, family, co-workers...";
 "Location purpose" = "Shike needs your location to get user's taste around you";
+"about" = "About";
 // Errors for geoloc
 "Oops" = "Oops";
 "geoloc denied" = "Shike isn't allow to use your location. Please enable it in your Settings \n(Shike > Location > Always)";

@@ -6,8 +6,11 @@
 //  Copyright (c) 2014 Jean-Louis Danielo. All rights reserved.
 //
 
-#import "ViewController.h"
 
-@interface AboutViewController : ViewController
+@interface AboutViewController : UIViewController <UINavigationControllerDelegate>
+{
+    CGFloat screenWidth;
+    CGFloat screenHeight;
+}
 
 @end
