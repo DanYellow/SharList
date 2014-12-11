@@ -31,6 +31,7 @@
 "Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une rencontre pour l'ajouter aux favoris";
 "Met at %@" = "Rencontré à %@";
 "nomeetings" = "Il semblerait qu'il n'y ait personne autour de vous pour découvrir de nouvelles choses. Parlez leur de Shike.";
+"%@ meetings" = "%@ rencontres";
 
 //Settings view controller
 "Enable geolocation" = "Activer la géolocalisation";
@@ -54,6 +55,13 @@
 "Liked by %i people" = "Aimé par %i personnes";
 "%@" = "%@";
 "noconnection" = "Il semblerait que vous ne soyez pas connecté à Internet. \nConnectez-vous et réessayez.";
+
+//AboutViewController
+"About" = "A propos";
+"Privacy" = "Confidentialité";
+"whatIsApp" = "Cette application vous permet de faire découvrir aux utilisateurs aux alentours ce que vous aimez.";
+"datasOrigins" = "Les données des films et séries proviennent de l'API d'omdbapi";
+
 
 
 "FBLV:LogInButton" = "Gentoo login";

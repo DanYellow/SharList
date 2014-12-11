@@ -2,12 +2,15 @@
 //  AboutViewController.h
 //  SharList
 //
-//  Created by Jean-Louis Danielo on 09/12/2014.
+//  Created by Jean-Louis Danielo on 11/12/2014.
 //  Copyright (c) 2014 Jean-Louis Danielo. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 
-@interface AboutViewController : UIViewController <UINavigationControllerDelegate>
+#import "UILabel+HeightToFit.h"
+
+@interface AboutViewController : UIViewController
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

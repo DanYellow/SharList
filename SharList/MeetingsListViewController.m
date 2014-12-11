@@ -98,6 +98,13 @@
     segmentedControl.tintColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f];
     [segmentedControlView addSubview:segmentedControl];
     
+    UILabel *tableFooter = [[UILabel alloc] initWithFrame:CGRectMake(0, 15.0, screenWidth, 60)];
+    tableFooter.textColor = [UIColor whiteColor];
+    tableFooter.textAlignment = NSTextAlignmentCenter;
+    tableFooter.opaque = YES;
+    tableFooter.font = [UIFont boldSystemFontOfSize:15];
+    NSNumber *countMeetings = [NSNumber numberWithInt:[[UserTaste MR_numberOfEntities] intValue] - 1]; // We remove current user
+    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"%@ meetings", nil), countMeetings]];
     
     // Uitableview of user selection (what user likes)
     UITableView *userMeetingsListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 47) style:UITableViewStylePlain];
@@ -180,17 +187,7 @@
 }
 
 - (NSArray*) fetchDatas
-{
-    NSFetchRequest *fr = [NSFetchRequest new];
-//    [fr setFetchLimit:2];
-    
-    NSEntityDescription *ed = [NSEntityDescription entityForName:@"UserTaste" inManagedObjectContext:[NSManagedObjectContext MR_contextForCurrentThread]];
-    [fr setEntity:ed];
-    
-    
-    NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"lastMeeting" ascending:NO];
-    [fr setSortDescriptors:@[sd]];
-    
+{    
     // Fetching datas
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@",
                                    [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
@@ -202,18 +199,16 @@
     if (self.isFilterEnabled) {
         filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
     }
-    
-    [fr setPredicate:meetingsFilter];
+
     
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates]; // Order by date of meeting
     
-//    NSArray *meetings = [[NSManagedObjectContext MR_contextForCurrentThread] executeFetchRequest:fr error:nil];
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
     //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
     int i = 0;
-    int fetchLimit = 5;
+    int fetchLimit = 42; // We display only the 42 last results
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
@@ -273,6 +268,8 @@
             [loadingIndicator stopAnimating];
         } else {
             emptyFavoritesLabel.hidden = NO;
+            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+            userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
         }
     }
 

@@ -75,17 +75,16 @@
 
 - (void) displayAboutScreen
 {
-    AboutViewController *aboutViewController = [AboutViewController new];
+    AboutViewController *aboutViewController = [[AboutViewController alloc] init];
+    aboutViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissModal)];
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:aboutViewController];
-//    navigationController.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-//                                                                                                   target:self
-//                                                                                                   action:@selector(dismissModal)];
-//    navigationController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
-//    navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
-//    navigationController.delegate = self;
+ 
     
-//    [self.navigationController presentViewController:navigationController animated:YES completion:nil];
+    navigationController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
+    navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    
+    [self.navigationController presentViewController:navigationController animated:YES completion:nil];
 //    [self.navigationController pushViewController:aboutViewController animated:YES];
 
     // Present AboutViewController

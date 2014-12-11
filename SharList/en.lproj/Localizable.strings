@@ -32,6 +32,7 @@
 "Favorites" = "Favorites";
 "Met at %@" = "Met at %@";
 "nomeetings" = "So it looks like there is none around you to get new discoveries. Talk to them about Shike";
+"%@ meetings" = "%@ meetings";
 
 // DetailsMeetingsViewController
 "met %@ times" = "met %@ times";
@@ -55,6 +56,11 @@
 "Liked by %i people" = "Liked by %i people";
 "noconnection" = "It's looks like you're not connected to Internet. \nConnect your device and try again.";
 
+//AboutViewController
+"About" = "About";
+"Privacy" = "Privacy";
+"whatIsApp" = "This app allow user to discover what's other user likes around you if you enable geoloc.";
+"datasOrigins" = "Movies and TV series datas, and posters art are provided by omdbapi's API";
 
 
 "FBLV:LogInButton" = "Gentoo";

@@ -45,18 +45,18 @@
     UINavigationController *navControllerSettings = [[UINavigationController alloc]
                                              initWithRootViewController:settingsViewController];
     navControllerSettings.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
-    navControllerSettings.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    navControllerSettings.navigationBar.barStyle = UIBarStyleBlack;
     
     navControllerMeetingsList = [[UINavigationController alloc]
                                                      initWithRootViewController:meetingsListViewController];
     navControllerMeetingsList.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
-    navControllerMeetingsList.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    navControllerMeetingsList.navigationBar.barStyle = UIBarStyleBlack;
     
     
     // Contains first view of the app
     UINavigationController *navController = [[UINavigationController alloc]
                                              initWithRootViewController:viewController];
-    navController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    navController.navigationBar.barStyle = UIBarStyleBlack;
     navController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     
     CGRect bottomBorderFrame = CGRectMake(0.0f, navController.navigationBar.frame.size.height, navController.navigationBar.frame.size.width, 1.0f);
