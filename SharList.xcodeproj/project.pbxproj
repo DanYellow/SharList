@@ -38,7 +38,7 @@
 		1A95471F1A29F829002AC281 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A95471E1A29F829002AC281 /* CoreData.framework */; };
 		1A9666461A312302006969A7 /* NSString+SentenceCapitalizedString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9666451A312302006969A7 /* NSString+SentenceCapitalizedString.m */; };
 		1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AB9775D1A2BC69200F41313 /* Localizable.strings */; };
-		1ACDC9041A23D3AA0032B857 /* app.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* app.plist */; };
+		1ACDC9041A23D3AA0032B857 /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* Settings.plist */; };
 		1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */; };
 		1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */; };
 		1AE0E1B01A2949CD002B4829 /* TrianglesBG2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE0E1AF1A2949CD002B4829 /* TrianglesBG2@2x.png */; };
@@ -114,7 +114,7 @@
 		1AB977591A2BC60000F41313 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
 		1AB9775C1A2BC69200F41313 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1AB977601A2BCC8100F41313 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
-		1ACDC9031A23D3AA0032B857 /* app.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = app.plist; sourceTree = "<group>"; };
+		1ACDC9031A23D3AA0032B857 /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
 		1ACDC9051A23E6720032B857 /* MeetingsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingsListViewController.h; sourceTree = "<group>"; };
 		1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingsListViewController.m; sourceTree = "<group>"; };
 		1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrianglesBG@2x.png"; sourceTree = "<group>"; };
@@ -213,7 +213,7 @@
 			children = (
 				1A076DB71A0FE20900CD725A /* Info.plist */,
 				1A076DB81A0FE20900CD725A /* main.m */,
-				1ACDC9031A23D3AA0032B857 /* app.plist */,
+				1ACDC9031A23D3AA0032B857 /* Settings.plist */,
 				1AB9775D1A2BC69200F41313 /* Localizable.strings */,
 			);
 			name = "Supporting Files";
@@ -460,7 +460,7 @@
 			files = (
 				1A95470E1A29E3A0002AC281 /* lens-icon-message@2x.png in Resources */,
 				1A9547141A29E56D002AC281 /* favorite-icon-message@2x.png in Resources */,
-				1ACDC9041A23D3AA0032B857 /* app.plist in Resources */,
+				1ACDC9041A23D3AA0032B857 /* Settings.plist in Resources */,
 				1A9547151A29E56D002AC281 /* favorite-icon-message@3x.png in Resources */,
 				1AFE13751A32EEAB006F2366 /* meetingFavoriteSelected@3x.png in Resources */,
 				1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */,

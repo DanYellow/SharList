@@ -51,10 +51,10 @@
     [self.view addSubview:privacyTextView];
     
     UILabel *privacyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 10, 20)];
-    privacyLabel.text = NSLocalizedString(@"Privacy", nil);
+    privacyLabel.text = NSLocalizedString(@"Credits", nil);
     privacyLabel.textColor = [UIColor whiteColor];
     privacyLabel.backgroundColor = [UIColor clearColor];
-    privacyLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
+    privacyLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.0f];
     [privacyTextView addSubview:privacyLabel];
     
     UITextView *privacyText = [[UITextView alloc] initWithFrame:CGRectMake(0, privacyLabel.frame.origin.y + privacyLabel.frame.size.height + 5, screenWidth - 10, 30)];
@@ -62,6 +62,7 @@
     privacyText.backgroundColor = [UIColor clearColor];
     privacyText.font = [UIFont fontWithName:@"Helvetica" size:13.0f];
     privacyText.text = NSLocalizedString(@"datasOrigins", nil);
+    privacyText.dataDetectorTypes = UIDataDetectorTypeAll;
     privacyText.editable = NO;
     [privacyText sizeToFit];
     privacyText.textAlignment = NSTextAlignmentLeft;

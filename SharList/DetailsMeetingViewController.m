@@ -61,6 +61,11 @@
     self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas taste]] mutableCopy];
 //    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
     
+    // Contains globals datas of the project
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+    
 //    NSLog(@"self.metUserTasteDict : %@", self.metUserTasteDict);
     
     // View init
@@ -159,7 +164,8 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID
 {
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+    
+    NSURL *aUrl= [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/getusertaste.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];

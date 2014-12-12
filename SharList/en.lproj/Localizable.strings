@@ -61,6 +61,7 @@
 "Privacy" = "Privacy";
 "whatIsApp" = "This app allow user to discover what's other user likes around you if you enable geoloc.";
 "datasOrigins" = "Movies and TV series datas, and posters art are provided by omdbapi's API";
+"Credits" = "Credits";
 
 
 "FBLV:LogInButton" = "Gentoo";

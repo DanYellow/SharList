@@ -4,7 +4,7 @@
 <dict>
 	<key>adress</key>
 	<string></string>
-	<key>apiURL</key>
-	<string>http://www.duckduckgo.com</string>
+	<key>apiPath</key>
+	<string>http://192.168.1.55:8888/Share/</string>
 </dict>
 </plist>

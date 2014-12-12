@@ -29,6 +29,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;
+    
+    NSDictionary *settingsDict;
    
     // Datas from API
     NSArray *APIdatas;

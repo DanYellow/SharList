@@ -59,6 +59,11 @@
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
+    // Contains globals datas of the project
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+    
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.FilterEnabled = NO;
     // Shoud contain raw data from the server
@@ -439,8 +444,9 @@
 #pragma mark - Fetch Datas in background
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-{    
-    NSURL *aUrl= [NSURL URLWithString:@"http://192.168.1.55:8888/Share/getusertaste.php"];
+{
+    
+    NSURL *aUrl= [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/getusertaste.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                        timeoutInterval:30.0];

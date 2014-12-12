@@ -109,6 +109,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
+    // Contains globals datas of the project
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+    
     [self.view setBackgroundColor:[UIColor blackColor]];
     
     CAGradientLayer *gradient = [CAGradientLayer layer];
@@ -683,8 +688,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     if (self.isConnectedToInternet == NO)
         return;
-        
-    NSURL *aUrl = [NSURL URLWithString:@"http://192.168.1.55:8888/Share/updateDatas.php"];
+    
+    
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/updateDatas.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];

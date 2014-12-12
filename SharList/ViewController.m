@@ -99,6 +99,12 @@
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     
+    // Contains globals datas of the project
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+    
+
     // If NSUserDefaults' geoLocEnabled key is not set we set it to no
     if ([userPreferences objectForKey:@"geoLocEnabled"] == nil) {
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
@@ -132,14 +138,7 @@
     bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"TrianglesBG"]].CGColor;
     [self.view.layer insertSublayer:bgLayer atIndex:1];
     
-    
-//    NSString *path = [[NSBundle mainBundle] pathForResource:
-//                      @"app" ofType:@"plist"];
-//    // Build the array from the plist
-//    NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:path];
-//    
-//    NSArray *value = [dict valueForKey:@"apiURL"];
-//    NSLog(@"foo : %@", value );
+
     
     // Motto of the app
     UIView *appnameView = [[UIView alloc] initWithFrame:CGRectMake([self computeRatio:44.0 forDimension:screenWidth],
@@ -377,7 +376,8 @@
         return;
     }
 
-    NSString *linkAPI = @"http://192.168.1.55:8888/Share/search.php";
+    NSString *linkAPI = [settingsDict valueForKey:@"apiPath"];
+    linkAPI =  [linkAPI stringByAppendingString:@"/search.php"];
    // Loading indicator of the app
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
@@ -1059,8 +1059,8 @@
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
         return;
     }
-    
-    NSURL *aUrl = [NSURL URLWithString:@"http://192.168.1.55:8888/Share/updateUserLocation.php"];
+
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/updateUserLocation.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
@@ -1077,7 +1077,7 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
 {
-    NSURL *aUrl = [NSURL URLWithString:@"http://192.168.1.55:8888/Share/connexion.php"];
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/connexion.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];

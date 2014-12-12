@@ -32,6 +32,8 @@
     CGFloat screenWidth;
     CGFloat screenHeight;
     
+    NSDictionary *settingsDict;
+    
     
     UIDynamicAnimator *animator;
     UIGravityBehavior *gravity;
