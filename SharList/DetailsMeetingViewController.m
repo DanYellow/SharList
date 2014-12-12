@@ -164,8 +164,7 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID
 {
-    
-    NSURL *aUrl= [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/getusertaste.php"]];
+    NSURL *aUrl= [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];

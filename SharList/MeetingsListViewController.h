@@ -31,8 +31,6 @@
     CGFloat screenWidth;
     CGFloat screenHeight;
     
-    NSDictionary *settingsDict;
-    
     NSUserDefaults *userPreferences;
     
     NSArray *distinctDays;

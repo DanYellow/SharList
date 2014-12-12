@@ -377,7 +377,7 @@
     }
 
     NSString *linkAPI = [settingsDict valueForKey:@"apiPath"];
-    linkAPI =  [linkAPI stringByAppendingString:@"/search.php"];
+    linkAPI =  [linkAPI stringByAppendingString:@"search.php"];
    // Loading indicator of the app
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
@@ -1060,7 +1060,7 @@
         return;
     }
 
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/updateUserLocation.php"]];
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
@@ -1077,7 +1077,7 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
 {
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/connexion.php"]];
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"connexion.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];

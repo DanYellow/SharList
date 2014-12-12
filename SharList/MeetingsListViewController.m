@@ -59,10 +59,6 @@
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
-    // Contains globals datas of the project
-    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
-    // Build the array from the plist
-    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.FilterEnabled = NO;
@@ -121,6 +117,8 @@
     userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userMeetingsListTableView.tableHeaderView = segmentedControlView;
     userMeetingsListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
+    
+//    [userMeetingsListTableView scrollToRowAtIndexPath:0 atScrollPosition:UITableViewScrollPositionTop animated:NO];
 
     [self.view addSubview:userMeetingsListTableView];
     
@@ -445,8 +443,12 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
+    // Contains globals datas of the project
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
-    NSURL *aUrl= [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/getusertaste.php"]];
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                        timeoutInterval:30.0];
@@ -468,11 +470,12 @@
     }
     
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
-
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
-        postString = [postString stringByAppendingString:[NSString stringWithFormat:@"latitude=%f&longitude=%f", theLastLocation.coordinate.latitude, theLastLocation.coordinate.longitude]];
-    }
     
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES) {
+        postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", theLastLocation.coordinate.latitude, theLastLocation.coordinate.longitude]];
+    }
+    NSLog(@"postString : %@", postString);
+    NSLog([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO");
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
 
     [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
@@ -496,6 +499,7 @@
     
     // datas from random user "met"
     NSMutableDictionary *randomUserDatas = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+
     // No datas retrieve from server
     // Maybe for geoloc
     if (randomUserDatas == nil) {
