@@ -179,15 +179,9 @@
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
     
     
-//    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
-//        
-//    }
+    
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
-{
-    theLastLocation = [locations lastObject];
-}
 
 - (NSArray*) fetchDatas
 {    
@@ -456,10 +450,12 @@
     
     NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
     
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
+    
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
         self.locationManager = [[CLLocationManager alloc] init];
-        self.locationManager.delegate = self;
-        self.locationManager.distanceFilter = 200;
+//        self.locationManager.delegate = self;
+        self.locationManager.distanceFilter = 0;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
         //      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
@@ -468,13 +464,12 @@
         }
         [self.locationManager startUpdatingLocation];
     }
-    
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
+
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES) {
-        postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", theLastLocation.coordinate.latitude, theLastLocation.coordinate.longitude]];
+        postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
     }
-    NSLog(@"postString : %@", postString);
+    
     NSLog([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO");
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -491,6 +486,8 @@
 //    completionHandler(UIBackgroundFetchResultNewData);
 }
 
+
+
 - (void) saveRandomUserDatas:(NSData *)datas
 {
    
@@ -506,7 +503,7 @@
         NSInteger numberOfNoResults = [[NSUserDefaults standardUserDefaults] integerForKey:@"noresultsgeoloc"];
         
         // User have fetch 5 times empty json (no data so)
-        // An Notification is displayed to indicate user to talk about the app
+        // A Notification is displayed to indicate user to talk about the app
         // Thx Carlos
         if (numberOfNoResults >= 5) {
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];

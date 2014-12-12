@@ -37,7 +37,6 @@
     NSMutableArray *daysList;
     
     UIActivityIndicatorView *loadingIndicator;
-    CLLocation *theLastLocation;
 }
 
 @property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;

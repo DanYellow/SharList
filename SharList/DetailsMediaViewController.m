@@ -673,6 +673,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [[NSNotificationCenter defaultCenter] postNotificationName:@"endSave" object:nil userInfo:userTasteDict];
         }
         // 7 secondes after update user list we update the database with new datas
+        // Like this we are "sure" that user really wants to add this media to his list
         [self performSelector:@selector(updateServerDatasForFbIDTimer:) withObject:[NSNumber numberWithBool:isAdding] afterDelay:7.0];
     }];
 }

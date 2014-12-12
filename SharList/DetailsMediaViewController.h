@@ -67,6 +67,8 @@
 - (void) addPhysics;
 - (void) saveMediaUpdate;
 - (void) updateServerDatasForFbID:(NSNumber*)userfbID;
+- (void) saveMediaUpdateForAdding:(BOOL)isAdding;
+- (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding;
 
 
 @end
