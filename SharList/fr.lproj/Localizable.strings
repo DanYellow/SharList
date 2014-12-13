@@ -32,6 +32,8 @@
 "Met at %@" = "Rencontré à %@";
 "nomeetings" = "Il semblerait qu'il n'y ait personne autour de vous pour découvrir de nouvelles choses. Parlez leur de Shike.";
 "%@ meetings" = "%@ rencontres";
+"disabledBGF" = "L'option d'actualisation en arrière-plan est désactivée dans les Réglages. Activez la pour faire découvrir au monde ce que vous aimez.";
+"restrictedBGF" = "Il semblerait que votre appareil ne soit pas autorisé à actualiser le contenu en arrière-plan.";
 
 //Settings view controller
 "Enable geolocation" = "Activer la géolocalisation";
@@ -59,8 +61,8 @@
 //AboutViewController
 "About" = "A propos";
 "Privacy" = "Confidentialité";
-"whatIsApp" = "Cette application vous permet de faire découvrir aux utilisateurs aux alentours ce que vous aimez.";
-"datasOrigins" = "Les données des films et séries proviennent de l'API d'omdbapi";
+"whatIsApp" = "Cette application vous permet de faire découvrir aux utilisateurs aux alentours ce que vous aimez. Séries télé et films pour le moment.";
+"datasOrigins" = "Les données des films et séries proviennent de l'API d'omdbapi.\n\nDéveloppé avec amour.";
 "Credits" = "Crédits";
 
 

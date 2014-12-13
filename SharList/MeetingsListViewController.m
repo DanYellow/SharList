@@ -75,6 +75,18 @@
     // Design on the view
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(canIGetRandomUser)];
     
+    UIAlertView *alertBGF;
+    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied && ![userPreferences boolForKey:@"seenAlertForBGF"]) {
+        alertBGF = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"disabledBGF", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alertBGF show];
+        // We display only once the alert for no bgf enabled
+        [userPreferences setBool:YES forKey:@"seenAlertForBGF"];
+    } else if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted && ![userPreferences boolForKey:@"seenAlertForBGF"]) {
+        alertBGF = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"restrictedBGF", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alertBGF show];
+        [userPreferences setBool:YES forKey:@"seenAlertForBGF"];
+    }
+    
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     
@@ -455,7 +467,7 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
         self.locationManager = [[CLLocationManager alloc] init];
 //        self.locationManager.delegate = self;
-        self.locationManager.distanceFilter = 0;
+        self.locationManager.distanceFilter = 1000;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
         //      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
@@ -552,8 +564,8 @@
         
         // If the meeting have been made less than one hour ago we do nothing
         if ((long)hours < 1) {
-            NSLog(@"Does nothing");
-//            return;
+            NSLog(@"already met");
+            return;
         }
         
         oldUserTaste.taste = arrayData;
@@ -573,7 +585,7 @@
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 
-
+    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     [self.locationManager stopUpdatingLocation];
 }

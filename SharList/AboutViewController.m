@@ -48,6 +48,7 @@
     UIView *privacyTextView = [[UIView alloc] initWithFrame:CGRectMake(10, whatIsApp.frame.origin.y + whatIsApp.frame.size.height + 25, screenWidth - 10, 30)];
     privacyTextView.backgroundColor = [UIColor clearColor];
     privacyTextView.opaque = YES;
+    [privacyTextView sizeToFit];
     [self.view addSubview:privacyTextView];
     
     UILabel *privacyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 10, 20)];

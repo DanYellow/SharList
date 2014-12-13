@@ -33,6 +33,8 @@
 "Met at %@" = "Met at %@";
 "nomeetings" = "So it looks like there is none around you to get new discoveries. Talk to them about Shike";
 "%@ meetings" = "%@ meetings";
+"disabledBGF" = "The background fetch feature is disabled in your Settings. Enabled it to introduce the world what you love.";
+"restrictedBGF" = "It looks like you device is not allowed to use the background fetch feature of your device.";
 
 // DetailsMeetingsViewController
 "met %@ times" = "met %@ times";
@@ -59,8 +61,8 @@
 //AboutViewController
 "About" = "About";
 "Privacy" = "Privacy";
-"whatIsApp" = "This app allow user to discover what's other user likes around you if you enable geoloc.";
-"datasOrigins" = "Movies and TV series datas, and posters art are provided by omdbapi's API";
+"whatIsApp" = "This app allow user to discover what's other user likes around you if you enable geoloc. TV Series and movies for now.";
+"datasOrigins" = "Movies and TV series datas, and posters art are provided by omdbapi's API.\n\nDevelopped with love.";
 "Credits" = "Credits";
 
 
