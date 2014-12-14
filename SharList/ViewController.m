@@ -320,7 +320,7 @@
     [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
     // user is not connected
-    if (!FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"]) {
+    if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
         fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
         // We don't want message for empty user list for no fb connexion
         fbLoginButton.hidden = NO;
