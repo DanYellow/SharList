@@ -35,7 +35,7 @@
     
     [[self navigationController] tabBarItem].badgeValue = nil;
     
-    if (!FBSession.activeSession.isOpen) {
+    if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
         self.navigationController.navigationBar.hidden = YES;
     }
 }
@@ -482,7 +482,7 @@
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
     }
     
-    NSLog([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO");
+//    NSLog([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO");
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
 
     [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {

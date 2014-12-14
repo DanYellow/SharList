@@ -65,12 +65,12 @@
     [self.view addSubview:settingsTableview];
     
     
-    UIButton *infoButton = [UIButton new];
-    [infoButton setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
-    [infoButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [infoButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
-    infoButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
-    [self.view addSubview:infoButton];
+    UIButton *aboutButton = [UIButton new];
+    [aboutButton setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
+    [aboutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [aboutButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
+    aboutButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
+    [self.view addSubview:aboutButton];
 }
 
 - (void) displayAboutScreen

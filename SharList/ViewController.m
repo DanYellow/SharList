@@ -47,7 +47,7 @@
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
     
     
-    if (!FBSession.activeSession.isOpen) {
+    if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
         [self.navigationController setNavigationBarHidden:YES animated:NO];
         self.tabBarController.tabBar.hidden = YES;
     }
@@ -147,7 +147,7 @@
     appnameView.tag = 2;
     appnameView.backgroundColor = [UIColor clearColor];
     appnameView.opaque = YES;
-    appnameView.hidden = NO;
+    appnameView.hidden = YES;
     [self.view addSubview:appnameView];
     
     UILabel *appnameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
@@ -320,7 +320,7 @@
     [self.view addSubview:fbLoginButton];
     // Detect if user not is connected
     // user is not connected
-    if (!FBSession.activeSession.isOpen) {
+    if (!FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"]) {
         fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
         // We don't want message for empty user list for no fb connexion
         fbLoginButton.hidden = NO;
@@ -505,11 +505,23 @@
 {
     [self.view addSubview: self.searchController.searchBar];
  
+    
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.alpha = 0;
     userSelectionTableView.hidden = NO;
     
     UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
+    
+    if (FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"]) {
+        [[self navigationController] setNavigationBarHidden:NO animated:YES];
+        self.tabBarController.tabBar.hidden = NO;
+        [userSelectionTableView reloadData];
+        appnameView.hidden = YES;
+        appnameView.alpha = 0;
+        userSelectionTableView.alpha = 1;
+        
+        return;
+    }
     
     for (CALayer *layer in [self.view.layer sublayers]) {
         
