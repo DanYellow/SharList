@@ -172,7 +172,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIBarButtonItem *addMediaToFavoriteBtnItem;
     // This media is not among user list
-    if (![[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] containsObject:self.mediaDatas]) {
+    // Because imdbID's key is unique we check if this key is among user media list api key
+    // Like the we are not screwed if we change api or CoreData'model structure
+    if (![[[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
         self.Added = NO;
         addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
         addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
