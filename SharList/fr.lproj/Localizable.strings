@@ -40,7 +40,6 @@
 "Log out" = "Déconnexion";
 "Delete account" = "Supprimer le compte";
 "Geoloc explain" = "Cette option n'est pas accessible présentement parce que nous venons de lancer cette application et qu'il n'y a pas beaucoup d'utilisateurs autour de vous. Donc parlez de Shike à vos amis, votre famille, vos collègues...";
-"Location purpose" = "Shike a besoin de votre position pour obtenir les goûts des utilisateurs autour de vous.";
 "about" = "A propos";
 // Errors for geoloc
 "Oops" = "Oups";

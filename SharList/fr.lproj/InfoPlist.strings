@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  SharList
+
+  Created by Jean-Louis Danielo on 15/12/2014.
+  Copyright (c) 2014 Jean-Louis Danielo. All rights reserved.
+*/
+
+"NSLocationAlwaysUsageDescription" = "Shike a besoin de votre position pour obtenir les goûts des utilisateurs autour de vous.";

@@ -136,7 +136,10 @@
     bgLayer.opacity = .7f;
     bgLayer.name = @"TrianglesBG";
     bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"TrianglesBG"]].CGColor;
-    [self.view.layer insertSublayer:bgLayer atIndex:1];
+    if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
+        [self.view.layer insertSublayer:bgLayer atIndex:1];
+    }
+    
     
 
     
@@ -463,7 +466,6 @@
 {
     // Manage
     if ([userPreferences objectForKey:@"currentUserfbID"] || FBSession.activeSession.isOpen) {
-        NSLog(@"GENTOOT");
         [self userConnectionForFbID:[userPreferences objectForKey:@"currentUserfbID"]];
         
         return;
@@ -513,6 +515,13 @@
     
     UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
     
+    for (CALayer *layer in [self.view.layer sublayers]) {
+        
+        if ([[layer name] isEqualToString:@"TrianglesBG"]) {
+            layer.opacity = 0;
+        }
+    }
+    
     if (FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"]) {
         [[self navigationController] setNavigationBarHidden:NO animated:YES];
         self.tabBarController.tabBar.hidden = NO;
@@ -524,12 +533,7 @@
         return;
     }
     
-    for (CALayer *layer in [self.view.layer sublayers]) {
-        
-        if ([[layer name] isEqualToString:@"TrianglesBG"]) {
-            layer.opacity = 0;
-        }
-    }
+    
     
     [UIView animateWithDuration:0.5 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -1184,11 +1188,8 @@
     
     NSString *searchString = [searchController.searchBar text];
     
-    NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
-    
     [filteredTableDatas removeAllObjects];
     
-    NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
 
     // Fetch online datas
     [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
@@ -1209,6 +1210,8 @@
     }];
     
 //    // Fetch local datas
+//    NSMutableArray *filteredDatas = [[NSMutableArray alloc] init];
+//    NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", searchString];
 //    [filteredDatas setArray:[APIdatas filteredArrayUsingPredicate:searchPredicate]];
 //    UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
 //    [searchLoadingIndicator stopAnimating];

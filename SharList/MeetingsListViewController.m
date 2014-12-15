@@ -469,7 +469,6 @@
 //        self.locationManager.delegate = self;
         self.locationManager.distanceFilter = 1000;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-        //      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
         if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self.locationManager requestAlwaysAuthorization];
