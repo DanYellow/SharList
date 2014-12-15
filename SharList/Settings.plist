@@ -5,6 +5,6 @@
 	<key>adress</key>
 	<string></string>
 	<key>apiPath</key>
-	<string>http://192.168.1.55:8888/Share/</string>
+	<string>http://danyellow.ilotreseau.net/</string>
 </dict>
 </plist>
