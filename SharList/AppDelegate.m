@@ -24,6 +24,8 @@
     [MagicalRecord setupAutoMigratingCoreDataStack];
     
 //    [self requestForLocationTracking];
+    
+    [application setMinimumBackgroundFetchInterval:150]; //3600
 
     
     ViewController *viewController = [ViewController new];
@@ -99,7 +101,7 @@
     [self.window setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [self.window makeKeyAndVisible];
     
-    [application setMinimumBackgroundFetchInterval:150]; //3600
+    
     
     // Ask for remote notification
     [self registerForRemoteNotification];

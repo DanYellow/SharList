@@ -314,7 +314,7 @@
     
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.backgroundColor = [UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
+        cell.backgroundColor = [UIColor clearColor];
         cell.textLabel.frame = cellFrame;
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
         cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;

@@ -402,8 +402,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) displayBuyScreen
 {
     // We don't need uinavigationcontroller so...
-    [self.navigationController setNavigationBarHidden:YES];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+//    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     
     UIView *displayBuyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
     displayBuyView.tag = 1;

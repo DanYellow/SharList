@@ -189,9 +189,6 @@
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
     // This method is called when user go back to app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
-    
-    
-    
 }
 
 
@@ -548,10 +545,10 @@
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
     UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
+    NSNumber *oldUserCount = [UserTaste MR_numberOfEntitiesWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
     
-
     // If user exists we just update his value like streetpass in 3ds
-    if (oldUserTaste != nil) {
+    if (oldUserCount > 0) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
         NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
@@ -564,7 +561,7 @@
         // If the meeting have been made less than one hour ago we do nothing
         if ((long)hours < 1) {
             NSLog(@"already met");
-            return;
+//            return;
         }
         
         oldUserTaste.taste = arrayData;
@@ -583,7 +580,6 @@
     }
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
-
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     [self.locationManager stopUpdatingLocation];
