@@ -38,6 +38,8 @@
     if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
         self.navigationController.navigationBar.hidden = YES;
     }
+    
+    
 }
 
 - (void) viewWillDisappear:(BOOL)animated
@@ -184,6 +186,8 @@
     [loadingIndicator startAnimating];
     [self.view addSubview:loadingIndicator];
     
+    NSLog(@"date : %@", daysList);
+    
 
     // This method is called when user quit the app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
@@ -230,7 +234,8 @@
     
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
-    
+    NSLog(@"disting : %@", distinctDays);
+    NSLog(@"listOfDistinctDays : %@", listOfDistinctDays);
     return [[foo reverseObjectEnumerator] allObjects];
 }
 
@@ -403,10 +408,11 @@
     NSCalendar *calendar = [NSCalendar currentCalendar];
     
     NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:currentDate];
-
+    NSLog(@"componentsForFirstDate : %@", componentsForFirstDate);
     // Contains all meetings of the day
     NSMutableArray *meetingsOfDay = [NSMutableArray new];
     for (int i = 0; i < [daysList count]; i++) {
+        
         NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[daysList objectAtIndex:i] ];
         
         if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
@@ -544,31 +550,31 @@
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
-    UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
-    NSNumber *oldUserCount = [UserTaste MR_numberOfEntitiesWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
+    UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
+    NSNumber *oldUserCount = [UserTaste MR_numberOfEntitiesWithPredicate:userPredicate];
     
-    // If user exists we just update his value like streetpass in 3ds
-    if (oldUserCount > 0) {
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        
-        NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
-        
-//        NSInteger days = [conversionInfo day];
-        NSInteger hours = [conversionInfo hour];
-//        NSInteger minutes = [conversionInfo minute];
-        
-        
-        // If the meeting have been made less than one hour ago we do nothing
-        if ((long)hours < 1) {
-            NSLog(@"already met");
-//            return;
-        }
-        
-        oldUserTaste.taste = arrayData;
-        oldUserTaste.fbid = randomUserfbID;
-        oldUserTaste.lastMeeting = [NSDate date];
-        oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
-    } else {
+//    // If user exists we just update his value like streetpass in 3ds
+//    if (oldUserCount > 0) {
+//        NSCalendar *calendar = [NSCalendar currentCalendar];
+//        
+//        NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
+//        
+////        NSInteger days = [conversionInfo day];
+//        NSInteger hours = [conversionInfo hour];
+////        NSInteger minutes = [conversionInfo minute];
+//        
+//        
+//        // If the meeting have been made less than one hour ago we do nothing
+//        if ((long)hours < 1) {
+//            NSLog(@"already met");
+////            return;
+//        }
+//        
+//        oldUserTaste.taste = arrayData;
+//        oldUserTaste.fbid = randomUserfbID;
+//        oldUserTaste.lastMeeting = [NSDate date];
+//        oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
+//    } else {
         // It's a new user
         // So we create a entity in CD for him
         UserTaste *userTaste = [UserTaste MR_createEntity];
@@ -577,12 +583,12 @@
         userTaste.lastMeeting = [NSDate date];
         userTaste.isFavorite = NO;
         userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
-    }
+//    }
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-    [self.locationManager stopUpdatingLocation];
+//    [self.locationManager stopUpdatingLocation];
 }
 
 
