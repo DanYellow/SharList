@@ -171,18 +171,26 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     self.navigationController.navigationBar.translucent = YES;
     
     UIBarButtonItem *addMediaToFavoriteBtnItem;
-    // This media is not among user list
-    // Because imdbID's key is unique we check if this key is among user media list api key
-    // Like the we are not screwed if we change api or CoreData'model structure
-    if (![[[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
+    
+    if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] class] != [NSNull class]) {
+        // This media is not among user list
+        // Because imdbID's key is unique we check if this key is among user media list api key
+        // Like the we are not screwed if we change api or CoreData'model structure
+        if (![[[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
+            self.Added = NO;
+            addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+            addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
+        } else {
+            self.Added = YES;
+            addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+            addRemoveMediaLabel.text = NSLocalizedString(@"Deleted", nil);
+        }
+    } else {
         self.Added = NO;
         addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
         addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
-    } else {
-        self.Added = YES;
-        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
-        addRemoveMediaLabel.text = NSLocalizedString(@"Deleted", nil);
     }
+    
     self.navigationItem.rightBarButtonItem = addMediaToFavoriteBtnItem;
     
     
@@ -403,6 +411,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     // We don't need uinavigationcontroller so...
     [self.navigationController setNavigationBarHidden:YES animated:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     
     UIView *displayBuyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
