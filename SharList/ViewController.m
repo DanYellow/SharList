@@ -464,8 +464,8 @@
 
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
 {
-    // Manage
-    if ([userPreferences objectForKey:@"currentUserfbID"] || FBSession.activeSession.isOpen) {
+    // Manage facebook recall function ios
+    if ([userPreferences objectForKey:@"currentUserfbID"]) {
         [self userConnectionForFbID:[userPreferences objectForKey:@"currentUserfbID"]];
         
         return;
@@ -617,7 +617,6 @@
     NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
     [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
-    
     
     [userPreferences setObject:fbIDNumber forKey:@"currentUserfbID"];
     // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
@@ -929,32 +928,32 @@
     return rightUtilityButtons;
 }
 
-- (void)swipeableTableViewCell:(ShareListMediaTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
-    switch (index) {
-        case 0:
-        {
-            // Delete button was pressed
-            UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
-            
-            NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
-            [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] removeObject:cell.model];
-            
-            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"currentUserfbID"]];
-            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-                UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
-                NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-                userTaste.taste = arrayData;
-            } completion:^(BOOL success, NSError *error) {
-                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
-                           withRowAnimation:UITableViewRowAnimationFade];
-                [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:YES];
-            }];
-            break;
-        }
-        default:
-            break;
-    }
-}
+//- (void)swipeableTableViewCell:(ShareListMediaTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
+//    switch (index) {
+//        case 0:
+//        {
+//            // Delete button was pressed
+//            UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
+//            
+//            NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
+//            [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] removeObject:cell.model];
+//            
+//            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"currentUserfbID"]];
+//            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+//                UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+//                NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+//                userTaste.taste = arrayData;
+//            } completion:^(BOOL success, NSError *error) {
+//                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
+//                           withRowAnimation:UITableViewRowAnimationFade];
+//                [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:YES];
+//            }];
+//            break;
+//        }
+//        default:
+//            break;
+//    }
+//}
 
 // prevent multiple cells from showing utilty buttons simultaneously
 - (BOOL) swipeableTableViewCellShouldHideUtilityButtonsOnSwipe:(SWTableViewCell *)cell

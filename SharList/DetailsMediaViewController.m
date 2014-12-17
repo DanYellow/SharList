@@ -714,7 +714,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@&isAdding=%@&imdbID=%@", userfbID, userTasteJSON, [isAdding boolValue] ? @"YES" : @"NO", self.mediaDatas[@"imdbID"]];
 
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-    
+//    NSLog(@"userTasteJSON : %@", userTasteJSON);
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
     [conn start];
 }
@@ -724,10 +724,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    //Getting your response string
-    
     if (self.responseData != nil) {
-        
         self.responseData = nil;
         self.responseData = [NSMutableData new];
     }
