@@ -60,7 +60,7 @@
 //AboutViewController
 "About" = "A propos";
 "Privacy" = "Confidentialité";
-"whatIsApp" = "Cette application vous permet de faire découvrir aux utilisateurs aux alentours ce que vous aimez. Séries télé et films pour le moment.";
+"whatIsApp" = "Cette application vous permet de faire découvrir aux utilisateurs aux alentours ce que vous aimez.";
 "datasOrigins" = "Les données des films et séries proviennent de l'API d'omdbapi.\n\nDéveloppé avec amour.";
 "Credits" = "Crédits";
 

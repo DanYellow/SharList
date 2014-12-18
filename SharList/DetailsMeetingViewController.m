@@ -59,6 +59,7 @@
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.metUserTasteDict = [NSMutableDictionary new];
     self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas taste]] mutableCopy];
+   
 //    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
     
     // Contains globals datas of the project
@@ -105,10 +106,10 @@
     meetingInfoView.backgroundColor = [UIColor redColor];
 
     
-    UILabel *text = [[UILabel alloc] initWithFrame:meetingInfoView.frame];
-    text.text = @"GENTOO";
-    text.bounds = CGRectInset(meetingInfoView.frame, 10.0f, 10.0f);
-    [meetingInfoView addSubview:text];
+//    UILabel *text = [[UILabel alloc] initWithFrame:meetingInfoView.frame];
+//    text.text = @"GENTOO";
+//    text.bounds = CGRectInset(meetingInfoView.frame, 10.0f, 10.0f);
+//    [meetingInfoView addSubview:text];
     
   
     UILabel *tableFooter = [[UILabel alloc] initWithFrame:CGRectMake(0, 15.0, screenWidth, 60)];
@@ -138,7 +139,7 @@
     
     NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
     NSInteger hours = [conversionInfo hour];
-
+    
     if ([self.meetingDatas isFavorite] && (long)hours >= 1) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
@@ -196,6 +197,7 @@
             NSData *stringData = [[allDatasFromServerDict objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
             NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
             
+            
             // This user has really updated is data we udpdate locals datas
             if (![self.metUserTasteDict isEqualToDictionary: [randomUserTaste mutableCopy] ]) {
                 // We update the current data from the server
@@ -225,20 +227,19 @@
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
-
     NSArray *sectionElements = [self.metUserTasteDict objectForKey:sectionTitle];
     
+//    NSLog(@"sectionElements : %@, %@, %@", sectionTitle, sectionElements, NSStringFromClass(sectionElements.class));
     // If the category is empty so the section not appears
     if ([sectionElements isKindOfClass:[NSNull class]]) {
         return 0;
     }
-    
+
     return sectionElements.count;
 }
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-
     // User have no list of taste
     UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
     BOOL IsTableViewEmpty = YES;
@@ -268,7 +269,8 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
     
-    NSString *title = [NSLocalizedString([[self.metUserTasteDict allKeys] objectAtIndex:section], nil) uppercaseString];
+    NSString *sectionTitleRaw = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+    NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
@@ -310,7 +312,6 @@
 
     title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
     imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
-    
     
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];

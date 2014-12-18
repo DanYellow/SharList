@@ -39,6 +39,12 @@
         self.navigationController.navigationBar.hidden = YES;
     }
     
+    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied || [[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted)
+    {
+        UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatasBtnAction)];
+        self.navigationItem.rightBarButtonItem = refreshBtn;
+        [self navigationItemRigthButtonEnablingManagement];
+    }
     
 }
 
@@ -48,6 +54,7 @@
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     [[self navigationController] tabBarItem].badgeValue = nil;
 }
+
 
 
 
@@ -75,7 +82,9 @@
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
     // Design on the view
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(canIGetRandomUser)];
+    
+    
+
     
     UIAlertView *alertBGF;
     if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied && ![userPreferences boolForKey:@"seenAlertForBGF"]) {
@@ -193,6 +202,28 @@
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
 }
 
+// This function manage the enable state of refresh button
+- (void) navigationItemRigthButtonEnablingManagement
+{
+    if ([userPreferences objectForKey:@"lastManualUpdate"]) {
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        
+        NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
+        
+        NSInteger hours = [conversionInfo hour];
+//        NSInteger minutes = [conversionInfo minute];
+
+        // If the meeting have been made less than one hour ago we do nothing
+        if ((long)hours > 1)
+        {
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+        } else {
+            self.navigationItem.rightBarButtonItem.enabled = NO;
+        }
+    } else {
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    }
+}
 
 - (NSArray*) fetchDatas
 {    
@@ -245,7 +276,13 @@
 - (void) diplayFavoritesMeetings:(id)sender
 {
     self.FilterEnabled = !self.FilterEnabled;
-    
+    [self reloadTableview];
+}
+
+- (void) reloadTableview
+{
+    [loadingIndicator startAnimating];
+    self.navigationItem.rightBarButtonItem.enabled = NO;
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     [userMeetingsListTableView reloadData];
@@ -274,12 +311,12 @@
         if (!self.FilterEnabled) {
             segmentedControlView.hidden = YES;
             emptyMeetingsLabel.hidden = NO;
-            [loadingIndicator stopAnimating];
         } else {
             emptyFavoritesLabel.hidden = NO;
             UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
             userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
         }
+        [loadingIndicator stopAnimating];
     }
 
     return [distinctDays count];
@@ -371,6 +408,7 @@
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.meetingDatas = selectedCell.model;
     detailsMeetingViewController.delegate = self;
+    
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.timeStyle = kCFDateFormatterShortStyle;
     detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model lastMeeting]];
@@ -439,8 +477,9 @@
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    // Called when the last cell is displayed
     if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
-        [loadingIndicator stopAnimating];
+      [loadingIndicator stopAnimating];
     }
 }
 
@@ -449,6 +488,32 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
+    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        if (error) {
+            completionHandler(UIBackgroundFetchResultFailed);
+            NSLog(@"%@", error);
+        } else {
+            [self saveRandomUserDatas:data];
+            completionHandler(UIBackgroundFetchResultNewData);
+        }
+    }];
+    
+//    completionHandler(UIBackgroundFetchResultNewData);
+}
+
+- (void) fetchUsersDatasBtnAction
+{
+    [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
+    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        if (error) {
+            NSLog(@"%@", error);
+        } else {
+            [self saveRandomUserDatas:data];
+        }
+    }];
+}
+
+- (NSMutableURLRequest*) fetchUsersDatasQuery {
     // Contains globals datas of the project
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
     // Build the array from the plist
@@ -466,7 +531,7 @@
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
         self.locationManager = [[CLLocationManager alloc] init];
-//        self.locationManager.delegate = self;
+        //        self.locationManager.delegate = self;
         self.locationManager.distanceFilter = 1000;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
@@ -475,29 +540,17 @@
         }
         [self.locationManager startUpdatingLocation];
     }
-
+    
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES) {
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
     }
     
-//    NSLog([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO");
+    //    NSLog([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO");
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if (error) {
-            completionHandler(UIBackgroundFetchResultFailed);
-            NSLog(@"%@", error);
-        } else {
-            [self saveRandomUserDatas:data];
-            completionHandler(UIBackgroundFetchResultNewData);
-        }
-    }];
     
-//    completionHandler(UIBackgroundFetchResultNewData);
+    return request;
 }
-
-
 
 - (void) saveRandomUserDatas:(NSData *)datas
 {
@@ -544,6 +597,8 @@
     // this var contains string raw of user taste. It should be converted to a NSDictionnary
     NSData *stringData = [[randomUserDatas objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
+
+    // The user's data is transform to nsdata to be putable in a CoreData model
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
@@ -585,8 +640,12 @@
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
-//    [self.locationManager stopUpdatingLocation];
+    
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        [self performSelectorOnMainThread:@selector(reloadTableview) withObject:nil waitUntilDone:YES];
+    } else {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+    }
 }
 
 
