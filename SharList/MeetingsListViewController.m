@@ -82,10 +82,6 @@
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
     // Design on the view
-    
-    
-
-    
     UIAlertView *alertBGF;
     if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied && ![userPreferences boolForKey:@"seenAlertForBGF"]) {
         alertBGF = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"disabledBGF", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -211,10 +207,13 @@
         NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
         
         NSInteger hours = [conversionInfo hour];
-//        NSInteger minutes = [conversionInfo minute];
+        NSInteger minutes = [conversionInfo minute];
+        NSInteger seconds = [conversionInfo second];
 
         // If the meeting have been made less than one hour ago we do nothing
-        if ((long)hours > 1)
+        NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
+        NSLog(@"delayLastMeetingUser : %li", delayLastMeetingUser);
+        if (delayLastMeetingUser > BGFETCHDELAY)
         {
             self.navigationItem.rightBarButtonItem.enabled = YES;
         } else {
