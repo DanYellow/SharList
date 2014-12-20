@@ -41,8 +41,6 @@
     
     if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied || [[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted)
     {
-        UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatasBtnAction)];
-        self.navigationItem.rightBarButtonItem = refreshBtn;
         [self navigationItemRigthButtonEnablingManagement];
     }
     
@@ -54,9 +52,6 @@
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     [[self navigationController] tabBarItem].badgeValue = nil;
 }
-
-
-
 
 - (void)viewDidLoad
 {
@@ -195,12 +190,24 @@
     // This method is called when user quit the app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
     // This method is called when user go back to app
+
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(navigationItemRigthButtonEnablingManagement) name: @"didEnterForeground" object: nil];
+
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
+    
 }
 
 // This function manage the enable state of refresh button
 - (void) navigationItemRigthButtonEnablingManagement
 {
+    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusAvailable)
+    {
+        return;
+    }
+    
+    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatasBtnAction)];
+    self.navigationItem.rightBarButtonItem = refreshBtn;
+    
     if ([userPreferences objectForKey:@"lastManualUpdate"]) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
@@ -212,7 +219,6 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        NSLog(@"delayLastMeetingUser : %li", delayLastMeetingUser);
         if (delayLastMeetingUser > BGFETCHDELAY)
         {
             self.navigationItem.rightBarButtonItem.enabled = YES;
@@ -417,6 +423,11 @@
 
 - (void) meetingsListHaveBeenUpdate
 {
+    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted || [[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied) {
+        return;
+    }
+
+    self.navigationItem.rightBarButtonItem = nil;
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     // We update the view behind the user like this when he comes back the view is updated
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
