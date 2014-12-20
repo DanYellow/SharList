@@ -78,11 +78,19 @@
     AboutViewController *aboutViewController = [[AboutViewController alloc] init];
     aboutViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissModal)];
     
+    
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:aboutViewController];
  
     
     navigationController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    CALayer *bottomBorder3 = [CALayer layer];
+    bottomBorder3.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+    bottomBorder3.borderWidth = 1;
+    bottomBorder3.name = @"bottomBorderLayer";
+    CGRect bottomBorderFrame = CGRectMake(0.0f, navigationController.navigationBar.frame.size.height, navigationController.navigationBar.frame.size.width, 1.0f);
+    bottomBorder3.frame = bottomBorderFrame;
+    [navigationController.navigationBar.layer addSublayer:bottomBorder3];
     
     [self.navigationController presentViewController:navigationController animated:YES completion:nil];
 //    [self.navigationController pushViewController:aboutViewController animated:YES];
