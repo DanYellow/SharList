@@ -30,7 +30,7 @@
 "Favorites" = "Favoris";
 "Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une rencontre pour l'ajouter aux favoris";
 "Met at %@" = "Rencontré à %@";
-"nomeetings" = "Il semblerait qu'il n'y ait personne autour de vous pour découvrir de nouvelles choses. Parlez leur de Shike.";
+"nomeetings" = "Il semblerait qu'il n'y ait personne autour de vous pour découvrir de nouvelles choses. Parlez leur de Shound.";
 "%@ meetings" = "%@ rencontres";
 "disabledBGF" = "L'option d'actualisation en arrière-plan est désactivée dans les Réglages. Activez la pour faire découvrir au monde ce que vous aimez.";
 "restrictedBGF" = "Il semblerait que votre appareil ne soit pas autorisé à actualiser le contenu en arrière-plan.";
@@ -39,12 +39,12 @@
 "Enable geolocation" = "Activer la géolocalisation";
 "Log out" = "Déconnexion";
 "Delete account" = "Supprimer le compte";
-"Geoloc explain" = "Cette option n'est pas accessible présentement parce que nous venons de lancer cette application et qu'il n'y a pas beaucoup d'utilisateurs autour de vous. Donc parlez de Shike à vos amis, votre famille, vos collègues...";
+"Geoloc explain" = "Cette option n'est pas accessible présentement parce que nous venons de lancer cette application et qu'il n'y a pas beaucoup d'utilisateurs autour de vous. Parlez de Shound à vos amis, votre famille, vos collègues...";
 "about" = "A propos";
 // Errors for geoloc
 "Oops" = "Oups";
-"geoloc denied" = "Shike n'est pas autorisé à utiliser votre position. Autorisé le dans les Réglages. (Shike > Position > Toujours)";
-"restricted denied" = "Shike n'est pas autorisé à utiliser votre position. Autorisé le dans les Réglages. (Shike > Position > Toujours)";
+"geoloc denied" = "Shound n'est pas autorisé à utiliser votre position. Autorisé le dans les Réglages. (Shound > Position > Toujours)";
+"restricted denied" = "Shound n'est pas autorisé à utiliser votre position. Autorisé le dans les Réglages. (Shound > Position > Toujours)";
 "geoloc disabled" = "Le service de localisation semble être désactivé dans les Réglages de l'appareil";
 
 // DetailsMeetingController

@@ -16,7 +16,7 @@
 #import "AFNetworking.h"
 #import "UIImageView+AFNetworking.h"
 
-#import "ShikeTutsScrollView.h"
+//#import "ShikeTutsScrollView.h"
 
 
 #import "ShareListMediaTableViewCell.h"

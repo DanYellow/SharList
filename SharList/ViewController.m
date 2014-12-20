@@ -154,7 +154,7 @@
     [self.view addSubview:appnameView];
     
     UILabel *appnameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
-    appnameLabel.text = @"Shike";
+    appnameLabel.text = @"Shound";
     appnameLabel.font = [UIFont fontWithName:@"Helvetica" size:50.0];
     appnameLabel.textColor = [UIColor whiteColor];
     appnameLabel.textAlignment = NSTextAlignmentLeft;

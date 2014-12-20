@@ -76,6 +76,7 @@
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
+    
     // Design on the view
     UIAlertView *alertBGF;
     if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied && ![userPreferences boolForKey:@"seenAlertForBGF"]) {
@@ -190,9 +191,9 @@
     // This method is called when user quit the app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
     // This method is called when user go back to app
-
+    // User not enable bgfetch
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(navigationItemRigthButtonEnablingManagement) name: @"didEnterForeground" object: nil];
-
+    // User enable bgfetch
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
     
 }
@@ -200,6 +201,7 @@
 // This function manage the enable state of refresh button
 - (void) navigationItemRigthButtonEnablingManagement
 {
+    
     if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusAvailable)
     {
         return;
@@ -498,6 +500,10 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
+//    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted || [[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied) {
+//        return;
+//    }
+    
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             completionHandler(UIBackgroundFetchResultFailed);
@@ -539,7 +545,9 @@
     
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] &&
+        [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways
+    ) {
         self.locationManager = [[CLLocationManager alloc] init];
         //        self.locationManager.delegate = self;
         self.locationManager.distanceFilter = 1000;

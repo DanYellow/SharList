@@ -31,7 +31,7 @@
 "All" = "All";
 "Favorites" = "Favorites";
 "Met at %@" = "Met at %@";
-"nomeetings" = "So it looks like there is none around you to get new discoveries. Talk to them about Shike";
+"nomeetings" = "So it looks like there is none around you to get new discoveries. Talk to them about Shound";
 "%@ meetings" = "%@ meetings";
 "disabledBGF" = "The background fetch feature is disabled in your Settings. Enabled it to introduce the world what you love.";
 "restrictedBGF" = "It looks like you device is not allowed to use the background fetch feature of your device.";
@@ -43,12 +43,12 @@
 "Enable geolocation" = "Enable geolocation";
 "Log out" = "Log out";
 "Delete account" = "Delete account";
-"Geoloc explain" = "This option is not available currently because we just launch this app and we don't have many users to fetch users around you. So talk about Shike to your friends, family, co-workers...";
+"Geoloc explain" = "This option is not available currently because we just launch this app and we don't have many users to fetch users around you. So talk about Shound to your friends, family, co-workers...";
 "about" = "About";
 // Errors for geoloc
 "Oops" = "Oops";
-"geoloc denied" = "Shike isn't allow to use your location. Please enable it in your Settings \n(Shike > Location > Always)";
-"restricted denied" = "Shike is allow to use your location. Please enable it in your Settings \n(Shike > Location > Always)";
+"geoloc denied" = "Shound isn't allow to use your location. Please enable it in your Settings \n(Shound > Location > Always)";
+"restricted denied" = "Shound is allow to use your location. Please enable it in your Settings \n(Shound > Location > Always)";
 "geoloc disabled" = "The location services seems to be disabled from the Settings";
 
 // DetailsMediaViewController

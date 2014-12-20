@@ -6,4 +6,4 @@
   Copyright (c) 2014 Jean-Louis Danielo. All rights reserved.
 */
 
-"NSLocationAlwaysUsageDescription" = "Shike a besoin de votre position pour obtenir les goûts des utilisateurs autour de vous.";
+"NSLocationAlwaysUsageDescription" = "Shound a besoin de votre position pour obtenir les goûts des utilisateurs autour de vous.";
