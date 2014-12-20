@@ -18,6 +18,12 @@
 		1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC31A0FE20900CD725A /* Images.xcassets */; };
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A16754F1A3F93E300AE7A9D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1675511A3F93E300AE7A9D /* InfoPlist.strings */; };
+		1A16F6491A457C17000BC4AB /* liste-tab-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */; };
+		1A16F64F1A457ECB000BC4AB /* discover-tab-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F64E1A457ECB000BC4AB /* discover-tab-icon@2x.png */; };
+		1A16F6531A458069000BC4AB /* list-tab-icon3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6511A458069000BC4AB /* list-tab-icon3@2x.png */; };
+		1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */; };
+		1A16F65C1A458929000BC4AB /* settings-tab-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F65A1A458929000BC4AB /* settings-tab-icon@2x.png */; };
+		1A16F65D1A458929000BC4AB /* settings-tab-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F65B1A458929000BC4AB /* settings-tab-icon@3x.png */; };
 		1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewController.m */; };
 		1A1D6E481A10AE930090C598 /* api.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A1D6E471A10AE930090C598 /* api.json */; };
 		1A2696F31A1D4396002ADC57 /* triangles-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A2696F21A1D4396002ADC57 /* triangles-bg@2x.png */; };
@@ -87,6 +93,12 @@
 		1A076DD21A0FE20900CD725A /* SharListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharListTests.m; sourceTree = "<group>"; };
 		1A1675501A3F93E300AE7A9D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A1675521A3F93E800AE7A9D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "liste-tab-icon@2x.png"; sourceTree = "<group>"; };
+		1A16F64E1A457ECB000BC4AB /* discover-tab-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "discover-tab-icon@2x.png"; sourceTree = "<group>"; };
+		1A16F6511A458069000BC4AB /* list-tab-icon3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-tab-icon3@2x.png"; sourceTree = "<group>"; };
+		1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-tab-icon2@2x.png"; sourceTree = "<group>"; };
+		1A16F65A1A458929000BC4AB /* settings-tab-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings-tab-icon@2x.png"; sourceTree = "<group>"; };
+		1A16F65B1A458929000BC4AB /* settings-tab-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings-tab-icon@3x.png"; sourceTree = "<group>"; };
 		1A1D6E431A1099C00090C598 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		1A1D6E441A1099C00090C598 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		1A1D6E471A10AE930090C598 /* api.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = api.json; sourceTree = "<group>"; };
@@ -252,6 +264,8 @@
 		1A076DDD1A102B0B00CD725A /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				1A16F65A1A458929000BC4AB /* settings-tab-icon@2x.png */,
+				1A16F65B1A458929000BC4AB /* settings-tab-icon@3x.png */,
 				1A9547161A29E7DD002AC281 /* favorite-icon-message-alt.png */,
 				1A9547171A29E7DD002AC281 /* favorite-icon-message-alt@2x.png */,
 				1A95471C1A29E8B6002AC281 /* favorite-icon-message-alt@3x.png */,
@@ -325,6 +339,10 @@
 				1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */,
 				1A037B0F1A33238F00124FA8 /* ShikeTutsScrollView.h */,
 				1A037B101A33238F00124FA8 /* ShikeTutsScrollView.m */,
+				1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */,
+				1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */,
+				1A16F6511A458069000BC4AB /* list-tab-icon3@2x.png */,
+				1A16F64E1A457ECB000BC4AB /* discover-tab-icon@2x.png */,
 			);
 			name = CustomViews;
 			sourceTree = "<group>";
@@ -463,10 +481,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A95470E1A29E3A0002AC281 /* lens-icon-message@2x.png in Resources */,
+				1A16F6491A457C17000BC4AB /* liste-tab-icon@2x.png in Resources */,
 				1A9547141A29E56D002AC281 /* favorite-icon-message@2x.png in Resources */,
 				1ACDC9041A23D3AA0032B857 /* Settings.plist in Resources */,
 				1A9547151A29E56D002AC281 /* favorite-icon-message@3x.png in Resources */,
+				1A16F65D1A458929000BC4AB /* settings-tab-icon@3x.png in Resources */,
+				1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */,
 				1AFE13751A32EEAB006F2366 /* meetingFavoriteSelected@3x.png in Resources */,
+				1A16F64F1A457ECB000BC4AB /* discover-tab-icon@2x.png in Resources */,
 				1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */,
 				1A9547131A29E56D002AC281 /* favorite-icon-message.png in Resources */,
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
@@ -487,6 +509,8 @@
 				1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */,
 				1A95471D1A29E8B6002AC281 /* favorite-icon-message-alt@3x.png in Resources */,
 				1A2696F31A1D4396002ADC57 /* triangles-bg@2x.png in Resources */,
+				1A16F65C1A458929000BC4AB /* settings-tab-icon@2x.png in Resources */,
+				1A16F6531A458069000BC4AB /* list-tab-icon3@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

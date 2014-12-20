@@ -30,12 +30,15 @@
     
     ViewController *viewController = [ViewController new];
     viewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
+    viewController.tabBarItem.image = [UIImage imageNamed:@"liste-tab-icon"];
     
     MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
     meetingsListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
+    meetingsListViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon2"];
     
     SettingsViewController *settingsViewController = [SettingsViewController new];
     settingsViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"settings", nil)];
+    settingsViewController.tabBarItem.image = [UIImage imageNamed:@"settings-tab-icon"];
     
     self.tabBarController = [[UITabBarController alloc] init];
     
