@@ -87,6 +87,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
     
     NSOperationQueue *operationQueue = manager.operationQueue;
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
@@ -204,7 +205,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     if (self.mediaDatas[@"imdbID"]) {
         linkAPI = [linkAPI stringByAppendingString:self.mediaDatas[@"imdbID"]];
     } else {
-        linkAPI = [linkAPI stringByAppendingString:@"tt0903747"]; //Avengers
+        linkAPI = [linkAPI stringByAppendingString:@"tt0903747"]; // Avengers
     }
     linkAPI = [linkAPI stringByAppendingString:@"&plot=full&r=json"];
     
@@ -218,9 +219,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }];
     
     
-    
-    
     CGFloat mediaTitleLabelY = [self computeRatio:240 forDimension:imgMediaHeight];
+    
+    
     
     UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth, 65)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
@@ -244,28 +245,36 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
+
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getmedia.php"];
+
+    [manager POST:shoundAPIPath parameters:@{ @"imdbid" : self.mediaDatas[@"imdbID"] }
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSInteger mediaLikeNumber = [responseObject[@"hits"] integerValue];
+
+        if (mediaLikeNumber > 1) {
+            // Aimé par X personnes
+            NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), mediaLikeNumber];
+            
+            UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
+            mediaLikeNumberLabel.text = mediaLikeNumberString;
+            mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
+            mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
+            mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+            mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+            mediaLikeNumberLabel.layer.shadowRadius = 2.5;
+            mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
+            mediaLikeNumberLabel.clipsToBounds = NO;
+            mediaLikeNumberLabel.layer.masksToBounds = NO;
+            mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
+            [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+            [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"error : %@", error);
+    }];
     
-    
-    NSInteger mediaLikeNumber = [self.mediaDatas[@"hits"] integerValue];
-    
-    if (mediaLikeNumber > 1) {
-        // Aimé par X personnes
-        NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), mediaLikeNumber];
-        
-        UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
-        mediaLikeNumberLabel.text = mediaLikeNumberString;
-        mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
-        mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
-        mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-        mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-        mediaLikeNumberLabel.layer.shadowRadius = 2.5;
-        mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
-        mediaLikeNumberLabel.clipsToBounds = NO;
-        mediaLikeNumberLabel.layer.masksToBounds = NO;
-        mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
-        [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
-        [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
-    }
+
 
     
     [self.view addSubview:infoMediaView];
@@ -702,7 +711,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         return;
     
     
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"/updateDatas.php"]];
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateDatas.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
