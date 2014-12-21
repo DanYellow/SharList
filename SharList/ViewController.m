@@ -218,8 +218,8 @@
     searchLoadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     [self.searchResultsController.tableView addSubview:searchLoadingIndicator];
     
-    //Message for empty search
-    UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 90, screenWidth, 90)];
+    //Message for empty search and no Internet connection
+    UILabel *emptyResultLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 90, screenWidth - 40, 110)];
     emptyResultLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:26.0f];
     emptyResultLabel.text = NSLocalizedString(@"No results", nil);
     emptyResultLabel.textColor = [UIColor whiteColor];
@@ -721,9 +721,18 @@
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        // This label is also used for no internet connexion for search
         UILabel *emptyResultLabel = (UILabel*)[self.searchResultsController.tableView viewWithTag:7];
-        if ([[filteredTableDatas allKeys] count] == 0 && [self.searchController.searchBar.text length] != 0) {
+        if (self.ConnectedToInternet == NO) {
+            emptyResultLabel.text = NSLocalizedString(@"No internet connection", nil);
+            emptyResultLabel.hidden = NO;
+
             
+            return 0;
+        }
+        
+        if ([[filteredTableDatas allKeys] count] == 0 && [self.searchController.searchBar.text length] != 0) {
+            emptyResultLabel.text = NSLocalizedString(@"No results", nil);
             emptyResultLabel.hidden = NO;
             
             return 0;
@@ -796,6 +805,7 @@
         cell.textLabel.textColor = [UIColor whiteColor];
         
         cell.textLabel.layer.contents = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        cell.alpha = .7f;
         
         // This statement is here for empty key
         // Or else we'll try to compare a NSNull object
@@ -807,6 +817,12 @@
                 cell.imageView.image = nil;
             }
         }
+        
+        [UIView transitionWithView:cell
+                          duration:.7f
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{cell.alpha = 1;}
+                        completion:NULL];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
@@ -846,6 +862,7 @@
         [cell setSelectedBackgroundView:bgColorView];
 
         cell.textLabel.text = title;
+        cell.alpha = .3f;
     }
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -853,6 +870,7 @@
     cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
     cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
     cell.indentationLevel = 1;
+    
     
     return cell;
 }
@@ -878,7 +896,6 @@
     imgBackground.contentMode = UIViewContentModeScaleAspectFill;
     imgBackground.clipsToBounds = YES;
     
-
     cell.backgroundView = imgBackground; //[cell addSubview:imgBackground];
     
     __block NSString *imgDistURL; // URL of the image from imdb database api
@@ -900,6 +917,12 @@
          [NSURL URLWithString:imgDistURL]
                       placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
         [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+        
+        [UIView transitionWithView:cell
+                          duration:.7f
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{cell.alpha = 1;}
+                        completion:NULL];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
@@ -1178,7 +1201,8 @@
     UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
     [searchLoadingIndicator startAnimating];
     
-    //We wait X seconds before query the server for performances and limit the bandwith
+
+    //We wait X seconds before query the server for performances and limit the bandwidth
     [self performSelector:@selector(getDatasFromServerForSearchController:) withObject:searchController afterDelay:1.7];
 }
 
@@ -1189,11 +1213,18 @@
     
     [filteredTableDatas removeAllObjects];
     
-
-    // Fetch online datas
-    [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
+    if (self.ConnectedToInternet == NO) {
         UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
         [searchLoadingIndicator stopAnimating];
+        [self.searchResultsController.tableView reloadData];
+        
+        
+        return;
+    }
+    
+    // Fetch online datas
+    [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
+        
         
         for (int i = 0; i < [[result valueForKey:@"type"] count]; i++) {
             NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[result valueForKey:@"type"] objectAtIndex:i]];
@@ -1206,6 +1237,9 @@
         }
         
         [self.searchResultsController.tableView reloadData];
+        
+        UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
+        [searchLoadingIndicator stopAnimating];
     }];
     
 //    // Fetch local datas

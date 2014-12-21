@@ -328,6 +328,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.indentationLevel = 1;
     }
+    cell.alpha = .3f;
 
     cell.model = [rowsOfSection objectAtIndex:indexPath.row];
     
@@ -397,6 +398,12 @@
          [NSURL URLWithString:imgDistURL]
                       placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
         [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+        
+        [UIView transitionWithView:cell
+                          duration:.7f
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{cell.alpha = 1;}
+                        completion:NULL];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);

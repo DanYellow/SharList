@@ -23,6 +23,7 @@
 "Tap on  " = "Appuyez sur  ";
 "Tap on  to fill your list" = "Appuyez sur   pour remplir votre liste";
 "No results" = "Aucun résultats";
+"No internet connection" = "Aucune connexion Internet";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore rencontré de personnes";

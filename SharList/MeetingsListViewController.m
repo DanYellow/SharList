@@ -500,11 +500,30 @@
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
     
+    cell.alpha = .3;
+    [UIView transitionWithView:cell
+                      duration:.5f
+                       options:UIViewAnimationOptionTransitionCrossDissolve
+                    animations:^{cell.alpha = 1;}
+                    completion:NULL];
+    
     return cell;
 }
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+//    cell.alpha = 0;
+//    [UIView animateWithDuration: 0.1
+//                          delay: 0.0
+//                        options: UIViewAnimationOptionCurveEaseOut
+//                     animations:^{
+//                         cell.alpha = 1;
+//                     }
+//                     completion:^(BOOL finished){
+//                         
+//                     }];
+
+    
     // Called when the last cell is displayed
     if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
       [loadingIndicator stopAnimating];
