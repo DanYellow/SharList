@@ -22,7 +22,7 @@
 #define DegreesToRadians(x) ((x) * M_PI / 180.0)
 
 //1800
-#define BGFETCHDELAY 1800
+#define BGFETCHDELAY 3600
 
 #define MR_ENABLE_ACTIVE_RECORD_LOGGING 0
 #import "CoreData+MagicalRecord.h"

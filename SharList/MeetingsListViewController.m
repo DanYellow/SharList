@@ -9,6 +9,8 @@
 #import "MeetingsListViewController.h"
 
 @interface MeetingsListViewController ()
+@property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
+
 
 @end
 
@@ -39,11 +41,8 @@
         self.navigationController.navigationBar.hidden = YES;
     }
     
-    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied || [[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted)
-    {
-        [self navigationItemRigthButtonEnablingManagement];
-    }
-    
+
+    [self navigationItemRightButtonEnablingManagement];
 }
 
 - (void) viewWillDisappear:(BOOL)animated
@@ -57,6 +56,29 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    
+    self.ConnectedToInternet = YES;
+    
+    NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
+    
+    NSOperationQueue *operationQueue = manager.operationQueue;
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        switch (status) {
+            case AFNetworkReachabilityStatusReachableViaWWAN:
+            case AFNetworkReachabilityStatusReachableViaWiFi:
+                [operationQueue setSuspended:NO];
+                self.ConnectedToInternet = YES;
+                break;
+            case AFNetworkReachabilityStatusNotReachable:
+            default:
+                [operationQueue setSuspended:YES];
+                self.ConnectedToInternet = NO;
+                break;
+        }
+    }];
     
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -192,32 +214,26 @@
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
     // This method is called when user go back to app
     // User not enable bgfetch
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(navigationItemRigthButtonEnablingManagement) name: @"didEnterForeground" object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(navigationItemRightButtonEnablingManagement) name: @"didEnterForeground" object: nil];
     // User enable bgfetch
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
     
 }
 
 // This function manage the enable state of refresh button
-- (void) navigationItemRigthButtonEnablingManagement
+- (void) navigationItemRightButtonEnablingManagement
 {
-    
-    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusAvailable)
-    {
-        return;
-    }
-    
     UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatasBtnAction)];
     self.navigationItem.rightBarButtonItem = refreshBtn;
     
     if ([userPreferences objectForKey:@"lastManualUpdate"]) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
-        NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
+        NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
         
-        NSInteger hours = [conversionInfo hour];
-        NSInteger minutes = [conversionInfo minute];
-        NSInteger seconds = [conversionInfo second];
+        NSInteger hours = [lastDataFetchingInterval hour];
+        NSInteger minutes = [lastDataFetchingInterval minute];
+        NSInteger seconds = [lastDataFetchingInterval second];
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
@@ -500,10 +516,9 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-//    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted || [[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied) {
-//        return;
-//    }
-    
+    // If user get a background fetch and back to the app. He's not able to do an manual update
+    // below BGFETCHDELAY interval
+    [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             completionHandler(UIBackgroundFetchResultFailed);
@@ -519,6 +534,13 @@
 
 - (void) fetchUsersDatasBtnAction
 {
+    if (self.isConnectedToInternet == NO) {
+        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [errConnectionAlertView show];
+        return;
+    }
+    
+    
     [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {

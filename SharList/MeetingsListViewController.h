@@ -44,13 +44,7 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
-/*
- *  headingAvailable
- *
- *  Discussion:
- *      Returns YES if the device supports the heading service, otherwise NO.
- */
-- (void) navigationItemRigthButtonEnablingManagement;
+- (void) navigationItemRightButtonEnablingManagement;
 
 
 @end
