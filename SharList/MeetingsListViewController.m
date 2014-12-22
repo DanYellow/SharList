@@ -445,7 +445,6 @@
         return;
     }
 
-    self.navigationItem.rightBarButtonItem = nil;
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     // We update the view behind the user like this when he comes back the view is updated
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
@@ -500,12 +499,12 @@
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
     
-    cell.alpha = .3;
-    [UIView transitionWithView:cell
-                      duration:.5f
-                       options:UIViewAnimationOptionTransitionCrossDissolve
-                    animations:^{cell.alpha = 1;}
-                    completion:NULL];
+//    cell.alpha = .3;
+//    [UIView transitionWithView:cell
+//                      duration:.5f
+//                       options:UIViewAnimationOptionTransitionCrossDissolve
+//                    animations:^{cell.alpha = 1;}
+//                    completion:NULL];
     
     return cell;
 }
@@ -535,8 +534,7 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    // If user get a background fetch and back to the app. He's not able to do an manual update
-    // below BGFETCHDELAY interval
+
     [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {

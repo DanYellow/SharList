@@ -805,7 +805,7 @@
         cell.textLabel.textColor = [UIColor whiteColor];
         
         cell.textLabel.layer.contents = [UIImage imageNamed:@"meetingFavoriteSelected"];
-        cell.alpha = .7f;
+//        cell.alpha = .7f;
         
         // This statement is here for empty key
         // Or else we'll try to compare a NSNull object
@@ -818,11 +818,11 @@
             }
         }
         
-        [UIView transitionWithView:cell
-                          duration:.7f
-                           options:UIViewAnimationOptionTransitionCrossDissolve
-                        animations:^{cell.alpha = 1;}
-                        completion:NULL];
+//        [UIView transitionWithView:cell
+//                          duration:.7f
+//                           options:UIViewAnimationOptionTransitionCrossDissolve
+//                        animations:^{cell.alpha = 1;}
+//                        completion:NULL];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];

@@ -25,7 +25,7 @@
     
 //    [self requestForLocationTracking];
     
-    [application setMinimumBackgroundFetchInterval:BGFETCHDELAY]; //3600 
+    [application setMinimumBackgroundFetchInterval:BGFETCHDELAY]; //3600 = BGFETCHDELAY
 
     
     ViewController *viewController = [ViewController new];
@@ -114,6 +114,8 @@
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void  (^)(UIBackgroundFetchResult))completionHandler
 {
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"OK" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//    [alert show];
     // If user is not connected to facebook, no bg task for him
     // and said to iOS's algorithm to "push" back manage
     if (!FBSession.activeSession.isOpen) {
