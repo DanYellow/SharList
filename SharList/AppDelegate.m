@@ -25,7 +25,7 @@
     
 //    [self requestForLocationTracking];
     
-    [application setMinimumBackgroundFetchInterval:BGFETCHDELAY]; //3600 = BGFETCHDELAY
+    [application setMinimumBackgroundFetchInterval:3000]; //40 min | 3600 = BGFETCHDELAY
 
     
     ViewController *viewController = [ViewController new];

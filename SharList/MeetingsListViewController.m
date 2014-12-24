@@ -237,7 +237,7 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        if (delayLastMeetingUser > BGFETCHDELAY)
+        if (delayLastMeetingUser > BGFETCHDELAY) //
         {
             self.navigationItem.rightBarButtonItem.enabled = YES;
         } else {
@@ -534,7 +534,6 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-
     [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
