@@ -276,10 +276,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   [tempDict setObject:(NSString *)responseObject[@"id"] forKey:@"id"];
                   self.mediaDatas = tempDict;
               }
-              NSLog(@"mediaLikeNumber : %@", [numberFormatter stringFromNumber:mediaLikeNumber]);
+              NSDecimalNumber *amountNumber = [NSDecimalNumber decimalNumberWithString:responseObject[@"hits"]];
+              NSString *numberString = [numberFormatter stringFromNumber:amountNumber];
+
               if ([mediaLikeNumber integerValue] > 1) {
                   // Aimé par X personnes
-                  NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), [responseObject[@"hits"] integerValue]];
+                  NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %@ people", nil), numberString];
                   
                   UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
                   mediaLikeNumberLabel.text = mediaLikeNumberString;

@@ -54,7 +54,7 @@
 // DetailsMediaViewController
 "Added" = "Ajouté";
 "Deleted" = "Supprimé";
-"Liked by %i people" = "Aimé par %i personnes";
+"Liked by %@ people" = "Aimé par %@ personnes";
 "%@" = "%@";
 "noconnection" = "Il semblerait que vous ne soyez pas connecté à Internet. \nConnectez-vous et réessayez.";
 "nodescription" = "Pas de description pour le moment";
