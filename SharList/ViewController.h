@@ -15,6 +15,7 @@
 //Vendors
 #import "AFNetworking.h"
 #import "UIImageView+AFNetworking.h"
+#import <JLTMDbClient.h>
 
 //#import "ShikeTutsScrollView.h"
 

@@ -85,9 +85,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     self.ConnectedToInternet = YES;
     
-    NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
+    NSURL *baseURL = [NSURL URLWithString:@"https://api.themoviedb.org/3/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+    manager.securityPolicy.allowInvalidCertificates = YES;
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     
     NSOperationQueue *operationQueue = manager.operationQueue;
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
@@ -193,30 +194,30 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
     
     self.navigationItem.rightBarButtonItem = addMediaToFavoriteBtnItem;
+
+    [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
+    NSString *apiLink;
     
+//    if (self.mediaDatas[@"themoviedbID"]) {
+        if ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) {
+            apiLink = kJLTMDbMovie;
+        } else {
+            apiLink = kJLTMDbTV;
+        }
+        
+        [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": self.mediaDatas[@"imdbID"], @"language": @"fr"} andResponseBlock:^(id responseObject, NSError *error) {
+            if(!error){
+                [self setMediaViewForData:responseObject];
+            } else {
+                UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                [errConnectionAlertView show];
+                NSLog(@"error : %@", error);
+                [loadingIndicator stopAnimating];
+            }
+        }];
+//    }
     
-    
-    __block NSDictionary *datasFromServer;
-//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    
-    NSString *linkAPI = @"http://www.omdbapi.com/?i=";
-    if (self.mediaDatas[@"imdbID"]) {
-        linkAPI = [linkAPI stringByAppendingString:self.mediaDatas[@"imdbID"]];
-    } else {
-        linkAPI = [linkAPI stringByAppendingString:@"tt0903747"]; // Avengers
-    }
-    linkAPI = [linkAPI stringByAppendingString:@"&plot=full&r=json"];
-    
-    [manager GET:linkAPI parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        datasFromServer = [[NSDictionary alloc] initWithDictionary:responseObject];
-        [self setMediaViewForData:responseObject];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) { 
-        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [errConnectionAlertView show];
-        [loadingIndicator stopAnimating];
-    }];
     
     
     CGFloat mediaTitleLabelY = [self computeRatio:240 forDimension:imgMediaHeight];
@@ -250,26 +251,33 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     [manager POST:shoundAPIPath parameters:@{ @"imdbid" : self.mediaDatas[@"imdbID"] }
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSInteger mediaLikeNumber = [responseObject[@"hits"] integerValue];
-
-        if (mediaLikeNumber > 1) {
-            // Aimé par X personnes
-            NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), mediaLikeNumber];
-            
-            UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
-            mediaLikeNumberLabel.text = mediaLikeNumberString;
-            mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
-            mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
-            mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-            mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-            mediaLikeNumberLabel.layer.shadowRadius = 2.5;
-            mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
-            mediaLikeNumberLabel.clipsToBounds = NO;
-            mediaLikeNumberLabel.layer.masksToBounds = NO;
-            mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
-            [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
-            [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
-        }
+              NSInteger mediaLikeNumber = [responseObject[@"hits"] integerValue];
+              
+              // Fix issue for old datas put in local
+              
+              if (!self.mediaDatas[@"id"]) {
+//                  [self.mediaDatas setObject:[responseObject[@"themoviedbID"] stringValue] forKey:@"themoviedbID"];
+//                  [self.mediaDatas setObject:responseObject[@"id"] forKey:@"id"];
+              }
+    
+              if (mediaLikeNumber > 1) {
+                  // Aimé par X personnes
+                  NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), mediaLikeNumber];
+                  
+                  UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
+                  mediaLikeNumberLabel.text = mediaLikeNumberString;
+                  mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
+                  mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
+                  mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+                  mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+                  mediaLikeNumberLabel.layer.shadowRadius = 2.5;
+                  mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
+                  mediaLikeNumberLabel.clipsToBounds = NO;
+                  mediaLikeNumberLabel.layer.masksToBounds = NO;
+                  mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
+                  [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+                  [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
+              }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"error : %@", error);
     }];
@@ -295,10 +303,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) setMediaViewForData:(NSDictionary*)data
 {
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-
+    //yGoQIzq0XfZsfzvzPGe7QOixYPq.jpg
     UIImageView *imgMedia = [UIImageView new];
+    
     [imgMedia setImageWithURL:
-     [NSURL URLWithString:data[@"Poster"]]
+     [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", data[@"poster_path"]]]
              placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
     imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
@@ -345,7 +354,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionHeight = (screenHeight * 47.53521127) / 100; //(280 * 100) / 568
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
-    mediaDescription.text = data[@"Plot"];
+    mediaDescription.text = data[@"overview"];
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;

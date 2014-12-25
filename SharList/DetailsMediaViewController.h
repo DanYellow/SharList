@@ -16,6 +16,7 @@
 #import "AFNetworking.h"
 #import "UIImageView+AFNetworking.h"
 #import "CCARadialGradientLayer.h"
+#import <JLTMDbClient.h>
 
 //Custom views
 #import "ShopButton.h"
@@ -24,6 +25,7 @@
 #import "UserTaste.h"
 
 #import "UILabel+HeightToFit.h"
+
 
 @protocol UpdateUserTasteListDelegate;
 

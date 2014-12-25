@@ -8,6 +8,7 @@ target "SharList" do
 	pod 'SWTableViewCell', '~> 0.3.6'
 	# pod 'TDBadgedCell', '~> 2.6'
 	pod 'CRGradientNavigationBar'
+	pod 'JLTMDbClient', '~> 0.2'
 end
 
 target "SharListTests" do
