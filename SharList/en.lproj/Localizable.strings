@@ -7,7 +7,7 @@
 */
 
 
-"Introduce the world what you love" = "Introduce the world what you love";
+"Introduce the world what you love" = "Introduce the world what you like";
 
 "serie" = "TV Series";
 "movie" = "movies";
@@ -63,7 +63,7 @@
 //AboutViewController
 "About" = "About";
 "Privacy" = "Privacy";
-"whatIsApp" = "This app allow user to discover what's other user likes around you if you enable geoloc.";
+"whatIsApp" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your tastes.";
 "datasOrigins" = "Movies and TV series datas, and posters art are provided by themoviedb's API.\n\nDevelopped with love.";
 "Credits" = "Credits";
 
