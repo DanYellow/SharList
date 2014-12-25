@@ -198,31 +198,43 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
     NSString *apiLink;
+    NSDictionary *queryParams;
     
-//    if (self.mediaDatas[@"themoviedbID"]) {
-        if ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) {
-            apiLink = kJLTMDbMovie;
-        } else {
-            apiLink = kJLTMDbTV;
-        }
-        
-        [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": self.mediaDatas[@"imdbID"], @"language": @"fr"} andResponseBlock:^(id responseObject, NSError *error) {
-            if(!error){
-                [self setMediaViewForData:responseObject];
+    // Tricky part
+    // We used now themoviedb
+    // But database still have ids from imdb and only movie in themoviedb uses them
+    // and I don't have time now to fill the db w/ 
+    
+    if ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) {
+        apiLink = kJLTMDbMovie;
+        queryParams = @{@"id": self.mediaDatas[@"imdbID"], @"language": @"fr"};
+    } else {
+        apiLink = kJLTMDbFind;
+        queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": @"fr", @"external_source": @"imdb_id"};
+    }
+    
+    [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
+        if(!error){
+            if (responseObject[@"tv_results"]) {
+                [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:@{@"id": [responseObject valueForKeyPath:@"tv_results.id"][0], @"language": @"fr"} andResponseBlock:^(id responseObject, NSError *error) {
+                    [self setMediaViewForData:responseObject];
+                }];
             } else {
-                UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                [errConnectionAlertView show];
-                NSLog(@"error : %@", error);
-                [loadingIndicator stopAnimating];
+                [self setMediaViewForData:responseObject];
             }
-        }];
-//    }
-    
+            
+            
+        } else {
+            UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [errConnectionAlertView show];
+            NSLog(@"error : %@", error);
+            [loadingIndicator stopAnimating];
+        }
+    }];
+
     
     
     CGFloat mediaTitleLabelY = [self computeRatio:240 forDimension:imgMediaHeight];
-    
-    
     
     UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth, 65)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
