@@ -72,7 +72,7 @@
     //    [UserTaste MR_truncateAll];
     
     // Permatenly checks if user is connected to Internet
-    NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
+    NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     
     NSOperationQueue *operationQueue = manager.operationQueue;
@@ -899,10 +899,7 @@
     cell.backgroundView = imgBackground;
     
     __block NSString *imgDistURL; // URL of the image from imdb database api
-    
-    NSString *linkAPI = @"http://www.omdbapi.com/?i=";
-    linkAPI = [linkAPI stringByAppendingString:model[@"imdbID"]];
-    linkAPI = [linkAPI stringByAppendingString:@"&plot=short&r=json"];
+
     
     CALayer *imgLayer = [CALayer layer];
     imgLayer.frame = cellFrame;
@@ -918,10 +915,10 @@
         apiLink = kJLTMDbFind;
     }
 
-    
+    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
-    [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": @"fr", @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
+    [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             if ([model[@"type"] isEqualToString:@"serie"]) {
                 imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];

@@ -60,7 +60,7 @@
     
     self.ConnectedToInternet = YES;
     
-    NSURL *baseURL = [NSURL URLWithString:@"http://www.omdbapi.com/"];
+    NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     
     NSOperationQueue *operationQueue = manager.operationQueue;

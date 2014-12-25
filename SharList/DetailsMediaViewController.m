@@ -29,6 +29,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 2 : addMediaBtnItem
 // 3 : addRemoveMediaLabel
 // 4 : title label
+// 5 : mediaLikeNumberLabel
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -110,6 +111,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
+    
+//    self.mediaDatas = NSMuta
     
     // Contains globals datas of the project
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
@@ -199,31 +202,31 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     NSString *apiLink;
     NSDictionary *queryParams;
+    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
     
     // Tricky part
     // We used now themoviedb
     // But database still have ids from imdb and only movie in themoviedb uses them
-    // and I don't have time now to fill the db w/ 
+    // and I don't have time now to fill the db w/
     
     if ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) {
         apiLink = kJLTMDbMovie;
-        queryParams = @{@"id": self.mediaDatas[@"imdbID"], @"language": @"fr"};
+        queryParams = @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage};
     } else {
         apiLink = kJLTMDbFind;
-        queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": @"fr", @"external_source": @"imdb_id"};
+        queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"};
     }
+    
     
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             if (responseObject[@"tv_results"]) {
-                [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:@{@"id": [responseObject valueForKeyPath:@"tv_results.id"][0], @"language": @"fr"} andResponseBlock:^(id responseObject, NSError *error) {
+                [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:@{@"id": [responseObject valueForKeyPath:@"tv_results.id"][0], @"language": userLanguage} andResponseBlock:^(id responseObject, NSError *error) {
                     [self setMediaViewForData:responseObject];
                 }];
             } else {
                 [self setMediaViewForData:responseObject];
             }
-            
-            
         } else {
             UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [errConnectionAlertView show];
@@ -258,23 +261,25 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
-
+    // This NSDict will be used to set id to local media
+    NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getmedia.php"];
 
     [manager POST:shoundAPIPath parameters:@{ @"imdbid" : self.mediaDatas[@"imdbID"] }
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              NSInteger mediaLikeNumber = [responseObject[@"hits"] integerValue];
               
-              // Fix issue for old datas put in local
+              NSNumber *mediaLikeNumber = responseObject[@"hits"];
+              NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
+              [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
               
               if (!self.mediaDatas[@"id"]) {
-//                  [self.mediaDatas setObject:[responseObject[@"themoviedbID"] stringValue] forKey:@"themoviedbID"];
-//                  [self.mediaDatas setObject:responseObject[@"id"] forKey:@"id"];
+                  [tempDict setObject:(NSString *)responseObject[@"id"] forKey:@"id"];
+                  self.mediaDatas = tempDict;
               }
-    
-              if (mediaLikeNumber > 1) {
+              NSLog(@"mediaLikeNumber : %@", [numberFormatter stringFromNumber:mediaLikeNumber]);
+              if ([mediaLikeNumber integerValue] > 1) {
                   // Aimé par X personnes
-                  NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), mediaLikeNumber];
+                  NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %i people", nil), [responseObject[@"hits"] integerValue]];
                   
                   UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
                   mediaLikeNumberLabel.text = mediaLikeNumberString;
@@ -285,6 +290,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   mediaLikeNumberLabel.layer.shadowRadius = 2.5;
                   mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
                   mediaLikeNumberLabel.clipsToBounds = NO;
+                  mediaLikeNumberLabel.tag = 5;
+                  mediaLikeNumberLabel.backgroundColor = [UIColor clearColor];
                   mediaLikeNumberLabel.layer.masksToBounds = NO;
                   mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
                   [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
@@ -295,12 +302,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }];
     
 
-
-    
     [self.view addSubview:infoMediaView];
-    
-    
-//    NSLocalizedString(@"Met at %@", nil)
     
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
@@ -314,6 +316,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) setMediaViewForData:(NSDictionary*)data
 {
+    themovieDBID = data[@"id"];
+    
+    
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     //yGoQIzq0XfZsfzvzPGe7QOixYPq.jpg
     UIImageView *imgMedia = [UIImageView new];
@@ -365,8 +370,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
     CGFloat mediaDescriptionHeight = (screenHeight * 47.53521127) / 100; //(280 * 100) / 568
 
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
-    mediaDescription.text = data[@"overview"];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY + 15, mediaDescriptionWidth, mediaDescriptionHeight)];
+    if ([data[@"overview"] isEqualToString:@""]) {
+        // the movie db doesnot provide description for this media
+        mediaDescription.text = NSLocalizedString(@"nodescription", nil);
+    } else {
+        mediaDescription.text = data[@"overview"];
+    }
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
@@ -375,7 +385,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
-    mediaDescription.contentInset = UIEdgeInsetsMake(-6, -3, 0, 0);
+    mediaDescription.contentInset = UIEdgeInsetsMake(-6, -2, 0, 0);
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
     mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
     [self.view addSubview:mediaDescription];
@@ -393,6 +403,28 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }
                      completion:^(BOOL finished){
                      }];
+    
+    NSMutableString *genresString = [NSMutableString stringWithString:NSLocalizedString(@"Genres", nil)];
+    for (id genre in data[@"genres"]) {
+        [genresString appendString: [genre[@"name"] stringByAppendingString:@", "]];
+    }
+    
+    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaDescriptionY - 38, screenWidth - 30, 25)];
+    mediaGenresLabel.text = [genresString substringToIndex:[genresString length] - 2]; // Space + comma
+    mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
+    mediaGenresLabel.textAlignment = NSTextAlignmentLeft;
+    mediaGenresLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+    mediaGenresLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    mediaGenresLabel.layer.shadowRadius = 2.5;
+    mediaGenresLabel.layer.shadowOpacity = 0.75;
+    mediaGenresLabel.clipsToBounds = NO;
+    mediaGenresLabel.numberOfLines = 0;
+    mediaGenresLabel.backgroundColor = [UIColor clearColor];
+    mediaGenresLabel.layer.masksToBounds = NO;
+    mediaGenresLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
+    [mediaGenresLabel sizeToFit];
+    [mediaGenresLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+    [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
     
     
     
@@ -693,9 +725,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) removeMediaToUserList
 {
     NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] mutableCopy];
-    [updatedUserTaste removeObject:self.mediaDatas];
+    [updatedUserTaste removeObjectsInArray:[updatedUserTaste filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"imdbID == %@", [self.mediaDatas valueForKey:@"imdbID"]]]];
+
     [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
     [userTasteDict setObject:updatedUserTaste forKey:[self.mediaDatas valueForKey:@"type"]];
+    
     
     [self saveMediaUpdateForAdding:NO];
 }
@@ -740,11 +774,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     // We send the json to the server only when we need it
     NSString *userTasteJSON = [self updateTasteForServer];
-
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@&isAdding=%@&imdbID=%@", userfbID, userTasteJSON, [isAdding boolValue] ? @"YES" : @"NO", self.mediaDatas[@"imdbID"]];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@&isAdding=%@&imdbID=%@&themovieDBID=%@", userfbID, userTasteJSON, [isAdding boolValue] ? @"YES" : @"NO", self.mediaDatas[@"imdbID"], themovieDBID];
 
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-//    NSLog(@"userTasteJSON : %@", userTasteJSON);
+
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
     [conn start];
 }

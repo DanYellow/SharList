@@ -57,12 +57,14 @@
 "Deleted" = "Deleted";
 "Liked by %i people" = "Liked by %i people";
 "noconnection" = "It's looks like you're not connected to Internet. \nConnect your device and try again.";
+"nodescription" = "No description";
+"Genres" = "Genres: ";
 
 //AboutViewController
 "About" = "About";
 "Privacy" = "Privacy";
 "whatIsApp" = "This app allow user to discover what's other user likes around you if you enable geoloc.";
-"datasOrigins" = "Movies and TV series datas, and posters art are provided by omdbapi's API.\n\nDevelopped with love.";
+"datasOrigins" = "Movies and TV series datas, and posters art are provided by themoviedb's API.\n\nDevelopped with love.";
 "Credits" = "Credits";
 
 

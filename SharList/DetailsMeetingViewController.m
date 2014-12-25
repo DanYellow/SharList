@@ -333,7 +333,7 @@
     cell.model = [rowsOfSection objectAtIndex:indexPath.row];
     
     if (imdbID != nil) {
-        [self getImageCellForData:imdbID aCell:cell];
+        [self getImageCellForData:cell.model aCell:cell];
     }
     
     UIView *bgColorView = [UIView new];
@@ -362,7 +362,7 @@
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 
-- (void) getImageCellForData:(NSString*)imdbID aCell:(UITableViewCell*)cell
+- (void) getImageCellForData:(id)model aCell:(UITableViewCell*)cell
 {
     CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
     
@@ -376,37 +376,48 @@
     imgBackground.contentMode = UIViewContentModeScaleAspectFill;
     imgBackground.clipsToBounds = YES;
     
-    
-    cell.backgroundView = imgBackground; //[cell addSubview:imgBackground];
+    cell.backgroundView = imgBackground;
     
     __block NSString *imgDistURL; // URL of the image from imdb database api
     
-    NSString *linkAPI = @"http://www.omdbapi.com/?i=";
-    linkAPI = [linkAPI stringByAppendingString:imdbID];
-    linkAPI = [linkAPI stringByAppendingString:@"&plot=short&r=json"];
     
     CALayer *imgLayer = [CALayer layer];
     imgLayer.frame = cellFrame;
     [imgLayer addSublayer:gradientLayer];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    [manager GET:linkAPI parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        imgDistURL = responseObject[@"Poster"];
-        
-        [imgBackground setImageWithURL:
-         [NSURL URLWithString:imgDistURL]
-                      placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
-        [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
-        
-        [UIView transitionWithView:cell
-                          duration:.7f
-                           options:UIViewAnimationOptionTransitionCrossDissolve
-                        animations:^{cell.alpha = 1;}
-                        completion:NULL];
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
+    
+    NSString *apiLink;
+    
+    __block NSString *imgURL;
+    if ([model[@"type"] isEqualToString:@"movie"]) {
+        apiLink = kJLTMDbMovie;
+    } else {
+        apiLink = kJLTMDbFind;
+    }
+    
+    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+    [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
+    
+    [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
+        if(!error){
+            if ([model[@"type"] isEqualToString:@"serie"]) {
+                imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
+            } else {
+                imgURL = responseObject[@"poster_path"];
+            }
+            
+            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", imgURL];
+            [imgBackground setImageWithURL:
+             [NSURL URLWithString:imgDistURL]
+                          placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
+            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+            
+            [UIView transitionWithView:cell
+                              duration:.7f
+                               options:UIViewAnimationOptionTransitionCrossDissolve
+                            animations:^{cell.alpha = 1;}
+                            completion:NULL];
+        }
     }];
 }
 
