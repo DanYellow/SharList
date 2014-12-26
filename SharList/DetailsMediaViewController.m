@@ -199,41 +199,73 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
     }
     
-    self.navigationItem.rightBarButtonItem = addMediaToFavoriteBtnItem;
+    
+    self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
-    NSString *apiLink;
+    NSString *apiLink, *trailerApiLink;
     NSDictionary *queryParams;
     NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+    __block NSString *trailerID;
     
     // Tricky part
     // We used now themoviedb
     // But database still have ids from imdb and only movie in themoviedb uses them
-    // and I don't have time now to fill the db w/
+    // and I don't have time / want now to fill the db w/ themoviedb's id
     
     if ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) {
         apiLink = kJLTMDbMovie;
         queryParams = @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage};
+        trailerApiLink = kJLTMDbMovieTrailers;
     } else {
         apiLink = kJLTMDbFind;
         queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"};
+        trailerApiLink = kJLTMDbTVTrailers;
     }
     
+    trailerID = @"";
+
     
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
+            // We made a second query for tv show to get datas from imdb
             if (responseObject[@"tv_results"]) {
-                [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:@{@"id": [responseObject valueForKeyPath:@"tv_results.id"][0], @"language": userLanguage} andResponseBlock:^(id responseObject, NSError *error) {
+                NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath:@"tv_results.id"][0], @"language":userLanguage};
+                [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
                     [self setMediaViewForData:responseObject];
+                    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
+
+                        // We check if there is a video called "trailer"
+                        // if yes we take it
+                        // else we take the first video
+//                        NSLog(@"%@", NSStringFromClass([[responseObject valueForKeyPath:@"results"] class]));
+                        if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
+                            trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
+                        } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
+                            trailerID = [[responseObject valueForKeyPath:@"results.key"][0] stringValue];
+                        }
+                        
+                        if (![trailerID isEqualToString:@""]) {
+                            [self displayTrailerButtonForId:trailerID];
+                        }
+                    }];
                 }];
             } else {
                 [self setMediaViewForData:responseObject];
+                [[JLTMDbClient sharedAPIInstance] GET:trailerApiLink withParameters:@{@"id": self.mediaDatas[@"imdbID"]} andResponseBlock:^(id responseObject, NSError *error) {
+                    if ([responseObject valueForKeyPath:@"youtube.source"] != nil && [[responseObject valueForKeyPath:@"youtube.source"] count] > 0) {
+                        trailerID = [responseObject valueForKeyPath:@"youtube.source"][0];
+                        if (![trailerID isEqualToString:@""]) {
+                            [self displayTrailerButtonForId:trailerID];
+                        }
+                    }
+                    
+                }];
             }
         } else {
             UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [errConnectionAlertView show];
-            NSLog(@"error : %@", error);
             [loadingIndicator stopAnimating];
         }
     }];
@@ -402,8 +434,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) setMediaViewForData:(NSDictionary*)data
 {
     themovieDBID = data[@"id"];
-    
-    
+
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
 
     UIImageView *imgMedia = [UIImageView new];
@@ -416,18 +447,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     imgMedia.clipsToBounds = YES;
     imgMedia.alpha = 1;
     imgMedia.tag = 6;
-//    [self.view insertSubview:imgMedia atIndex:0];
     [self.view insertSubview:imgMedia belowSubview:infoMediaView];
-    
-//    UISwipeGestureRecognizer *imgMediaSwipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(foo)];
-//    imgMediaSwipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-//    [imgMedia addGestureRecognizer:imgMediaSwipeLeft];
-    
+
     
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = imgMedia.frame;
     overlayLayer.name = @"overlayLayerImgMedia";
-//    overlayLayer.opacity = 0;
     overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.83].CGColor;
     [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
     
@@ -518,7 +543,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [mediaGenresLabel sizeToFit];
     [mediaGenresLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
-    
     
     
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -709,6 +733,24 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
     
     return nil;
+}
+
+- (void) displayTrailerButtonForId:(NSString*)aTrailerID
+{
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    
+    UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 40, 75, 25, 25);
+    seeTrailerMediaBtn.trailerID = aTrailerID;
+    [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailerMedia:) forControlEvents:UIControlEventTouchUpInside];
+    [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];
+    [seeTrailerMediaBtn setImage:[[UIImage imageNamed:@"trailer-icon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [infoMediaView addSubview:seeTrailerMediaBtn];
+}
+
+- (void) seeTrailerMedia:(UIButton*)sender
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.youtube.com/watch?v=%@", sender.trailerID]]];
 }
 
 - (void) addPhysics

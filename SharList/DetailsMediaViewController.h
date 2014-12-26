@@ -25,6 +25,7 @@
 #import "UserTaste.h"
 
 #import "UILabel+HeightToFit.h"
+#import "UIButton+TrailerID.h"
 
 
 @protocol UpdateUserTasteListDelegate;
@@ -54,7 +55,7 @@
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
 @property (nonatomic, assign, getter=isAdded) BOOL Added;
 @property (nonatomic, strong) id mediaDatas;
-@property (retain, nonatomic) NSMutableData *responseData;
+@property (nonatomic, retain) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;
 
 
