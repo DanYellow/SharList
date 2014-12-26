@@ -20,6 +20,7 @@
 #endif
 
 #define DegreesToRadians(x) ((x) * M_PI / 180.0)
+#define CGRectSetPos( r, x, y ) CGRectMake( x, y, r.size.width, r.size.height )
 
 //1800
 #define BGFETCHDELAY 3600

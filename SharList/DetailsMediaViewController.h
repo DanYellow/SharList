@@ -29,7 +29,7 @@
 
 @protocol UpdateUserTasteListDelegate;
 
-@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate>
+@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate, UIGestureRecognizerDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

@@ -30,6 +30,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 3 : addRemoveMediaLabel
 // 4 : title label
 // 5 : mediaLikeNumberLabel
+// 6 : imgMedia
+// 7 : buy button
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -123,6 +125,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame = self.view.bounds;
+    gradient.name = @"selfviewGradient";
     UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
     UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
     gradient.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
@@ -304,7 +307,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }];
     
 
-    [self.view addSubview:infoMediaView];
+    [self.view insertSubview:infoMediaView atIndex:10];
     
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
@@ -314,6 +317,79 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     loadingIndicator.hidesWhenStopped = YES;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     [self.view addSubview:loadingIndicator];
+    
+    
+    UIScreenEdgePanGestureRecognizer *leftEdgeGesture = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(showPoster)];
+    leftEdgeGesture.edges = UIRectEdgeRight;
+    leftEdgeGesture.delegate = self;
+    [self.view addGestureRecognizer:leftEdgeGesture];
+    
+    UISwipeGestureRecognizer *rightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showMediaDetails)];
+    rightGesture.direction = UISwipeGestureRecognizerDirectionRight;
+    [self.view addGestureRecognizer:rightGesture];
+}
+
+//
+- (void) showPoster
+{
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+
+    [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 0;
+    
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    infoMediaView.alpha = 0;
+    
+    UIImageView *imgMedia = (UIImageView*)[self.view viewWithTag:6];
+    imgMedia.contentMode = UIViewContentModeScaleAspectFit;
+    
+    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    overlayAlphaAnim.fromValue = @1;
+    overlayAlphaAnim.toValue   = @0;
+    overlayAlphaAnim.duration = 0.21;
+    overlayAlphaAnim.fillMode = kCAFillModeForwards;
+    overlayAlphaAnim.removedOnCompletion = NO;
+    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    [[self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation2"];
+    
+    UIButton *buyButton = (UIButton*)[self.view viewWithTag:7];
+    [UIView animateWithDuration:0.4 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight + 50 );
+                         [self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia].opacity = 0;
+                     }
+                     completion:nil];
+}
+
+- (void) showMediaDetails
+{
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+    [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 1;
+    
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    infoMediaView.alpha = 1;
+    
+    UIImageView *imgMedia = (UIImageView*)[self.view viewWithTag:6];
+    imgMedia.contentMode = UIViewContentModeScaleAspectFill;
+    
+    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    overlayAlphaAnim.fromValue = @0;
+    overlayAlphaAnim.toValue   = @1;
+    overlayAlphaAnim.duration = 0.21;
+    overlayAlphaAnim.fillMode = kCAFillModeForwards;
+    overlayAlphaAnim.removedOnCompletion = NO;
+    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    [[self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
+
+    UIButton *buyButton = (UIButton*)[self.view viewWithTag:7];
+    [UIView animateWithDuration:0.4 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
+                     }
+                     completion:nil];
 }
 
 - (void) setMediaViewForData:(NSDictionary*)data
@@ -322,7 +398,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    //yGoQIzq0XfZsfzvzPGe7QOixYPq.jpg
+
     UIImageView *imgMedia = [UIImageView new];
     
     [imgMedia setImageWithURL:
@@ -332,11 +408,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
     imgMedia.clipsToBounds = YES;
     imgMedia.alpha = 1;
-    [infoMediaView insertSubview:imgMedia atIndex:0];
+    imgMedia.tag = 6;
+//    [self.view insertSubview:imgMedia atIndex:0];
+    [self.view insertSubview:imgMedia belowSubview:infoMediaView];
+    
+//    UISwipeGestureRecognizer *imgMediaSwipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(foo)];
+//    imgMediaSwipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+//    [imgMedia addGestureRecognizer:imgMediaSwipeLeft];
     
     
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = imgMedia.frame;
+    overlayLayer.name = @"overlayLayerImgMedia";
+//    overlayLayer.opacity = 0;
     overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.83].CGColor;
     [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
     
@@ -390,7 +474,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.contentInset = UIEdgeInsetsMake(-6, -2, 0, 0);
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
     mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
-    [self.view addSubview:mediaDescription];
+    [infoMediaView addSubview:mediaDescription];
     
     CGRect frame = mediaDescription.frame;
     frame.size.height = mediaDescription.contentSize.height;
@@ -432,6 +516,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton addTarget:self action:@selector(displayBuyScreen) forControlEvents:UIControlEventTouchUpInside];
+    buyButton.tag = 7;
     [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
     buyButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:17.0f];
     buyButton.frame = CGRectMake(0, screenHeight - 49, screenWidth, 49);
@@ -604,6 +689,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             }
         }
     }
+}
+
+- (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView
+{
+    
+    for (CALayer *layer in [aParentView.layer sublayers]) {
+        
+        if ([[layer name] isEqualToString:myLayerName]) {
+            return layer;
+        }
+    }
+    
+    return nil;
 }
 
 - (void) addPhysics
