@@ -242,7 +242,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat mediaTitleLabelY = [self computeRatio:240 forDimension:imgMediaHeight];
     
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth, 65)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth - 30, 65)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
@@ -329,9 +329,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view addGestureRecognizer:rightGesture];
 }
 
-//
 - (void) showPoster
 {
+    if ([[UIApplication sharedApplication] isStatusBarHidden] == YES) {
+        return;
+    }
+    
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 
@@ -364,6 +367,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) showMediaDetails
 {
+    if ([[UIApplication sharedApplication] isStatusBarHidden] == NO) {
+        return;
+    }
+    
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
     [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 1;
