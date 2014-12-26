@@ -186,16 +186,19 @@
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
     // Message for no friends /:
-    UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
+    UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 25, 90)];
     emptyMeetingsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyMeetingsLabel.text = NSLocalizedString(@"You haven't met a person yet", nil);
     emptyMeetingsLabel.textColor = [UIColor whiteColor];
     emptyMeetingsLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyMeetingsLabel.numberOfLines = 0;
     emptyMeetingsLabel.textAlignment = NSTextAlignmentCenter;
+    emptyMeetingsLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    emptyMeetingsLabel.backgroundColor = [UIColor clearColor];
     emptyMeetingsLabel.tag = 4;
     emptyMeetingsLabel.hidden = YES;
-    emptyMeetingsLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 20.0f);
+    [emptyMeetingsLabel sizeToFit];
+//    emptyMeetingsLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 20.0f);
     [userMeetingsListTableView addSubview:emptyMeetingsLabel];
     
     

@@ -28,7 +28,7 @@
 
 // Meetinglistviewcontroller
 "Tap on  in a meeting to add it among your favorites" = "Tap on  in a meeting to add it among your favorites";
-"You haven't met a person yet" = "You haven't met a person yet";
+"You haven't met a person yet" = "You haven't met a person yet.\nTap \"refresh\" button to discover new things.";
 "All" = "All";
 "Favorites" = "Favorites";
 "Met at %@" = "Met at %@";
