@@ -281,7 +281,7 @@
     infosAboutSearchLabel.text = @"Gentoo";
     infosAboutSearchLabel.backgroundColor = [UIColor colorWithRed:1 green:0 blue:0 alpha:1];
     infosAboutSearchLabel.bounds = CGRectInset(infosAboutSearchLabel.frame, 10.0f, 10.0f);
-//    [self.searchController.view addSubview:fooText];
+//    [self.searchController.view addSubview:infosAboutSearchLabel];
     
     
 //    CALayer *searchControllerBGimgLayer = [CALayer layer];
@@ -403,7 +403,7 @@
 
 - (void) appearsSearchBar
 {
-    self.searchController.searchBar.frame = CGRectMake(0, 10, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
+    self.searchController.searchBar.frame = CGRectMake(0, 9, self.searchController.searchBar.frame.size.width, self.searchController.searchBar.frame.size.height);
 
     self.searchController.view.alpha = 1;
 //    self.searchController.view.backgroundColor = [UIColor colorWithWhite:1.0 alpha:.95f];
@@ -1292,11 +1292,7 @@
 //    self.searchController.view.backgroundColor = [UIColor colorWithWhite:1.0 alpha:.05f];
 }
 
-// When the user starts to scroll we hide the keyboard
-- (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    [self.searchController.searchBar resignFirstResponder];
-}
+
 
 - (UIImage*) changeImg:(UIImage*)image forColor:(UIColor*)aColor
 {
@@ -1323,6 +1319,12 @@
 }
 
 # pragma mark - Delegate methods
+
+// When the user starts to scroll we hide the keyboard
+- (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [self.searchController.searchBar resignFirstResponder];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

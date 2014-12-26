@@ -724,7 +724,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView
 {
-    
     for (CALayer *layer in [aParentView.layer sublayers]) {
         
         if ([[layer name] isEqualToString:myLayerName]) {
@@ -740,7 +739,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     
     UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 40, 75, 25, 25);
+    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 40, 80, 25, 25);
     seeTrailerMediaBtn.trailerID = aTrailerID;
     [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailerMedia:) forControlEvents:UIControlEventTouchUpInside];
     [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];

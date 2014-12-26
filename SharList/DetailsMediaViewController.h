@@ -73,6 +73,9 @@
 //- (void) updateServerDatasForFbID:(NSNumber*)userfbID;
 - (void) saveMediaUpdateForAdding:(BOOL)isAdding;
 - (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding;
+- (void) displayTrailerButtonForId:(NSString*)aTrailerID;
+- (void) seeTrailerMedia:(UIButton*)sender;
+- (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView;
 
 
 @end
