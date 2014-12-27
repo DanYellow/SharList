@@ -239,11 +239,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                         // We check if there is a video called "trailer"
                         // if yes we take it
                         // else we take the first video
-//                        NSLog(@"%@", NSStringFromClass([[responseObject valueForKeyPath:@"results"] class]));
                         if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
                             trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
                         } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
-                            trailerID = [[responseObject valueForKeyPath:@"results.key"][0] stringValue];
+                            trailerID = [responseObject valueForKeyPath:@"results.key"][0];
                         }
                         
                         if (![trailerID isEqualToString:@""]) {
