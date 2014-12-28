@@ -245,7 +245,7 @@
     
     NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
     
-    NSRange r = [[attributedString string] rangeOfString:NSLocalizedString(@"Tap on  ", nil)];
+    NSRange r = [[attributedString string] rangeOfString:NSLocalizedString(@"Tap on ", nil)];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
     CGFloat emptyUserTasteLabelPosY = 45;// [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
