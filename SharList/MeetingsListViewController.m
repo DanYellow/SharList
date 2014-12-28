@@ -168,12 +168,12 @@
     
     NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
     
-    NSRange r = [[attributedString string] rangeOfString:NSLocalizedString(@"Tap on  ", nil)];
+    NSRange r = [[attributedString string] rangeOfString:NSLocalizedString(@"Tap on ", nil)];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
     CGFloat emptyUserTasteLabelPosY = 45; // [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
     
-    UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 90)];
+    UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 24, 90)];
     emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0f];
     emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur l'étoile} pour ajouter aux favoris
     emptyFavoritesLabel.textColor = [UIColor whiteColor];
@@ -186,7 +186,7 @@
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
     // Message for no friends /:
-    UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 25, 90)];
+    UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 110)];
     emptyMeetingsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyMeetingsLabel.text = NSLocalizedString(@"You haven't met a person yet", nil);
     emptyMeetingsLabel.textColor = [UIColor whiteColor];
@@ -197,7 +197,7 @@
     emptyMeetingsLabel.backgroundColor = [UIColor clearColor];
     emptyMeetingsLabel.tag = 4;
     emptyMeetingsLabel.hidden = YES;
-    [emptyMeetingsLabel sizeToFit];
+//    [emptyMeetingsLabel sizeToFit];
 //    emptyMeetingsLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 20.0f);
     [userMeetingsListTableView addSubview:emptyMeetingsLabel];
     

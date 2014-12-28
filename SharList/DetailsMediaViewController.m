@@ -207,7 +207,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     NSString *apiLink, *trailerApiLink;
     NSDictionary *queryParams;
     NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-    __block NSString *trailerID;
+    __block NSString *trailerID = @"";
     
     // Tricky part
     // We used now themoviedb
@@ -218,37 +218,42 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         apiLink = kJLTMDbMovie;
         queryParams = @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage};
         trailerApiLink = kJLTMDbMovieTrailers;
-    } else {
+    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
         apiLink = kJLTMDbFind;
         queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"};
         trailerApiLink = kJLTMDbTVTrailers;
+    } else {
+        return;
     }
-    
-    trailerID = @"";
 
-    
+
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             // We made a second query for tv show to get datas from imdb
             if (responseObject[@"tv_results"]) {
                 NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath:@"tv_results.id"][0], @"language":userLanguage};
                 [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
-                    [self setMediaViewForData:responseObject];
-                    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
+                    if(!error){
+                        [self setMediaViewForData:responseObject];
+                        [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
+                            
+                            // We check if there is a video called "trailer"
+                            // if yes we take it
+                            // else we take the first video
+                            if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
+                                trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
+                            } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
+                                trailerID = [responseObject valueForKeyPath:@"results.key"][0];
+                            }
+                            
+                            if (![trailerID isEqualToString:@""]) {
+                                [self displayTrailerButtonForId:trailerID];
+                            }
+                        }];
+                    } else {
+                        [self noInternetConnexionAlert];
+                    }
 
-                        // We check if there is a video called "trailer"
-                        // if yes we take it
-                        // else we take the first video
-                        if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
-                            trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
-                        } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
-                            trailerID = [responseObject valueForKeyPath:@"results.key"][0];
-                        }
-                        
-                        if (![trailerID isEqualToString:@""]) {
-                            [self displayTrailerButtonForId:trailerID];
-                        }
-                    }];
                 }];
             } else {
                 [self setMediaViewForData:responseObject];
@@ -263,9 +268,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                 }];
             }
         } else {
-            UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-            [errConnectionAlertView show];
-            [loadingIndicator stopAnimating];
+            [self noInternetConnexionAlert];
         }
     }];
 
@@ -983,6 +986,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 }
 
 
+- (void) noInternetConnexionAlert
+{
+    UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [errConnectionAlertView show];
+    [loadingIndicator stopAnimating];
+    
+    return;
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

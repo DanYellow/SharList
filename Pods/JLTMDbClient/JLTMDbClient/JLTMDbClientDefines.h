@@ -82,13 +82,12 @@ static NSString * const kJLTMDbKeywordMovies = @"keyword/{id}/movies";
 static NSString * const kJLTMDbSearchMovie = @"search/movie";
 static NSString * const kJLTMDbSearchPerson = @"search/person";
 static NSString * const kJLTMDbSearchCompany = @"search/company";
-static NSString * const kJLTMDbFind = @"find/{id}";
-
 
 #pragma mark - TV Shows | All customs
 //Documentation: http://docs.themoviedb.apiary.io/#tv
-static NSString * const kJLTMDbTV = @"tv/{id}";
-static NSString * const kJLTMDbTVExternalIds = @"tv/{id}/external_ids";
-static NSString * const kJLTMDbTVTrailers = @"tv/{id}/videos";
+static NSString * const kJLTMDbTV = @"tv/{id}"; //Custom
+static NSString * const kJLTMDbTVExternalIds = @"tv/{id}/external_ids"; //Custom
+static NSString * const kJLTMDbTVTrailers = @"tv/{id}/videos"; //Custom
 
+static NSString * const kJLTMDbFind = @"find/{id}"; //Custom
 
