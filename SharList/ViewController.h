@@ -26,7 +26,7 @@
 #import "UserTaste.h"
 
 @interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate, CLLocationManagerDelegate>
+UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate>
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -42,8 +42,6 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
     NSUserDefaults *userPreferences;
     
     UIActivityIndicatorView *loadingIndicator;
-    
-    CLLocation *theLastLocation;
 }
 
 //@property (nonatomic, weak) id<DetailsMediaViewControllerProtocol> delegate;

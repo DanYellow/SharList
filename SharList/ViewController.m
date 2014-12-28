@@ -339,20 +339,6 @@
         //[userPreferences setBool:YES forKey:@"firstTime"];
         NSLog(@"Log tutorial");
     }
-    
-    
-//    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
-//        self.locationManager = [[CLLocationManager alloc] init];
-//        self.locationManager.delegate = self;
-//        self.locationManager.distanceFilter = 200;
-//        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-//        //      self.locationManager.purpose = @"Location needed to show zombies that are nearby.";
-//        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
-//        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-//            [self.locationManager requestAlwaysAuthorization];
-//        }
-//        [self.locationManager startUpdatingLocation];
-//    }
 }
 
 
@@ -501,7 +487,7 @@
     }
     
     // Update location from server
-//    [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
+    [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
 }
 
 - (void) displayUserTasteList
@@ -1107,22 +1093,36 @@
 
 - (void) updateUserLocation:(NSNumber*)userfbID
 {
+    if ((!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) && self.ConnectedToInternet == NO) {
+        return;
+    }
+    
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
         return;
     }
-
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"]];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
-                                                       timeoutInterval:10.0];
-    [request setHTTPMethod:@"POST"];
     
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&latitude=%f&longitude=%f", userfbID, theLastLocation.coordinate.latitude, theLastLocation.coordinate.longitude];
-
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    if (!self.locationManager) {
+        self.locationManager = [CLLocationManager new];
+        self.locationManager.distanceFilter = 200;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+    }
     
-    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-    [conn start];
+    // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+    if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+        [self.locationManager requestAlwaysAuthorization];
+    }
+    [self.locationManager startUpdatingLocation];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *params = @{@"fbiduser": userfbID,
+                             @"latitude": [NSNumber numberWithDouble:self.locationManager.location.coordinate.latitude],
+                             @"longitude": [NSNumber numberWithDouble:self.locationManager.location.coordinate.longitude]};
+    NSString *updateUserLocationURL = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"];
+    [manager POST:updateUserLocationURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self.locationManager stopUpdatingLocation];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 // This methods allows to retrieve and send (?) user datas from the server
@@ -1311,11 +1311,6 @@
     UIGraphicsEndImageContext();
     
     return img;
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
-{
-    theLastLocation = [locations lastObject];
 }
 
 # pragma mark - Delegate methods

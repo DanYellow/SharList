@@ -308,7 +308,6 @@
 - (void) reloadTableview
 {
     [loadingIndicator startAnimating];
-    self.navigationItem.rightBarButtonItem.enabled = NO;
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     [userMeetingsListTableView reloadData];
@@ -541,7 +540,6 @@
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             completionHandler(UIBackgroundFetchResultFailed);
-            NSLog(@"%@", error);
         } else {
             [self saveRandomUserDatas:data];
             completionHandler(UIBackgroundFetchResultNewData);
@@ -570,7 +568,10 @@
     }];
 }
 
-- (NSMutableURLRequest*) fetchUsersDatasQuery {
+- (NSMutableURLRequest*) fetchUsersDatasQuery
+{
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    
     // Contains globals datas of the project
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
     // Build the array from the plist
@@ -582,30 +583,33 @@
                                                        timeoutInterval:30.0];
     [request setHTTPMethod:@"POST"];
     
-    NSInteger randomUserFacebookID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
+    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
     
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)randomUserFacebookID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] &&
         [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways
     ) {
-        self.locationManager = [[CLLocationManager alloc] init];
-        //        self.locationManager.delegate = self;
+        if (!self.locationManager) {
+            self.locationManager = [CLLocationManager new];
+        }
+        
         self.locationManager.distanceFilter = 1000;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
         if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self.locationManager requestAlwaysAuthorization];
         }
-        [self.locationManager startUpdatingLocation];
+        
     }
+
     
-    
+    // If user is accepts geoloc we update his location BEFORE fetch new users
+    // That's way the meeting is more relevant
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES) {
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
     }
-    
-    //    NSLog([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO");
+
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
     return request;
@@ -698,7 +702,15 @@
     }
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+
+    // We set to 0 the count of no results fetch location
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
+    
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] && [CLLocationManager authorizationStatus] ==kCLAuthorizationStatusAuthorizedAlways
+        ) {
+        [self.locationManager stopUpdatingLocation];
+    }
     
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self performSelectorOnMainThread:@selector(reloadTableview) withObject:nil waitUntilDone:YES];
