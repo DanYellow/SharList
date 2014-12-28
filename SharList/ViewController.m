@@ -487,7 +487,20 @@
     }
     
     // Update location from server
-    [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
+    
+    NSInteger hours = [lastDataFetchingInterval hour];
+    NSInteger minutes = [lastDataFetchingInterval minute];
+    NSInteger seconds = [lastDataFetchingInterval second];
+    
+    // We update user location to the server at launch only every 2 hours
+    NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
+    if (delayLastMeetingUser > 7200)
+    {
+        [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
+    }
 }
 
 - (void) displayUserTasteList
@@ -1157,11 +1170,6 @@
         self.responseData = nil;
         self.responseData = [NSMutableData new];
         
-        // User juste update his location
-        if ([responseString isEqualToString:@"UpdateLocation"]) {
-            return;
-        }
-
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         
         // There is some datas from the server

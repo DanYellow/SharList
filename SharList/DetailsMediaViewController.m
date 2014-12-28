@@ -447,7 +447,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
     imgMedia.clipsToBounds = YES;
-    imgMedia.alpha = 1;
+    imgMedia.alpha = 0;
     imgMedia.tag = 6;
     [self.view insertSubview:imgMedia belowSubview:infoMediaView];
 
@@ -490,7 +490,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
     CGFloat mediaDescriptionHeight = (screenHeight * 47.53521127) / 100; //(280 * 100) / 568
 
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY + 15, mediaDescriptionWidth, mediaDescriptionHeight)];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
     if ([data[@"overview"] isEqualToString:@""]) {
         // the movie db doesnot provide description for this media
         mediaDescription.text = NSLocalizedString(@"nodescription", nil);
@@ -502,31 +502,30 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
     mediaDescription.showsHorizontalScrollIndicator = NO;
+    mediaDescription.showsVerticalScrollIndicator = NO;
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
-    mediaDescription.contentInset = UIEdgeInsetsMake(-6, -2, 0, 0);
+    mediaDescription.contentInset = UIEdgeInsetsMake(0, -2, 0, 0);
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
     mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
     [infoMediaView addSubview:mediaDescription];
     
-    CGRect frame = mediaDescription.frame;
-    frame.size.height = mediaDescription.contentSize.height;
-    mediaDescription.frame = frame;
+//    CGRect frame = mediaDescription.frame;
+//    frame.size.height = mediaDescription.contentSize.height;
+//    mediaDescription.frame = frame;
     
     [UIView animateWithDuration:0.3 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          mediaDescription.alpha = 1;
-                         
                          imgMedia.alpha = .95f;
                      }
-                     completion:^(BOOL finished){
-                     }];
+                     completion:nil];
     
     NSMutableString *genresString = [NSMutableString stringWithString:NSLocalizedString(@"Genres", nil)];
     for (id genre in data[@"genres"]) {
-        [genresString appendString: [genre[@"name"] stringByAppendingString:@", "]];
+        [genresString appendString:[genre[@"name"] stringByAppendingString:@", "]];
     }
     
     UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaDescriptionY - 38, screenWidth - 30, 25)];
