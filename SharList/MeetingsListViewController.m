@@ -57,9 +57,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    
-    self.ConnectedToInternet = YES;
-    
     NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     
@@ -240,7 +237,7 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        if (delayLastMeetingUser > BGFETCHDELAY) //
+        if (delayLastMeetingUser > 3) // BGFETCHDELAY
         {
             self.navigationItem.rightBarButtonItem.enabled = YES;
         } else {
@@ -275,15 +272,17 @@
     int i = 0;
     int fetchLimit = 42; // We display only the 42 last results
     for (UserTaste *userTaste in meetings) {
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
         
-        NSString *dateString = [dateFormatter stringFromDate:[userTaste lastMeeting]];
-        
-        if (dateString != nil && i < fetchLimit) {
-            [listOfDistinctDays addObject: dateString];
-            [foo addObject:[userTaste lastMeeting]];
+        if ([userTaste lastMeeting] != nil) {
+            NSString *dateString = [[dateFormatter stringFromDate:[userTaste lastMeeting]] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            if (i < fetchLimit) {
+                [listOfDistinctDays addObject: dateString];
+                [foo addObject:[userTaste lastMeeting]];
+            }
         }
+        
         i++;
     }
     
@@ -387,15 +386,15 @@
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
     
-    NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
+    NSCompoundPredicate *filterPredicates;
     if (self.isFilterEnabled) {
         filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
+    } else {
+        filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
     }
 
     // We don't want the taste of the current user
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
-
-    
 //    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
 //    if ([meetings count] == 0) {
 //        emptyFavoritesLabel.hidden = NO;
@@ -416,11 +415,14 @@
     
     int j = 0;
     for (int i = 0; i < [meetings count]; i++) {
-        NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
-        
-        if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
-            j++;
+        if ([[meetings objectAtIndex:i] lastMeeting] != nil) {
+            NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
+            
+            if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
+                j++;
+            }
         }
+        
     }
     
     return j;
@@ -437,7 +439,7 @@
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.timeStyle = kCFDateFormatterShortStyle;
     detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model lastMeeting]];
-    
+   
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
 
@@ -682,8 +684,8 @@
         
         // If the meeting have been made less than one hour ago we do nothing
         if ((long)hours < 1) {
-            NSLog(@"already met");
-//            return;
+//            NSLog(@"already met");
+            return;
         }
         
         oldUserTaste.taste = arrayData;

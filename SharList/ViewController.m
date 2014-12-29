@@ -486,6 +486,9 @@
         NSLog(@"fetch server datas");
     }
     
+    
+    
+    
     // Update location from server
     NSCalendar *calendar = [NSCalendar currentCalendar];
     
@@ -713,6 +716,7 @@
         if ([sectionElements isKindOfClass:[NSNull class]]) {
             return 0;
         }
+        
         return sectionElements.count;
     }
 }
