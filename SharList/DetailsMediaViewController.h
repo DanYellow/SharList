@@ -77,6 +77,9 @@
 - (void) seeTrailerMedia:(UIButton*)sender;
 - (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView;
 - (void) noInternetConnexionAlert;
+- (void) showTutorial;
+- (void) hideTutorial;
+- (void) showPoster;
 
 
 @end

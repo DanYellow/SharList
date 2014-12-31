@@ -59,6 +59,7 @@
 "noconnection" = "Il semblerait que vous ne soyez pas connecté à Internet. \nConnectez-vous et réessayez.";
 "nodescription" = "Pas de description pour le moment";
 "Genres" = "Genres : ";
+"goit" = "Compris";
 
 //AboutViewController
 "About" = "A propos";

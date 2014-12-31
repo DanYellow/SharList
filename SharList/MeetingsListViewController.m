@@ -237,7 +237,7 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        if (delayLastMeetingUser > 3) // BGFETCHDELAY
+        if (delayLastMeetingUser > BGFETCHDELAY) //
         {
             self.navigationItem.rightBarButtonItem.enabled = YES;
         } else {

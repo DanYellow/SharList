@@ -224,7 +224,6 @@
 				1A076DDC1A10113000CD725A /* FirstViewController */,
 				1A0014EE1A15819A003430E9 /* Vendors */,
 				1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */,
-				1AEB2BC11A4B25BB000D7C7B /* New Group */,
 				1A076DC01A0FE20900CD725A /* Main.storyboard */,
 				1A076DC31A0FE20900CD725A /* Images.xcassets */,
 				1A1D6E471A10AE930090C598 /* api.json */,
@@ -387,13 +386,6 @@
 				1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */,
 			);
 			name = DetailsMeetingViewController;
-			sourceTree = "<group>";
-		};
-		1AEB2BC11A4B25BB000D7C7B /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "New Group";
 			sourceTree = "<group>";
 		};
 		58C2B6CA8DD147B7BE564C25 /* Frameworks */ = {

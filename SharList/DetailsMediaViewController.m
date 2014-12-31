@@ -23,7 +23,10 @@ green:((float)((rgbValue & 0xFF00) >> 8))/255.0 \
 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
+@implementation DetailsMediaViewController
 
+
+#pragma mark - Tag List
 // Tag list
 // 1 : displayBuyView (blurred view)
 // 2 : addMediaBtnItem
@@ -32,14 +35,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 5 : mediaLikeNumberLabel
 // 6 : imgMedia
 // 7 : buy button
+// 8 : tutorialView
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
 // 401 : iTunes
-
-@implementation DetailsMediaViewController
-
-
 
 // Before page loading we hide the tabbar
 
@@ -110,11 +110,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         }
     }];
     
+    // Init vars
+    self.PhysicsAdded = NO;
+    buyButtonsInitPositions = [NSMutableArray new];
+    // Shoud contain raw data from the server
+    self.responseData = [NSMutableData new];
+    
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
-//    self.mediaDatas = NSMuta
+    
     
     // Contains globals datas of the project
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
@@ -150,11 +156,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     addRemoveMediaLabel.tag = 3;
     [infoMediaView insertSubview:addRemoveMediaLabel atIndex:10];
     
-    // Init vars
-    self.PhysicsAdded = NO;
-    buyButtonsInitPositions = [NSMutableArray new];
-    // Shoud contain raw data from the server
-    self.responseData = [NSMutableData new];
+
     
     self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
                                               withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
@@ -341,7 +343,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }];
     
 
-    [self.view insertSubview:infoMediaView atIndex:10];
+    [self.view insertSubview:infoMediaView atIndex:1];
     
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
@@ -350,88 +352,211 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [loadingIndicator startAnimating];
     loadingIndicator.hidesWhenStopped = YES;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
-    [self.view addSubview:loadingIndicator];
+    [self.view insertSubview:loadingIndicator atIndex:2];
     
-    
+    // <----
     UIScreenEdgePanGestureRecognizer *leftEdgeGesture = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(showPoster)];
     leftEdgeGesture.edges = UIRectEdgeRight;
     leftEdgeGesture.delegate = self;
     [self.view addGestureRecognizer:leftEdgeGesture];
     
+    // ---->
     UISwipeGestureRecognizer *rightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showMediaDetails)];
     rightGesture.direction = UISwipeGestureRecognizerDirectionRight;
     [self.view addGestureRecognizer:rightGesture];
+    
+    
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
+        // Display and extra button for
+        //[userPreferences setBool:YES forKey:@"firstTime"];
+        NSLog(@"Log detailsMediaTutorial");
+        [self showTutorial];
+    }
 }
 
-- (void) showPoster
+#pragma mark - Overlay views
+
+- (void) showTutorial
 {
-    if ([[UIApplication sharedApplication] isStatusBarHidden] == YES) {
-        return;
+    self.navigationItem.hidesBackButton = YES;
+    
+    CAShapeLayer *maskWithHole = [CAShapeLayer layer];
+    
+    CGRect biggerRect = CGRectMake(0, 0, screenWidth, screenHeight);
+    
+    UIBezierPath *maskPath = [UIBezierPath bezierPath];
+    [maskPath moveToPoint:CGPointMake(CGRectGetMinX(biggerRect), CGRectGetMinY(biggerRect))];
+    [maskPath addLineToPoint:CGPointMake(CGRectGetMinX(biggerRect), CGRectGetMaxY(biggerRect))];
+    [maskPath addLineToPoint:CGPointMake(CGRectGetMaxX(biggerRect), CGRectGetMaxY(biggerRect))];
+    [maskPath addLineToPoint:CGPointMake(CGRectGetMaxX(biggerRect), CGRectGetMinY(biggerRect))];
+    [maskPath addLineToPoint:CGPointMake(CGRectGetMinX(biggerRect), CGRectGetMinY(biggerRect))];
+
+    int radius = 23.0;
+    UIBezierPath *circlePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(screenWidth - 50, 18.0, 2.0 * radius, 2.0 * radius) cornerRadius:radius];
+    [maskPath appendPath:circlePath];
+    
+    [maskWithHole setPath:[maskPath CGPath]];
+    [maskWithHole setFillRule:kCAFillRuleEvenOdd];
+    [maskWithHole setFillColor:[[UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f] CGColor]];
+    
+    
+    UIView *tutorialView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.985f];
+    tutorialView.layer.mask = maskWithHole;
+    tutorialView.tag = 8;
+    tutorialView.alpha = 1;
+    tutorialView.opaque = NO;
+    [self.view insertSubview:tutorialView atIndex:4];
+
+    // TUTORIAL VIEW
+    UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
+    [endTutorial addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
+    [endTutorial setTitle:[NSLocalizedString(@"goit", nil) uppercaseString] forState:UIControlStateNormal];
+    endTutorial.frame = CGRectMake(0, screenHeight - 150, screenWidth, 49);
+    endTutorial.tintColor = [UIColor whiteColor];
+    [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+    [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.0f];
+
+    [tutorialView addSubview:endTutorial];
+
+}
+
+- (void) showBuyScreen
+{
+    // We don't need uinavigationcontroller so...
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+//    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    
+    UIView *displayBuyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    displayBuyView.tag = 1;
+    displayBuyView.hidden = NO;
+    displayBuyView.alpha = .25f;
+    displayBuyView.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
+    
+    
+    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];
+    bluredImageView.alpha = .85f;
+    [bluredImageView setFrame:displayBuyView.frame];
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = bluredImageView.bounds;
+    
+    [bluredImageView addSubview:visualEffectView];
+    
+    [displayBuyView addSubview:bluredImageView];
+    
+    BOOL doesContain = [self.view.subviews containsObject:(UIView*)[self.view viewWithTag:1]];
+    UIView *displayBuyViewAlias = (UIView*)[self.view viewWithTag:1];
+    if (doesContain == YES) {
+        displayBuyViewAlias.hidden = NO;
+    } else {
+        [self.view addSubview:displayBuyView];
     }
     
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
-
-    [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 0;
-    
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    infoMediaView.alpha = 0;
-    
-    UIImageView *imgMedia = (UIImageView*)[self.view viewWithTag:6];
-    imgMedia.contentMode = UIViewContentModeScaleAspectFit;
-    
-    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
-    overlayAlphaAnim.fromValue = @1;
-    overlayAlphaAnim.toValue   = @0;
-    overlayAlphaAnim.duration = 0.21;
-    overlayAlphaAnim.fillMode = kCAFillModeForwards;
-    overlayAlphaAnim.removedOnCompletion = NO;
-    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
-    [[self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation2"];
-    
-    UIButton *buyButton = (UIButton*)[self.view viewWithTag:7];
-    [UIView animateWithDuration:0.4 delay:0.0
+    [UIView animateWithDuration:0.4 delay:0.2
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
-                         buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight + 50 );
-                         [self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia].opacity = 0;
+                         displayBuyView.alpha = 1;
+                         displayBuyViewAlias.alpha = 1;
                      }
                      completion:nil];
-}
-
-- (void) showMediaDetails
-{
-    if ([[UIApplication sharedApplication] isStatusBarHidden] == NO) {
-        return;
+    
+    
+    UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:86 forDimension:screenHeight], [self computeRatio:574 forDimension:screenWidth], 16.0f)];
+    titleBuyMedia.textColor = [UIColor whiteColor];
+    titleBuyMedia.backgroundColor = [UIColor clearColor];
+    titleBuyMedia.opaque = NO;
+    titleBuyMedia.text = [[NSString stringWithFormat:NSLocalizedString(@"buy %@", nil), self.mediaDatas[@"name"]] uppercaseString];
+    titleBuyMedia.font = [UIFont fontWithName:@"HelveticaNeue" size:19.0f];
+    titleBuyMedia.textAlignment = NSTextAlignmentCenter;
+    titleBuyMedia.numberOfLines = 0;
+    titleBuyMedia.lineBreakMode = NSLineBreakByWordWrapping;
+    [titleBuyMedia heightToFit];
+    
+    [displayBuyView addSubview:titleBuyMedia];
+    
+    UIFont *buttonFont = [UIFont fontWithName:@"Helvetica" size:18.0f];
+    CGSize buttonSize = CGSizeMake([self computeRatio:574 forDimension:screenWidth], 41.0f);
+    CGPoint buttonPos = CGPointMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:190 forDimension:screenHeight]);
+    
+    
+    UIColor *amazonOrange = [UIColor colorWithRed:1 green:(124.0f/255.0f) blue:(2.0f/255.0f) alpha:1.0f];
+    
+    ShopButton *amazonBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
+    amazonBuyButton.tag = 400;
+    [amazonBuyButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
+    [amazonBuyButton setTitle:[@"Amazon" uppercaseString] forState:UIControlStateNormal];
+    [amazonBuyButton setTitleColor:amazonOrange forState:UIControlStateNormal];
+    amazonBuyButton.titleLabel.font = buttonFont;
+    amazonBuyButton.frame = CGRectMake(buttonPos.x, buttonPos.y + 30, buttonSize.width, buttonSize.height);
+    amazonBuyButton.backgroundColor = [UIColor clearColor];
+    amazonBuyButton.layer.borderColor = amazonOrange.CGColor;
+    amazonBuyButton.layer.borderWidth = 2.0f;
+    [displayBuyView addSubview:amazonBuyButton];
+    
+    
+    
+    CGFloat itunesBuyButtonPosY = amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + (38/2);
+    UIColor *itunesGray = [UIColor colorWithRed:(166.0f/255.0f) green:(166.0f/255.0f) blue:(166.0f/255.0f) alpha:1.0f];
+    
+    ShopButton *itunesBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
+    itunesBuyButton.tag = 401;
+    [itunesBuyButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
+    [itunesBuyButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
+    itunesBuyButton.titleLabel.font = buttonFont;
+    [itunesBuyButton setTitleColor:itunesGray forState:UIControlStateNormal];
+    itunesBuyButton.frame = CGRectMake(buttonPos.x, itunesBuyButtonPosY, buttonSize.width, buttonSize.height);
+    itunesBuyButton.backgroundColor = [UIColor clearColor];
+    itunesBuyButton.layer.borderColor = itunesGray.CGColor;
+    itunesBuyButton.layer.borderWidth = 2.0f;
+    //    [displayBuyView addSubview:itunesBuyButton];
+    
+    
+    
+    CGRect lineFrame = CGRectMake(0, 18, 35, 4);
+    
+    
+    UIButton *crossButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    crossButton.frame = CGRectMake([self computeRatio:250 forDimension:screenWidth], screenHeight - [self computeRatio:116 forDimension:screenHeight], 50, 50);
+    [crossButton addTarget:self action:@selector(hideBuyScreen) forControlEvents:UIControlEventTouchUpInside];
+    crossButton.backgroundColor = [UIColor clearColor];
+    crossButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    crossButton.layer.borderWidth = 1.0f;
+    crossButton.layer.cornerRadius = 25;
+    crossButton.center = CGPointMake(self.view.center.x, crossButton.frame.origin.y);
+    [displayBuyView addSubview:crossButton];
+    
+    UIView *lineRight = [[UIView alloc] initWithFrame:lineFrame];
+    lineRight.backgroundColor = [UIColor whiteColor];
+    lineRight.center = CGPointMake(crossButton.frame.size.width / 2, crossButton.frame.size.height / 2);
+    lineRight.transform = CGAffineTransformMakeRotation(DegreesToRadians(-45));
+    lineRight.userInteractionEnabled = NO;
+    [crossButton addSubview:lineRight];
+    
+    UIView *lineLeft = [[UIView alloc] initWithFrame:lineFrame];
+    lineLeft.backgroundColor = [UIColor whiteColor];
+    lineLeft.userInteractionEnabled = NO;
+    lineLeft.center = CGPointMake(crossButton.frame.size.width / 2, crossButton.frame.size.height / 2);
+    lineLeft.transform = CGAffineTransformMakeRotation(DegreesToRadians(45));
+    [crossButton addSubview:lineLeft];
+    
+    
+    // Create array of all shop buttons one time only
+    if (self.isPhysicsAdded == NO) {
+        for (ShopButton *shopButton in displayBuyView.subviews) {
+            if ([shopButton isKindOfClass:[ShopButton class]]) {
+                [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:shopButton.frame]];
+            }
+        }
     }
-    
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-    [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 1;
-    
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    infoMediaView.alpha = 1;
-    
-    UIImageView *imgMedia = (UIImageView*)[self.view viewWithTag:6];
-    imgMedia.contentMode = UIViewContentModeScaleAspectFill;
-    
-    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
-    overlayAlphaAnim.fromValue = @0;
-    overlayAlphaAnim.toValue   = @1;
-    overlayAlphaAnim.duration = 0.21;
-    overlayAlphaAnim.fillMode = kCAFillModeForwards;
-    overlayAlphaAnim.removedOnCompletion = NO;
-    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
-    [[self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
-
-    UIButton *buyButton = (UIButton*)[self.view viewWithTag:7];
-    [UIView animateWithDuration:0.4 delay:0.0
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
-                     }
-                     completion:nil];
 }
+
 
 - (void) setMediaViewForData:(NSDictionary*)data
 {
@@ -440,9 +565,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
 
     UIImageView *imgMedia = [UIImageView new];
+    NSURL *imgMediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", data[@"poster_path"]]];
     
-    [imgMedia setImageWithURL:
-     [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", data[@"poster_path"]]]
+    [imgMedia setImageWithURL:imgMediaURL
              placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
     imgMedia.frame = CGRectMake(0, 0, screenWidth, screenHeight);
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
@@ -450,8 +575,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     imgMedia.alpha = 0;
     imgMedia.tag = 6;
     [self.view insertSubview:imgMedia belowSubview:infoMediaView];
-
     
+
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = imgMedia.frame;
     overlayLayer.name = @"overlayLayerImgMedia";
@@ -547,10 +672,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [buyButton addTarget:self action:@selector(displayBuyScreen) forControlEvents:UIControlEventTouchUpInside];
+    [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
     buyButton.tag = 7;
     [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
-    buyButton.titleLabel.font = [UIFont fontWithName:@"Helvetica-Neue" size:17.0f];
+    buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
     buyButton.frame = CGRectMake(0, screenHeight - 49, screenWidth, 49);
     buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
 
@@ -560,7 +685,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [buyButton setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
     
-    [self.view addSubview:buyButton];
+    [infoMediaView insertSubview:buyButton atIndex:42];
     
     [loadingIndicator stopAnimating];
 }
@@ -588,151 +713,78 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     return motionGroup;
 }
 
-- (void) displayBuyScreen
+
+
+#pragma mark - Custom Events
+
+- (void) showPoster
 {
-    // We don't need uinavigationcontroller so...
-    [self.navigationController setNavigationBarHidden:YES animated:NO];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-//    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    
-    UIView *displayBuyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-    displayBuyView.tag = 1;
-    displayBuyView.hidden = NO;
-    displayBuyView.alpha = .25f;
-    displayBuyView.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
-
-    
-    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];
-    bluredImageView.alpha = .85f;
-    [bluredImageView setFrame:displayBuyView.frame];
-
-    UIVisualEffect *blurEffect;
-    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-    
-    UIVisualEffectView *visualEffectView;
-    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    visualEffectView.frame = bluredImageView.bounds;
-    
-    [bluredImageView addSubview:visualEffectView];
-    
-    [displayBuyView addSubview:bluredImageView];
-    
-    BOOL doesContain = [self.view.subviews containsObject:(UIView*)[self.view viewWithTag:1]];
-    UIView *displayBuyViewAlias = (UIView*)[self.view viewWithTag:1];
-    if (doesContain == YES) {
-        displayBuyViewAlias.hidden = NO;
-    } else {
-       [self.view addSubview:displayBuyView];
+    if ([[UIApplication sharedApplication] isStatusBarHidden] == YES) {
+        return;
     }
     
-    [UIView animateWithDuration:0.4 delay:0.2
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+    
+    [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 0;
+    
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    infoMediaView.alpha = 0;
+    
+    UIImageView *imgMedia = (UIImageView*)[self.view viewWithTag:6];
+    imgMedia.contentMode = UIViewContentModeScaleAspectFit;
+    
+    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    overlayAlphaAnim.fromValue = @1;
+    overlayAlphaAnim.toValue   = @0;
+    overlayAlphaAnim.duration = 0.21;
+    overlayAlphaAnim.fillMode = kCAFillModeForwards;
+    overlayAlphaAnim.removedOnCompletion = NO;
+    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    [[self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation2"];
+    
+    UIButton *buyButton = (UIButton*)[self.view viewWithTag:7];
+    [UIView animateWithDuration:0.4 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
-                         displayBuyView.alpha = 1;
-                         displayBuyViewAlias.alpha = 1;
+                         buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight + 50 );
+                         [self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia].opacity = 0;
                      }
                      completion:nil];
-    
-    
-    UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:86 forDimension:screenHeight], [self computeRatio:574 forDimension:screenWidth], 16.0f)];
-    titleBuyMedia.textColor = [UIColor whiteColor];
-    titleBuyMedia.backgroundColor = [UIColor clearColor];
-    titleBuyMedia.opaque = NO;
-    titleBuyMedia.text = [[NSString stringWithFormat:NSLocalizedString(@"buy %@", nil), self.mediaDatas[@"name"]] uppercaseString];
-    titleBuyMedia.font = [UIFont fontWithName:@"Helvetica-Neue" size:19.0f];
-    titleBuyMedia.textAlignment = NSTextAlignmentCenter;
-    titleBuyMedia.numberOfLines = 0;
-    titleBuyMedia.lineBreakMode = NSLineBreakByWordWrapping;
-    [titleBuyMedia heightToFit];
-    
-    [displayBuyView addSubview:titleBuyMedia];
-    
-    UIFont *buttonFont = [UIFont fontWithName:@"Helvetica" size:18.0f];
-    CGSize buttonSize = CGSizeMake([self computeRatio:574 forDimension:screenWidth], 41.0f);
-    CGPoint buttonPos = CGPointMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:190 forDimension:screenHeight]);
-    
-    
-    UIColor *amazonOrange = [UIColor colorWithRed:1 green:(124.0f/255.0f) blue:(2.0f/255.0f) alpha:1.0f];
-    
-    ShopButton *amazonBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
-    amazonBuyButton.tag = 400;
-    [amazonBuyButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
-    [amazonBuyButton setTitle:[@"Amazon" uppercaseString] forState:UIControlStateNormal];
-    [amazonBuyButton setTitleColor:amazonOrange forState:UIControlStateNormal];
-    amazonBuyButton.titleLabel.font = buttonFont;
-    amazonBuyButton.frame = CGRectMake(buttonPos.x, buttonPos.y + 30, buttonSize.width, buttonSize.height);
-    amazonBuyButton.backgroundColor = [UIColor clearColor];
-    amazonBuyButton.layer.borderColor = amazonOrange.CGColor;
-    amazonBuyButton.layer.borderWidth = 2.0f;
-    [displayBuyView addSubview:amazonBuyButton];
-    
-
-    
-    CGFloat itunesBuyButtonPosY = amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + (38/2);
-    UIColor *itunesGray = [UIColor colorWithRed:(166.0f/255.0f) green:(166.0f/255.0f) blue:(166.0f/255.0f) alpha:1.0f];
-    
-    ShopButton *itunesBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
-    itunesBuyButton.tag = 401;
-    [itunesBuyButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
-    [itunesBuyButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
-    itunesBuyButton.titleLabel.font = buttonFont;
-    [itunesBuyButton setTitleColor:itunesGray forState:UIControlStateNormal];
-    itunesBuyButton.frame = CGRectMake(buttonPos.x, itunesBuyButtonPosY, buttonSize.width, buttonSize.height);
-    itunesBuyButton.backgroundColor = [UIColor clearColor];
-    itunesBuyButton.layer.borderColor = itunesGray.CGColor;
-    itunesBuyButton.layer.borderWidth = 2.0f;
-//    [displayBuyView addSubview:itunesBuyButton];
-    
- 
-    
-    CGRect lineFrame = CGRectMake(0, 18, 35, 4);
-    
-    
-    UIButton *crossButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    crossButton.frame = CGRectMake([self computeRatio:250 forDimension:screenWidth], screenHeight - [self computeRatio:116 forDimension:screenHeight], 50, 50);
-    [crossButton addTarget:self action:@selector(hideBuyScreen) forControlEvents:UIControlEventTouchUpInside];
-    crossButton.backgroundColor = [UIColor clearColor];
-    crossButton.layer.borderColor = [UIColor whiteColor].CGColor;
-    crossButton.layer.borderWidth = 1.0f;
-    crossButton.layer.cornerRadius = 25;
-    crossButton.center = CGPointMake(self.view.center.x, crossButton.frame.origin.y);
-    [displayBuyView addSubview:crossButton];
-    
-    UIView *lineRight = [[UIView alloc] initWithFrame:lineFrame];
-    lineRight.backgroundColor = [UIColor whiteColor];
-    lineRight.center = CGPointMake(crossButton.frame.size.width / 2, crossButton.frame.size.height / 2);
-    lineRight.transform = CGAffineTransformMakeRotation(DegreesToRadians(-45));
-    lineRight.userInteractionEnabled = NO;
-    [crossButton addSubview:lineRight];
-    
-    UIView *lineLeft = [[UIView alloc] initWithFrame:lineFrame];
-    lineLeft.backgroundColor = [UIColor whiteColor];
-    lineLeft.userInteractionEnabled = NO;
-    lineLeft.center = CGPointMake(crossButton.frame.size.width / 2, crossButton.frame.size.height / 2);
-    lineLeft.transform = CGAffineTransformMakeRotation(DegreesToRadians(45));
-    [crossButton addSubview:lineLeft];
-    
-    
-    // Create array of all shop buttons one time only
-    if (self.isPhysicsAdded == NO) {
-        for (ShopButton *shopButton in displayBuyView.subviews) {
-            if ([shopButton isKindOfClass:[ShopButton class]]) {
-                [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:shopButton.frame]];
-            }
-        }
-    }
 }
 
-- (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView
+- (void) showMediaDetails
 {
-    for (CALayer *layer in [aParentView.layer sublayers]) {
-        
-        if ([[layer name] isEqualToString:myLayerName]) {
-            return layer;
-        }
+    if ([[UIApplication sharedApplication] isStatusBarHidden] == NO) {
+        return;
     }
     
-    return nil;
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+    [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 1;
+    
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    infoMediaView.alpha = 1;
+    
+    UIImageView *imgMedia = (UIImageView*)[self.view viewWithTag:6];
+    imgMedia.contentMode = UIViewContentModeScaleAspectFill;
+    
+    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    overlayAlphaAnim.fromValue = @0;
+    overlayAlphaAnim.toValue   = @1;
+    overlayAlphaAnim.duration = 0.21;
+    overlayAlphaAnim.fillMode = kCAFillModeForwards;
+    overlayAlphaAnim.removedOnCompletion = NO;
+    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    [[self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
+    
+    UIButton *buyButton = (UIButton*)[self.view viewWithTag:7];
+    [UIView animateWithDuration:0.4 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
+                     }
+                     completion:nil];
 }
 
 - (void) displayTrailerButtonForId:(NSString*)aTrailerID
@@ -816,15 +868,29 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }];
 }
 
-- (UIImage *) takeSnapshotOfView:(UIView *)view
+
+- (void) hideTutorial
 {
-    UIGraphicsBeginImageContext(CGSizeMake(view.frame.size.width, view.frame.size.height));
-    [view drawViewHierarchyInRect:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height) afterScreenUpdates:YES];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
+    self.navigationItem.hidesBackButton = NO;
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
     
-    return image;
+    UIView *tutorialView = (UIView*)[self.view viewWithTag:8];
+    [UIView animateWithDuration:0.25 delay:0.1
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         tutorialView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [tutorialView removeFromSuperview];
+                     }];
+    
+    
 }
+
+
+
+#pragma mark - Saving user list
 
 - (void) addAndRemoveMediaToList:(UIBarButtonItem*) sender
 {
@@ -905,6 +971,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 }
 
 
+#pragma mark - Server part
+
 - (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding
 {
     [self updateServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] forAdding:isAdding];
@@ -926,9 +994,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // We send the json to the server only when we need it
     NSString *userTasteJSON = [self updateTasteForServer];
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@&isAdding=%@&imdbID=%@&themovieDBID=%@", userfbID, userTasteJSON, [isAdding boolValue] ? @"YES" : @"NO", self.mediaDatas[@"imdbID"], themovieDBID];
-
+    
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-
+    
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
     [conn start];
 }
@@ -943,7 +1011,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         self.responseData = [NSMutableData new];
     }
 }
-
 
 // This method retrieve an readable json of user taste for the database
 - (NSString *) updateTasteForServer
@@ -963,6 +1030,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         return jsonString;
     }
 }
+
+
+- (void) noInternetConnexionAlert
+{
+    UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [errConnectionAlertView show];
+    [loadingIndicator stopAnimating];
+    
+    return;
+}
+
+#pragma mark - Misc
 
 - (void) openStore:(UIButton*)sender
 {
@@ -986,15 +1065,30 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     return roundf(ratio);
 }
 
-
-- (void) noInternetConnexionAlert
+- (UIImage *) takeSnapshotOfView:(UIView *)view
 {
-    UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    [errConnectionAlertView show];
-    [loadingIndicator stopAnimating];
+    UIGraphicsBeginImageContext(CGSizeMake(view.frame.size.width, view.frame.size.height));
+    [view drawViewHierarchyInRect:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height) afterScreenUpdates:YES];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
     
-    return;
+    return image;
 }
+
+
+- (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView
+{
+    for (CALayer *layer in [aParentView.layer sublayers]) {
+        
+        if ([[layer name] isEqualToString:myLayerName]) {
+            return layer;
+        }
+    }
+    
+    return nil;
+}
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
