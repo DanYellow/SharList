@@ -740,11 +740,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     
     UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 40, 80, 25, 25);
+    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 45, 80, 40, 40);
     seeTrailerMediaBtn.trailerID = aTrailerID;
     [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailerMedia:) forControlEvents:UIControlEventTouchUpInside];
     [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];
     [seeTrailerMediaBtn setImage:[[UIImage imageNamed:@"trailer-icon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    seeTrailerMediaBtn.backgroundColor = [UIColor clearColor];
+    seeTrailerMediaBtn.opaque = YES;
     [infoMediaView addSubview:seeTrailerMediaBtn];
 }
 
