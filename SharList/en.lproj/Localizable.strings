@@ -60,6 +60,7 @@
 "nodescription" = "No description";
 "Genres" = "Genres: ";
 "goit" = "Go it";
+"tutFavsMessage" = "Use this icon to add it among your list and introduce it to the world";
 
 //AboutViewController
 "About" = "About";

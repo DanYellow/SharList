@@ -367,9 +367,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
-        // Display and extra button for
-        //[userPreferences setBool:YES forKey:@"firstTime"];
-        NSLog(@"Log detailsMediaTutorial");
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMediaTutorial"];
         [self showTutorial];
     }
 }
@@ -401,14 +399,32 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     
     UIView *tutorialView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-    tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.985f];
+    tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.989f];
     tutorialView.layer.mask = maskWithHole;
     tutorialView.tag = 8;
-    tutorialView.alpha = 1;
+    tutorialView.alpha = .25;
     tutorialView.opaque = NO;
     [self.view insertSubview:tutorialView atIndex:4];
+    
+    [UIView animateWithDuration:0.35 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         tutorialView.alpha = 1.0;
+                     }
+                     completion:nil];
+    
 
     // TUTORIAL VIEW
+    UITextView *tutFavsMessageTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 40, 90)];
+    tutFavsMessageTV.text = NSLocalizedString(@"tutFavsMessage", nil);
+    tutFavsMessageTV.textColor = [UIColor whiteColor];
+    tutFavsMessageTV.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    tutFavsMessageTV.textAlignment = NSTextAlignmentCenter;
+    tutFavsMessageTV.center = CGPointMake(self.view.center.x, self.view.center.y);
+    tutFavsMessageTV.backgroundColor = [UIColor clearColor];
+    [tutFavsMessageTV sizeToFit];
+    [tutorialView addSubview:tutFavsMessageTV];
+    
     UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
     [endTutorial addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
     [endTutorial setTitle:[NSLocalizedString(@"goit", nil) uppercaseString] forState:UIControlStateNormal];
@@ -416,10 +432,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     endTutorial.tintColor = [UIColor whiteColor];
     [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
     [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
-    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.0f];
+    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
 
     [tutorialView addSubview:endTutorial];
-
 }
 
 - (void) showBuyScreen
@@ -884,8 +899,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      completion:^(BOOL finished){
                          [tutorialView removeFromSuperview];
                      }];
-    
-    
 }
 
 

@@ -60,6 +60,7 @@
 "nodescription" = "Pas de description pour le moment";
 "Genres" = "Genres : ";
 "goit" = "Compris";
+"tutFavsMessage" = "Utilisez l'icône pour ajouter une fiche à vos favoris et faire découvrir au monde que vous l'aimez";
 
 //AboutViewController
 "About" = "A propos";
