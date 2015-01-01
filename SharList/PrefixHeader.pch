@@ -23,7 +23,7 @@
 #define CGRectSetPos( r, x, y ) CGRectMake( x, y, r.size.width, r.size.height )
 
 //1800
-#define BGFETCHDELAY 3600
+#define BGFETCHDELAY 3920
 
 #define MR_ENABLE_ACTIVE_RECORD_LOGGING 0
 #import "CoreData+MagicalRecord.h"
