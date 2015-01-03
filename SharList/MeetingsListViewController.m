@@ -538,7 +538,9 @@
 
 - (void)fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastManualUpdate"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             completionHandler(UIBackgroundFetchResultFailed);

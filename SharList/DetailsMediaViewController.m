@@ -635,7 +635,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // the movie db doesnot provide description for this media
         mediaDescription.text = NSLocalizedString(@"nodescription", nil);
     } else {
-        mediaDescription.text = data[@"overview"];
+        mediaDescription.text = [data[@"overview"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;

@@ -65,12 +65,11 @@
 
 - (void) addMediaToUserList;
 - (void) removeMediaToUserList;
-- (void) displayBuyScreen;
+- (void) showBuyScreen;
 - (void) hideBuyScreen;
 - (void) openStore:(UIButton*)sender;
 
 - (void) addPhysics;
-//- (void) updateServerDatasForFbID:(NSNumber*)userfbID;
 - (void) saveMediaUpdateForAdding:(BOOL)isAdding;
 - (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding;
 - (void) displayTrailerButtonForId:(NSString*)aTrailerID;
