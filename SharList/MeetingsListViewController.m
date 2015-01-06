@@ -561,7 +561,7 @@
         return;
     }
     
-    
+    [loadingIndicator startAnimating];
     [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {

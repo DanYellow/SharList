@@ -2,9 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>adress</key>
-	<string></string>
 	<key>apiPath</key>
 	<string>http://danyellow.ilotreseau.net/</string>
+	<key>appversion</key>
+	<string>Shound 1.0</string>
+	<key>contactShound</key>
+	<string>contact@shound.fr</string>
 </dict>
 </plist>

@@ -51,24 +51,45 @@
     [privacyTextView sizeToFit];
     [self.view addSubview:privacyTextView];
     
-    UILabel *privacyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 10, 20)];
-    privacyLabel.text = NSLocalizedString(@"Credits", nil);
-    privacyLabel.textColor = [UIColor whiteColor];
-    privacyLabel.backgroundColor = [UIColor clearColor];
-    privacyLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.0f];
-    [privacyTextView addSubview:privacyLabel];
+    UILabel *creditsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 10, 20)];
+    creditsLabel.text = NSLocalizedString(@"Credits", nil);
+    creditsLabel.textColor = [UIColor whiteColor];
+    creditsLabel.backgroundColor = [UIColor clearColor];
+    creditsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.0f];
+    [privacyTextView addSubview:creditsLabel];
     
-    UITextView *privacyText = [[UITextView alloc] initWithFrame:CGRectMake(0, privacyLabel.frame.origin.y + privacyLabel.frame.size.height + 5, screenWidth - 10, 30)];
-    privacyText.textColor = [UIColor whiteColor];
-    privacyText.backgroundColor = [UIColor clearColor];
-    privacyText.font = [UIFont fontWithName:@"Helvetica" size:13.0f];
-    privacyText.text = NSLocalizedString(@"datasOrigins", nil);
-    privacyText.dataDetectorTypes = UIDataDetectorTypeAll;
-    privacyText.editable = NO;
-    [privacyText sizeToFit];
-    privacyText.textAlignment = NSTextAlignmentLeft;
-    privacyText.contentInset = UIEdgeInsetsMake(-6, -3, 0, 0);
-    [privacyTextView addSubview:privacyText];
+    UITextView *creditsText = [[UITextView alloc] initWithFrame:CGRectMake(0, creditsLabel.frame.origin.y + creditsLabel.frame.size.height + 5, screenWidth - 10, 30)];
+    creditsText.textColor = [UIColor whiteColor];
+    creditsText.backgroundColor = [UIColor clearColor];
+    creditsText.font = [UIFont fontWithName:@"Helvetica" size:13.0f];
+    creditsText.text = NSLocalizedString(@"datasOrigins", nil);
+    creditsText.dataDetectorTypes = UIDataDetectorTypeAll;
+    creditsText.editable = NO;
+    [creditsText sizeToFit];
+    creditsText.textAlignment = NSTextAlignmentLeft;
+    creditsText.contentInset = UIEdgeInsetsMake(-6, -3, 0, 0);
+    [privacyTextView addSubview:creditsText];
+    
+    
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+    NSString *aboutApp = [NSString stringWithFormat:@"%@ \r %@", [settingsDict valueForKey:@"appversion"], [settingsDict valueForKey:@"contactShound"]];
+//    aboutApp = [aboutApp stringByAppendingString:@"\n"];
+//    aboutApp = [aboutApp stringByAppendingString:];
+    
+    UITextView *contactShound = [[UITextView alloc] initWithFrame:CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 80)];
+    contactShound.text = aboutApp;
+    contactShound.textColor = [UIColor whiteColor];
+    contactShound.textAlignment = NSTextAlignmentCenter;
+    contactShound.dataDetectorTypes = UIDataDetectorTypeAll;
+    contactShound.editable = NO;
+    contactShound.backgroundColor = [UIColor clearColor];
+    contactShound.opaque = YES;
+    contactShound.font = [UIFont fontWithName:@"Helvetica" size:13.0f];
+    contactShound.tintColor = [UIColor colorWithRed:(221.0/255.0f) green:(214.0f/255.0f) blue:(227.0f/255.0f) alpha:.95f];
+//    [contactShound sizeToFit];
+    [self.view addSubview:contactShound];
 }
 
 - (void) foo {
