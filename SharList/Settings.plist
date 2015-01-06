@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>apiPath</key>
-	<string>http://danyellow.ilotreseau.net/</string>
+	<string>http://api.shound.fr/</string>
 	<key>appversion</key>
 	<string>Shound 1.0</string>
 	<key>contactShound</key>

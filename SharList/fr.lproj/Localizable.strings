@@ -67,7 +67,7 @@
 "Privacy" = "Confidentialité";
 "whatIsApp" = "Shound vous permet de faire découvrir au monde ce que vous aimez. Les utilisateurs autour de vous peuvent savoir vos films et séries favoris.";
 //Show them your tastes.
-"datasOrigins" = "Les données des films et séries proviennent de l'API de themoviedb.\n\nDéveloppé avec amour.";
+"datasOrigins" = "Les données des films et séries proviennent de l'API de themoviedb.";
 "Credits" = "Crédits";
 "Privacy" = "Privacy";
 "PrivacyDetails" = "Shound ";

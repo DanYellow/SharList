@@ -700,7 +700,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [buyButton setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
     
-    [infoMediaView insertSubview:buyButton atIndex:42];
+//    [infoMediaView insertSubview:buyButton atIndex:42];
     
     [loadingIndicator stopAnimating];
 }
