@@ -114,8 +114,6 @@
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void  (^)(UIBackgroundFetchResult))completionHandler
 {
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"OK" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-//    [alert show];
     // If user is not connected to facebook, no bg task for him
     // and said to iOS's algorithm to "push" back manage
     if (!FBSession.activeSession.isOpen) {
@@ -124,13 +122,8 @@
     }
     
     MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
-    NSDate *fetchStart = [NSDate date];
     [meetingsListViewController fetchNewDataWithCompletionHandler:^(UIBackgroundFetchResult result) {
         completionHandler(result);
-        
-        NSDate *fetchEnd = [NSDate date];
-        NSTimeInterval timeElapsed = [fetchEnd timeIntervalSinceDate:fetchStart];
-        NSLog(@"Background Fetch Duration: %f seconds", timeElapsed);
     }];
 }
 

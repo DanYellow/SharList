@@ -26,7 +26,7 @@
 "No internet connection" = "Aucune connexion Internet";
 
 // Meetingslistviewcontroller
-"You haven't met a person yet" = "Vous n'avez pas encore rencontré de personnes.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
+"You haven't met a person yet" = "Vous n'avez pas encore rencontré d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
 "All" = "Toutes";
 "Favorites" = "Favoris";
 "Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une rencontre pour l'ajouter aux favoris";

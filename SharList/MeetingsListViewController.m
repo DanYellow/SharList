@@ -687,6 +687,7 @@
         // If the meeting have been made less than one hour ago we do nothing
         if ((long)hours < 1) {
 //            NSLog(@"already met");
+            [loadingIndicator stopAnimating];
             return;
         }
         
