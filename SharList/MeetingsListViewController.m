@@ -688,6 +688,7 @@
         if ((long)hours < 1) {
 //            NSLog(@"already met");
             [loadingIndicator stopAnimating];
+//            [self fetchUsersDatasBtnAction];
             return;
         }
         

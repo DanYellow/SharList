@@ -153,7 +153,16 @@
         userSelectRefresh.tag = 2;
         [userSelectRefresh addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
         userSelectionTableView.refreshControl = userSelectRefresh;
-//        [userSelectionTableView addSubview:userSelectRefresh];
+//        [userSelectionTableView.tableView addSubview:userSelectRefresh];
+        
+//        NSDateFormatter *formatter = [NSDateFormatter new];
+//        [formatter setDateFormat:@"MMM d, h:mm a"];
+//        NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
+//
+//        NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
+//                                                                    forKey:NSForegroundColorAttributeName];
+//        NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
+//        userSelectRefresh.attributedTitle = attributedTitle;
     }
 }
 
@@ -161,6 +170,14 @@
 {
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
     [userSelectRefresh endRefreshing];
+    
+//    NSDateFormatter *formatter = [NSDateFormatter new];
+//    [formatter setDateFormat:@"MMM d, h:mm a"];
+//    NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
+//    NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
+//                                                                forKey:NSForegroundColorAttributeName];
+//    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
+//    userSelectRefresh.attributedTitle = attributedTitle;
 
     [self getServerDatasForFbID:[self.meetingDatas fbid]];
 }

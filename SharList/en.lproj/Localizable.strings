@@ -41,6 +41,7 @@
 "met %@ times" = "met %@ times";
 
 //Settings view controller
+"Settings" = "Settings";
 "Enable geolocation" = "Enable geolocation";
 "Log out" = "Log out";
 "Delete account" = "Delete account";

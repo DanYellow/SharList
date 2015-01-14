@@ -178,6 +178,8 @@
                 [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied ||
                 [CLLocationManager authorizationStatus] == kCLAuthorizationStatusRestricted) {
                 geolocSwitch.on = NO;
+//                UIAlertView
+                NSLog(@"denied");
             } else {
                 geolocSwitch.on = YES;
             }
@@ -287,7 +289,7 @@
             case kCLAuthorizationStatusDenied:
             case kCLAuthorizationStatusRestricted:
             {
-                alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc denied", nil) delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+                alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc denied", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NSLocalizedString(@"Settings", nil), nil];
                 aBool = NO;
             }
                 break;                
@@ -295,14 +297,26 @@
                 break;
         }
     } else {
-        alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc disabled", nil) delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc disabled", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NSLocalizedString(@"Settings", nil), nil];
         aBool = NO;
     }
     
     [alert show];
     alert = nil;
     
+    
+    
     return aBool;
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    if([title isEqualToString:NSLocalizedString(@"Settings", nil)])
+    {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+    }
 }
 
 //- (void)updateSwitchAtIndexPath:(NSIndexPath *)indexPath

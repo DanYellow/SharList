@@ -480,29 +480,31 @@
             userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
         }
         [self displayUserTasteList];
-        NSLog(@"fetch local datas");
+//        NSLog(@"fetch local datas");
     } else {
         [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
-        NSLog(@"fetch server datas");
+//        NSLog(@"fetch server datas");
     }
     
     
     
     
     // Update location from server
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    
-    NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
-    
-    NSInteger hours = [lastDataFetchingInterval hour];
-    NSInteger minutes = [lastDataFetchingInterval minute];
-    NSInteger seconds = [lastDataFetchingInterval second];
-    
-    // We update user location to the server at launch only every 2 hours
-    NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-    if (delayLastMeetingUser > 7200)
-    {
-        [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
+    if ([userPreferences objectForKey:@"lastManualUpdate"]) {
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        
+        NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
+        
+        NSInteger hours = [lastDataFetchingInterval hour];
+        NSInteger minutes = [lastDataFetchingInterval minute];
+        NSInteger seconds = [lastDataFetchingInterval second];
+        
+        // We update user location to the server at launch only every 2 hours
+        NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
+        if (delayLastMeetingUser > 7200)
+        {
+            [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
+        }
     }
 }
 
@@ -1084,7 +1086,7 @@
                                                        options:0 // Pass 0 if you don't care about the readability of the generated string
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"Got an error: %@", error);
+//        NSLog(@"Got an error: %@", error);
         return nil;
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
