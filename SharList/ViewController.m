@@ -337,7 +337,11 @@
     if (![userPreferences boolForKey:@"firstTime"]) {
         // Display and extra button for
         //[userPreferences setBool:YES forKey:@"firstTime"];
-        NSLog(@"Log tutorial");
+//        NSLog(@"Log tutorial");
+        
+//        UIView *foo = [[ UIView alloc] initWithFrame:self.view.bounds];
+//        foo.backgroundColor = [UIColor redColor];
+//        [[[UIApplication sharedApplication] keyWindow] addSubview:foo];
     }
 }
 
@@ -485,8 +489,6 @@
         [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
 //        NSLog(@"fetch server datas");
     }
-    
-    
     
     
     // Update location from server
@@ -783,6 +785,15 @@
     }
 }
 
+- (NSArray *)rightButtons
+{
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
+    [rightUtilityButtons sw_addUtilityButtonWithColor:[UIColor colorWithRed:1.0f green:0.231f blue:0.188 alpha:1.0f]
+                                                title:NSLocalizedString(@"Delete", nil)];
+    
+    return rightUtilityButtons;
+}
+
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
@@ -838,12 +849,13 @@
         
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            cell.delegate = self;
+            cell.rightUtilityButtons = [self rightButtons];
         }
         cell.delegate = self;
         // For "Classic mode" we want a cell's background more opaque
         cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.35];; //[UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
         
-        //            cell.rightUtilityButtons = [self rightButtonsForSearch];
         
         // We hide this part to get easily datas
         cell.textLabel.frame = cellFrame;
@@ -957,43 +969,40 @@
     return rightUtilityButtons;
 }
 
-- (NSArray *) rightButtonsForSearch
-{
-    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
-    
-    [rightUtilityButtons sw_addUtilityButtonWithColor:
-     [UIColor colorWithRed:(236.0/255.0f) green:(31.0/255.0f) blue:(63.0/255.0f) alpha:1.0]
-                                                title:@"Retirer"];
-    
-    return rightUtilityButtons;
-}
 
-//- (void)swipeableTableViewCell:(ShareListMediaTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
-//    switch (index) {
-//        case 0:
-//        {
-//            // Delete button was pressed
-//            UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
-//            
-//            NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
+- (void)swipeableTableViewCell:(ShareListMediaTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
+    switch (index) {
+        case 0:
+        {
+            // Delete button was pressed
+            UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
+            
+            __block NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
 //            [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] removeObject:cell.model];
-//            
-//            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"currentUserfbID"]];
-//            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-//                UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
-//                NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-//                userTaste.taste = arrayData;
-//            } completion:^(BOOL success, NSError *error) {
-//                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
-//                           withRowAnimation:UITableViewRowAnimationFade];
+            
+            NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] mutableCopy];
+            [updatedUserTaste removeObjectsInArray:[updatedUserTaste filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"imdbID == %@", [cell.model valueForKey:@"imdbID"]]]];
+            
+            [userTasteDict removeObjectForKey:[cell.model valueForKey:@"type"]];
+            [userTasteDict setObject:updatedUserTaste forKey:[cell.model valueForKey:@"type"]];
+            
+            
+            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"currentUserfbID"]];
+            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+                UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+                NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+                userTaste.taste = arrayData;
+            } completion:^(BOOL success, NSError *error) {
+                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
+                           withRowAnimation:UITableViewRowAnimationFade];
 //                [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:YES];
-//            }];
-//            break;
-//        }
-//        default:
-//            break;
-//    }
-//}
+            }];
+            break;
+        }
+        default:
+            break;
+    }
+}
 
 // prevent multiple cells from showing utilty buttons simultaneously
 - (BOOL) swipeableTableViewCellShouldHideUtilityButtonsOnSwipe:(SWTableViewCell *)cell

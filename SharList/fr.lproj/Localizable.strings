@@ -24,6 +24,7 @@
 "Tap on  to fill your list" = "Appuyez sur   pour remplir votre liste";
 "No results" = "Aucun résultats";
 "No internet connection" = "Aucune connexion Internet";
+"Delete" = "Retirer";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore rencontré d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";

@@ -178,8 +178,6 @@
                 [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied ||
                 [CLLocationManager authorizationStatus] == kCLAuthorizationStatusRestricted) {
                 geolocSwitch.on = NO;
-//                UIAlertView
-                NSLog(@"denied");
             } else {
                 geolocSwitch.on = YES;
             }
@@ -303,7 +301,6 @@
     
     [alert show];
     alert = nil;
-    
     
     
     return aBool;
