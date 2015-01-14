@@ -232,8 +232,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             // We made a second query for tv show to get datas from imdb
-            if (responseObject[@"tv_results"]) {
-                NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath:@"tv_results.id"][0], @"language":userLanguage};
+            if (responseObject[@"tv_results"] != nil) {
+                NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0], @"language": userLanguage};
                 [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
                     if(!error){
                         [self setMediaViewForData:responseObject];
@@ -255,7 +255,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                     } else {
                         [self noInternetConnexionAlert];
                     }
-
                 }];
             } else {
                 [self setMediaViewForData:responseObject];

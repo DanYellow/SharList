@@ -36,6 +36,7 @@
 "%@ meetings" = "%@ rencontres";
 "disabledBGF" = "L'option d'actualisation en arrière-plan est désactivée dans les Réglages. Activez la pour faire découvrir au monde ce que vous aimez.";
 "restrictedBGF" = "Il semblerait que votre appareil ne soit pas autorisé à actualiser le contenu en arrière-plan.";
+"no datas updated for this user" = "Cet utilisateur n'a pas mis à jour sa liste";
 
 //Settings view controller
 "Settings" = "Réglages";
