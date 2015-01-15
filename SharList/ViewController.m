@@ -730,10 +730,10 @@
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         // This label is also used for no internet connexion for search
         UILabel *emptyResultLabel = (UILabel*)[self.searchResultsController.tableView viewWithTag:7];
+
         if (self.ConnectedToInternet == NO) {
             emptyResultLabel.text = NSLocalizedString(@"No internet connection", nil);
             emptyResultLabel.hidden = NO;
-
             
             return 0;
         }

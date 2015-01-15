@@ -237,8 +237,7 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        if (delayLastMeetingUser > BGFETCHDELAY) //
-        {
+        if (delayLastMeetingUser > BGFETCHDELAY && self.isConnectedToInternet == YES) {
             self.navigationItem.rightBarButtonItem.enabled = YES;
         } else {
             self.navigationItem.rightBarButtonItem.enabled = NO;
@@ -651,6 +650,11 @@
         } else {
             numberOfNoResults += 1;
             [[NSUserDefaults standardUserDefaults] setInteger:numberOfNoResults forKey:@"noresultsgeoloc"];
+            
+           if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+               UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+               [noNewDatasAlert show];
+            }
         }
         
         return;
@@ -687,9 +691,9 @@
         // If the meeting have been made less than one hour ago we do nothing
         if ((long)hours < 1) {
 //            NSLog(@"already met");
-            [loadingIndicator stopAnimating];
+//            [loadingIndicator stopAnimating];
 //            [self fetchUsersDatasBtnAction];
-            return;
+//            return;
         }
         
         oldUserTaste.taste = arrayData;
@@ -724,8 +728,6 @@
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     }
 }
-
-
 
 
 - (void) didReceiveMemoryWarning {

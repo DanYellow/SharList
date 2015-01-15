@@ -228,11 +228,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         return;
     }
 
-
+//    NSLog(@"foof");
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             // We made a second query for tv show to get datas from imdb
-            if (responseObject[@"tv_results"] != nil) {
+            if (responseObject[@"tv_results"] != nil && [responseObject[@"tv_results"] count] != 0) {
                 NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0], @"language": userLanguage};
                 [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
                     if(!error){
@@ -265,7 +265,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                             [self displayTrailerButtonForId:trailerID];
                         }
                     }
-                    
                 }];
             }
         } else {
@@ -443,7 +442,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     
-    UIView *displayBuyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    UIView *displayBuyView = [[UIView alloc] initWithFrame:self.view.bounds];
     displayBuyView.tag = 1;
     displayBuyView.hidden = NO;
     displayBuyView.alpha = .25f;
