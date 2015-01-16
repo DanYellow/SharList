@@ -123,18 +123,18 @@
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [self.meetingDatas numberOfMeetings]]];
 
     //___________________
-    // Uitableview of user selection (what user likes)
-    UITableViewController *userSelectionTableView = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
-    userSelectionTableView.tableView.frame = CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height);
-    userSelectionTableView.tableView.dataSource = self;
-    userSelectionTableView.tableView.delegate = self;
-    userSelectionTableView.tableView.backgroundColor = [UIColor clearColor];
-    userSelectionTableView.tableView.tag = 1;
-    userSelectionTableView.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    userSelectionTableView.tableView.tableFooterView = tableFooter; //[[UIView alloc] initWithFrame:CGRectZero];
-    userSelectionTableView.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
-    userSelectionTableView.tableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
-    [self.view addSubview:userSelectionTableView.tableView];
+    // Uitableview of user selection (what user likes) initWithStyle:UITableViewStylePlain
+    UITableView *userSelectionTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height) style:UITableViewStylePlain];
+    userSelectionTableView.frame = CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height);
+    userSelectionTableView.dataSource = self;
+    userSelectionTableView.delegate = self;
+    userSelectionTableView.backgroundColor = [UIColor clearColor];
+    userSelectionTableView.tag = 1;
+    userSelectionTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    userSelectionTableView.tableFooterView = tableFooter; //[[UIView alloc] initWithFrame:CGRectZero];
+    userSelectionTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    userSelectionTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
+    [self.view addSubview:userSelectionTableView];
     
     // If the current user list is among user's favorites and the meeting have been made one hour ago
     // He can fetch his update to follow him
@@ -142,17 +142,18 @@
 //    
 //    NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
 //    NSInteger hours = [conversionInfo hour];
-//    
+
+
     if ([self.meetingDatas isFavorite]) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
-        
-        UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
-        userSelectRefresh.backgroundColor = [UIColor clearColor];
-        userSelectRefresh.tintColor = [UIColor whiteColor];
-        userSelectRefresh.tag = 2;
-        [userSelectRefresh addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
-        userSelectionTableView.refreshControl = userSelectRefresh;
+
+        UIRefreshControl *userSelectRefreshControl = [[UIRefreshControl alloc] init];
+        userSelectRefreshControl.backgroundColor = [UIColor clearColor];
+        userSelectRefreshControl.tintColor = [UIColor whiteColor];
+        userSelectRefreshControl.tag = 2;
+        [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
+        [userSelectionTableView addSubview:userSelectRefreshControl];
     }
 }
 
@@ -443,7 +444,6 @@
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
         [self.meetingDatas setIsFavorite:YES];
-        
     }else{
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
         [self.meetingDatas setIsFavorite:NO];

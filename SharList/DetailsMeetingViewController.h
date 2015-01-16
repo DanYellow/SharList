@@ -23,6 +23,7 @@
     CGFloat screenHeight;
     
     NSDictionary *settingsDict;
+//    UITableViewController *userSelectionTableView;
     
     NSUserDefaults *userPreferences;
 }
