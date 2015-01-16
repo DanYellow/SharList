@@ -431,7 +431,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
     [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
     endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
-
     [tutorialView addSubview:endTutorial];
 }
 

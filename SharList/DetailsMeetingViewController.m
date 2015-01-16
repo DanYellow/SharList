@@ -138,12 +138,12 @@
     
     // If the current user list is among user's favorites and the meeting have been made one hour ago
     // He can fetch his update to follow him
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    
-    NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
-    NSInteger hours = [conversionInfo hour];
-    
-    if ([self.meetingDatas isFavorite] && (long)hours >= 1) {
+//    NSCalendar *calendar = [NSCalendar currentCalendar];
+//    
+//    NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
+//    NSInteger hours = [conversionInfo hour];
+//    
+    if ([self.meetingDatas isFavorite]) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
         
@@ -153,16 +153,6 @@
         userSelectRefresh.tag = 2;
         [userSelectRefresh addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
         userSelectionTableView.refreshControl = userSelectRefresh;
-//        [userSelectionTableView.tableView addSubview:userSelectRefresh];
-        
-//        NSDateFormatter *formatter = [NSDateFormatter new];
-//        [formatter setDateFormat:@"MMM d, h:mm a"];
-//        NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
-//
-//        NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
-//                                                                    forKey:NSForegroundColorAttributeName];
-//        NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
-//        userSelectRefresh.attributedTitle = attributedTitle;
     }
 }
 

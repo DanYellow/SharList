@@ -288,6 +288,7 @@
             case kCLAuthorizationStatusRestricted:
             {
                 alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc denied", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NSLocalizedString(@"Settings", nil), nil];
+                [alert show];
                 aBool = NO;
             }
                 break;                
@@ -295,12 +296,9 @@
                 break;
         }
     } else {
-        alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc disabled", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NSLocalizedString(@"Settings", nil), nil];
+//        alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc disabled", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NSLocalizedString(@"Settings", nil), nil];
         aBool = NO;
     }
-    
-    [alert show];
-    alert = nil;
     
     
     return aBool;
