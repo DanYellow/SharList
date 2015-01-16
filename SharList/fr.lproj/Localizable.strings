@@ -27,13 +27,13 @@
 "Delete" = "Retirer";
 
 // Meetingslistviewcontroller
-"You haven't met a person yet" = "Vous n'avez pas encore rencontré d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
+"You haven't met a person yet" = "Vous n'avez pas encore découvert d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
 "All" = "Toutes";
 "Favorites" = "Favoris";
-"Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une rencontre pour l'ajouter aux favoris";
-"Met at %@" = "Rencontré à %@";
+"Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une découverte pour l'ajouter aux favoris";
+"Met at %@" = "Discovered à %@";
 "nomeetings" = "Il semblerait qu'il n'y ait personne autour de vous pour découvrir de nouvelles choses. Parlez leur de Shound.";
-"%@ meetings" = "%@ rencontres";
+"%@ meetings" = "%@ découvertes";
 "disabledBGF" = "L'option d'actualisation en arrière-plan est désactivée dans les Réglages. Activez la pour faire découvrir au monde ce que vous aimez.";
 "restrictedBGF" = "Il semblerait que votre appareil ne soit pas autorisé à actualiser le contenu en arrière-plan.";
 "no datas updated for this user" = "Cet utilisateur n'a pas mis à jour sa liste";
