@@ -45,18 +45,18 @@
     [whatIsApp heightToFit];
     [self.view addSubview:whatIsApp];
     
-    UIView *privacyTextView = [[UIView alloc] initWithFrame:CGRectMake(10, whatIsApp.frame.origin.y + whatIsApp.frame.size.height + 25, screenWidth - 10, 30)];
-    privacyTextView.backgroundColor = [UIColor clearColor];
-    privacyTextView.opaque = YES;
-    [privacyTextView sizeToFit];
-    [self.view addSubview:privacyTextView];
+    UIView *creditsTextView = [[UIView alloc] initWithFrame:CGRectMake(10, whatIsApp.frame.origin.y + whatIsApp.frame.size.height + 25, screenWidth - 10, 30)];
+    creditsTextView.backgroundColor = [UIColor clearColor];
+    creditsTextView.opaque = YES;
+    [creditsTextView sizeToFit];
+    [self.view addSubview:creditsTextView];
     
     UILabel *creditsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 10, 20)];
     creditsLabel.text = NSLocalizedString(@"Credits", nil);
     creditsLabel.textColor = [UIColor whiteColor];
     creditsLabel.backgroundColor = [UIColor clearColor];
     creditsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.0f];
-    [privacyTextView addSubview:creditsLabel];
+    [creditsTextView addSubview:creditsLabel];
     
     UITextView *creditsText = [[UITextView alloc] initWithFrame:CGRectMake(0, creditsLabel.frame.origin.y + creditsLabel.frame.size.height + 5, screenWidth - 10, 30)];
     creditsText.textColor = [UIColor whiteColor];
@@ -68,7 +68,34 @@
     [creditsText sizeToFit];
     creditsText.textAlignment = NSTextAlignmentLeft;
     creditsText.contentInset = UIEdgeInsetsMake(-6, -3, 0, 0);
-    [privacyTextView addSubview:creditsText];
+    [creditsTextView addSubview:creditsText];
+    
+    
+//    UIView *privacyTextViews = [[UIView alloc] initWithFrame:CGRectMake(10, creditsTextView.frame.origin.y + creditsTextView.frame.size.height + 40, screenWidth - 10, 30)];
+//    privacyTextViews.backgroundColor = [UIColor clearColor];
+//    privacyTextViews.opaque = YES;
+//    [privacyTextViews sizeToFit];
+//    [self.view addSubview:privacyTextViews];
+//    
+//    UILabel *privacyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 10, 20)];
+//    privacyLabel.text = NSLocalizedString(@"Privacy", nil);
+//    privacyLabel.textColor = [UIColor whiteColor];
+//    privacyLabel.backgroundColor = [UIColor clearColor];
+//    privacyLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.0f];
+//    [privacyTextViews addSubview:privacyLabel];
+//
+//    UITextView *privacyText = [[UITextView alloc] initWithFrame:CGRectMake(0, privacyLabel.frame.origin.y + privacyLabel.frame.size.height + 5, screenWidth - 10, 30)];
+//    privacyText.textColor = [UIColor whiteColor];
+//    privacyText.backgroundColor = [UIColor clearColor];
+//    privacyText.font = [UIFont fontWithName:@"Helvetica" size:13.0f];
+//    privacyText.text = NSLocalizedString(@"PrivacyContent", nil);
+//    privacyText.dataDetectorTypes = UIDataDetectorTypeAll;
+//    privacyText.editable = NO;
+//    [privacyText sizeToFit];
+//    privacyText.textAlignment = NSTextAlignmentLeft;
+//    privacyText.contentInset = UIEdgeInsetsMake(-6, -3, 0, 0);
+//    [privacyTextViews addSubview:privacyText];
+    
     
     
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
@@ -93,7 +120,7 @@
 }
 
 - (void) foo {
-    
+
 }
 
 - (void)didReceiveMemoryWarning {

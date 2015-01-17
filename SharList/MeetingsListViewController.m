@@ -241,7 +241,7 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        if (delayLastMeetingUser > BGFETCHDELAY) {
+        if (delayLastMeetingUser > BGFETCHDELAY) { //BGFETCHDELAY
             self.navigationItem.rightBarButtonItem.enabled = YES;
         } else {
             self.navigationItem.rightBarButtonItem.enabled = NO;
@@ -569,20 +569,28 @@
 - (void) fetchUsersDatasBtnAction
 {
     if (self.isConnectedToInternet == NO) {
-        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [errConnectionAlertView show];
+        [self noInternetAlert];
         return;
     }
     
     [loadingIndicator startAnimating];
-    [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
+    
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
-            NSLog(@"%@", error);
+            [loadingIndicator stopAnimating];
+            [self noInternetAlert];
         } else {
+            [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
             [self saveRandomUserDatas:data];
         }
     }];
+}
+
+- (void) noInternetAlert
+{
+    UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [errConnectionAlertView show];
+
 }
 
 - (NSMutableURLRequest*) fetchUsersDatasQuery

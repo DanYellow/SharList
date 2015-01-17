@@ -125,8 +125,8 @@
 
     //___________________
     // Uitableview of user selection (what user likes) initWithStyle:UITableViewStylePlain
-    UITableView *userSelectionTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height) style:UITableViewStylePlain];
-    userSelectionTableView.frame = CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height);
+    UITableView *userSelectionTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
+//    userSelectionTableView.frame = CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height);
     userSelectionTableView.dataSource = self;
     userSelectionTableView.delegate = self;
     userSelectionTableView.backgroundColor = [UIColor clearColor];
@@ -156,7 +156,7 @@
         [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
         [userSelectionTableView addSubview:userSelectRefreshControl];
         
-        if (YES) { //![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]) {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMeetingFavTutorial"];
             [self showTutorial];
         }

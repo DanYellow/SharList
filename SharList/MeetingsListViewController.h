@@ -45,6 +45,7 @@
 
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 - (void) navigationItemRightButtonEnablingManagement;
+- (void) noInternetAlert;
 
 
 @end
