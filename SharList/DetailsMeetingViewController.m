@@ -18,6 +18,7 @@
 // Tag list
 // 1 : userSelectionTableView
 // 2 : UIRefreshControl
+// 3 : TutorialView
 
 
 @implementation DetailsMeetingViewController
@@ -154,6 +155,11 @@
         userSelectRefreshControl.tag = 2;
         [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
         [userSelectionTableView addSubview:userSelectRefreshControl];
+        
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMeetingFavTutorial"];
+            [self showTutorial];
+        }
     }
 }
 
@@ -173,6 +179,7 @@
     [self getServerDatasForFbID:[self.meetingDatas fbid]];
 }
 
+#pragma mark - server communication
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID
 {
@@ -235,6 +242,66 @@
         [userSelectRefresh endRefreshing];
     }
 }
+
+- (void) getImageCellForData:(id)model aCell:(UITableViewCell*)cell
+{
+    CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.frame = cellFrame;
+    [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
+    [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
+    gradientLayer.colors = @[(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor]];
+    
+    UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
+    imgBackground.contentMode = UIViewContentModeScaleAspectFill;
+    imgBackground.clipsToBounds = YES;
+    
+    cell.backgroundView = imgBackground;
+    
+    __block NSString *imgDistURL; // URL of the image from imdb database api
+    
+    
+    CALayer *imgLayer = [CALayer layer];
+    imgLayer.frame = cellFrame;
+    [imgLayer addSublayer:gradientLayer];
+    
+    
+    NSString *apiLink;
+    
+    __block NSString *imgURL;
+    if ([model[@"type"] isEqualToString:@"movie"]) {
+        apiLink = kJLTMDbMovie;
+    } else {
+        apiLink = kJLTMDbFind;
+    }
+    
+    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+    [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
+    
+    [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
+        if(!error){
+            if ([model[@"type"] isEqualToString:@"serie"]) {
+                imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
+            } else {
+                imgURL = responseObject[@"poster_path"];
+            }
+            
+            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", imgURL];
+            [imgBackground setImageWithURL:
+             [NSURL URLWithString:imgDistURL]
+                          placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
+            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+            
+            [UIView transitionWithView:cell
+                              duration:.7f
+                               options:UIViewAnimationOptionTransitionCrossDissolve
+                            animations:^{cell.alpha = 1;}
+                            completion:NULL];
+        }
+    }];
+}
+
 
 #pragma mark - tableview definition
 
@@ -373,70 +440,8 @@
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 
-- (void) getImageCellForData:(id)model aCell:(UITableViewCell*)cell
-{
-    CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
-    
-    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.frame = cellFrame;
-    [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
-    [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
-    gradientLayer.colors = @[(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor]];
-    
-    UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
-    imgBackground.contentMode = UIViewContentModeScaleAspectFill;
-    imgBackground.clipsToBounds = YES;
-    
-    cell.backgroundView = imgBackground;
-    
-    __block NSString *imgDistURL; // URL of the image from imdb database api
-    
-    
-    CALayer *imgLayer = [CALayer layer];
-    imgLayer.frame = cellFrame;
-    [imgLayer addSublayer:gradientLayer];
-    
-    
-    NSString *apiLink;
-    
-    __block NSString *imgURL;
-    if ([model[@"type"] isEqualToString:@"movie"]) {
-        apiLink = kJLTMDbMovie;
-    } else {
-        apiLink = kJLTMDbFind;
-    }
-    
-    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-    [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
-    
-    [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
-        if(!error){
-            if ([model[@"type"] isEqualToString:@"serie"]) {
-                imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
-            } else {
-                imgURL = responseObject[@"poster_path"];
-            }
-            
-            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", imgURL];
-            [imgBackground setImageWithURL:
-             [NSURL URLWithString:imgDistURL]
-                          placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
-            [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
-            
-            [UIView transitionWithView:cell
-                              duration:.7f
-                               options:UIViewAnimationOptionTransitionCrossDissolve
-                            animations:^{cell.alpha = 1;}
-                            completion:NULL];
-        }
-    }];
-}
 
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 
 - (void) addAsFavorite:(UIBarButtonItem*)sender
@@ -454,6 +459,57 @@
         [self.delegate meetingsListHaveBeenUpdate];
     }
 }
+
+- (void) showTutorial
+{
+    UIView *tutorialView = [[UIView alloc] initWithFrame:self.view.bounds];
+    tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.989f];
+    tutorialView.tag = 3;
+    tutorialView.alpha = 1;
+    tutorialView.opaque = NO;
+    [[[UIApplication sharedApplication] keyWindow] addSubview:tutorialView];
+    
+    // TUTORIAL VIEW
+    UITextView *tutFavsMessageTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 40, 90)];
+    tutFavsMessageTV.text = NSLocalizedString(@"pull to refresh fav", nil);
+    tutFavsMessageTV.textColor = [UIColor whiteColor];
+    tutFavsMessageTV.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    tutFavsMessageTV.textAlignment = NSTextAlignmentCenter;
+    tutFavsMessageTV.center = CGPointMake(self.view.center.x, self.view.center.y);
+    tutFavsMessageTV.backgroundColor = [UIColor clearColor];
+    [tutFavsMessageTV sizeToFit];
+    [tutorialView addSubview:tutFavsMessageTV];
+    
+    UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
+    [endTutorial addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
+    [endTutorial setTitle:[NSLocalizedString(@"goit", nil) uppercaseString] forState:UIControlStateNormal];
+    endTutorial.frame = CGRectMake(0, screenHeight - 150, screenWidth, 49);
+    endTutorial.tintColor = [UIColor whiteColor];
+    [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+    [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
+    [tutorialView addSubview:endTutorial];
+}
+
+- (void) hideTutorial
+{
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    UIView *tutorialView = (UIView*)[[[UIApplication sharedApplication] keyWindow] viewWithTag:3];
+    [UIView animateWithDuration:0.25 delay:0.1
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         tutorialView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [tutorialView removeFromSuperview];
+                     }];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
 
 /*
 #pragma mark - Navigation

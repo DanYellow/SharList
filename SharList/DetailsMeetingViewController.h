@@ -33,6 +33,8 @@
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateMeetingsListDelegate> delegate;
 
+- (void) showTutorial;
+- (void) addAsFavorite:(UIBarButtonItem*)sender;
 
 
 @end

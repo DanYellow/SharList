@@ -40,7 +40,8 @@
 "no datas updated for this user" = "This user haven't update his list";
 
 // DetailsMeetingsViewController
-"met %@ times" = "met %@ times";
+"met %@ times" = "discovered %@ times";
+"pull to refresh fav" = "This discovery is now among your favs. You can \"pull-to-refresh\" to see if this has been updated.";
 
 //Settings view controller
 "Settings" = "Settings";

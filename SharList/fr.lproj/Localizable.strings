@@ -52,7 +52,9 @@
 "geoloc disabled" = "Le service de localisation semble être désactivé dans les Réglages de l'appareil";
 
 // DetailsMeetingController
-"met %@ times" = "rencontré %@ fois";
+"met %@ times" = "découvert %@ fois";
+"pull to refresh fav" = "Cette découverte est parmi vos favoris. Vous pouvez \"tirer-pour-rafraîchir\" pour voir si elle a été mise à jour";
+
 
 // DetailsMediaViewController
 "Added" = "Ajouté";
