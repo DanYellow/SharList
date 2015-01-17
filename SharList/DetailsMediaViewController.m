@@ -418,14 +418,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     tutFavsMessageTV.textColor = [UIColor whiteColor];
     tutFavsMessageTV.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     tutFavsMessageTV.textAlignment = NSTextAlignmentCenter;
-    tutFavsMessageTV.center = CGPointMake(self.view.center.x, self.view.center.y);
     tutFavsMessageTV.backgroundColor = [UIColor clearColor];
     [tutFavsMessageTV sizeToFit];
+    tutFavsMessageTV.center = CGPointMake(self.view.center.x, self.view.center.y);
     [tutorialView addSubview:tutFavsMessageTV];
     
     UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
     [endTutorial addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
-    [endTutorial setTitle:[NSLocalizedString(@"goit", nil) uppercaseString] forState:UIControlStateNormal];
+    [endTutorial setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
     endTutorial.frame = CGRectMake(0, screenHeight - 150, screenWidth, 49);
     endTutorial.tintColor = [UIColor whiteColor];
     [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
@@ -622,7 +622,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UILabel *mediaTitleLabel = (UILabel*)[self.view viewWithTag:4];
     
 //    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
-    CGFloat mediaDescriptionWidth = [self computeRatio:530 forDimension:screenWidth];
+    CGFloat mediaDescriptionWidthPercentage = 82.0;
+    CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
 //    CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
     CGFloat mediaDescriptionHeight = (screenHeight * 47.53521127) / 100; //(280 * 100) / 568
@@ -643,7 +644,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
-    mediaDescription.contentInset = UIEdgeInsetsMake(0, -2, 0, 0);
+    mediaDescription.contentInset = UIEdgeInsetsMake(-2, -2, 0, 0);
 //    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
     mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
     [infoMediaView addSubview:mediaDescription];

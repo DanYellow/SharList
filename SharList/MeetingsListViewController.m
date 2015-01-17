@@ -229,6 +229,7 @@
     UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatasBtnAction)];
     self.navigationItem.rightBarButtonItem = refreshBtn;
     
+
     if ([userPreferences objectForKey:@"lastManualUpdate"]) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
@@ -240,7 +241,7 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        if (delayLastMeetingUser > BGFETCHDELAY && self.isConnectedToInternet == YES) {
+        if (delayLastMeetingUser > BGFETCHDELAY) {
             self.navigationItem.rightBarButtonItem.enabled = YES;
         } else {
             self.navigationItem.rightBarButtonItem.enabled = NO;

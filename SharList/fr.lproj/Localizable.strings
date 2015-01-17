@@ -53,7 +53,7 @@
 
 // DetailsMeetingController
 "met %@ times" = "découvert %@ fois";
-"pull to refresh fav" = "Cette découverte est parmi vos favoris. Vous pouvez \"tirer-pour-rafraîchir\" pour voir si elle a été mise à jour";
+"pull to refresh fav" = "Cette découverte est parmi vos favoris.\nVous pouvez \"tirer-pour-rafraîchir\" pour voir si elle a été mise à jour";
 
 
 // DetailsMediaViewController
@@ -64,7 +64,7 @@
 "noconnection" = "Il semblerait que vous ne soyez pas connecté à Internet. \nConnectez-vous et réessayez.";
 "nodescription" = "Pas de description pour le moment";
 "Genres" = "Genres : ";
-"goit" = "Compris";
+"gotit" = "Compris";
 "tutFavsMessage" = "Utilisez l'icône pour ajouter une fiche à vos favoris et faire découvrir au monde que vous l'aimez";
 
 //AboutViewController
@@ -76,3 +76,7 @@
 "Credits" = "Crédits";
 "Privacy" = "Privacy";
 "PrivacyDetails" = "Shound ";
+
+
+//Facebook
+"errorConnect" = "Facebook a rencontré une problème";

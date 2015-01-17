@@ -156,7 +156,7 @@
         [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
         [userSelectionTableView addSubview:userSelectRefreshControl];
         
-        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]) {
+        if (YES) { //![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMeetingFavTutorial"];
             [self showTutorial];
         }
@@ -470,19 +470,19 @@
     [[[UIApplication sharedApplication] keyWindow] addSubview:tutorialView];
     
     // TUTORIAL VIEW
-    UITextView *tutFavsMessageTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 40, 90)];
+    UITextView *tutFavsMessageTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 26, 90)];
     tutFavsMessageTV.text = NSLocalizedString(@"pull to refresh fav", nil);
     tutFavsMessageTV.textColor = [UIColor whiteColor];
     tutFavsMessageTV.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     tutFavsMessageTV.textAlignment = NSTextAlignmentCenter;
-    tutFavsMessageTV.center = CGPointMake(self.view.center.x, self.view.center.y);
     tutFavsMessageTV.backgroundColor = [UIColor clearColor];
     [tutFavsMessageTV sizeToFit];
+    tutFavsMessageTV.center = CGPointMake(self.view.center.x, self.view.center.y);
     [tutorialView addSubview:tutFavsMessageTV];
     
     UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
     [endTutorial addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
-    [endTutorial setTitle:[NSLocalizedString(@"goit", nil) uppercaseString] forState:UIControlStateNormal];
+    [endTutorial setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
     endTutorial.frame = CGRectMake(0, screenHeight - 150, screenWidth, 49);
     endTutorial.tintColor = [UIColor whiteColor];
     [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];

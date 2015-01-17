@@ -232,6 +232,7 @@
     emptyResultLabel.clipsToBounds = NO;
     emptyResultLabel.layer.masksToBounds = NO;
     emptyResultLabel.tag = 7;
+    emptyResultLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 75.0);
     emptyResultLabel.hidden = YES;
     [self.searchResultsController.tableView addSubview:emptyResultLabel];
 
@@ -333,6 +334,12 @@
         appnameView.hidden = YES;
     }
     
+    
+    // Keep the date of installation of app
+    if (![userPreferences objectForKey:@"installationDate"]) {
+        [userPreferences setObject:[NSDate date] forKey:@"installationDate"];
+    }
+    
     // Test if it's the first use
     if (![userPreferences boolForKey:@"firstTime"]) {
         // Display and extra button for
@@ -362,6 +369,7 @@
     return json;
 }
 
+#pragma mark - Search Bar
 // Search system
 - (void) fetchDatasFromServerWithQuery:(NSString*)query completion:(void (^)(id result))completion
 {
@@ -369,8 +377,9 @@
         return;
     }
 
+   
     NSString *linkAPI = [settingsDict valueForKey:@"apiPath"];
-    linkAPI =  [linkAPI stringByAppendingString:@"search.php"];
+    linkAPI = [linkAPI stringByAppendingString:@"search.php"];
    // Loading indicator of the app
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
@@ -379,7 +388,7 @@
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     
     [self.view insertSubview:loadingIndicator aboveSubview:self.searchController.searchBar];
-    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] init];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     [manager POST:linkAPI parameters:@{ @"query" : query } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (completion)
@@ -492,7 +501,7 @@
     
     
     // Update location from server
-    if ([userPreferences objectForKey:@"lastManualUpdate"]) {
+    if ([userPreferences objectForKey:@"lastManualUpdate"] && self.ConnectedToInternet == YES) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
         NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
@@ -690,9 +699,9 @@
         // You can checkout our error handling guide for more detailed information
         // https://developers.facebook.com/docs/ios/errors
     } else {
-        alertTitle  = @"Something went wrong";
-        alertMessage = @"Please try again later.";
-        NSLog(@"Unexpected error:%@", error);
+        alertTitle  = nil;
+        alertMessage = NSLocalizedString(@"errorConnect", nil);// @"Please try again later.";
+//        NSLog(@"Unexpected error:%@", error);
     }
     
     if (alertMessage) {
@@ -777,7 +786,8 @@
     return 69.0;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+- (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
     } else {
@@ -785,7 +795,7 @@
     }
 }
 
-- (NSArray *)rightButtons
+- (NSArray *) rightCellButtons
 {
     NSMutableArray *rightUtilityButtons = [NSMutableArray new];
     [rightUtilityButtons sw_addUtilityButtonWithColor:[UIColor colorWithRed:1.0f green:0.231f blue:0.188 alpha:1.0f]
@@ -850,7 +860,7 @@
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
-            cell.rightUtilityButtons = [self rightButtons];
+            cell.rightUtilityButtons = [self rightCellButtons];
         }
         cell.delegate = self;
         // For "Classic mode" we want a cell's background more opaque
@@ -1058,7 +1068,7 @@
     return headerView;
 }
 
-#pragma mark - custom methods
+#pragma mark - Custom methods
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension {
     CGFloat ratio = 0;
@@ -1235,9 +1245,8 @@
 {
     UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
     [searchLoadingIndicator startAnimating];
-    
 
-    //We wait X seconds before query the server for performances and limit the bandwidth
+    //We wait X seconds before query the server for performances and "limit" the bandwidth
     [self performSelector:@selector(getDatasFromServerForSearchController:) withObject:searchController afterDelay:1.7];
 }
 
@@ -1253,14 +1262,11 @@
         [searchLoadingIndicator stopAnimating];
         [self.searchResultsController.tableView reloadData];
         
-        
         return;
     }
     
     // Fetch online datas
     [self fetchDatasFromServerWithQuery:searchString completion:^(NSArray *result){
-        
-        
         for (int i = 0; i < [[result valueForKey:@"type"] count]; i++) {
             NSPredicate *nameForTypePredicate = [NSPredicate predicateWithFormat:@"type = %@", [[result valueForKey:@"type"] objectAtIndex:i]];
             

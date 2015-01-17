@@ -41,7 +41,7 @@
 
 // DetailsMeetingsViewController
 "met %@ times" = "discovered %@ times";
-"pull to refresh fav" = "This discovery is now among your favs. You can \"pull-to-refresh\" to see if this has been updated.";
+"pull to refresh fav" = "This discovery is now among your favs.\nYou can \"pull-to-refresh\" to see if this has been updated.";
 
 //Settings view controller
 "Settings" = "Settings";
@@ -63,7 +63,7 @@
 "noconnection" = "It's looks like you're not connected to Internet. \nConnect your device and try again.";
 "nodescription" = "No description";
 "Genres" = "Genres: ";
-"goit" = "Go it";
+"gotit" = "Got it";
 "tutFavsMessage" = "Use this icon to add it among your list and introduce it to the world";
 
 //AboutViewController
@@ -74,3 +74,5 @@
 "Credits" = "Credits";
 
 
+//Facebook
+"errorConnect" = "Facebook has an issue";
