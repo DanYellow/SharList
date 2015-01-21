@@ -947,7 +947,7 @@
     
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
-            if ([model[@"type"] isEqualToString:@"serie"]) {
+            if ([model[@"type"] isEqualToString:@"serie"] && [[responseObject valueForKeyPath:@"tv_results.poster_path"] count] != 0) {
                 imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
             } else {
                 imgURL = responseObject[@"poster_path"];
@@ -1060,8 +1060,8 @@
         headerView.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
         label.textColor = [UIColor blackColor];
     } else {
-        headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
-        label.textColor = [UIColor whiteColor];
+        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
+        label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
     }
     [headerView addSubview:label];
     

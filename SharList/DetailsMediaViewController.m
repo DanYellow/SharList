@@ -87,6 +87,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // Do any additional setup after loading the view.
     
     self.ConnectedToInternet = YES;
+    self.itunesIDString = @"";
     
     NSURL *baseURL = [NSURL URLWithString:@"https://api.themoviedb.org/3/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
@@ -304,7 +305,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     [manager POST:shoundAPIPath parameters:@{ @"imdbid" : self.mediaDatas[@"imdbID"] }
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              
+
               NSNumber *mediaLikeNumber = responseObject[@"hits"];
               NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
               [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -335,6 +336,26 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
                   [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
                   [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
+                  
+                  self.itunesIDString = responseObject[@"itunesID"];
+                  
+                  UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+                  [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
+                  buyButton.tag = 7;
+                  [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
+                  buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
+                  buyButton.frame = CGRectMake(0, screenHeight - 49, screenWidth, 49);
+                  buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
+                  
+                  [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
+                  [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
+                  [buyButton setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+                  [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                  [buyButton setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+                  
+                  if ([self.itunesIDString length] != 0) {
+                      [infoMediaView insertSubview:buyButton atIndex:42];
+                  }
               }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"error : %@", error);
@@ -510,11 +531,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     amazonBuyButton.backgroundColor = [UIColor clearColor];
     amazonBuyButton.layer.borderColor = amazonOrange.CGColor;
     amazonBuyButton.layer.borderWidth = 2.0f;
-    [displayBuyView addSubview:amazonBuyButton];
+//    [displayBuyView addSubview:amazonBuyButton];
     
     
     
-    CGFloat itunesBuyButtonPosY = amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + (38/2);
+//    CGFloat itunesBuyButtonPosY = amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + (38/2);
     UIColor *itunesGray = [UIColor colorWithRed:(166.0f/255.0f) green:(166.0f/255.0f) blue:(166.0f/255.0f) alpha:1.0f];
     
     ShopButton *itunesBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
@@ -523,11 +544,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [itunesBuyButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
     itunesBuyButton.titleLabel.font = buttonFont;
     [itunesBuyButton setTitleColor:itunesGray forState:UIControlStateNormal];
-    itunesBuyButton.frame = CGRectMake(buttonPos.x, itunesBuyButtonPosY, buttonSize.width, buttonSize.height);
+    itunesBuyButton.frame = CGRectMake(buttonPos.x, buttonPos.y + 30, buttonSize.width, buttonSize.height);
+    //CGRectMake(buttonPos.x, itunesBuyButtonPosY, buttonSize.width, buttonSize.height);
     itunesBuyButton.backgroundColor = [UIColor clearColor];
     itunesBuyButton.layer.borderColor = itunesGray.CGColor;
     itunesBuyButton.layer.borderWidth = 2.0f;
-    //    [displayBuyView addSubview:itunesBuyButton];
+    
+    [displayBuyView addSubview:itunesBuyButton];
+    
     
     
     
@@ -684,22 +708,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
     
     
-    UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
-    buyButton.tag = 7;
-    [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
-    buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
-    buyButton.frame = CGRectMake(0, screenHeight - 49, screenWidth, 49);
-    buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
-
-    [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
-    [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
-    [buyButton setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
-    [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [buyButton setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
-    
-//    [infoMediaView insertSubview:buyButton atIndex:42];
-    
     [loadingIndicator stopAnimating];
 }
 
@@ -825,15 +833,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
 
     
-    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
-//    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
+//    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
+    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
     
     animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-    gravity = [[UIGravityBehavior alloc] initWithItems:@[amazonBuyButton]];
-    collision = [[UICollisionBehavior alloc] initWithItems:@[amazonBuyButton]]; //itunesBuyButton
+    gravity = [[UIGravityBehavior alloc] initWithItems:@[itunesBuyButton]];
+    collision = [[UICollisionBehavior alloc] initWithItems:@[itunesBuyButton]]; //itunesBuyButton
     collision.collisionDelegate = self;
     
-    UIDynamicItemBehavior* itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[amazonBuyButton]]; //itunesBuyButton
+    UIDynamicItemBehavior* itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[itunesBuyButton]]; //itunesBuyButton
     itemBehaviour.elasticity = 0.9;
     itemBehaviour.allowsRotation = NO;
     itemBehaviour.density = .4000;
@@ -1056,8 +1064,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) openStore:(UIButton*)sender
 {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.duckduckgo.com"]];
+    NSString *iTunesURLString = @"https://itunes.apple.com/fr/";
+    iTunesURLString = [iTunesURLString stringByAppendingString:self.itunesIDString];
+    iTunesURLString = [iTunesURLString stringByAppendingString:@"?uo=4&at=11lRd6"];
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iTunesURLString]];
 }
+
+
+//<a href="https://itunes.apple.com/fr/movie/scarface-1983/id371011281" target="itunes_store">Scarface (1983)</a>
+
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension
 {

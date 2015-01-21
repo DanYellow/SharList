@@ -56,6 +56,7 @@
 @property (nonatomic, assign, getter=isAdded) BOOL Added;
 @property (nonatomic, strong) id mediaDatas;
 @property (nonatomic, retain) NSMutableData *responseData;
+@property (nonatomic, retain) NSString *itunesIDString;
 @property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;
 
 
