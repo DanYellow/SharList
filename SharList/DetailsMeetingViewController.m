@@ -357,8 +357,8 @@
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
     label.text = title;
     
-    headerView.backgroundColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:.9f];
-    label.textColor = [UIColor whiteColor];
+    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
+    label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
     
     [headerView addSubview:label];
     

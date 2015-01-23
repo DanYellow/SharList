@@ -66,6 +66,7 @@
 "Genres" = "Genres : ";
 "gotit" = "Compris";
 "tutFavsMessage" = "Utilisez l'icône pour ajouter une fiche à vos favoris et faire découvrir au monde que vous l'aimez";
+"issuesWithDetailsMedia" = "Il semblerait qu'il y ait une erreur avec cette fiche.\nRéessayez plus tard";
 
 //AboutViewController
 "About" = "A propos";

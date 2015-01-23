@@ -36,6 +36,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 6 : imgMedia
 // 7 : buy button
 // 8 : tutorialView
+// 9 : errConnectionAlertView
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -344,7 +345,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   buyButton.tag = 7;
                   [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
                   buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
-                  buyButton.frame = CGRectMake(0, screenHeight - 49, screenWidth, 49);
+                  buyButton.frame = CGRectMake(0, screenHeight + 50, screenWidth, 50);
                   buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
                   
                   [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
@@ -355,6 +356,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   
                   if ([self.itunesIDString length] != 0) {
                       [infoMediaView insertSubview:buyButton atIndex:42];
+                      
+                      [UIView animateWithDuration:0.4 delay:0.0
+                                          options: UIViewAnimationOptionCurveEaseOut
+                                       animations:^{
+                                           buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
+                                       }
+                                       completion:nil];
                   }
               }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -1053,11 +1061,25 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) noInternetConnexionAlert
 {
-    UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    UIAlertView *errConnectionAlertView;
+    
+    if (!self.ConnectedToInternet) {
+        errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    } else {
+        errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"issuesWithDetailsMedia", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        errConnectionAlertView.tag = 9;
+    }
+    
     [errConnectionAlertView show];
     [loadingIndicator stopAnimating];
     
     return;
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == 9) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark - Misc

@@ -950,7 +950,9 @@
             if ([model[@"type"] isEqualToString:@"serie"] && [[responseObject valueForKeyPath:@"tv_results.poster_path"] count] != 0) {
                 imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
             } else {
-                imgURL = responseObject[@"poster_path"];
+                if([responseObject[@"poster_path"] length] != 0) {
+                    imgURL = responseObject[@"poster_path"];
+                }
             }
             
             imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", imgURL];

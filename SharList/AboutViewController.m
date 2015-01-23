@@ -101,10 +101,10 @@
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
     // Build the array from the plist
     NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
-    NSString *aboutApp = [NSString stringWithFormat:@"%@ \r %@", [settingsDict valueForKey:@"appversion"], [settingsDict valueForKey:@"contactShound"]];
+    NSString *aboutApp = [NSString stringWithFormat:@"Shound v%@ \r %@",  [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"], [settingsDict valueForKey:@"contactShound"]];
 //    aboutApp = [aboutApp stringByAppendingString:@"\n"];
 //    aboutApp = [aboutApp stringByAppendingString:];
-    
+        
     UITextView *contactShound = [[UITextView alloc] initWithFrame:CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 80)];
     contactShound.text = aboutApp;
     contactShound.textColor = [UIColor whiteColor];
