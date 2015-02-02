@@ -253,8 +253,8 @@
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
-        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-            [self.locationManager requestAlwaysAuthorization];
+        if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            [self.locationManager requestWhenInUseAuthorization];
         }
         [self.locationManager startUpdatingLocation];
         // If user try to enable geoloc but he doesn't enable it
