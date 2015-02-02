@@ -7,3 +7,5 @@
 */
 
 "NSLocationAlwaysUsageDescription" = "Shound a besoin de votre position pour obtenir les goûts des utilisateurs autour de vous.";
+"NSLocationWhenInUseUsageDescription" = "Shound a besoin de votre position pour obtenir les goûts des utilisateurs autour de vous.";
+

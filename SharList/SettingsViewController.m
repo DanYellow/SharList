@@ -135,7 +135,7 @@
     UIView *tempView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, 100)];
     tempView.backgroundColor = [UIColor clearColor];
     
-    UILabel *footerSectionLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 0, screenWidth-30, 100)];
+    UILabel *footerSectionLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, screenWidth-30, 100)];
     footerSectionLabel.backgroundColor = [UIColor clearColor];
     footerSectionLabel.textColor = [UIColor whiteColor];
     footerSectionLabel.font = [UIFont fontWithName:@"Helvetica" size:13.0];

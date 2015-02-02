@@ -317,7 +317,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               }
               NSDecimalNumber *amountNumber = [NSDecimalNumber decimalNumberWithString:responseObject[@"hits"]];
               NSString *numberString = [numberFormatter stringFromNumber:amountNumber];
-
+              // https://itunes.apple.com/fr/lookup/id705992412
               if ([mediaLikeNumber integerValue] > 1) {
                   // Aimé par X personnes
                   NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %@ people", nil), numberString];
@@ -337,33 +337,33 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
                   [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
                   [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
+              }
+              
+              self.itunesIDString = responseObject[@"itunesID"];
+              
+              UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+              [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
+              buyButton.tag = 7;
+              [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
+              buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
+              buyButton.frame = CGRectMake(0, screenHeight + 50, screenWidth, 50);
+              buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
+              
+              [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
+              [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
+              [buyButton setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+              [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+              [buyButton setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+              
+              if ([self.itunesIDString length] != 0) {
+                  [infoMediaView insertSubview:buyButton atIndex:42];
                   
-                  self.itunesIDString = responseObject[@"itunesID"];
-                  
-                  UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                  [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
-                  buyButton.tag = 7;
-                  [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
-                  buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
-                  buyButton.frame = CGRectMake(0, screenHeight + 50, screenWidth, 50);
-                  buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
-                  
-                  [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
-                  [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
-                  [buyButton setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
-                  [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                  [buyButton setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
-                  
-                  if ([self.itunesIDString length] != 0) {
-                      [infoMediaView insertSubview:buyButton atIndex:42];
-                      
-                      [UIView animateWithDuration:0.4 delay:0.0
-                                          options: UIViewAnimationOptionCurveEaseOut
-                                       animations:^{
-                                           buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
-                                       }
-                                       completion:nil];
-                  }
+                  [UIView animateWithDuration:0.4 delay:0.0
+                                      options: UIViewAnimationOptionCurveEaseOut
+                                   animations:^{
+                                       buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
+                                   }
+                                   completion:nil];
               }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"error : %@", error);

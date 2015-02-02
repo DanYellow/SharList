@@ -8,3 +8,4 @@
 
 
 "NSLocationAlwaysUsageDescription" = "Shound needs your location to get user's taste around you";
+"NSLocationWhenInUseUsageDescription" = "Shound needs your location to get user's taste around you";

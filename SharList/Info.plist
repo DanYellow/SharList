@@ -28,7 +28,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>6</string>
 	<key>FacebookAppID</key>
 	<string>1557139914519856</string>
 	<key>FacebookBundleName</key>
@@ -37,12 +37,11 @@
 	<string>Shar</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationAlwaysUsageDescription</key>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>location</string>
 	</array>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
