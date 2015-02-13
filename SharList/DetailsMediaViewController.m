@@ -1004,7 +1004,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }];
 }
 
-
 #pragma mark - Server part
 
 - (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding
@@ -1060,9 +1059,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         return nil;
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        
+        jsonString = [DetailsMediaViewController urlEncodeValue:jsonString];
+    
         return jsonString;
     }
+}
+
+
++ (NSString *)urlEncodeValue:(NSString *)str
+{
+    NSString *result = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)str, NULL, CFSTR(":/?#[]@!$&’()*+,;="), kCFStringEncodingUTF8));
+    return result;
 }
 
 
