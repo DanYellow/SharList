@@ -315,6 +315,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   [tempDict setObject:(NSString *)responseObject[@"id"] forKey:@"id"];
                   self.mediaDatas = tempDict;
               }
+              
+              // If the name of the media change in the database, the user keep the last name in the db
+              if (![self.mediaDatas[@"name"] isEqualToString:(NSString *)responseObject[@"name"]]) {
+                  [tempDict setObject:(NSString *)responseObject[@"name"] forKey:@"name"];
+                  self.mediaDatas = tempDict;
+              }
+              
               NSDecimalNumber *amountNumber = [NSDecimalNumber decimalNumberWithString:responseObject[@"hits"]];
               NSString *numberString = [numberFormatter stringFromNumber:amountNumber];
               // https://itunes.apple.com/fr/lookup/id705992412
