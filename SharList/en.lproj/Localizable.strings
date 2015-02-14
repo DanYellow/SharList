@@ -38,6 +38,7 @@
 "disabledBGF" = "The background fetch feature is disabled in your Settings. Enabled it to introduce the world what you love without open the app.";
 "restrictedBGF" = "It looks like you device is not allowed to use the background fetch feature of your device.";
 "no datas updated for this user" = "This user haven't update his list";
+"numberOfJSONErrorsMaxReached" = "Too bad, the server has no datas for you.";
 
 // DetailsMeetingsViewController
 "met %@ times" = "discovered %@ times";

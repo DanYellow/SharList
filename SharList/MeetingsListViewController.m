@@ -81,7 +81,7 @@
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
-    
+    numberOfJSONErrors = 0;
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.FilterEnabled = NO;
@@ -602,7 +602,7 @@
     // Build the array from the plist
     NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"]];
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"test/getusertaste3.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                        timeoutInterval:30.0];
@@ -690,7 +690,22 @@
     // this var contains string raw of user taste. It should be converted to a NSDictionnary
     NSData *stringData = [[randomUserDatas objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
-
+    
+    // The server send bad json
+    if([NSJSONSerialization JSONObjectWithData:stringData options:kNilOptions error:nil] == nil) {
+        // We try to get new meeting from server with good json
+        if (numberOfJSONErrors > 2) {
+            UIAlertView *numberOfJSONErrorsMaxReachedAlert = [[UIAlertView alloc] initWithTitle:@"Oops" message:NSLocalizedString(@"numberOfJSONErrorsMaxReached", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [numberOfJSONErrorsMaxReachedAlert show];
+            numberOfJSONErrors = 0;
+            [loadingIndicator stopAnimating];
+            return;
+        }
+       [self fetchUsersDatasBtnAction];
+        numberOfJSONErrors++;
+        return;
+    }
+    
     // The user's data is transform to nsdata to be putable in a CoreData model
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
     

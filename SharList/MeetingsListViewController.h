@@ -37,11 +37,14 @@
     NSMutableArray *daysList;
     
     UIActivityIndicatorView *loadingIndicator;
+    
+    NSUInteger numberOfJSONErrors; //Contains the number of incorrect json user taste retrieve from the server
 }
 
 @property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+
 
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 - (void) navigationItemRightButtonEnablingManagement;

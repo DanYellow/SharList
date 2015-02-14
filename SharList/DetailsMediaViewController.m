@@ -1053,7 +1053,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                                        options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"Got an error: %@", error);
+//        NSLog(@"Got an error: %@", error);
         UIAlertView *errorServer = [[UIAlertView alloc] initWithTitle:@"Erreur" message:@"La synchronisation avec le serveur n'a pas pu avoir lieu" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [errorServer show];
         return nil;
