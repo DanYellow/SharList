@@ -633,9 +633,9 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES) {
         [self.locationManager startUpdatingLocation];
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
-//        
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"foo" message:[NSString stringWithFormat:@"latitude=%f | longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-//        [alert show];
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"foo" message:[NSString stringWithFormat:@"latitude=%f | longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
     }
     
 
@@ -645,9 +645,7 @@
     return request;
 }
 
-
-
-//-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+//- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 //{
 //    CLLocation *currentLocation = [locations lastObject];
 //}

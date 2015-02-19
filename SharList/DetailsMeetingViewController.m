@@ -406,6 +406,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.indentationLevel = 1;
     }
+    
     cell.alpha = .3f;
 
     cell.model = [rowsOfSection objectAtIndex:indexPath.row];
