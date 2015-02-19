@@ -317,7 +317,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               }
               
               // If the name of the media change in the database, the user keep the last name in the db
-              if (![self.mediaDatas[@"name"] isEqualToString:(NSString *)responseObject[@"name"]]) {
+              if (responseObject[@"name"] != nil && ![self.mediaDatas[@"name"] isEqualToString:(NSString *)responseObject[@"name"]]) {
                   [tempDict setObject:(NSString *)responseObject[@"name"] forKey:@"name"];
                   self.mediaDatas = tempDict;
               }
@@ -552,6 +552,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
 //    CGFloat itunesBuyButtonPosY = amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + (38/2);
     UIColor *itunesGray = [UIColor colorWithRed:(166.0f/255.0f) green:(166.0f/255.0f) blue:(166.0f/255.0f) alpha:1.0f];
+//    UIColor *itunesGrayDarker = [UIColor colorWithRed:(133.0f/255.0f) green:(133.0f/255.0f) blue:(133.0f/255.0f) alpha:1.0f];
     
     ShopButton *itunesBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
     itunesBuyButton.tag = 401;
@@ -668,7 +669,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionHeight = (screenHeight * 47.53521127) / 100; //(280 * 100) / 568
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
-    if ([data[@"overview"] isEqualToString:@""]) {
+    if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
         // the movie db doesnot provide description for this media
         mediaDescription.text = NSLocalizedString(@"nodescription", nil);
     } else {

@@ -723,13 +723,14 @@
         
         return sectionElements.count;
     } else {
+        
         NSString *sectionTitle = [[[userTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
         NSArray *sectionElements = [userTasteDict objectForKey:sectionTitle];
         // If the category is empty so the section not appears
         if ([sectionElements isKindOfClass:[NSNull class]]) {
             return 0;
         }
-        
+
         return sectionElements.count;
     }
 }
@@ -757,6 +758,7 @@
         
         return [categoryList count];
     } else {
+        
         // User have no list of taste
         UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
         BOOL IsTableViewEmpty = YES;
@@ -768,10 +770,11 @@
                 }
             }
         }
-
+        
         if (IsTableViewEmpty == YES && (FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"])) {
             emptyUserTasteLabel.hidden = NO;
             [loadingIndicator stopAnimating];
+            
             return 0;
         }
         emptyUserTasteLabel.hidden = YES;
@@ -990,6 +993,7 @@
             UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
             
             __block NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
+
 //            [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] removeObject:cell.model];
             
             NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] mutableCopy];
@@ -998,15 +1002,24 @@
             [userTasteDict removeObjectForKey:[cell.model valueForKey:@"type"]];
             [userTasteDict setObject:updatedUserTaste forKey:[cell.model valueForKey:@"type"]];
             
-            
             NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"currentUserfbID"]];
             [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
                 UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
                 userTaste.taste = arrayData;
             } completion:^(BOOL success, NSError *error) {
-                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
-                           withRowAnimation:UITableViewRowAnimationFade];
+                BOOL lastItem = ([[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] count] == 0);
+                
+                if (lastItem) {
+//                    [userTasteDict removeObjectForKey:[cell.model valueForKey:@"type"]];
+                    [tableView reloadData];
+                } else {
+                    [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
+                                     withRowAnimation:UITableViewRowAnimationFade];
+                }
+
+//                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
+//                           withRowAnimation:UITableViewRowAnimationFade];
 //                [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:YES];
             }];
             break;

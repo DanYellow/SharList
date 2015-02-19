@@ -602,10 +602,10 @@
     // Build the array from the plist
     NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"test/getusertaste3.php"]];
+    NSURL *aUrl = [NSURL URLWithString:[[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:30.0];
+                                                       timeoutInterval:15.0];
     [request setHTTPMethod:@"POST"];
     
     NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
@@ -617,6 +617,7 @@
     ) {
         if (!self.locationManager) {
             self.locationManager = [CLLocationManager new];
+//            self.locationManager.delegate = self;
         }
         
         self.locationManager.distanceFilter = 1000;
@@ -625,20 +626,31 @@
         if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self.locationManager requestAlwaysAuthorization];
         }
-        
     }
-
     
     // If user is accepts geoloc we update his location BEFORE fetch new users
     // That's way the meeting is more relevant
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES) {
+        [self.locationManager startUpdatingLocation];
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
+//        
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"foo" message:[NSString stringWithFormat:@"latitude=%f | longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//        [alert show];
     }
+    
 
+//    [self.locationManager stopUpdatingLocation];
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
     return request;
 }
+
+
+
+//-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+//{
+//    CLLocation *currentLocation = [locations lastObject];
+//}
 
 - (void) saveRandomUserDatas:(NSData *)datas
 {
@@ -678,7 +690,7 @@
                [noNewDatasAlert show];
             }
         }
-        
+        [loadingIndicator stopAnimating];
         return;
     }
     
