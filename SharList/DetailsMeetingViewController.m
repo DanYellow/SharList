@@ -294,7 +294,7 @@
             [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
             
             [UIView transitionWithView:cell
-                              duration:.7f
+                              duration:.15f
                                options:UIViewAnimationOptionTransitionCrossDissolve
                             animations:^{cell.alpha = 1;}
                             completion:NULL];
