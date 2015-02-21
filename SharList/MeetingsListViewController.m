@@ -618,6 +618,9 @@
         if (!self.locationManager) {
             self.locationManager = [CLLocationManager new];
 //            self.locationManager.delegate = self;
+            [self.locationManager startUpdatingLocation];
+            
+            NSLog(@"%@", [NSString stringWithFormat:@"latitude: %f longitude: %f", _locationManager.location.coordinate.latitude, _locationManager.location.coordinate.longitude]);
         }
         
         self.locationManager.distanceFilter = 1000;
@@ -631,7 +634,7 @@
     // If user is accepts geoloc we update his location BEFORE fetch new users
     // That's way the meeting is more relevant
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES) {
-        [self.locationManager startUpdatingLocation];
+        
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
         
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"foo" message:[NSString stringWithFormat:@"latitude=%f | longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -648,6 +651,9 @@
 //- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 //{
 //    CLLocation *currentLocation = [locations lastObject];
+//    
+//    
+////    self.locationManager.location.coordinate.latitude = currentLocation.coordinate.latitude;
 //}
 
 - (void) saveRandomUserDatas:(NSData *)datas

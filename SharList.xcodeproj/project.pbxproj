@@ -22,7 +22,6 @@
 		1A16F65C1A458929000BC4AB /* settings-tab-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F65A1A458929000BC4AB /* settings-tab-icon@2x.png */; };
 		1A16F65D1A458929000BC4AB /* settings-tab-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F65B1A458929000BC4AB /* settings-tab-icon@3x.png */; };
 		1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewController.m */; };
-		1A1D6E481A10AE930090C598 /* api.json in Resources */ = {isa = PBXBuildFile; fileRef = 1A1D6E471A10AE930090C598 /* api.json */; };
 		1A2696F31A1D4396002ADC57 /* triangles-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A2696F21A1D4396002ADC57 /* triangles-bg@2x.png */; };
 		1A2696F51A1D443F002ADC57 /* triangles-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A2696F41A1D443F002ADC57 /* triangles-bg.png */; };
 		1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */; };
@@ -98,7 +97,6 @@
 		1A16F65B1A458929000BC4AB /* settings-tab-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings-tab-icon@3x.png"; sourceTree = "<group>"; };
 		1A1D6E431A1099C00090C598 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		1A1D6E441A1099C00090C598 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
-		1A1D6E471A10AE930090C598 /* api.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = api.json; sourceTree = "<group>"; };
 		1A2696F21A1D4396002ADC57 /* triangles-bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "triangles-bg@2x.png"; sourceTree = "<group>"; };
 		1A2696F41A1D443F002ADC57 /* triangles-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "triangles-bg.png"; sourceTree = "<group>"; };
 		1A3C227A1A113069005B31E4 /* DetailsMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMediaViewController.h; sourceTree = "<group>"; };
@@ -219,7 +217,6 @@
 				1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */,
 				1A076DC01A0FE20900CD725A /* Main.storyboard */,
 				1A076DC31A0FE20900CD725A /* Images.xcassets */,
-				1A1D6E471A10AE930090C598 /* api.json */,
 				1AEB2BBF1A4B2580000D7C7B /* FacebookSDKOverrides.bundle */,
 				1A076DB61A0FE20900CD725A /* Supporting Files */,
 			);
@@ -510,7 +507,6 @@
 				1A16754F1A3F93E300AE7A9D /* InfoPlist.strings in Resources */,
 				1AF474591A4DCBB0003ED4AF /* trailer-icon@3x.png in Resources */,
 				1A2696F51A1D443F002ADC57 /* triangles-bg.png in Resources */,
-				1A1D6E481A10AE930090C598 /* api.json in Resources */,
 				1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */,
 				1A95471D1A29E8B6002AC281 /* favorite-icon-message-alt@3x.png in Resources */,
 				1A2696F31A1D4396002ADC57 /* triangles-bg@2x.png in Resources */,
