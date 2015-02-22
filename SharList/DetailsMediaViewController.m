@@ -888,13 +888,94 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
     
     
-    NSString *paramsURL = [NSString stringWithFormat:@"client_id=8bc04c11b4c283b72a3fa48cfc6149f3&imdb_id=%@", self.mediaDatas[@"imdbID"]];
+//    NSString *paramsURL = [NSString stringWithFormat:@"client_id=8bc04c11b4c283b72a3fa48cfc6149f3&imdb_id=%@", self.mediaDatas[@"imdbID"]];
+//
+//    NSURL *URL = [NSURL URLWithString:@"https://api.betaseries.com/shows/display"];
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+//    [request setHTTPMethod:@"GET"];
+//    [request addValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
+//    [request addValue:sender.trailerID forHTTPHeaderField:@"X-BetaSeries-Token"];
+//    [request setHTTPBody:[paramsURL dataUsingEncoding:NSUTF8StringEncoding]];
+//    
+    
+    
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
+    [manager.requestSerializer setValue:sender.trailerID forHTTPHeaderField:@"X-BetaSeries-Token"];
+    [manager GET:@"https://api.betaseries.com/shows/display" parameters:@{@"imdb_id" : self.mediaDatas[@"imdbID"], @"client_id" : @"8bc04c11b4c283b72a3fa48cfc6149f3"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"JSON: %@", [responseObject valueForKeyPath:@"show.in_account"]);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self toggleAddingMediaInUserBSAccountForUserToken:sender.trailerID
+                                                  forState:[responseObject valueForKeyPath:@"show.in_account"]];
+            NSLog(@"in_account : %@", [responseObject valueForKeyPath:@"show.in_account"]);
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+    
+//    NSURLSession *session = [NSURLSession sharedSession];
+//    NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+//                                            completionHandler:
+//                                  ^(NSData *data, NSURLResponse *response, NSError *error) {
+//                                      
+//                                      if (error) {
+//                                          NSLog(@"error : %@", error);
+//                                          return;
+//                                      }
+//                                      
+//                                      NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
+//                                                                                                   options:kNilOptions
+//                                                                                                     error:&error];
+//                                      
+//                                      NSLog(@"in_account : %@ | jsonResponse : %@", jsonResponse[@"in_account"], jsonResponse);
+////                                      [self toggleAddingMediaInUserBSAccountForUserToken:sender.trailerID
+////                                                                                forState:jsonResponse[@"in_account"]];
+//                                  }];
+//    
+//    [task resume];
+}
 
+/*
+ * Allow to remove or add serie / movie to an user
+ * aBool = YES -> Add Serie
+ * aBool = NO -> Remove serie
+ */
+
+- (void) toggleAddingMediaInUserBSAccountForUserToken:(NSString*)userToken forState:(BOOL)aBool
+{
+    NSString *paramsURL = [NSString stringWithFormat:@"client_id=8bc04c11b4c283b72a3fa48cfc6149f3&imdb_id=%@", self.mediaDatas[@"imdbID"]];
+    
     NSURL *URL = [NSURL URLWithString:@"https://api.betaseries.com/shows/show"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    [request setHTTPMethod:@"POST"];
+    
+    NSLog(aBool ? @"YES" : @"NO");
+    //show.in_account key is true when media is in user account
+//    if (aBool == NO) {
+//        // Add serie /
+//        [request setHTTPMethod:@"POST"];
+//    } else {
+//        // remove serie /
+//        [request setHTTPMethod:@"DELETE"];
+//    }
+    
+    //    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    //    [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
+    //    [manager.requestSerializer setValue:userToken forHTTPHeaderField:@"X-BetaSeries-Token"];
+    //    [manager DELETE:@"https://api.betaseries.com/shows/show" parameters:@{@"imdb_id" : self.mediaDatas[@"imdbID"], @"client_id" : @"8bc04c11b4c283b72a3fa48cfc6149f3"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    //        //        NSLog(@"JSON: %@", [responseObject valueForKeyPath:@"show.in_account"]);
+    //
+    //        NSLog(@"in_account : %@", responseObject);
+    //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    //        NSLog(@"Error: %@", error);
+    //    }];
+
+    
+    [request setHTTPMethod:@"DELETE"];
     [request addValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
-    [request addValue:sender.trailerID forHTTPHeaderField:@"X-BetaSeries-Token"];
+    [request addValue:userToken forHTTPHeaderField:@"X-BetaSeries-Token"];
+    [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [request setHTTPBody:[paramsURL dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLSession *session = [NSURLSession sharedSession];
@@ -921,7 +1002,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                           NSLog(@"gentoo");
                                       }
                                       
-//                                      BSUserToken = jsonResponse[@"token"];
+                                      //                                      BSUserToken = jsonResponse[@"token"];
                                       
                                   }];
     
