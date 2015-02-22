@@ -12,6 +12,14 @@
 
 @end
 
+#pragma mark - tag list references
+// Tag list
+// 1 : settingsTableview
+// 2 : fbLoginButton
+// 3 : geolocSwitch
+// 4 : Alertview for access device's settings
+// 5 : Alertview for betaseries
+
 @implementation SettingsViewController
 
 - (void) viewDidAppear:(BOOL)animated
@@ -71,6 +79,24 @@
     [aboutButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
     aboutButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
     [self.view addSubview:aboutButton];
+    
+    
+    UIButton *showBetaSeriesConnectBtn = [UIButton new];
+    [showBetaSeriesConnectBtn setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
+    [showBetaSeriesConnectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [showBetaSeriesConnectBtn addTarget:self action:@selector(showBetaSeriesConnect) forControlEvents:UIControlEventTouchUpInside];
+    showBetaSeriesConnectBtn.frame = CGRectMake(0, screenHeight - ((99 * 3) + 30), screenWidth, 49);
+    [self.view addSubview:showBetaSeriesConnectBtn];
+}
+
+
+- (void) showBetaSeriesConnect
+{
+    UIAlertView *alert =[[UIAlertView alloc ] initWithTitle:@"Login" message:@"Enter Username & Password" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles: nil];
+    alert.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
+    alert.tag = 5;
+    [alert addButtonWithTitle:@"Login"];
+    [alert show];
 }
 
 - (void) displayAboutScreen
@@ -241,7 +267,6 @@
     }
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
 }
 
 
@@ -288,6 +313,7 @@
             case kCLAuthorizationStatusRestricted:
             {
                 alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"geoloc denied", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NSLocalizedString(@"Settings", nil), nil];
+                alert.tag = 4;
                 [alert show];
                 aBool = NO;
             }
@@ -306,13 +332,59 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
-    
-    if([title isEqualToString:NSLocalizedString(@"Settings", nil)])
-    {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+    if (alertView.tag == 4) {
+        NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+        
+        if([title isEqualToString:NSLocalizedString(@"Settings", nil)]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+        }
+    } else if (alertView.tag == 5) {
+        if (buttonIndex == 1)
+        {
+            UITextField *username = [alertView textFieldAtIndex:0];
+            UITextField *password = [alertView textFieldAtIndex:1];
+            
+            if (![self isUITextFieldValueEmpty:username] || ![self isUITextFieldValueEmpty:password]) {
+                return;
+            }
+            
+            NSString *paramsURL = [NSString stringWithFormat:@"client_id=8bc04c11b4c283b72a3fa48cfc6149f3&login=%@&password=%@", username.text, [NSString md5:password.text]];
+            NSLog(@"paramsURL : %@", paramsURL);
+            NSURL *URL = [NSURL URLWithString:@"http://api.betaseries.com/members/auth"];
+            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+            [request setHTTPMethod:@"POST"];
+            [request addValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
+            [request setHTTPBody:[paramsURL dataUsingEncoding:NSUTF8StringEncoding]];
+            
+            NSURLSession *session = [NSURLSession sharedSession];
+            NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+                                                    completionHandler:
+                                          ^(NSData *data, NSURLResponse *response, NSError *error) {
+                                              
+                                              if (error) {
+                                                  NSLog(@"error : %@", error);
+                                                  return;
+                                              }
+                                             
+                                              NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                   options:kNilOptions
+                                                                                                     error:&error];
+                                              BSUserToken = jsonResponse[@"token"];
+                                              NSLog(@"JSON: %@", jsonResponse);
+                                          }];
+            
+            [task resume];
+        }
     }
 }
+
+- (BOOL) isUITextFieldValueEmpty:(UITextField*)anUITextField
+{
+    NSString *anUITextFieldText = [anUITextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    return [anUITextFieldText length] > 0 && ![anUITextFieldText isEqualToString:@""];
+}
+
+
 
 //- (void)updateSwitchAtIndexPath:(NSIndexPath *)indexPath
 //{

@@ -8,6 +8,7 @@
 
 #import "DetailsMediaViewController.h"
 
+
 @interface DetailsMediaViewController ()
 
 @property (strong, nonatomic) UserTaste *userTaste;
@@ -89,6 +90,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     self.ConnectedToInternet = YES;
     self.itunesIDString = @"";
+    
+//    BSUserToken =
     
     NSURL *baseURL = [NSURL URLWithString:@"https://api.themoviedb.org/3/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
@@ -229,6 +232,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } else {
         return;
     }
+    
+//    if (![BSUserToken isEqualToString:@""] || BSUserToken != nil) {
+//        [self displayBetaSeriesButton];
+//    }
 
 //    NSLog(@"foof");
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
@@ -842,6 +849,58 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) seeTrailerMedia:(UIButton*)sender
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.youtube.com/watch?v=%@", sender.trailerID]]];
+}
+
+
+/*
+ * Display button to allow user to add / remove serie from it's BetaSeries account
+ *
+ *
+ **/
+
+- (void) displayBetaSeriesButton
+{
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    
+    UIButton *connectWithBSBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    connectWithBSBtn.frame = CGRectMake(screenWidth - 85, 80, 40, 40);
+    [connectWithBSBtn addTarget:self action:@selector(connectWithBSAccount:) forControlEvents:UIControlEventTouchUpInside];
+    [connectWithBSBtn setTintColor:[UIColor whiteColor]];
+    //    [seeTrailerMediaBtn setImage:[[UIImage imageNamed:@"trailer-icon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    connectWithBSBtn.backgroundColor = [UIColor purpleColor];
+    connectWithBSBtn.opaque = YES;
+    [infoMediaView addSubview:connectWithBSBtn];
+}
+
+- (void) connectWithBSAccount:(UIButton*)sender
+{
+    NSString *paramsURL = [NSString stringWithFormat:@"client_id=8bc04c11b4c283b72a3fa48cfc6149f3&imdb_id=%@", self.mediaDatas[@"imdbID"]];
+
+    NSURL *URL = [NSURL URLWithString:@"https://api.betaseries.com/shows/show"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    [request setHTTPMethod:@"POST"];
+    [request addValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
+//    [request addValue:BSUserToken forHTTPHeaderField:@"X-BetaSeries-Token"];
+    [request setHTTPBody:[paramsURL dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+                                            completionHandler:
+                                  ^(NSData *data, NSURLResponse *response, NSError *error) {
+                                      
+                                      if (error) {
+                                          NSLog(@"error : %@", error);
+                                          return;
+                                      }
+                                      
+                                      NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                   options:kNilOptions
+                                                                                                     error:&error];
+//                                      BSUserToken = jsonResponse[@"token"];
+                                      NSLog(@"JSON: %@", jsonResponse);
+                                  }];
+    
+    [task resume];
 }
 
 - (void) addPhysics

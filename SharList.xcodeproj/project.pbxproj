@@ -16,6 +16,7 @@
 		1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC01A0FE20900CD725A /* Main.storyboard */; };
 		1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC31A0FE20900CD725A /* Images.xcassets */; };
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
+		1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EB7771A994BEE000EA307 /* NSString+MD5.m */; };
 		1A16754F1A3F93E300AE7A9D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1675511A3F93E300AE7A9D /* InfoPlist.strings */; };
 		1A16F6491A457C17000BC4AB /* liste-tab-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */; };
 		1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */; };
@@ -89,6 +90,8 @@
 		1A076DCC1A0FE20900CD725A /* SharListTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SharListTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A076DD11A0FE20900CD725A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A076DD21A0FE20900CD725A /* SharListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharListTests.m; sourceTree = "<group>"; };
+		1A0EB7761A994BEE000EA307 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
+		1A0EB7771A994BEE000EA307 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 		1A1675501A3F93E300AE7A9D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A1675521A3F93E800AE7A9D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "liste-tab-icon@2x.png"; sourceTree = "<group>"; };
@@ -304,6 +307,8 @@
 				1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */,
 				1A024AB31A3A3EF20098F015 /* NSArray+Reverse.h */,
 				1A024AB41A3A3EF20098F015 /* NSArray+Reverse.m */,
+				1A0EB7761A994BEE000EA307 /* NSString+MD5.h */,
+				1A0EB7771A994BEE000EA307 /* NSString+MD5.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -573,6 +578,7 @@
 				1AEB8BEC1A3636FA004A94C1 /* UILabel+HeightToFit.m in Sources */,
 				1A024AB81A3A52DC0098F015 /* AboutViewController.m in Sources */,
 				1A9666461A312302006969A7 /* NSString+SentenceCapitalizedString.m in Sources */,
+				1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */,
 				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,
 				1A3C22821A114339005B31E4 /* UserTaste.m in Sources */,
 				1A076DB91A0FE20900CD725A /* main.m in Sources */,

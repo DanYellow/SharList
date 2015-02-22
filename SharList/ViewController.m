@@ -315,9 +315,11 @@
                 forControlEvents:UIControlEventValueChanged];
     
 
-    APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
+//    APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
 //    NSLog(@"APIdatas : %@", APIdatas);
-    categoryList = [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    categoryList = [@[@"book", @"serie", @"movie"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    
+//    [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     
     filteredTableDatas = [NSMutableDictionary new];
     

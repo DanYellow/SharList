@@ -11,10 +11,12 @@
 #import <CoreLocation/CoreLocation.h>
 
 #import "DetailsMediaViewController.h"
-
 #import "ViewController.h"
-
 #import "AboutViewController.h"
+
+#import "NSString+MD5.h"
+
+extern NSString *BSUserToken;
 
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate, CLLocationManagerDelegate, UIAlertViewDelegate>

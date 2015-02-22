@@ -27,6 +27,8 @@
 #import "UILabel+HeightToFit.h"
 #import "UIButton+TrailerID.h"
 
+#import "SettingsViewController.h"
+
 
 @protocol UpdateUserTasteListDelegate;
 
@@ -82,6 +84,8 @@
 - (void) showTutorial;
 - (void) hideTutorial;
 - (void) showPoster;
+- (void) displayBetaSeriesButton;
+- (void) connectWithBSAccount:(UIButton*)sender;
 
 
 @end
