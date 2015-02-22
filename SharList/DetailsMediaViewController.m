@@ -880,7 +880,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) connectWithBSAccount:(UIButton*)sender
 {
-    if ([sender.trailerID isEqualToString:@""] && sender.trailerID == (id)[NSNull null]) {
+    if (sender.trailerID == nil || sender.trailerID == (id)[NSNull null]) {
         UIAlertView *notConnectedToBS = [[UIAlertView alloc] initWithTitle:@"Erreur" message:@"Vous n'êtes pas connecté(e) à votre compte betaseries. \nVous pouvez le faire depuis les paramètres de l'application" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [notConnectedToBS show];
         
@@ -910,8 +910,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                       NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
                                                                                                    options:kNilOptions
                                                                                                      error:&error];
-                                      if ([jsonResponse valueForKeyPath:@"errors.code"]) {
-                                          NSLog(@"JSON: %@", [jsonResponse valueForKeyPath:@"errors.code"]);
+                                      if ([jsonResponse[@"errors"] count] > 0) {
+                                          NSLog(@"jsonResponse : %@", jsonResponse);
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              NSString *errorFromBSAPI = (NSString*)[jsonResponse valueForKeyPath:@"errors.text"][0];
+                                              UIAlertView *errorIDBSAlert = [[UIAlertView alloc] initWithTitle:@"Erreur" message:errorFromBSAPI delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                                              [errorIDBSAlert show];
+                                          });
                                       } else {
                                           NSLog(@"gentoo");
                                       }
