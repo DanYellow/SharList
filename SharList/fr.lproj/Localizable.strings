@@ -48,7 +48,8 @@
 "Geoloc explain" = "Cette option n'est pas accessible présentement parce que nous venons de lancer cette application et qu'il n'y a pas beaucoup d'utilisateurs autour de vous. Parlez de Shound à vos amis, votre famille, vos collègues...";
 "about" = "A propos";
 "BSConnect" = "Connexion à Betaseries";
-"BSLoginPlaceholder" = "Pseudo betaseries";
+"BSDisconnect" = "Déconnexion Betaseries";
+"BSLoginPlaceholder" = "Pseudo Betaseries";
 "BSPasswordPlaceholder" = "Mot de passe";
 "Connection" = "Connexion";
 "Cancel" = "Annuler";

@@ -867,12 +867,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIButton *connectWithBSBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [connectWithBSBtn setTitle:@"bs" forState:UIControlStateNormal];
+    [connectWithBSBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     connectWithBSBtn.trailerID = BSUserToken; // This is not a trailer but this extra property is useful
     connectWithBSBtn.frame = CGRectMake(screenWidth - 95, 80, 40, 40);
     [connectWithBSBtn addTarget:self action:@selector(connectWithBSAccount:) forControlEvents:UIControlEventTouchUpInside];
 //    [connectWithBSBtn setTintColor:[UIColor whiteColor]];
 //    [connectWithBSBtn setImage:[[UIImage imageNamed:@"trailer-icon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    connectWithBSBtn.backgroundColor = [UIColor purpleColor];
+    connectWithBSBtn.backgroundColor = [UIColor whiteColor];
     connectWithBSBtn.opaque = YES;
     [infoMediaView addSubview:connectWithBSBtn];
 }

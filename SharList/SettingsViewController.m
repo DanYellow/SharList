@@ -26,6 +26,25 @@
 {
 }
 
+- (void) viewWillAppear:(BOOL)animated {
+    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+    // We display the betaseries button only if the user is french
+    if ([userLanguage isEqualToString:@"fr"]) {
+        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"]) {
+            self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
+                                       NSLocalizedString(@"Log out", nil),
+                                       NSLocalizedString(@"BSConnect", nil)]; //NSLocalizedString(@"Delete account", nil)
+        } else {
+            self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
+                                       NSLocalizedString(@"Log out", nil),
+                                       NSLocalizedString(@"BSDisconnect", nil)]; //NSLocalizedString(@"Delete account", nil)
+        }
+    } else {
+        self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
+                                   NSLocalizedString(@"Log out", nil)]; //NSLocalizedString(@"Delete account", nil)
+    }
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -55,12 +74,8 @@
     fbLoginButton.tag = 2;
     fbLoginButton.frame = CGRectMake(51, screenHeight + 150, 218, 46);
     [self.view addSubview:fbLoginButton];
-    
-    self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
-                               NSLocalizedString(@"Log out", nil)]; //NSLocalizedString(@"Delete account", nil)
-    
-    
-    // Uitableview of user selection (what user likes)
+
+    // UITableview of user selection (what user likes)
     UITableView *settingsTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStyleGrouped];
     settingsTableview.dataSource = self;
     settingsTableview.delegate = self;
@@ -81,17 +96,6 @@
     [self.view addSubview:aboutButton];
     
     
-    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-    // We display the betaseries button only if the user is french
-    if ([userLanguage isEqualToString:@"fr"]) {
-        UIButton *showBetaSeriesConnectBtn = [UIButton new];
-        [showBetaSeriesConnectBtn setTitle:NSLocalizedString(@"BSConnect", nil) forState:UIControlStateNormal];
-        [showBetaSeriesConnectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [showBetaSeriesConnectBtn addTarget:self action:@selector(showBetaSeriesConnect) forControlEvents:UIControlEventTouchUpInside];
-        showBetaSeriesConnectBtn.frame = CGRectMake(0, screenHeight - ((99 * 3) + 30), screenWidth, 49);
-        [self.view addSubview:showBetaSeriesConnectBtn];
-    }
-    
     
 }
 
@@ -102,7 +106,7 @@
                                                     message:nil
                                                    delegate:self
                                           cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
-                                          otherButtonTitles: nil];
+                                          otherButtonTitles:nil];
     alert.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
     alert.tag = 5;
     [alert addButtonWithTitle:NSLocalizedString(@"Connection", nil)];
@@ -113,6 +117,76 @@
     
     UITextField *passwordTextField = [alert textFieldAtIndex:1];
     passwordTextField.placeholder = NSLocalizedString(@"BSPasswordPlaceholder", nil);
+    
+    
+//    UIButton *aboutButton = [UIButton new];
+//    [aboutButton setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
+//    [aboutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [aboutButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
+//    aboutButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
+//    [self.view addSubview:aboutButton];
+}
+
+- (void) showBetaSeriesDisconnect
+{
+    UIActionSheet *disconnectBetaSeries = [[UIActionSheet alloc] initWithTitle:@"Connecté(e)" delegate:self cancelButtonTitle:@"Annuler" destructiveButtonTitle:NSLocalizedString(@"BSDisconnect", nil) otherButtonTitles: nil];
+    [disconnectBetaSeries showInView:self.view];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == actionSheet.destructiveButtonIndex) {
+        
+        NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
+        
+        NSURL *URL = [NSURL URLWithString:@"https://api.betaseries.com/members/destroy"];
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+        [request setHTTPMethod:@"POST"];
+        [request addValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
+        [request addValue:BSUserToken forHTTPHeaderField:@"X-BetaSeries-Token"];
+        
+        NSURLSession *session = [NSURLSession sharedSession];
+        NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+                                                completionHandler:
+                                      ^(NSData *data, NSURLResponse *response, NSError *error) {
+                                          
+                                          if (error) {
+                                              NSLog(@"error : %@", error);
+                                              return;
+                                          }
+
+                                          
+                                          
+                                          [[NSUserDefaults standardUserDefaults]
+                                           setObject:nil
+                                           forKey:@"BSUserToken"];
+                                          [[NSUserDefaults standardUserDefaults]
+                                           setObject:nil
+                                           forKey:@"BSUserLoginName"];
+                                          
+                                          UITableView *settingsTableview = (UITableView*)[self.view viewWithTag:1];
+                                          [settingsTableview reloadData];
+//                                          [self changeCellAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2] WithTextValue:NSLocalizedString(@"BSConnect", nil)];
+                                      }];
+        
+        [task resume];
+    }
+}
+
+- (void) changeCellAtIndexPath:(NSIndexPath*)indexPath WithTextValue:(NSString*)textValue
+{
+    UITableView *settingsTableview = (UITableView*)[self.view viewWithTag:1];
+    
+    NSIndexPath *disconnectBSRow = indexPath;
+    UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:disconnectBSRow];
+    
+    [settingsTableview beginUpdates];
+    for (UILabel *view in cell.contentView.subviews)
+    {
+        view.text = textValue;
+    }
+    [settingsTableview reloadRowsAtIndexPaths:@[disconnectBSRow] withRowAnimation:UITableViewRowAnimationNone];
+    [settingsTableview endUpdates];
 }
 
 - (void) displayAboutScreen
@@ -152,8 +226,8 @@
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    if (section == 2)
-        return 70.0f;
+//    if (section == 2)
+//        return 70.0f;
     return 0.0f;
 }
 
@@ -246,12 +320,12 @@
     myLabel.textColor = [UIColor colorWithRed:(44.0f/255.0f) green:(44.0f/255.0f) blue:(44.0f/255.0f) alpha:1.0];
     
     if (indexPath.section == 1 || indexPath.section == 2) {
-        myLabel.textAlignment= NSTextAlignmentCenter;
+        myLabel.textAlignment = NSTextAlignmentCenter;
     }
     
-    if (indexPath.section == 2) {
-        myLabel.textColor = [UIColor colorWithRed:(171.0f/255.0f) green:(0/255.0f) blue:(0/255.0f) alpha:1.0];
-    }
+//    if (indexPath.section == 2) {
+//        myLabel.textColor = [UIColor colorWithRed:(171.0f/255.0f) green:(0/255.0f) blue:(0/255.0f) alpha:1.0];
+//    }
     
     
     
@@ -274,6 +348,18 @@
                 {
                     [obj sendActionsForControlEvents:UIControlEventTouchUpInside];
                 }
+            }
+        }
+            break;
+            
+        case 2:
+        {
+            NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
+            
+            if (!BSUserToken) {
+                [self showBetaSeriesConnect];
+            } else {
+                [self showBetaSeriesDisconnect];
             }
         }
             break;
@@ -311,7 +397,6 @@
     UISwitch *geolocSwitch = (UISwitch*)[self.view viewWithTag:3];
     geolocSwitch.on = NO;
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
-
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
@@ -385,13 +470,26 @@
                                               NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
                                                                                                    options:kNilOptions
                                                                                                      error:&error];
-                                              
-                                              
+
+                                              if ([jsonResponse[@"errors"] count] > 0) {
+                                                  
+                                                  // We have to display the Alertview in the main controller
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      NSString *errorFromBSAPI = (NSString*)[jsonResponse valueForKeyPath:@"errors.text"][0];
+                                                      NSLog(@"errorFromBSAPI : %@", errorFromBSAPI);
+                                                      UIAlertView *errorIDBSAlert = [[UIAlertView alloc] initWithTitle:@"Erreur" message:errorFromBSAPI delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                                                      [errorIDBSAlert show];
+                                                  });
+                                                  
+                                                  return;
+                                              }
                                               [[NSUserDefaults standardUserDefaults]
                                                 setObject:jsonResponse[@"token"]
                                                 forKey:@"BSUserToken"];
+                                              [[NSUserDefaults standardUserDefaults]
+                                               setObject:[jsonResponse valueForKeyPath:@"user.login"]
+                                               forKey:@"BSUserLoginName"];
                                               
-                                              NSLog(@"JSON: %@", jsonResponse);
                                           }];
             
             [task resume];

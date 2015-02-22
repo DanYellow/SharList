@@ -16,7 +16,7 @@
 #import "NSString+MD5.h"
 
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate, CLLocationManagerDelegate, UIAlertViewDelegate>
+UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate, CLLocationManagerDelegate, UIAlertViewDelegate, UIActionSheetDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
