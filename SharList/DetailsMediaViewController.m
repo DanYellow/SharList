@@ -232,12 +232,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } else {
         return;
     }
-    
-//    if (![BSUserToken isEqualToString:@""] || BSUserToken != nil) {
-//        [self displayBetaSeriesButton];
-//    }
 
-//    NSLog(@"foof");
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             // We made a second query for tv show to get datas from imdb
@@ -385,6 +380,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
 
     [self.view insertSubview:infoMediaView atIndex:1];
+    
+    // Manage current user betaseries account
+    NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
+    
+    if ([userLanguage isEqualToString:@"fr"]) {
+        [self displayBetaSeriesButtonForToken:BSUserToken];
+    }
     
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
@@ -858,15 +860,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
  *
  **/
 
-- (void) displayBetaSeriesButton
+- (void) displayBetaSeriesButtonForToken:(NSString*)BSUserToken
 {
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     
+    
     UIButton *connectWithBSBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    connectWithBSBtn.frame = CGRectMake(screenWidth - 85, 80, 40, 40);
+    [connectWithBSBtn setTitle:@"bs" forState:UIControlStateNormal];
+    connectWithBSBtn.trailerID = BSUserToken; // This is not a trailer but this extra property is useful
+    connectWithBSBtn.frame = CGRectMake(screenWidth - 95, 80, 40, 40);
     [connectWithBSBtn addTarget:self action:@selector(connectWithBSAccount:) forControlEvents:UIControlEventTouchUpInside];
-    [connectWithBSBtn setTintColor:[UIColor whiteColor]];
-    //    [seeTrailerMediaBtn setImage:[[UIImage imageNamed:@"trailer-icon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+//    [connectWithBSBtn setTintColor:[UIColor whiteColor]];
+//    [connectWithBSBtn setImage:[[UIImage imageNamed:@"trailer-icon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     connectWithBSBtn.backgroundColor = [UIColor purpleColor];
     connectWithBSBtn.opaque = YES;
     [infoMediaView addSubview:connectWithBSBtn];
@@ -874,13 +879,21 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) connectWithBSAccount:(UIButton*)sender
 {
+    if ([sender.trailerID isEqualToString:@""] && sender.trailerID == (id)[NSNull null]) {
+        UIAlertView *notConnectedToBS = [[UIAlertView alloc] initWithTitle:@"Erreur" message:@"Vous n'êtes pas connecté(e) à votre compte betaseries. \nVous pouvez le faire depuis les paramètres de l'application" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [notConnectedToBS show];
+        
+        return;
+    }
+    
+    
     NSString *paramsURL = [NSString stringWithFormat:@"client_id=8bc04c11b4c283b72a3fa48cfc6149f3&imdb_id=%@", self.mediaDatas[@"imdbID"]];
 
     NSURL *URL = [NSURL URLWithString:@"https://api.betaseries.com/shows/show"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     [request setHTTPMethod:@"POST"];
     [request addValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
-//    [request addValue:BSUserToken forHTTPHeaderField:@"X-BetaSeries-Token"];
+    [request addValue:sender.trailerID forHTTPHeaderField:@"X-BetaSeries-Token"];
     [request setHTTPBody:[paramsURL dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLSession *session = [NSURLSession sharedSession];
@@ -896,8 +909,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                       NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
                                                                                                    options:kNilOptions
                                                                                                      error:&error];
+                                      if ([jsonResponse valueForKeyPath:@"errors.code"]) {
+                                          NSLog(@"JSON: %@", [jsonResponse valueForKeyPath:@"errors.code"]);
+                                      } else {
+                                          NSLog(@"gentoo");
+                                      }
+                                      
 //                                      BSUserToken = jsonResponse[@"token"];
-                                      NSLog(@"JSON: %@", jsonResponse);
+                                      
                                   }];
     
     [task resume];

@@ -47,6 +47,11 @@
 "Delete account" = "Supprimer le compte";
 "Geoloc explain" = "Cette option n'est pas accessible présentement parce que nous venons de lancer cette application et qu'il n'y a pas beaucoup d'utilisateurs autour de vous. Parlez de Shound à vos amis, votre famille, vos collègues...";
 "about" = "A propos";
+"BSConnect" = "Connexion à Betaseries";
+"BSLoginPlaceholder" = "Pseudo betaseries";
+"BSPasswordPlaceholder" = "Mot de passe";
+"Connection" = "Connexion";
+"Cancel" = "Annuler";
 // Errors for geoloc
 "Oops" = "Oups";
 "geoloc denied" = "Shound n'est pas autorisé à utiliser votre position. Autorisez le dans les Réglages. (Shound > Position > Toujours)";

@@ -81,22 +81,38 @@
     [self.view addSubview:aboutButton];
     
     
-    UIButton *showBetaSeriesConnectBtn = [UIButton new];
-    [showBetaSeriesConnectBtn setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
-    [showBetaSeriesConnectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [showBetaSeriesConnectBtn addTarget:self action:@selector(showBetaSeriesConnect) forControlEvents:UIControlEventTouchUpInside];
-    showBetaSeriesConnectBtn.frame = CGRectMake(0, screenHeight - ((99 * 3) + 30), screenWidth, 49);
-    [self.view addSubview:showBetaSeriesConnectBtn];
+    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+    // We display the betaseries button only if the user is french
+    if ([userLanguage isEqualToString:@"fr"]) {
+        UIButton *showBetaSeriesConnectBtn = [UIButton new];
+        [showBetaSeriesConnectBtn setTitle:NSLocalizedString(@"BSConnect", nil) forState:UIControlStateNormal];
+        [showBetaSeriesConnectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [showBetaSeriesConnectBtn addTarget:self action:@selector(showBetaSeriesConnect) forControlEvents:UIControlEventTouchUpInside];
+        showBetaSeriesConnectBtn.frame = CGRectMake(0, screenHeight - ((99 * 3) + 30), screenWidth, 49);
+        [self.view addSubview:showBetaSeriesConnectBtn];
+    }
+    
+    
 }
 
 
 - (void) showBetaSeriesConnect
 {
-    UIAlertView *alert =[[UIAlertView alloc ] initWithTitle:@"Login" message:@"Enter Username & Password" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles: nil];
+    UIAlertView *alert =[[UIAlertView alloc ] initWithTitle:NSLocalizedString(@"BSConnect", nil)
+                                                    message:nil
+                                                   delegate:self
+                                          cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                                          otherButtonTitles: nil];
     alert.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
     alert.tag = 5;
-    [alert addButtonWithTitle:@"Login"];
+    [alert addButtonWithTitle:NSLocalizedString(@"Connection", nil)];
     [alert show];
+    
+    UITextField *usernameTextField = [alert textFieldAtIndex:0];
+    usernameTextField.placeholder = NSLocalizedString(@"BSLoginPlaceholder", nil);
+    
+    UITextField *passwordTextField = [alert textFieldAtIndex:1];
+    passwordTextField.placeholder = NSLocalizedString(@"BSPasswordPlaceholder", nil);
 }
 
 - (void) displayAboutScreen
@@ -349,7 +365,7 @@
             }
             
             NSString *paramsURL = [NSString stringWithFormat:@"client_id=8bc04c11b4c283b72a3fa48cfc6149f3&login=%@&password=%@", username.text, [NSString md5:password.text]];
-            NSLog(@"paramsURL : %@", paramsURL);
+            
             NSURL *URL = [NSURL URLWithString:@"http://api.betaseries.com/members/auth"];
             NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
             [request setHTTPMethod:@"POST"];
@@ -369,7 +385,12 @@
                                               NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
                                                                                                    options:kNilOptions
                                                                                                      error:&error];
-                                              BSUserToken = jsonResponse[@"token"];
+                                              
+                                              
+                                              [[NSUserDefaults standardUserDefaults]
+                                                setObject:jsonResponse[@"token"]
+                                                forKey:@"BSUserToken"];
+                                              
                                               NSLog(@"JSON: %@", jsonResponse);
                                           }];
             
