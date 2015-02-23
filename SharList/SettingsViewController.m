@@ -165,7 +165,6 @@
               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                   NSLog(@"Error: %@", error);
               }];
-
     }
 }
 
@@ -417,52 +416,38 @@
                 return;
             }
             
-            NSString *paramsURL = [NSString stringWithFormat:@"client_id=8bc04c11b4c283b72a3fa48cfc6149f3&login=%@&password=%@", username.text, [NSString md5:password.text]];
-            
-            NSURL *URL = [NSURL URLWithString:@"http://api.betaseries.com/members/auth"];
-            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-            [request setHTTPMethod:@"POST"];
-            [request addValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
-            [request setHTTPBody:[paramsURL dataUsingEncoding:NSUTF8StringEncoding]];
-            
-            NSURLSession *session = [NSURLSession sharedSession];
-            NSURLSessionDataTask *task = [session dataTaskWithRequest:request
-                                                    completionHandler:
-                                          ^(NSData *data, NSURLResponse *response, NSError *error) {
-                                              
-                                              if (error) {
-                                                  NSLog(@"error : %@", error);
-                                                  return;
-                                              }
-                                             
-                                              NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
-                                                                                                   options:kNilOptions
-                                                                                                     error:&error];
+            AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+            [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
 
-                                              if ([jsonResponse[@"errors"] count] > 0) {
-                                                  
-                                                  // We have to display the Alertview in the main controller
-                                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                                      NSString *errorFromBSAPI = (NSString*)[jsonResponse valueForKeyPath:@"errors.text"][0];
-                                                      UIAlertView *errorIDBSAlert = [[UIAlertView alloc] initWithTitle:@"Erreur" message:errorFromBSAPI delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                                                      [errorIDBSAlert show];
-                                                  });
-                                                  
-                                                  return;
-                                              }
-                                              
-                                              [[NSUserDefaults standardUserDefaults]
-                                                setObject:jsonResponse[@"token"]
-                                                forKey:@"BSUserToken"];
-                                              [[NSUserDefaults standardUserDefaults]
-                                               setObject:[jsonResponse valueForKeyPath:@"user.login"]
-                                               forKey:@"BSUserLoginName"];
-                                              
-                                              UIButton *connectBSButton = (UIButton*)[self.view viewWithTag:6];
-                                              [connectBSButton setTitle:NSLocalizedString(@"BSDisconnect", nil) forState:UIControlStateNormal];
-                                          }];
             
-            [task resume];
+            NSString *urlAPI = [NSString stringWithFormat:@"http://api.betaseries.com/members/auth?client_id=8bc04c11b4c283b72a3fa48cfc6149f3&login=%@&password=%@", username.text, [NSString md5:password.text]];
+            
+            [manager POST:urlAPI
+               parameters:nil
+                  success:^(AFHTTPRequestOperation *operation, id jsonResponse) {
+                      
+                      if ([jsonResponse[@"errors"] count] > 0) {
+                          
+                          // We have to display the Alertview in the main controller
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                              NSString *errorFromBSAPI = (NSString*)[jsonResponse valueForKeyPath:@"errors.text"][0];
+                              UIAlertView *errorIDBSAlert = [[UIAlertView alloc] initWithTitle:@"Erreur" message:errorFromBSAPI delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                              [errorIDBSAlert show];
+                          });
+                          
+                          return;
+                      }
+                      
+                      [[NSUserDefaults standardUserDefaults] setObject:jsonResponse[@"token"] forKey:@"BSUserToken"];
+                      [[NSUserDefaults standardUserDefaults] setObject:[jsonResponse valueForKeyPath:@"user.login"] forKey:@"BSUserLoginName"];
+                      
+                      UIButton *connectBSButton = (UIButton*)[self.view viewWithTag:6];
+                      [connectBSButton setTitle:NSLocalizedString(@"BSDisconnect", nil) forState:UIControlStateNormal];
+
+                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                      NSLog(@"Error: %@", error);
+                  }];
+
         }
     }
 }
