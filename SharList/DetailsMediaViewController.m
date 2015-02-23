@@ -875,12 +875,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     connectWithBSBtn.trailerID = BSUserToken; // This is not a trailer but this extra property is useful
     connectWithBSBtn.frame = CGRectMake(screenWidth - 220, 81, 170, 40);
-    connectWithBSBtn.backgroundColor = [UIColor redColor];
+    connectWithBSBtn.backgroundColor = [UIColor clearColor];
     connectWithBSBtn.opaque = YES;
-    
-    connectWithBSBtn.titleLabel.textAlignment = NSTextAlignmentRight;
+    connectWithBSBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+    connectWithBSBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     connectWithBSBtn.titleLabel.font = [UIFont systemFontOfSize:13.0f];
-    
+
     return connectWithBSBtn;
 }
 
@@ -888,16 +888,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     UIButton *connectWithBSBtn = [self displayBetaSeriesButtonForToken:BSUserToken];
-//    [connectWithBSBtn sizeToFit];
     [infoMediaView addSubview:connectWithBSBtn];
     
     // If user is not connected to bs we propose him to do it
-    if (BSUserToken == nil || BSUserToken == (id)[NSNull null]) {
-        [connectWithBSBtn addTarget:self action:@selector(connectWithBSAccount:) forControlEvents:UIControlEventTouchUpInside];
-        [connectWithBSBtn setTitle:@"Se connecter à BetaSeries |" forState:UIControlStateNormal];
-    } else {
-        //[connectWithBSBtn addTarget:self action:@selector(connectWithBSAccount:) forControlEvents:UIControlEventTouchUpInside];
-        
+    if (BSUserToken != nil || BSUserToken != (id)[NSNull null]) {
         [self checkForIfUserHasMediaInBS:BSUserToken];
     }
     
@@ -922,7 +916,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [connectWithBSBtn setTitle:NSLocalizedString(@"BSRemove", nil) forState:UIControlStateNormal];
         }
         
-        self.AmongBSAccount = [responseObject valueForKeyPath:@"show.in_account"];
+        self.AmongBSAccount = isAmongUserBSAccount;
         [connectWithBSBtn addTarget:self action:@selector(toggleAmongBSAccount:) forControlEvents:UIControlEventTouchUpInside];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -951,27 +945,39 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIButton *connectWithBSBtn = (UIButton*)[infoMediaView viewWithTag:10];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
     [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
     [manager.requestSerializer setValue:userToken forHTTPHeaderField:@"X-BetaSeries-Token"];
+    [manager.requestSerializer setValue:@"2.4" forHTTPHeaderField:@"X-BetaSeries-Version"];
+    
+    NSDictionary *URLParams = @{@"client_id" : @"8bc04c11b4c283b72a3fa48cfc6149f3"};
+    NSString *urlAPI = [NSString stringWithFormat:@"http://api.betaseries.com/shows/show?imdb_id=%@", self.mediaDatas[@"imdbID"]];
     
     //show.in_account key is true when media is in user account
+//    NSLog(@"aBool :")
     if (aBool == NO) {
         // Add serie /
-        [manager POST:@"https://api.betaseries.com/shows/show" parameters:@{@"imdb_id" : self.mediaDatas[@"imdbID"], @"client_id" : @"8bc04c11b4c283b72a3fa48cfc6149f3"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [manager POST:urlAPI
+           parameters:nil
+              success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [connectWithBSBtn setTitle:NSLocalizedString(@"BSRemove", nil) forState:UIControlStateNormal];
-            connectWithBSBtn.enabled = YES;
+//            connectWithBSBtn.enabled = YES;
+            [connectWithBSBtn performSelector:@selector(setEnabled:) withObject:@YES afterDelay:.75];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
         }];
     } else {
         // remove serie /
-        [manager DELETE:[NSString stringWithFormat:@"https://api.betaseries.com/shows/show?imdb_id=%@", self.mediaDatas[@"imdbID"]]
-             parameters:@{@"client_id" : @"8bc04c11b4c283b72a3fa48cfc6149f3"}
+        [manager DELETE:urlAPI
+             parameters:URLParams
                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [connectWithBSBtn setTitle:NSLocalizedString(@"BSAdd", nil) forState:UIControlStateNormal];
-            connectWithBSBtn.enabled = YES;
+             [connectWithBSBtn performSelector:@selector(setEnabled:) withObject:@YES afterDelay:0.75];
+//                    connectWithBSBtn.enabled = YES;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
+            
+//            NSLog(@"operation: %@", operation);
         }];
     }
 }
