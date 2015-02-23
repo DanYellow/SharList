@@ -391,9 +391,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-    [loadingIndicator startAnimating];
     loadingIndicator.hidesWhenStopped = YES;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    [loadingIndicator startAnimating];
+    
     [self.view insertSubview:loadingIndicator atIndex:2];
     
     // <----
@@ -894,8 +895,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     if (BSUserToken != nil || BSUserToken != (id)[NSNull null]) {
         [self checkForIfUserHasMediaInBS:BSUserToken];
     }
-    
-    
 }
 
 - (void) checkForIfUserHasMediaInBS:(NSString*)BSUserToken
@@ -941,6 +940,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) toggleAddingMediaInUserBSAccountForUserToken:(NSString*)userToken forState:(BOOL)aBool
 {
+    self.navigationController.navigationItem.backBarButtonItem.enabled = NO;
+    
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     UIButton *connectWithBSBtn = (UIButton*)[infoMediaView viewWithTag:10];
     
@@ -953,16 +954,22 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     NSDictionary *URLParams = @{@"client_id" : @"8bc04c11b4c283b72a3fa48cfc6149f3"};
     NSString *urlAPI = [NSString stringWithFormat:@"http://api.betaseries.com/shows/show?imdb_id=%@", self.mediaDatas[@"imdbID"]];
     
-    //show.in_account key is true when media is in user account
-//    NSLog(@"aBool :")
+    UIActivityIndicatorView *BSActivityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    BSActivityIndicator.hidesWhenStopped = YES;
+    BSActivityIndicator.center = CGPointMake(0.0, connectWithBSBtn.bounds.size.height / 2);
+    [BSActivityIndicator startAnimating];
+    [connectWithBSBtn addSubview:BSActivityIndicator];
+    
+    
     if (aBool == NO) {
         // Add serie /
         [manager POST:urlAPI
            parameters:nil
               success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [connectWithBSBtn setTitle:NSLocalizedString(@"BSRemove", nil) forState:UIControlStateNormal];
-//            connectWithBSBtn.enabled = YES;
-            [connectWithBSBtn performSelector:@selector(setEnabled:) withObject:@YES afterDelay:.75];
+                  [connectWithBSBtn setTitle:NSLocalizedString(@"BSRemove", nil) forState:UIControlStateNormal];
+                  [BSActivityIndicator stopAnimating];
+                  [self performSelector:@selector(enableButtonWithDelay) withObject:nil afterDelay:1.75];
+                  self.navigationController.navigationItem.backBarButtonItem.enabled = YES;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
         }];
@@ -971,15 +978,23 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [manager DELETE:urlAPI
              parameters:URLParams
                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [connectWithBSBtn setTitle:NSLocalizedString(@"BSAdd", nil) forState:UIControlStateNormal];
-             [connectWithBSBtn performSelector:@selector(setEnabled:) withObject:@YES afterDelay:0.75];
-//                    connectWithBSBtn.enabled = YES;
+                    [connectWithBSBtn setTitle:NSLocalizedString(@"BSAdd", nil) forState:UIControlStateNormal];
+                    [BSActivityIndicator stopAnimating];
+                    [self performSelector:@selector(enableButtonWithDelay) withObject:nil afterDelay:1.75];
+                    self.navigationController.navigationItem.backBarButtonItem.enabled = YES;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
             
 //            NSLog(@"operation: %@", operation);
         }];
     }
+}
+
+- (void) enableButtonWithDelay {
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    UIButton *connectWithBSBtn = (UIButton*)[infoMediaView viewWithTag:10];
+    
+    connectWithBSBtn.enabled = YES;
 }
 
 - (void) addPhysics
