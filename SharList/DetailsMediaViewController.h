@@ -56,6 +56,8 @@
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
 @property (nonatomic, assign, getter=isAdded) BOOL Added;
+@property (nonatomic, assign, getter=isAmongBSAccount) BOOL AmongBSAccount; // Indicates if the media (video or serie) is among BS Account
+
 @property (nonatomic, strong) id mediaDatas;
 @property (nonatomic, retain) NSMutableData *responseData;
 @property (nonatomic, retain) NSString *itunesIDString;
@@ -85,7 +87,7 @@
 - (void) hideTutorial;
 - (void) showPoster;
 - (void) displayBetaSeriesButton;
-- (void) connectWithBSAccount:(UIButton*)sender;
+- (void) connectWithBSAccount:(NSString*)BSUserToken;
 
 
 @end

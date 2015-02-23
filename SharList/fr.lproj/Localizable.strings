@@ -77,6 +77,8 @@
 "gotit" = "Compris";
 "tutFavsMessage" = "Utilisez l'icône pour ajouter une fiche à vos favoris et faire découvrir au monde que vous l'aimez";
 "issuesWithDetailsMedia" = "Il semblerait qu'il y ait une erreur avec cette fiche.\nRéessayez plus tard";
+"BSAdd" = "Ajouter à BetaSeries |";
+"BSRemove" = "Supprimer de BetaSeries |";
 
 //AboutViewController
 "About" = "A propos";
