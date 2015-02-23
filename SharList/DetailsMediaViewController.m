@@ -384,7 +384,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // We display the BS part only if the device's user iPhone is in French
     if ([userLanguage isEqualToString:@"fr"]) {
         NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
-        [self connectWithBSAccount:BSUserToken];
+        if (BSUserToken != nil || [BSUserToken isKindOfClass:[NSNull class]]) {
+            [self connectWithBSAccount:BSUserToken];
+        }
+        
     }
     
     
@@ -892,9 +895,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [infoMediaView addSubview:connectWithBSBtn];
     
     // If user is not connected to bs we propose him to do it
-    if (BSUserToken != nil || BSUserToken != (id)[NSNull null]) {
+//    if (BSUserToken != nil || BSUserToken != (id)[NSNull null]) {
         [self checkForIfUserHasMediaInBS:BSUserToken];
-    }
+//    }
 }
 
 - (void) checkForIfUserHasMediaInBS:(NSString*)BSUserToken
@@ -938,7 +941,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
  * aBool = NO -> Remove serie
  */
 
-- (void) toggleAddingMediaInUserBSAccountForUserToken:(NSString*)userToken forState:(BOOL)aBool
+- (void) toggleAddingMediaInUserBSAccountForUserToken:(NSString*)BSUserToken forState:(BOOL)aBool
 {
     self.navigationController.navigationItem.backBarButtonItem.enabled = NO;
     
@@ -948,7 +951,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
-    [manager.requestSerializer setValue:userToken forHTTPHeaderField:@"X-BetaSeries-Token"];
+    [manager.requestSerializer setValue:BSUserToken forHTTPHeaderField:@"X-BetaSeries-Token"];
     [manager.requestSerializer setValue:@"2.4" forHTTPHeaderField:@"X-BetaSeries-Version"];
     
     NSDictionary *URLParams = @{@"client_id" : @"8bc04c11b4c283b72a3fa48cfc6149f3"};

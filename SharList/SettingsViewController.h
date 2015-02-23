@@ -10,6 +10,7 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import <CoreLocation/CoreLocation.h>
 
+#import "AFNetworking.h"
 
 #import "AboutViewController.h"
 

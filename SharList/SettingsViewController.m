@@ -147,36 +147,25 @@
         
         NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
         
-        NSURL *URL = [NSURL URLWithString:@"https://api.betaseries.com/members/destroy"];
-        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-        [request setHTTPMethod:@"POST"];
-        [request addValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
-        [request addValue:BSUserToken forHTTPHeaderField:@"X-BetaSeries-Token"];
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
+        [manager.requestSerializer setValue:BSUserToken forHTTPHeaderField:@"X-BetaSeries-Token"];
         
-        NSURLSession *session = [NSURLSession sharedSession];
-        NSURLSessionDataTask *task = [session dataTaskWithRequest:request
-                                                completionHandler:
-                                      ^(NSData *data, NSURLResponse *response, NSError *error) {
-                                          
-                                          if (error) {
-                                              NSLog(@"error : %@", error);
-                                              return;
-                                          }
+        NSString *urlAPI = @"https://api.betaseries.com/members/destroy";
+        
+        [manager POST:urlAPI
+           parameters:nil
+              success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"BSUserToken"];
+                  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"BSUserLoginName"];
+                  
+                  UIButton *connectBSButton = (UIButton*)[self.view viewWithTag:6];
+                  [connectBSButton setTitle:NSLocalizedString(@"BSConnect", nil) forState:UIControlStateNormal];
+              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                  NSLog(@"Error: %@", error);
+              }];
 
-                                          
-                                          [[NSUserDefaults standardUserDefaults]
-                                           setObject:nil
-                                           forKey:@"BSUserToken"];
-                                          [[NSUserDefaults standardUserDefaults]
-                                           setObject:nil
-                                           forKey:@"BSUserLoginName"];
-                                          
-                                          UIButton *connectBSButton = (UIButton*)[self.view viewWithTag:6];
-                                          [connectBSButton setTitle:NSLocalizedString(@"BSConnect", nil) forState:UIControlStateNormal];
-                                          
-                                      }];
-        
-        [task resume];
     }
 }
 
