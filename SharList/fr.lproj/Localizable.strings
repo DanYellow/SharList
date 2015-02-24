@@ -43,12 +43,12 @@
 //Settings view controller
 "Settings" = "Réglages";
 "Enable geolocation" = "Activer la géolocalisation";
-"Log out" = "Déconnexion Facebook";
+"Log out" = "Déconnexion";
 "Delete account" = "Supprimer le compte";
 "Geoloc explain" = "Cette option n'est pas accessible présentement parce que nous venons de lancer cette application et qu'il n'y a pas beaucoup d'utilisateurs autour de vous. Parlez de Shound à vos amis, votre famille, vos collègues...";
 "about" = "A propos";
-"BSConnect" = "Connexion à Betaseries";
-"BSDisconnect" = "Déconnexion à Betaseries";
+"BSConnect" = "Lier son compte Betaseries";
+"BSDisconnect" = "Délier son compte Betaseries";
 "Disconnect" = "Déconnexion";
 "BSLoginPlaceholder" = "Pseudo Betaseries";
 "BSPasswordPlaceholder" = "Mot de passe";

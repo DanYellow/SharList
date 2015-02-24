@@ -27,8 +27,24 @@
 {
 }
 
-- (void) viewWillAppear:(BOOL)animated {
-
+- (void) viewWillAppear:(BOOL)animated
+{
+    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+    // We display the betaseries button only if the user is french
+    if ([userLanguage isEqualToString:@"fr"]) {
+        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"]) {
+            self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
+                                       NSLocalizedString(@"Log out", nil),
+                                       NSLocalizedString(@"BSConnect", nil)]; //NSLocalizedString(@"Delete account", nil)
+        } else {
+            self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
+                                       NSLocalizedString(@"Log out", nil),
+                                       NSLocalizedString(@"BSDisconnect", nil)]; //NSLocalizedString(@"Delete account", nil)
+        }
+    } else {
+        self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
+                                   NSLocalizedString(@"Log out", nil)]; //NSLocalizedString(@"Delete account", nil)
+    }
 }
 
 - (void)viewDidLoad {
@@ -39,8 +55,8 @@
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
-    self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
-                               NSLocalizedString(@"Log out", nil)]; //NSLocalizedString(@"Delete account", nil)
+//    self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
+//                               NSLocalizedString(@"Log out", nil)]; //NSLocalizedString(@"Delete account", nil)
     
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
@@ -83,24 +99,6 @@
     [aboutButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
     aboutButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
     [self.view addSubview:aboutButton];
-    
-    
-    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-    // We display the betaseries button only if the user is french
-    if ([userLanguage isEqualToString:@"fr"]) {
-        UIButton *connectBSButton = [UIButton new];
-        
-        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"]) {
-            [connectBSButton setTitle:NSLocalizedString(@"BSConnect", nil) forState:UIControlStateNormal];
-        } else {
-            [connectBSButton setTitle:NSLocalizedString(@"BSDisconnect", nil) forState:UIControlStateNormal];
-        }
-        connectBSButton.tag = 6;
-        [connectBSButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [connectBSButton addTarget:self action:@selector(manageBSConnection) forControlEvents:UIControlEventTouchUpInside];
-        connectBSButton.frame = CGRectMake(0, screenHeight - ((79 * 3) + 30), screenWidth, 49);
-        [self.view addSubview:connectBSButton];
-    }
 }
 
 
@@ -136,7 +134,7 @@
 
 - (void) showBetaSeriesDisconnect
 {
-    NSString *disconnectMessage = [NSString stringWithFormat:@"Connecté(e) en tant que %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserLoginName"]];
+    NSString *disconnectMessage = [NSString stringWithFormat:@"Connecté(e) en tant que %@ sur BetaSeries", [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserLoginName"]];
     UIActionSheet *disconnectBetaSeries = [[UIActionSheet alloc] initWithTitle:disconnectMessage delegate:self cancelButtonTitle:@"Annuler" destructiveButtonTitle:NSLocalizedString(@"Disconnect", nil) otherButtonTitles: nil];
     [disconnectBetaSeries showInView:self.view];
 }
@@ -159,9 +157,12 @@
               success:^(AFHTTPRequestOperation *operation, id responseObject) {
                   [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"BSUserToken"];
                   [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"BSUserLoginName"];
+    
                   
-                  UIButton *connectBSButton = (UIButton*)[self.view viewWithTag:6];
-                  [connectBSButton setTitle:NSLocalizedString(@"BSConnect", nil) forState:UIControlStateNormal];
+                  UITableView *settingsTableview = (UITableView*)[self.view viewWithTag:1];
+                  UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2]];
+                  cell.textLabel.text = NSLocalizedString(@"BSConnect", nil);
+                  
               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                   NSLog(@"Error: %@", error);
               }];
@@ -197,6 +198,8 @@
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
+
+#pragma mark - UITableview's methods
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -253,17 +256,13 @@
 {
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    UILabel *myLabel;
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.indentationLevel = 1;
 //        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        myLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
-        if (indexPath.section == 0) {
-            myLabel.frame = CGRectMake(12.0, 0, screenWidth, 50);
-            myLabel.enabled = YES;
-            
+        if (indexPath.section == 0) {            
             UISwitch *geolocSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
             geolocSwitch.onTintColor = [UIColor colorWithRed:(26.0f/255.0f) green:(79.0f/255.0f) blue:(103.0f/255.0f) alpha:1.0f];
             geolocSwitch.enabled = YES;
@@ -282,11 +281,13 @@
             cell.textLabel.enabled = YES;
             cell.detailTextLabel.enabled = YES;
         }
-        myLabel.font = [UIFont fontWithName:@"Helvetica" size:16.0f];
-        myLabel.backgroundColor = [UIColor clearColor];
+        cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:16.0f];
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+        cell.textLabel.textColor = [UIColor colorWithRed:(44.0f/255.0f) green:(44.0f/255.0f) blue:(44.0f/255.0f) alpha:1.0];
         
-
-        [cell.contentView addSubview:myLabel];
+        if (indexPath.section == 1 || indexPath.section == 2) {
+            cell.textLabel.textAlignment = NSTextAlignmentCenter;
+        }
     }
     
     UIView *bgColorView = [UIView new];
@@ -294,21 +295,8 @@
     cell.selectedBackgroundView = bgColorView;
     
     NSString *title = [self.settingsItemsList objectAtIndex:indexPath.section];
-    
-    myLabel.text = title;
-    myLabel.textColor = [UIColor colorWithRed:(44.0f/255.0f) green:(44.0f/255.0f) blue:(44.0f/255.0f) alpha:1.0];
-    
-    if (indexPath.section == 1 || indexPath.section == 2) {
-        myLabel.textAlignment = NSTextAlignmentCenter;
-    }
-    
-//    if (indexPath.section == 2) {
-//        myLabel.textColor = [UIColor colorWithRed:(171.0f/255.0f) green:(0/255.0f) blue:(0/255.0f) alpha:1.0];
-//    }
-    
-    
-    
-    // [button sendActionsForControlEvents:UIControlEventTouchUpInside];
+    cell.textLabel.text = title;
+
     
     return cell;
 }
@@ -327,6 +315,17 @@
                 {
                     [obj sendActionsForControlEvents:UIControlEventTouchUpInside];
                 }
+            }
+        }
+            break;
+            
+        case 2:
+        {
+            NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
+            if (!BSUserToken) {
+                [self showBetaSeriesConnect];
+            } else {
+                [self showBetaSeriesDisconnect];
             }
         }
             break;
@@ -441,8 +440,12 @@
                       [[NSUserDefaults standardUserDefaults] setObject:jsonResponse[@"token"] forKey:@"BSUserToken"];
                       [[NSUserDefaults standardUserDefaults] setObject:[jsonResponse valueForKeyPath:@"user.login"] forKey:@"BSUserLoginName"];
                       
-                      UIButton *connectBSButton = (UIButton*)[self.view viewWithTag:6];
-                      [connectBSButton setTitle:NSLocalizedString(@"BSDisconnect", nil) forState:UIControlStateNormal];
+//                      UIButton *connectBSButton = (UIButton*)[self.view viewWithTag:6];
+//                      [connectBSButton setTitle:NSLocalizedString(@"BSDisconnect", nil) forState:UIControlStateNormal];
+                      
+                      UITableView *settingsTableview = (UITableView*)[self.view viewWithTag:1];
+                      UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2]];
+                      cell.textLabel.text = NSLocalizedString(@"BSDisconnect", nil);
 
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                       NSLog(@"Error: %@", error);
