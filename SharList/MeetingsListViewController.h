@@ -28,7 +28,7 @@
 #import "NSArray+Reverse.h"
 
 // Views
-#import "ConnectViewController.h"
+#import "ConnectView.h"
 
 @interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate, CLLocationManagerDelegate>
 {

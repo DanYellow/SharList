@@ -18,7 +18,12 @@
     NSUserDefaults *userPreferences;
 }
 
+@property (retain, nonatomic) UIViewController *viewController;
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
+
+// Hack to change tab
+- (void) setViewController:(UIViewController*)anViewController;
+- (UIViewController*)viewController;
 
 @end

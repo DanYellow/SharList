@@ -16,6 +16,16 @@
 
 #import "NSString+MD5.h"
 
+#import "ConnectView.h"
+
+
+enum SettingsMenuItem : NSUInteger {
+    EnableGeoloc = 0,
+    FBLogOut = 1,
+    UnlinkBS = 2,
+    EnabledAnonymous = 3
+};
+
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate, CLLocationManagerDelegate, UIAlertViewDelegate, UIActionSheetDelegate>
 {

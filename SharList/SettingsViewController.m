@@ -75,7 +75,6 @@
     
     
     FBLoginView *fbLoginButton = [FBLoginView new];
-//    fbLoginButton.delegate = self;
     fbLoginButton.tag = 2;
     fbLoginButton.frame = CGRectMake(51, screenHeight + 150, 218, 46);
     [self.view addSubview:fbLoginButton];
@@ -262,7 +261,7 @@
         cell.indentationLevel = 1;
 //        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        if (indexPath.section == 0) {            
+        if (indexPath.section == EnableGeoloc) {
             UISwitch *geolocSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
             geolocSwitch.onTintColor = [UIColor colorWithRed:(26.0f/255.0f) green:(79.0f/255.0f) blue:(103.0f/255.0f) alpha:1.0f];
             geolocSwitch.enabled = YES;
@@ -285,7 +284,7 @@
         cell.textLabel.backgroundColor = [UIColor clearColor];
         cell.textLabel.textColor = [UIColor colorWithRed:(44.0f/255.0f) green:(44.0f/255.0f) blue:(44.0f/255.0f) alpha:1.0];
         
-        if (indexPath.section == 1 || indexPath.section == 2) {
+        if (indexPath.section == FBLogOut || indexPath.section == UnlinkBS) {
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
         }
     }
@@ -305,7 +304,7 @@
 {
     switch (indexPath.section) {
         // Facebook log out
-        case 1:
+        case FBLogOut:
         {
             FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:2];
             
@@ -320,7 +319,7 @@
             break;
             
         // Connect / Disconnect BS
-        case 2:
+        case UnlinkBS:
         {
             NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
             if (!BSUserToken) {
@@ -440,9 +439,7 @@
                       
                       [[NSUserDefaults standardUserDefaults] setObject:jsonResponse[@"token"] forKey:@"BSUserToken"];
                       [[NSUserDefaults standardUserDefaults] setObject:[jsonResponse valueForKeyPath:@"user.login"] forKey:@"BSUserLoginName"];
-                      
-//                      UIButton *connectBSButton = (UIButton*)[self.view viewWithTag:6];
-//                      [connectBSButton setTitle:NSLocalizedString(@"BSDisconnect", nil) forState:UIControlStateNormal];
+
                       
                       UITableView *settingsTableview = (UITableView*)[self.view viewWithTag:1];
                       UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2]];
@@ -486,15 +483,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

@@ -8,6 +8,8 @@
 	<string>http://api.shound.fr/</string>
 	<key>appversion</key>
 	<string>Shound v1.0</string>
+	<key>facebookAccountURL</key>
+	<string>https://www.facebook.com/app_scoped_user_id/</string>
 	<key>contactShound</key>
 	<string>contact@shound.fr</string>
 </dict>

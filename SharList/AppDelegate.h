@@ -11,8 +11,6 @@
 
 #import <FacebookSDK/FacebookSDK.h>
 
-#import "ConnectViewController.h"
-
 #import "ViewController.h"
 #import "SettingsViewController.h"
 #import "MeetingsListViewController.h"

@@ -26,8 +26,6 @@
     
     [application setMinimumBackgroundFetchInterval:3000]; //40 min | 3600 = BGFETCHDELAY
 
-    ConnectViewController *connectViewController = [ConnectViewController new];
-    
     
     ViewController *viewController = [ViewController new];
     viewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];

@@ -8,7 +8,16 @@
 
 #import "ConnectView.h"
 
+
+#pragma mark - tag list references
+// Tag list
+// 1 : Facebook button for connect
+// 2 : appnameLabel (UILabel)
+// 3 : appMottoLabel (UILabel)
+
 @implementation ConnectView
+
+@synthesize viewController = _viewController;
 
 - (id) initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
@@ -29,9 +38,7 @@
         bgLayer.opacity = .7f;
         bgLayer.name = @"TrianglesBG";
         bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"TrianglesBG"]].CGColor;
-        if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
-            [self.layer insertSublayer:bgLayer atIndex:1];
-        }
+        [self.layer insertSublayer:bgLayer atIndex:1];
         
         
 #pragma mark - variables init
@@ -47,7 +54,7 @@
         UIView *appnameView = [[UIView alloc] initWithFrame:CGRectMake([self computeRatio:44.0 forDimension:screenWidth],
                                                                        [self computeRatio:104.0 forDimension:screenHeight],
                                                                        screenWidth, 61)];
-        appnameView.tag = 2;
+        appnameView.tag = 1;
         appnameView.backgroundColor = [UIColor clearColor];
         appnameView.opaque = YES;
         appnameView.hidden = NO;
@@ -55,12 +62,14 @@
         
         UILabel *appnameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
         appnameLabel.text = @"Shound";
+        appnameLabel.tag = 2;
         appnameLabel.font = [UIFont fontWithName:@"Helvetica" size:50.0];
         appnameLabel.textColor = [UIColor whiteColor];
         appnameLabel.textAlignment = NSTextAlignmentLeft;
         [appnameView addSubview:appnameLabel];
         
         UILabel *appMottoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 51, screenWidth, 15)];
+        appMottoLabel.tag = 3;
         appMottoLabel.text = [NSLocalizedString(@"Introduce the world what you love", nil) uppercaseString];
         appMottoLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0];
         appMottoLabel.textColor = [UIColor whiteColor];
@@ -80,21 +89,51 @@
 // User is logged
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
 {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
-    self.hidden = YES;
+    UIView *appnameView = (UIView*)[self viewWithTag:1];
+    
+    UILabel *appnameLabel = (UILabel*)[appnameView viewWithTag:2];
+    UILabel *appMottoLabel = (UILabel*)[appnameView viewWithTag:3];
+    
+    [UIView animateWithDuration: 0.3
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         appnameLabel.frame = CGRectMake(-30, 0, screenWidth, 50);
+                         appnameLabel.alpha = .3;
+                         
+                         appMottoLabel.frame = CGRectMake(30, 51, screenWidth, 15);
+                         appMottoLabel.alpha = .3;
+                     }
+                     completion:^(BOOL finished){
+                         self.hidden = YES;
+                         
+                         appMottoLabel.frame = CGRectMake(0, 51, screenWidth, 15);
+                         appnameLabel.frame = CGRectMake(0, 0, screenWidth, 50);
+                         
+                         appnameLabel.alpha = 1;
+                         appMottoLabel.alpha = 1;
+                     }];
+    
 }
 
 // User quits the app
 - (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
 {
-    UITabBarController *tabBarController = [UITabBarController new];
-    [tabBarController setSelectedIndex:0];
+//    UITabBarController *tabBarController = [UITabBarController new];
+//    [tabBarController setSelectedIndex:0];
     self.hidden = NO;
+    [self.viewController.tabBarController setSelectedIndex:0];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
 }
+
+//- (void) show
+//{
+//    self.hidden = NO;
+//    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
+//}
 
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
 {
-    NSLog(@"user : %@", user);
     NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
     [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
@@ -117,6 +156,16 @@
     }
     
     return roundf(ratio);
+}
+
+- (void) setViewController:(UIViewController*)anViewController
+{
+    _viewController = anViewController;
+}
+
+- (id) viewController
+{
+    return _viewController;
 }
 
 

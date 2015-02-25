@@ -8,7 +8,7 @@
 
 #import "MeetingsListViewController.h"
 
-#import "ConnectView.h"
+
 
 @interface MeetingsListViewController ()
 @property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
@@ -27,10 +27,10 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
-    [self.tabBarController.tabBar setHidden:NO];
     [super viewWillAppear:animated];
     
     self.navigationController.navigationBar.translucent = NO;
+    [self.tabBarController.tabBar setHidden:NO];
     
     // Animate background of cell selected on press back button
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
@@ -40,10 +40,10 @@
     [[self navigationController] tabBarItem].badgeValue = nil;
     
     if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
-        ConnectViewController *connectViewController = [ConnectViewController new];
+        //        ConnectViewController *connectViewController = [ConnectViewController new];
         
         ConnectView *connectView = [[ConnectView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        
+        connectView.viewController = self;
         UIView *foo = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 900, 900)];
         foo.backgroundColor = [UIColor redColor];
         
@@ -51,7 +51,6 @@
         [window addSubview:connectView];
     }
     
-
     [self navigationItemRightButtonEnablingManagement];
 }
 
@@ -65,6 +64,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     // Do any additional setup after loading the view.
     
     NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
@@ -600,8 +600,8 @@
 {
     UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [errConnectionAlertView show];
-
 }
+
 
 - (NSMutableURLRequest*) fetchUsersDatasQuery
 {
