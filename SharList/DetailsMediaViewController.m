@@ -298,7 +298,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
     mediaTitleLabel.tag = 4;
     [mediaTitleLabel sizeToFit];
-    [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+//    [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
@@ -701,9 +701,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
     [infoMediaView addSubview:mediaDescription];
     
-//    CGRect frame = mediaDescription.frame;
-//    frame.size.height = mediaDescription.contentSize.height;
-//    mediaDescription.frame = frame;
     
     [UIView animateWithDuration:0.3 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -732,7 +729,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaGenresLabel.layer.masksToBounds = NO;
     mediaGenresLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
     [mediaGenresLabel sizeToFit];
-    [mediaGenresLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+//    [mediaGenresLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
     
     
