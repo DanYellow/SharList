@@ -12,6 +12,9 @@
 
 @property (nonatomic, copy) NSMutableDictionary *metUserTasteDict;
 
+@property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
+
+
 @end
 
 
@@ -19,6 +22,8 @@
 // 1 : userSelectionTableView
 // 2 : UIRefreshControl
 // 3 : TutorialView
+// 4 : metUserFBView
+// 5 : metUserFBImgView
 
 
 @implementation DetailsMeetingViewController
@@ -51,6 +56,26 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
+    
+    NSOperationQueue *operationQueue = manager.operationQueue;
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        switch (status) {
+            case AFNetworkReachabilityStatusReachableViaWWAN:
+            case AFNetworkReachabilityStatusReachableViaWiFi:
+                [operationQueue setSuspended:NO];
+                self.ConnectedToInternet = YES;
+                break;
+            case AFNetworkReachabilityStatusNotReachable:
+            default:
+                [operationQueue setSuspended:YES];
+                self.ConnectedToInternet = NO;
+                break;
+        }
+    }];
     
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -99,7 +124,10 @@
     addMeetingToFavoriteBtnItem.tag = 2;
     addMeetingToFavoriteBtnItem.enabled = YES;
     
-    self.navigationItem.rightBarButtonItem = addMeetingToFavoriteBtnItem;
+    UIBarButtonItem *seeFBUserMetAccountBtnItem;
+    seeFBUserMetAccountBtnItem  = [[UIBarButtonItem alloc] initWithTitle:@"fb" style:UIBarButtonItemStylePlain target:self action:@selector(seeFbAccount:)];
+    
+    self.navigationItem.rightBarButtonItems = @[addMeetingToFavoriteBtnItem, seeFBUserMetAccountBtnItem];
     
 
 //    NSDateFormatter *foo = [NSDateFormatter new];
@@ -143,6 +171,40 @@
 //    
 //    NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
 //    NSInteger hours = [conversionInfo hour];
+    
+    NSLog(self.ConnectedToInternet ? @"YES" : @"NO");
+    if (YES) { //self.ConnectedToInternet
+        UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
+        metUserFBView.backgroundColor = [UIColor clearColor];
+        metUserFBView.tag = 4;
+        int intWidthScreen = screenWidth;
+        NSString *fbMetUserString = [[self.meetingDatas fbid] stringValue];
+        NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", @"gentoo", intWidthScreen, 120];
+        
+        UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
+        [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL]];
+        metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
+        metUserFBImgView.tag = 5;
+        [metUserFBView addSubview:metUserFBImgView];
+        
+        CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+        gradientLayer.frame = metUserFBImgView.frame;
+        [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
+        [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
+        gradientLayer.colors = @[(id)[[UIColor whiteColor] CGColor]];
+
+        
+        CALayer *metUserFBImgViewLayer = [CALayer layer];
+        metUserFBImgViewLayer.backgroundColor = (__bridge CGColorRef)([UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]);
+        metUserFBImgViewLayer.frame = metUserFBImgView.frame;
+        [metUserFBImgView.layer addSublayer:gradientLayer];
+        
+        NSLog(@"metUserFBImgURL : %@", metUserFBImgView.image);
+        
+        userSelectionTableView.tableHeaderView = metUserFBView;
+        
+        [userSelectionTableView setContentOffset:CGPointMake(0, metUserFBView.bounds.size.height)];
+    }
 
 
     if ([self.meetingDatas isFavorite]) {
@@ -177,6 +239,20 @@
 //    userSelectRefresh.attributedTitle = attributedTitle;
 
     [self getServerDatasForFbID:[self.meetingDatas fbid]];
+}
+
+- (void) seeFbAccount:(UIBarButtonItem*)sender
+{
+//    fb://profile/(fbid)
+    NSURL *fbAccountURL = [NSURL URLWithString:@"fb://profile/10205792663674205"];
+    [[UIApplication sharedApplication] openURL:fbAccountURL];
+//        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://www.facebook.com/app_scoped_user_id/10205792663674205", nil]]];
+//    
+    // 10205792663674205
+    // 1494405967495387
+    
+//    https://graph.facebook.com/1494405967495387/picture?width=230&height=120
+//
 }
 
 #pragma mark - server communication
@@ -442,9 +518,6 @@
 }
 
 
-
-
-
 - (void) addAsFavorite:(UIBarButtonItem*)sender
 {
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
@@ -461,6 +534,7 @@
     }
 }
 
+#pragma mark - tutorial's methods
 - (void) showTutorial
 {
     UIView *tutorialView = [[UIView alloc] initWithFrame:self.view.bounds];
@@ -505,6 +579,7 @@
                          [tutorialView removeFromSuperview];
                      }];
 }
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

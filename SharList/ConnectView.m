@@ -89,48 +89,17 @@
 // User is logged
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
 {
-    UIView *appnameView = (UIView*)[self viewWithTag:1];
-    
-    UILabel *appnameLabel = (UILabel*)[appnameView viewWithTag:2];
-    UILabel *appMottoLabel = (UILabel*)[appnameView viewWithTag:3];
-    
-    [UIView animateWithDuration: 0.3
-                          delay: 0.0
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         appnameLabel.frame = CGRectMake(-30, 0, screenWidth, 50);
-                         appnameLabel.alpha = .3;
-                         
-                         appMottoLabel.frame = CGRectMake(30, 51, screenWidth, 15);
-                         appMottoLabel.alpha = .3;
-                     }
-                     completion:^(BOOL finished){
-                         self.hidden = YES;
-                         
-                         appMottoLabel.frame = CGRectMake(0, 51, screenWidth, 15);
-                         appnameLabel.frame = CGRectMake(0, 0, screenWidth, 50);
-                         
-                         appnameLabel.alpha = 1;
-                         appMottoLabel.alpha = 1;
-                     }];
-    
+    self.hidden = YES;
 }
 
 // User quits the app
 - (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
 {
-//    UITabBarController *tabBarController = [UITabBarController new];
-//    [tabBarController setSelectedIndex:0];
     self.hidden = NO;
     [self.viewController.tabBarController setSelectedIndex:0];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
 }
 
-//- (void) show
-//{
-//    self.hidden = NO;
-//    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
-//}
 
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
 {

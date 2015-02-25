@@ -32,6 +32,7 @@
 @property (nonatomic, strong) id meetingDatas;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateMeetingsListDelegate> delegate;
+//@property (strong, atomic) UITableView *userSelectionTableView;
 
 - (void) showTutorial;
 - (void) addAsFavorite:(UIBarButtonItem*)sender;
