@@ -8,6 +8,8 @@
 
 #import "MeetingsListViewController.h"
 
+#import "ConnectView.h"
+
 @interface MeetingsListViewController ()
 @property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
 
@@ -38,7 +40,15 @@
     [[self navigationController] tabBarItem].badgeValue = nil;
     
     if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
-        self.navigationController.navigationBar.hidden = YES;
+        ConnectViewController *connectViewController = [ConnectViewController new];
+        
+        ConnectView *connectView = [[ConnectView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        
+        UIView *foo = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 900, 900)];
+        foo.backgroundColor = [UIColor redColor];
+        
+        UIWindow* window = [[UIApplication sharedApplication] keyWindow];
+        [window addSubview:connectView];
     }
     
 

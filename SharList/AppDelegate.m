@@ -23,10 +23,11 @@
     
     [MagicalRecord setupAutoMigratingCoreDataStack];
     
-//    [self requestForLocationTracking];
     
     [application setMinimumBackgroundFetchInterval:3000]; //40 min | 3600 = BGFETCHDELAY
 
+    ConnectViewController *connectViewController = [ConnectViewController new];
+    
     
     ViewController *viewController = [ViewController new];
     viewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
@@ -40,7 +41,7 @@
     settingsViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"settings", nil)];
     settingsViewController.tabBarItem.image = [UIImage imageNamed:@"settings-tab-icon"];
     
-    self.tabBarController = [[UITabBarController alloc] init];
+    self.tabBarController = [UITabBarController new];
     
     
     [UITabBar appearance].barTintColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.95f];
@@ -95,12 +96,12 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
     
     
-    NSArray* controllers = @[navController, navControllerMeetingsList, navControllerSettings];
+    NSArray* controllers = @[navControllerMeetingsList, navController, navControllerSettings];
     
     self.tabBarController.viewControllers = controllers;
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [self.window setRootViewController:self.tabBarController];
+    [self.window setRootViewController:self.tabBarController]; //connectViewController
     [self.window setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [self.window makeKeyAndVisible];
     

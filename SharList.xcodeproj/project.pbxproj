@@ -25,6 +25,7 @@
 		1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewController.m */; };
 		1A2696F31A1D4396002ADC57 /* triangles-bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A2696F21A1D4396002ADC57 /* triangles-bg@2x.png */; };
 		1A2696F51A1D443F002ADC57 /* triangles-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A2696F41A1D443F002ADC57 /* triangles-bg.png */; };
+		1A36E3131A9D4C1C004B0DBC /* ConnectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36E3121A9D4C1C004B0DBC /* ConnectView.m */; };
 		1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */; };
 		1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */; };
 		1A3C22821A114339005B31E4 /* UserTaste.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C22811A114339005B31E4 /* UserTaste.m */; };
@@ -102,6 +103,8 @@
 		1A1D6E441A1099C00090C598 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		1A2696F21A1D4396002ADC57 /* triangles-bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "triangles-bg@2x.png"; sourceTree = "<group>"; };
 		1A2696F41A1D443F002ADC57 /* triangles-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "triangles-bg.png"; sourceTree = "<group>"; };
+		1A36E3111A9D4C1C004B0DBC /* ConnectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectView.h; sourceTree = "<group>"; };
+		1A36E3121A9D4C1C004B0DBC /* ConnectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectView.m; sourceTree = "<group>"; };
 		1A3C227A1A113069005B31E4 /* DetailsMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMediaViewController.h; sourceTree = "<group>"; };
 		1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsMediaViewController.m; sourceTree = "<group>"; };
 		1A3C227E1A114027005B31E4 /* UserTaste.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UserTaste.xcdatamodel; sourceTree = "<group>"; };
@@ -215,6 +218,7 @@
 				1A9A63591A37A41B00E47234 /* AboutViewController */,
 				1A1D6E461A1099C60090C598 /* SettingsViewController */,
 				1A3C22831A114345005B31E4 /* CoreData */,
+				1A36E30A1A9D3F7B004B0DBC /* ConnectViewController */,
 				1A076DDC1A10113000CD725A /* FirstViewController */,
 				1A0014EE1A15819A003430E9 /* Vendors */,
 				1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */,
@@ -320,6 +324,15 @@
 				1A1D6E441A1099C00090C598 /* SettingsViewController.m */,
 			);
 			name = SettingsViewController;
+			sourceTree = "<group>";
+		};
+		1A36E30A1A9D3F7B004B0DBC /* ConnectViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1A36E3111A9D4C1C004B0DBC /* ConnectView.h */,
+				1A36E3121A9D4C1C004B0DBC /* ConnectView.m */,
+			);
+			name = ConnectViewController;
 			sourceTree = "<group>";
 		};
 		1A3C22791A11303E005B31E4 /* DetailsMediaViewController */ = {
@@ -578,6 +591,7 @@
 				1AEB8BEC1A3636FA004A94C1 /* UILabel+HeightToFit.m in Sources */,
 				1A024AB81A3A52DC0098F015 /* AboutViewController.m in Sources */,
 				1A9666461A312302006969A7 /* NSString+SentenceCapitalizedString.m in Sources */,
+				1A36E3131A9D4C1C004B0DBC /* ConnectView.m in Sources */,
 				1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */,
 				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,
 				1A3C22821A114339005B31E4 /* UserTaste.m in Sources */,

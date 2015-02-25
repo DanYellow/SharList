@@ -33,7 +33,6 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
-    
     [super viewWillAppear:animated];
     
     
@@ -45,17 +44,12 @@
     UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
-    
-    
-    if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
-        [self.navigationController setNavigationBarHidden:YES animated:NO];
-        self.tabBarController.tabBar.hidden = YES;
-    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    
     [self.tabBarController.tabBar setHidden:NO];
     self.navigationController.navigationBar.translucent = YES;
     
@@ -68,8 +62,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-
-    //    [UserTaste MR_truncateAll];
     
     // Permatenly checks if user is connected to Internet
     NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
@@ -140,40 +132,6 @@
         [self.view.layer insertSublayer:bgLayer atIndex:1];
     }
     
-    
-
-    
-    // Motto of the app
-    UIView *appnameView = [[UIView alloc] initWithFrame:CGRectMake([self computeRatio:44.0 forDimension:screenWidth],
-                                                                  [self computeRatio:104.0 forDimension:screenHeight],
-                                                                  screenWidth, 61)];
-    appnameView.tag = 2;
-    appnameView.backgroundColor = [UIColor clearColor];
-    appnameView.opaque = YES;
-    appnameView.hidden = YES;
-    [self.view addSubview:appnameView];
-    
-    UILabel *appnameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
-    appnameLabel.text = @"Shound";
-    appnameLabel.font = [UIFont fontWithName:@"Helvetica" size:50.0];
-    appnameLabel.textColor = [UIColor whiteColor];
-    appnameLabel.textAlignment = NSTextAlignmentLeft;
-    [appnameView addSubview:appnameLabel];
-    
-    UILabel *appMottoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 51, screenWidth, 15)];
-    appMottoLabel.text = [NSLocalizedString(@"Introduce the world what you love", nil) uppercaseString];
-    appMottoLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0];
-    appMottoLabel.textColor = [UIColor whiteColor];
-    appMottoLabel.textAlignment = NSTextAlignmentLeft;
-    [appnameView addSubview:appMottoLabel];
-    
-    
-    // Facebook login
-    FBLoginView *fbLoginButton = [FBLoginView new];
-    fbLoginButton.delegate = self;
-    fbLoginButton.tag = 1;
-//    fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
-//    fbLoginButton.frame = CGRectOffset(fbLoginButton.frame, (self.view.center.x - (fbLoginButton.frame.size.width / 2)), [self computeRatio:740.0 forDimension:screenHeight]);
     
     // Loading indicator of the app
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
@@ -315,26 +273,8 @@
                 forControlEvents:UIControlEventValueChanged];
     
 
-//    APIdatas = [[NSArray alloc] initWithArray:[self fetchDatas]];
-//    NSLog(@"APIdatas : %@", APIdatas);
     categoryList = [@[@"book", @"serie", @"movie"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    
-//    [[[self fetchDatas] valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    
     filteredTableDatas = [NSMutableDictionary new];
-    
-    [self.view addSubview:fbLoginButton];
-    // Detect if user not is connected
-    // user is not connected
-    if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
-        fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
-        // We don't want message for empty user list for no fb connexion
-        fbLoginButton.hidden = NO;
-    } else {
-        fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight + 350, 218, 46);
-//        fbLoginButton.hidden = YES;
-        appnameView.hidden = YES;
-    }
     
     
     // Keep the date of installation of app
@@ -351,6 +291,12 @@
 //        UIView *foo = [[ UIView alloc] initWithFrame:self.view.bounds];
 //        foo.backgroundColor = [UIColor redColor];
 //        [[[UIApplication sharedApplication] keyWindow] addSubview:foo];
+    }
+    
+    if ([userPreferences objectForKey:@"currentUserfbID"]) {
+        [self userConnectionForFbID:[userPreferences objectForKey:@"currentUserfbID"]];
+        
+        return;
     }
 }
 
@@ -460,19 +406,6 @@
 //    return YES;
 //}
 
-
-#pragma mark - Facebook user connection
-
-- (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
-{
-    // Manage facebook recall function ios
-    if ([userPreferences objectForKey:@"currentUserfbID"]) {
-        [self userConnectionForFbID:[userPreferences objectForKey:@"currentUserfbID"]];
-        
-        return;
-    }
-    self.FirstFBLoginDone = YES;
-}
 
 
 // This method have to be called when the user is connected
@@ -622,98 +555,101 @@
 }
 
 
-- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
-{
-    if(!self.isFirstFBLoginDone) {
-        return;
-    }
-    
-    FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-    fbLoginButton.hidden = YES;
-    // We format the user id (NSString) to an NSNumber to be stored in NSUserDefault key
-    NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
-    [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
-    
-    [userPreferences setObject:fbIDNumber forKey:@"currentUserfbID"];
-    // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
-    
-    
-//    NSLog(@"user %@ | %@:", user, user.objectID);
-    
-    // Here we add userid (aka user.objectID) to the database
-    
-    //        UserTaste *userTaste = [UserTaste  MR_createEntity];
-    //        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-    //        userTaste.taste = arrayData;
-    //        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
-    //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+//- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
+//{
+//    if(!self.isFirstFBLoginDone) {
+//        return;
+//    }
+//    
+//    FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
+//    fbLoginButton.hidden = YES;
+//    // We format the user id (NSString) to an NSNumber to be stored in NSUserDefault key
+//    NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
+//    [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+//    NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
+//    
+//    [userPreferences setObject:fbIDNumber forKey:@"currentUserfbID"];
+//    // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
+//    
+//    
+////    NSLog(@"user %@ | %@:", user, user.objectID);
+//    
+//    // Here we add userid (aka user.objectID) to the database
+//    
+//    //        UserTaste *userTaste = [UserTaste  MR_createEntity];
+//    //        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
+//    //        userTaste.taste = arrayData;
+//    //        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
+//    //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+//
+//    [self userConnectionForFbID:fbIDNumber];
+//    
+//    self.FirstFBLoginDone = NO;
+//}
+//
+//
+//// When user logged out
+//- (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
+//{
+////    ConnectViewController *connectViewController = [ConnectViewController new];
+////    
+////    UIWindow* mainWindow = [[UIApplication sharedApplication] keyWindow];
+////    [mainWindow addSubview: connectViewController.view];
+////    [self userLoggedOutOffb:nil completion:^(BOOL success) {
+////        if (success) {
+////            [self.tabBarController setSelectedIndex:0];
+////            FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
+////            fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
+////            fbLoginButton.hidden = NO;
+////        } else {
+////            // Could not log in. Display alert to user.
+////        }
+////    }];
+//}
 
-    [self userConnectionForFbID:fbIDNumber];
-    
-    self.FirstFBLoginDone = NO;
-}
-
-
-// When user logged out
-- (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
-{
-    [self userLoggedOutOffb:nil completion:^(BOOL success) {
-        if (success) {
-            [self.tabBarController setSelectedIndex:0];
-            FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-            fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
-            fbLoginButton.hidden = NO;
-        } else {
-            // Could not log in. Display alert to user.
-        }
-    }];
-    
-}
-
-// Manage error for connection
-- (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error
-{
-    NSString *alertMessage, *alertTitle;
-    
-    // If the user should perform an action outside of you app to recover,
-    // the SDK will provide a message for the user, you just need to surface it.
-    // This conveniently handles cases like Facebook password change or unverified Facebook accounts.
-    if ([FBErrorUtility shouldNotifyUserForError:error]) {
-        alertTitle = @"Facebook error";
-        alertMessage = [FBErrorUtility userMessageForError:error];
-        
-        // This code will handle session closures that happen outside of the app
-        // You can take a look at our error handling guide to know more about it
-        // https://developers.facebook.com/docs/ios/errors
-    } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession) {
-        alertTitle = @"Session Error";
-        alertMessage = @"Your current session is no longer valid. Please log in again.";
-        
-        // If the user has cancelled a login, we will do nothing.
-        // You can also choose to show the user a message if cancelling login will result in
-        // the user not being able to complete a task they had initiated in your app
-        // (like accessing FB-stored information or posting to Facebook)
-    } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
-        NSLog(@"user cancelled login");
-        
-        // For simplicity, this sample handles other errors with a generic message
-        // You can checkout our error handling guide for more detailed information
-        // https://developers.facebook.com/docs/ios/errors
-    } else {
-        alertTitle  = nil;
-        alertMessage = NSLocalizedString(@"errorConnect", nil);// @"Please try again later.";
-//        NSLog(@"Unexpected error:%@", error);
-    }
-    
-    if (alertMessage) {
-        [[[UIAlertView alloc] initWithTitle:alertTitle
-                                    message:alertMessage
-                                   delegate:nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil] show];
-    }
-}
+//// Manage error for connection
+//- (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error
+//{
+//    NSString *alertMessage, *alertTitle;
+//    
+//    // If the user should perform an action outside of you app to recover,
+//    // the SDK will provide a message for the user, you just need to surface it.
+//    // This conveniently handles cases like Facebook password change or unverified Facebook accounts.
+//    if ([FBErrorUtility shouldNotifyUserForError:error]) {
+//        alertTitle = @"Facebook error";
+//        alertMessage = [FBErrorUtility userMessageForError:error];
+//        
+//        // This code will handle session closures that happen outside of the app
+//        // You can take a look at our error handling guide to know more about it
+//        // https://developers.facebook.com/docs/ios/errors
+//    } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession) {
+//        alertTitle = @"Session Error";
+//        alertMessage = @"Your current session is no longer valid. Please log in again.";
+//        
+//        // If the user has cancelled a login, we will do nothing.
+//        // You can also choose to show the user a message if cancelling login will result in
+//        // the user not being able to complete a task they had initiated in your app
+//        // (like accessing FB-stored information or posting to Facebook)
+//    } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
+//        NSLog(@"user cancelled login");
+//        
+//        // For simplicity, this sample handles other errors with a generic message
+//        // You can checkout our error handling guide for more detailed information
+//        // https://developers.facebook.com/docs/ios/errors
+//    } else {
+//        alertTitle  = nil;
+//        alertMessage = NSLocalizedString(@"errorConnect", nil);// @"Please try again later.";
+////        NSLog(@"Unexpected error:%@", error);
+//    }
+//    
+//    if (alertMessage) {
+//        [[[UIAlertView alloc] initWithTitle:alertTitle
+//                                    message:alertMessage
+//                                   delegate:nil
+//                          cancelButtonTitle:@"OK"
+//                          otherButtonTitles:nil] show];
+//    }
+//}
 
 #pragma mark - Tableview configuration
 

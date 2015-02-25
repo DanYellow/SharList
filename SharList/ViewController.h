@@ -18,15 +18,12 @@
 #import "UIImageView+AFNetworking.h"
 #import <JLTMDbClient.h>
 
-//#import "ShikeTutsScrollView.h"
-
-
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"
 
 #import "UserTaste.h"
 
-@interface ViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource,
+@interface ViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate>
 {    
     CGFloat screenWidth;

@@ -27,6 +27,9 @@
 // Categories
 #import "NSArray+Reverse.h"
 
+// Views
+#import "ConnectViewController.h"
+
 @interface MeetingsListViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate, CLLocationManagerDelegate>
 {
     CGFloat screenWidth;

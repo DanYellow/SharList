@@ -75,7 +75,7 @@
     
     
     FBLoginView *fbLoginButton = [FBLoginView new];
-    fbLoginButton.delegate = self;
+//    fbLoginButton.delegate = self;
     fbLoginButton.tag = 2;
     fbLoginButton.frame = CGRectMake(51, screenHeight + 150, 218, 46);
     [self.view addSubview:fbLoginButton];
@@ -319,6 +319,7 @@
         }
             break;
             
+        // Connect / Disconnect BS
         case 2:
         {
             NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
