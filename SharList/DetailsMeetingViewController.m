@@ -172,38 +172,26 @@
 //    NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
 //    NSInteger hours = [conversionInfo hour];
     
+    
+//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    
+
+    
     NSLog(self.ConnectedToInternet ? @"YES" : @"NO");
     if (YES) { //self.ConnectedToInternet
-        UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
-        metUserFBView.backgroundColor = [UIColor clearColor];
-        metUserFBView.tag = 4;
-        int intWidthScreen = screenWidth;
-        NSString *fbMetUserString = [[self.meetingDatas fbid] stringValue];
-        NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", @"gentoo", intWidthScreen, 120];
-        
-        UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
-        [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL]];
-        metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
-        metUserFBImgView.tag = 5;
-        [metUserFBView addSubview:metUserFBImgView];
-        
-        CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-        gradientLayer.frame = metUserFBImgView.frame;
-        [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
-        [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
-        gradientLayer.colors = @[(id)[[UIColor whiteColor] CGColor]];
-
-        
-        CALayer *metUserFBImgViewLayer = [CALayer layer];
-        metUserFBImgViewLayer.backgroundColor = (__bridge CGColorRef)([UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]);
-        metUserFBImgViewLayer.frame = metUserFBImgView.frame;
-        [metUserFBImgView.layer addSublayer:gradientLayer];
-        
-        NSLog(@"metUserFBImgURL : %@", metUserFBImgView.image);
-        
-        userSelectionTableView.tableHeaderView = metUserFBView;
-        
-        [userSelectionTableView setContentOffset:CGPointMake(0, metUserFBView.bounds.size.height)];
+        NSString *urlAPI = @"https://api.shound.fr";
+        NSDictionary *apiParams = @{@"metUserfbID" : [self.meetingDatas fbid]};
+        NSLog(@"[self.meetingDatas fbid] : %@", [self.meetingDatas fbid]);
+        [self displayMetUserfbImgProfile];
+        NSLog(@"foo");
+//        [manager GET:urlAPI
+//          parameters:apiParams
+//             success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//                 NSLog(@"foo");
+//             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                 NSLog(@"Error: %@", error);
+//             }];
     }
 
 
@@ -223,6 +211,42 @@
             [self showTutorial];
         }
     }
+}
+
+- (void) displayMetUserfbImgProfile
+{
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
+    
+    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
+    metUserFBView.backgroundColor = [UIColor clearColor];
+    metUserFBView.tag = 4;
+    int intWidthScreen = screenWidth;
+    NSString *fbMetUserString = [[self.meetingDatas fbid] stringValue];
+    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, 120];
+    
+    UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
+    [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:[UIImage animatedImageNamed:@"list-tab-icon2" duration:1.0f]];
+    metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
+    metUserFBImgView.tag = 5;
+    [metUserFBView addSubview:metUserFBImgView];
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.frame = metUserFBImgView.frame;
+    [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
+    [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
+    gradientLayer.colors = @[(id)[[UIColor whiteColor] CGColor]];
+    
+    
+    CALayer *metUserFBImgViewLayer = [CALayer layer];
+    metUserFBImgViewLayer.backgroundColor = (__bridge CGColorRef)([UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]);
+    metUserFBImgViewLayer.frame = metUserFBImgView.frame;
+    [metUserFBImgView.layer addSublayer:gradientLayer];
+    
+    NSLog(@"metUserFBImgURL : %@", metUserFBImgView.image);
+    
+    userSelectionTableView.tableHeaderView = metUserFBView;
+    
+    [userSelectionTableView setContentOffset:CGPointMake(0, metUserFBView.bounds.size.height)];
 }
 
 - (void) updateCurrentUser

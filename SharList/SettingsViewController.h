@@ -20,10 +20,10 @@
 
 
 enum SettingsMenuItem : NSUInteger {
-    EnableGeoloc = 0,
-    FBLogOut = 1,
-    UnlinkBS = 2,
-    EnabledAnonymous = 3
+    EnabledAnonymous = 0,
+    EnableGeoloc = 1,
+    FBLogOut = 2,
+    UnlinkBS = 3
 };
 
 @interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
@@ -31,10 +31,12 @@ UISearchControllerDelegate, UINavigationControllerDelegate, FBLoginViewDelegate,
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
+    
+    NSDictionary *settingsDict;
 }
 
 @property (strong, nonatomic) UITableViewController *settingsTVController;
-@property (strong, nonatomic) NSArray *settingsItemsList;
+@property (strong, nonatomic) NSMutableArray *settingsItemsList;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 
 @end

@@ -29,31 +29,34 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
+    self.settingsItemsList = [[NSMutableArray alloc] initWithArray:@[NSLocalizedString(@"Enable anonymous mode", nil),
+                                                                     NSLocalizedString(@"Enable geolocation", nil),
+                                                                     NSLocalizedString(@"Log out", nil)]];
+    
     NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
     // We display the betaseries button only if the user is french
     if ([userLanguage isEqualToString:@"fr"]) {
         if (![[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"]) {
-            self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
-                                       NSLocalizedString(@"Log out", nil),
-                                       NSLocalizedString(@"BSConnect", nil)]; //NSLocalizedString(@"Delete account", nil)
+            [self.settingsItemsList insertObject:NSLocalizedString(@"BSConnect", nil) atIndex:self.settingsItemsList.count];
         } else {
-            self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
-                                       NSLocalizedString(@"Log out", nil),
-                                       NSLocalizedString(@"BSDisconnect", nil)]; //NSLocalizedString(@"Delete account", nil)
+            [self.settingsItemsList insertObject:NSLocalizedString(@"BSDisconnect", nil) atIndex:self.settingsItemsList.count];
         }
-    } else {
-        self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
-                                   NSLocalizedString(@"Log out", nil)]; //NSLocalizedString(@"Delete account", nil)
     }
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
         
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
+    
+    // Contains globals datas of the project
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
 //    self.settingsItemsList = @[NSLocalizedString(@"Enable geolocation", nil),
 //                               NSLocalizedString(@"Log out", nil)]; //NSLocalizedString(@"Delete account", nil)
@@ -62,7 +65,6 @@
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     
 
-    
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame = self.view.bounds;
     UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
@@ -267,6 +269,7 @@
             geolocSwitch.enabled = YES;
             geolocSwitch.tag = 3;
             [geolocSwitch addTarget:self action:@selector(geolocSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+            
             if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ||
                 [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied ||
                 [CLLocationManager authorizationStatus] == kCLAuthorizationStatusRestricted) {
@@ -276,10 +279,30 @@
             }
             
             cell.accessoryView = geolocSwitch;
+        }
+        
+        if (indexPath.section == EnabledAnonymous) {
+            UISwitch *enableAnonSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
+            enableAnonSwitch.onTintColor = [UIColor colorWithRed:(26.0f/255.0f) green:(79.0f/255.0f) blue:(103.0f/255.0f) alpha:1.0f];
+            enableAnonSwitch.enabled = YES;
+            [enableAnonSwitch addTarget:self action:@selector(enableAnonSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+            
+            if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
+                enableAnonSwitch.on = NO;
+            } else {
+                enableAnonSwitch.on = YES;
+            }
+            
+            cell.accessoryView = enableAnonSwitch;
+        }
+        
+        if (indexPath.section == EnableGeoloc || indexPath.section == EnabledAnonymous) {
+            
             cell.userInteractionEnabled = YES;
             cell.textLabel.enabled = YES;
             cell.detailTextLabel.enabled = YES;
         }
+        
         cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:16.0f];
         cell.textLabel.backgroundColor = [UIColor clearColor];
         cell.textLabel.textColor = [UIColor colorWithRed:(44.0f/255.0f) green:(44.0f/255.0f) blue:(44.0f/255.0f) alpha:1.0];
@@ -356,6 +379,33 @@
     } else {
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"geoLocEnabled"];
     }
+}
+
+- (void) enableAnonSwitchChanged:(id)sender
+{
+    BOOL anonModeEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"];
+    anonModeEnabled = !anonModeEnabled;
+    
+    [[NSUserDefaults standardUserDefaults] setBool:anonModeEnabled forKey:@"anonModeEnabled"];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+//    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    
+    NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserStatus.php"];
+    
+//    NSString *isAnonymousBoolString = (anonModeEnabled) ? @"True" : @"False";
+    
+    NSDictionary *apiParams = @{@"isAnonymous" : [NSNumber numberWithBool:anonModeEnabled],
+                                @"fbiduser" : [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]};
+
+    [manager POST:urlAPI
+       parameters:apiParams
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"responseObject : %@", responseObject);
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"Error: %@", error);
+          }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error

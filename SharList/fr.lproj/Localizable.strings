@@ -55,6 +55,7 @@
 "Connection" = "Connexion";
 "Cancel" = "Annuler";
 "BSExplaination" = "La connexion à votre compte BetaSeries, vous permet d'ajouter un média à votre compte sans pour autant vouloir le faire découvrir aux autres";
+"Enable anonymous mode" = "Activer l'anonymat";
 // Errors for geoloc
 "Oops" = "Oups";
 "geoloc denied" = "Shound n'est pas autorisé à utiliser votre position. Autorisez le dans les Réglages. (Shound > Position > Toujours)";
@@ -64,7 +65,6 @@
 // DetailsMeetingController
 "met %@ times" = "découvert %@ fois";
 "pull to refresh fav" = "Cette découverte est parmi vos favoris.\nVous pouvez \"tirer-pour-rafraîchir\" pour voir si elle a été mise à jour";
-
 
 // DetailsMediaViewController
 "Added" = "Ajouté";

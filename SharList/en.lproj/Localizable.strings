@@ -56,6 +56,7 @@
 "geoloc denied" = "Shound isn't allow to use your location. Please enable it in your Settings \n(Shound > Location > Always)";
 "restricted denied" = "Shound is allow to use your location. Please enable it in your Settings \n(Shound > Location > Always)";
 "geoloc disabled" = "The location services seems to be disabled from the Settings";
+"Enable anonymous mode" = "Be anonymous";
 
 // DetailsMediaViewController
 "Added" = "Added";

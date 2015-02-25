@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
 
+#import "AFNetworking.h"
+#import "UIImageView+AFNetworking.h"
 
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"
@@ -36,6 +38,7 @@
 
 - (void) showTutorial;
 - (void) addAsFavorite:(UIBarButtonItem*)sender;
+- (void) displayMetUserfbImgProfile;
 
 
 @end
