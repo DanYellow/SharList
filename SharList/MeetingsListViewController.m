@@ -201,6 +201,11 @@
     [loadingIndicator startAnimating];
     [self.view addSubview:loadingIndicator];
     
+    
+    UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
+                             withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
+    
 
     // This method is called when user quit the app
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
@@ -488,8 +493,46 @@
         }
     }
 
-    UserTaste *currentUserTaste = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
+    UserTaste *currentUserMet = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
                                                            withValue:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]];
+    
+    
+    NSMutableSet* set1 = [NSMutableSet setWithObject:currentUserTaste];
+
+    
+//    NSArray* result = [set1 allObjects];
+    
+//    NSLog(@"result : %@ | %@", currentUserTaste, [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMetTaste taste]] mutableCopy]);
+//    NSSet *uniqueStates = [NSSet setWithArray:[[currentUserTaste objectForKey:@"serie"] valueForKey:@"imdbID"]];
+    
+    NSDictionary *currentUserMetTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet taste]] mutableCopy];
+    
+
+    NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
+    int commonTasteCount = 0;
+    for (NSString* key in @[@"serie", @"movie"]) {
+        if ([currentUserTaste objectForKey:key] != nil && [currentUserTaste objectForKey:key] != (id)[NSNull null]) {
+            currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
+        }
+        
+        if ([currentUserMetTaste objectForKey:key] != nil && [currentUserMetTaste objectForKey:key] != (id)[NSNull null]) {
+            currentUserMetTasteSet = [NSMutableSet setWithArray:[[currentUserMetTaste objectForKey:key] valueForKey:@"imdbID"]];
+        }
+        
+        [currentUserMetTasteSet intersectSet:currentUserTasteSet]; //this will give you only the obejcts that are in both sets
+        
+        NSArray* result = [currentUserMetTasteSet allObjects];
+        
+        commonTasteCount += result.count;
+    }
+    
+    NSString *detailTextLabelString = @"";
+    
+    if (commonTasteCount == 0) {
+        detailTextLabelString = NSLocalizedString(@"nothing common", nil);
+    } else {
+        detailTextLabelString = NSLocalizedString(@"things common", nil);
+    }
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
@@ -497,9 +540,14 @@
     cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]]];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     cell.textLabel.textColor = [UIColor whiteColor];
-    cell.model = currentUserTaste;
+    cell.model = currentUserMet;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.indentationLevel = 1;
+    
+    cell.detailTextLabel.font = [UIFont systemFontOfSize:11];
+    cell.detailTextLabel.text = detailTextLabelString; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+    cell.detailTextLabel.textColor = [UIColor whiteColor];
+    
 
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
@@ -561,7 +609,6 @@
 
 - (void) fetchUsersDatasBtnAction
 {
-    NSLog([self connected] ? @"YES" : @"NO");
     if ([self connected] == NO) {
         [self noInternetAlert];
         return;
@@ -613,8 +660,6 @@
             self.locationManager = [CLLocationManager new];
 //            self.locationManager.delegate = self;
             [self.locationManager startUpdatingLocation];
-            
-            NSLog(@"%@", [NSString stringWithFormat:@"latitude: %f longitude: %f", _locationManager.location.coordinate.latitude, _locationManager.location.coordinate.longitude]);
         }
         
         self.locationManager.distanceFilter = 1000;

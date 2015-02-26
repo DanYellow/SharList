@@ -90,9 +90,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     
-    
-    
-    
     // Init vars
     self.PhysicsAdded = NO;
     self.itunesIDString = @"";
@@ -1106,7 +1103,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [userTasteDict removeObjectForKey:[self.mediaDatas valueForKey:@"type"]];
         [userTasteDict setObject:sortedCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     }
-    
+
     [self saveMediaUpdateForAdding:YES];
 }
 

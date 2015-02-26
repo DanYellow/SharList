@@ -43,6 +43,8 @@
     UIActivityIndicatorView *loadingIndicator;
     
     NSUInteger numberOfJSONErrors; //Contains the number of incorrect json user taste retrieve from the server
+    
+    NSDictionary *currentUserTaste;
 }
 
 @property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;
