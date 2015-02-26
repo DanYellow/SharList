@@ -12,9 +12,6 @@
 
 @property (nonatomic, copy) NSMutableDictionary *metUserTasteDict;
 
-@property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
-
-
 @end
 
 
@@ -57,26 +54,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-//    NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
-//    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
-//    
-//    NSOperationQueue *operationQueue = manager.operationQueue;
-//    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-//    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-//        switch (status) {
-//            case AFNetworkReachabilityStatusReachableViaWWAN:
-//            case AFNetworkReachabilityStatusReachableViaWiFi:
-//                [operationQueue setSuspended:NO];
-//                self.ConnectedToInternet = YES;
-//                break;
-//            case AFNetworkReachabilityStatusNotReachable:
-//            default:
-//                [operationQueue setSuspended:YES];
-//                self.ConnectedToInternet = NO;
-//                break;
-//        }
-//    }];
-//    
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+    
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
@@ -176,9 +155,9 @@
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
-//        if (!self.ConnectedToInternet) {
-//            return;
-//        }
+        if (![self connected]) {
+            return;
+        }
         NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"];
         NSDictionary *apiParams = @{@"fbiduser" : [self.meetingDatas fbid], @"isspecificuser" : @"yes"};
 
@@ -217,6 +196,10 @@
             [self showTutorial];
         }
     }
+}
+
+- (BOOL) connected {
+    return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
 - (void) displayMetUserfbImgProfile

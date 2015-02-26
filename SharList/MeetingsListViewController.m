@@ -11,8 +11,6 @@
 
 
 @interface MeetingsListViewController ()
-@property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
-
 
 @end
 
@@ -66,26 +64,7 @@
     [super viewDidLoad];
     
     // Do any additional setup after loading the view.
-    
-    NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
-    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
-    
-    NSOperationQueue *operationQueue = manager.operationQueue;
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-        switch (status) {
-            case AFNetworkReachabilityStatusReachableViaWWAN:
-            case AFNetworkReachabilityStatusReachableViaWiFi:
-                [operationQueue setSuspended:NO];
-                self.ConnectedToInternet = YES;
-                break;
-            case AFNetworkReachabilityStatusNotReachable:
-            default:
-                [operationQueue setSuspended:YES];
-                self.ConnectedToInternet = NO;
-                break;
-        }
-    }];
     
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -576,9 +555,14 @@
 //    completionHandler(UIBackgroundFetchResultNewData);
 }
 
+- (BOOL) connected {
+    return [AFNetworkReachabilityManager sharedManager].isReachable;
+}
+
 - (void) fetchUsersDatasBtnAction
 {
-    if (self.isConnectedToInternet == NO) {
+    NSLog([self connected] ? @"YES" : @"NO");
+    if ([self connected] == NO) {
         [self noInternetAlert];
         return;
     }

@@ -49,6 +49,8 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
         
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
@@ -345,12 +347,20 @@
         // Connect / Disconnect BS
         case UnlinkBS:
         {
-            NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
-            if (!BSUserToken) {
-                [self showBetaSeriesConnect];
-            } else {
-                [self showBetaSeriesDisconnect];
+            if (![self connected]) {
+                UIAlertView *errConnectionAlertView;
+                errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                                                    message:NSLocalizedString(@"noconnection", nil)
+                                                                   delegate:nil
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles: nil];
+                [errConnectionAlertView show];
+                [tableView deselectRowAtIndexPath:indexPath animated:YES];
+                
+                return;
             }
+            
+            [self manageBSConnection];
         }
             break;
             
@@ -519,6 +529,10 @@
 {
     NSString *anUITextFieldText = [anUITextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     return [anUITextFieldText length] > 0 && ![anUITextFieldText isEqualToString:@""];
+}
+
+- (BOOL) connected {
+    return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
 

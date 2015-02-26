@@ -10,9 +10,6 @@
 
 @interface ViewController ()
 
-@property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
-
-
 @end
 
 
@@ -62,27 +59,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    
-    // Permatenly checks if user is connected to Internet
-    NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
-    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
-    
-    NSOperationQueue *operationQueue = manager.operationQueue;
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-        switch (status) {
-            case AFNetworkReachabilityStatusReachableViaWWAN:
-            case AFNetworkReachabilityStatusReachableViaWiFi:
-                [operationQueue setSuspended:NO];
-                self.ConnectedToInternet = YES;
-                break;
-            case AFNetworkReachabilityStatusNotReachable:
-            default:
-                [operationQueue setSuspended:YES];
-                self.ConnectedToInternet = NO;
-                break;
-        }
-    }];
     
     // Variables init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -436,7 +413,7 @@
     
     
     // Update location from server
-    if ([userPreferences objectForKey:@"lastManualUpdate"] && self.ConnectedToInternet == YES) {
+    if ([userPreferences objectForKey:@"lastManualUpdate"] && [self connected] == YES) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
         NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
@@ -679,7 +656,7 @@
         // This label is also used for no internet connexion for search
         UILabel *emptyResultLabel = (UILabel*)[self.searchResultsController.tableView viewWithTag:7];
 
-        if (self.ConnectedToInternet == NO) {
+        if ([self connected] == NO) {
             emptyResultLabel.text = NSLocalizedString(@"No internet connection", nil);
             emptyResultLabel.hidden = NO;
             
@@ -1084,7 +1061,7 @@
 
 - (void) updateUserLocation:(NSNumber*)userfbID
 {
-    if ((!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) && self.ConnectedToInternet == NO) {
+    if ((!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) && [self connected] == NO) {
         return;
     }
     
@@ -1191,6 +1168,10 @@
     NSLog(@"Connection failed: %@", [error description]);
 }
 
+- (BOOL) connected {
+    return [AFNetworkReachabilityManager sharedManager].reachable;
+}
+
 
 #pragma mark - Content filtering
 
@@ -1210,7 +1191,7 @@
     
     [filteredTableDatas removeAllObjects];
     
-    if (self.ConnectedToInternet == NO) {
+    if (![self connected]) {
         UIActivityIndicatorView *searchLoadingIndicator = (UIActivityIndicatorView*)[self.searchResultsController.tableView viewWithTag:9];
         [searchLoadingIndicator stopAnimating];
         [self.searchResultsController.tableView reloadData];

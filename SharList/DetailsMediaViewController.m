@@ -12,7 +12,6 @@
 @interface DetailsMediaViewController ()
 
 @property (strong, nonatomic) UserTaste *userTaste;
-@property (nonatomic, assign, getter=isConnectedToInternet) BOOL ConnectedToInternet;
 
 @end
 
@@ -89,34 +88,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    self.ConnectedToInternet = YES;
-    self.itunesIDString = @"";
-
-    
-    NSURL *baseURL = [NSURL URLWithString:@"https://api.themoviedb.org/3/"];
-    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
-    manager.securityPolicy.allowInvalidCertificates = YES;
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
-    
-    NSOperationQueue *operationQueue = manager.operationQueue;
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-        switch (status) {
-            case AFNetworkReachabilityStatusReachableViaWWAN:
-            case AFNetworkReachabilityStatusReachableViaWiFi:
-                [operationQueue setSuspended:NO];
-                self.ConnectedToInternet = YES;
-                break;
-            case AFNetworkReachabilityStatusNotReachable:
-            default:
-                [operationQueue setSuspended:YES];
-                self.ConnectedToInternet = NO;
-                break;
-        }
-    }];
+    
+    
+    
     
     // Init vars
     self.PhysicsAdded = NO;
+    self.itunesIDString = @"";
     buyButtonsInitPositions = [NSMutableArray new];
     // Shoud contain raw data from the server
     self.responseData = [NSMutableData new];
@@ -306,6 +285,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getmedia.php"];
 
+    NSURL *baseURL = [NSURL URLWithString:@"https://api.themoviedb.org/3/"];
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
+    manager.securityPolicy.allowInvalidCertificates = YES;
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     [manager POST:shoundAPIPath parameters:@{ @"imdbid" : self.mediaDatas[@"imdbID"] }
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
@@ -1165,10 +1148,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self updateServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] forAdding:isAdding];
 }
 
+- (BOOL) connected {
+    return [AFNetworkReachabilityManager sharedManager].reachable;
+}
+
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) updateServerDatasForFbID:(NSNumber*)userfbID forAdding:(NSNumber*)isAdding
 {
-    if (self.isConnectedToInternet == NO)
+    if ([self connected] == NO)
         return;
     
     
@@ -1231,7 +1218,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     UIAlertView *errConnectionAlertView;
     
-    if (!self.ConnectedToInternet) {
+    if (![self connected]) {
         errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
     } else {
         errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"issuesWithDetailsMedia", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];

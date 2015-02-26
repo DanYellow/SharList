@@ -86,7 +86,6 @@
 - (void) showTutorial;
 - (void) hideTutorial;
 - (void) showPoster;
-- (void) displayBetaSeriesButton;
 - (void) connectWithBSAccount:(NSString*)BSUserToken;
 
 
