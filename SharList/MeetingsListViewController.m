@@ -510,9 +510,12 @@
 
     NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
     int commonTasteCount = 0;
+    int currentUserNumberItems = 0;
     for (NSString* key in @[@"serie", @"movie"]) {
         if ([currentUserTaste objectForKey:key] != nil && [currentUserTaste objectForKey:key] != (id)[NSNull null]) {
             currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
+            
+            currentUserNumberItems += [[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"] count];
         }
         
         if ([currentUserMetTaste objectForKey:key] != nil && [currentUserMetTaste objectForKey:key] != (id)[NSNull null]) {
@@ -528,11 +531,19 @@
     
     NSString *detailTextLabelString = @"";
     
+    CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
+//    NSLog(@"commonTasteCountPercent : %i", commonTasteCountPercent);
     if (commonTasteCount == 0) {
         detailTextLabelString = NSLocalizedString(@"nothing common", nil);
     } else {
-        detailTextLabelString = NSLocalizedString(@"things common", nil);
+        NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
+        [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
+        
+        NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:commonTasteCountPercent]];
+        
+        detailTextLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ in common", nil), strNumber];
     }
+    
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
