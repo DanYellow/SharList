@@ -28,6 +28,7 @@
 //    UITableViewController *userSelectionTableView;
     
     NSUserDefaults *userPreferences;
+    NSDictionary *currentUserTaste;
 }
 
 

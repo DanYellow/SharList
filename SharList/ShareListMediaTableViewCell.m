@@ -16,7 +16,8 @@
     // Initialization code
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
     
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     self.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.35];
@@ -28,6 +29,12 @@
     
     return self;
 }
+
+//- (void)layoutSubviews
+//{
+//    [super layoutSubviews];
+//    self.imageView.frame = CGRectMake(0,0,32,32);
+//}
 
 
 - (void) setModel:(id)s

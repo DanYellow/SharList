@@ -75,6 +75,10 @@
     // Build the array from the plist
     settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
+    UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
+                                                      withValue:[userPreferences objectForKey:@"currentUserfbID"]];
+    currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
+    
 //    NSLog(@"self.metUserTasteDict : %@", self.metUserTasteDict);
     
     // View init
@@ -494,6 +498,19 @@
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.indentationLevel = 1;
+    }
+    
+    if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
+
+        CALayer *sublayer = [CALayer layer];
+        sublayer.backgroundColor = [UIColor clearColor].CGColor;
+        sublayer.shadowColor = [UIColor clearColor].CGColor;
+        sublayer.frame = CGRectMake(screenWidth - 60, (cellFrame.size.height / 2) - 11, 22, 22);
+        sublayer.contents = (id) [UIImage imageNamed:@"meetingFavoriteSelected"].CGImage;
+        
+        [cell.layer addSublayer:sublayer];
+    } else {
+        cell.imageView.image = nil;
     }
     
     cell.alpha = .3f;

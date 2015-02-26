@@ -725,6 +725,7 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
+    CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
     
     NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
     NSString *title, *year, *imdbID;
@@ -756,7 +757,13 @@
         if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
             //         If this row is among user current taste list so we put a star
             if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
-                cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+                CALayer *sublayer = [CALayer layer];
+                sublayer.backgroundColor = [UIColor clearColor].CGColor;
+                sublayer.shadowColor = [UIColor clearColor].CGColor;
+                sublayer.frame = CGRectMake(screenWidth - 60, (cellFrame.size.height / 2) - 11, 22, 22);
+                sublayer.contents = (id) [UIImage imageNamed:@"meetingFavoriteSelected"].CGImage;
+                
+                [cell.layer addSublayer:sublayer];
             } else {
                 cell.imageView.image = nil;
             }

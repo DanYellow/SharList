@@ -496,15 +496,6 @@
     UserTaste *currentUserMet = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
                                                            withValue:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]];
     
-    
-    NSMutableSet* set1 = [NSMutableSet setWithObject:currentUserTaste];
-
-    
-//    NSArray* result = [set1 allObjects];
-    
-//    NSLog(@"result : %@ | %@", currentUserTaste, [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMetTaste taste]] mutableCopy]);
-//    NSSet *uniqueStates = [NSSet setWithArray:[[currentUserTaste objectForKey:@"serie"] valueForKey:@"imdbID"]];
-    
     NSDictionary *currentUserMetTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet taste]] mutableCopy];
     
 
