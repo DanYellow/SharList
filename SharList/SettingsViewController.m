@@ -402,9 +402,9 @@
     [manager POST:urlAPI
        parameters:apiParams
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              NSLog(@"responseObject : %@", responseObject);
+//              NSLog(@"responseObject : %@", responseObject);
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-              NSLog(@"Error: %@", error);
+//              NSLog(@"Error: %@", error);
           }];
 }
 

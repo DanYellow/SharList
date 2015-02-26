@@ -57,26 +57,26 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
-    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
-    
-    NSOperationQueue *operationQueue = manager.operationQueue;
-    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-        switch (status) {
-            case AFNetworkReachabilityStatusReachableViaWWAN:
-            case AFNetworkReachabilityStatusReachableViaWiFi:
-                [operationQueue setSuspended:NO];
-                self.ConnectedToInternet = YES;
-                break;
-            case AFNetworkReachabilityStatusNotReachable:
-            default:
-                [operationQueue setSuspended:YES];
-                self.ConnectedToInternet = NO;
-                break;
-        }
-    }];
-    
+//    NSURL *baseURL = [NSURL URLWithString:@"http://api.themoviedb.org"];
+//    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
+//    
+//    NSOperationQueue *operationQueue = manager.operationQueue;
+//    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+//    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+//        switch (status) {
+//            case AFNetworkReachabilityStatusReachableViaWWAN:
+//            case AFNetworkReachabilityStatusReachableViaWiFi:
+//                [operationQueue setSuspended:NO];
+//                self.ConnectedToInternet = YES;
+//                break;
+//            case AFNetworkReachabilityStatusNotReachable:
+//            default:
+//                [operationQueue setSuspended:YES];
+//                self.ConnectedToInternet = NO;
+//                break;
+//        }
+//    }];
+//    
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
@@ -124,10 +124,10 @@
     addMeetingToFavoriteBtnItem.tag = 2;
     addMeetingToFavoriteBtnItem.enabled = YES;
     
-    UIBarButtonItem *seeFBUserMetAccountBtnItem;
-    seeFBUserMetAccountBtnItem  = [[UIBarButtonItem alloc] initWithTitle:@"fb" style:UIBarButtonItemStylePlain target:self action:@selector(seeFbAccount:)];
+//    UIBarButtonItem *seeFBUserMetAccountBtnItem;
+//    seeFBUserMetAccountBtnItem  = [[UIBarButtonItem alloc] initWithTitle:@"fb" style:UIBarButtonItemStylePlain target:self action:@selector(seeFbAccount:)];
     
-    self.navigationItem.rightBarButtonItems = @[addMeetingToFavoriteBtnItem, seeFBUserMetAccountBtnItem];
+    self.navigationItem.rightBarButtonItems = @[addMeetingToFavoriteBtnItem];
     
 
 //    NSDateFormatter *foo = [NSDateFormatter new];
@@ -172,29 +172,35 @@
 //    NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
 //    NSInteger hours = [conversionInfo hour];
     
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     
-//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
+//        if (!self.ConnectedToInternet) {
+//            return;
+//        }
+        NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"];
+        NSDictionary *apiParams = @{@"fbiduser" : [self.meetingDatas fbid], @"isspecificuser" : @"yes"};
 
-    
-    NSLog(self.ConnectedToInternet ? @"YES" : @"NO");
-    if (YES) { //self.ConnectedToInternet
-        NSString *urlAPI = @"https://api.shound.fr";
-        NSDictionary *apiParams = @{@"metUserfbID" : [self.meetingDatas fbid]};
-        NSLog(@"[self.meetingDatas fbid] : %@", [self.meetingDatas fbid]);
-        [self displayMetUserfbImgProfile];
-        NSLog(@"foo");
-//        [manager GET:urlAPI
-//          parameters:apiParams
-//             success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//                 NSLog(@"foo");
-//             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                 NSLog(@"Error: %@", error);
-//             }];
+        [manager POST:urlAPI
+          parameters:apiParams
+             success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                 // The user met accepts to be public (default behaviour)
+                 if (![responseObject[@"isAnonymous"] boolValue]) {
+                     [self displayMetUserfbImgProfile];
+                 }
+                 
+             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                 NSLog(@"Error: %@", error);
+             }];
     }
 
-
+//    UserTaste *person = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
+//                                           withValue:[self.meetingDatas lastMeeting]];
+//    [person MR_deleteEntity];
+//    
+//    return;
+    
     if ([self.meetingDatas isFavorite]) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
@@ -217,15 +223,18 @@
 {
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     
-    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
+    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
     metUserFBView.backgroundColor = [UIColor clearColor];
     metUserFBView.tag = 4;
-    int intWidthScreen = screenWidth;
-    NSString *fbMetUserString = [[self.meetingDatas fbid] stringValue];
-    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, 120];
     
-    UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
-    [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:[UIImage animatedImageNamed:@"list-tab-icon2" duration:1.0f]];
+    int intWidthScreen = screenWidth;
+    int heightImg = 172;
+    
+    NSString *fbMetUserString = [[self.meetingDatas fbid] stringValue];
+    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
+    
+    UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
+    [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:[UIImage animatedImageNamed:@"list-tab-icon2" duration:.1f]];
     metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
     metUserFBImgView.tag = 5;
     [metUserFBView addSubview:metUserFBImgView];
@@ -234,15 +243,12 @@
     gradientLayer.frame = metUserFBImgView.frame;
     [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
     [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
-    gradientLayer.colors = @[(id)[[UIColor whiteColor] CGColor]];
+    UIColor *topGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.65];
+    UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.65];
+    gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
+
     
-    
-    CALayer *metUserFBImgViewLayer = [CALayer layer];
-    metUserFBImgViewLayer.backgroundColor = (__bridge CGColorRef)([UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]);
-    metUserFBImgViewLayer.frame = metUserFBImgView.frame;
-    [metUserFBImgView.layer addSublayer:gradientLayer];
-    
-    NSLog(@"metUserFBImgURL : %@", metUserFBImgView.image);
+    [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
     
     userSelectionTableView.tableHeaderView = metUserFBView;
     

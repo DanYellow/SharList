@@ -869,9 +869,9 @@
     __block NSString *imgDistURL; // URL of the image from imdb database api
 
     
-    CALayer *imgLayer = [CALayer layer];
-    imgLayer.frame = cellFrame;
-    [imgLayer addSublayer:gradientLayer];
+//    CALayer *imgLayer = [CALayer layer];
+//    imgLayer.frame = cellFrame;
+//    [imgLayer addSublayer:gradientLayer];
 
     
     NSString *apiLink;
