@@ -20,6 +20,7 @@
 // 4 : Alertview for access device's settings
 // 5 : Alertview for betaseries
 // 6 : connectBSButton
+// 7 : alertEnableAnonymousMode
 
 @implementation SettingsViewController
 
@@ -383,6 +384,16 @@
 
 - (void) enableAnonSwitchChanged:(id)sender
 {
+    UISwitch *enableAnonSwitch = sender;
+    if (enableAnonSwitch.on) {
+        UIAlertView *alertEnableAnonymousMode = [[UIAlertView alloc] initWithTitle:@""
+                                                                           message:NSLocalizedString(@"Enable anonymous mode message", nil)                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                              otherButtonTitles:nil];
+        alertEnableAnonymousMode.tag = 7;
+        [alertEnableAnonymousMode show];
+    }
+    enableAnonSwitch.enabled = NO;
     BOOL anonModeEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"];
     anonModeEnabled = !anonModeEnabled;
     
@@ -403,6 +414,7 @@
        parameters:apiParams
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //              NSLog(@"responseObject : %@", responseObject);
+              enableAnonSwitch.enabled = YES;
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //              NSLog(@"Error: %@", error);
           }];

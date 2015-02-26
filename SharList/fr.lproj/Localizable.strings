@@ -56,6 +56,7 @@
 "Cancel" = "Annuler";
 "BSExplaination" = "La connexion à votre compte BetaSeries, vous permet d'ajouter un média à votre compte sans pour autant vouloir le faire découvrir aux autres";
 "Enable anonymous mode" = "Activer l'anonymat";
+"Enable anonymous mode message" = "En activant l'anonymat, vous ne pourrez plus voir les images de profil des autres utilisateurs (eux ne pourront pas voir la vôtre bien évidemment)";
 // Errors for geoloc
 "Oops" = "Oups";
 "geoloc denied" = "Shound n'est pas autorisé à utiliser votre position. Autorisez le dans les Réglages. (Shound > Position > Toujours)";
