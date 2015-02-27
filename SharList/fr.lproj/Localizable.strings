@@ -41,8 +41,8 @@
 "nothing common" = "Rien en commun. Découvrez !";
 "things common" = "On peut toujours apprendre des autres";
 "full common" = "On peut toujours apprendre des autres";
-
-"%@ in common" = "%@ en commun";
+"in common" = "de goût en commun";
+"%@ in common" = "%@ de goût en commun";
 
 //Settings view controller
 "Settings" = "Réglages";

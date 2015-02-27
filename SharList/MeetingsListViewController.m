@@ -444,8 +444,8 @@
     detailsMeetingViewController.delegate = self;
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.timeStyle = kCFDateFormatterShortStyle;
-    detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model lastMeeting]];
+    formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
+    detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model[@"userModel"] lastMeeting]];
    
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
@@ -525,6 +525,8 @@
     CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
 //    NSLog(@"commonTasteCountPercent : %i", commonTasteCountPercent);
     if (commonTasteCount == 0) {
+        cell.detailTextLabel.textColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
+        cell.textLabel.textColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
         detailTextLabelString = NSLocalizedString(@"nothing common", nil);
     } else {
         NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
@@ -533,22 +535,28 @@
         NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:commonTasteCountPercent]];
         
         detailTextLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ in common", nil), strNumber];
+        
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.detailTextLabel.textColor = [UIColor whiteColor];
     }
     
     
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
   
-    cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]]];
+    cell.textLabel.text = detailTextLabelString;
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
-    cell.textLabel.textColor = [UIColor whiteColor];
-    cell.model = currentUserMet;
+    
+    NSDictionary *userMetDatas = @{@"userModel" : currentUserMet, @"commonTasteCountPercent" : [NSNumber numberWithFloat:commonTasteCountPercent]};
+    
+    cell.model = userMetDatas;
+//    [cell.model setObject:[NSNumber numberWithFloat:commonTasteCountPercent] forKey:@"commonTasteCountPercent"];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.indentationLevel = 1;
     
-    cell.detailTextLabel.font = [UIFont systemFontOfSize:11];
-    cell.detailTextLabel.text = detailTextLabelString; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
-    cell.detailTextLabel.textColor = [UIColor whiteColor];
+    cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
+    cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]]];; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+    
     
 
     UIView *bgColorView = [UIView new];

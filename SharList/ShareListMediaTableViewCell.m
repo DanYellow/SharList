@@ -33,7 +33,10 @@
 //- (void)layoutSubviews
 //{
 //    [super layoutSubviews];
-//    self.imageView.frame = CGRectMake(0,0,32,32);
+//    
+//    CGRect textLabelFrame = self.textLabel.frame;
+//    textLabelFrame.size.width = ([[UIScreen mainScreen] bounds].size.width - 50);
+//    self.textLabel.frame = textLabelFrame;
 //}
 
 

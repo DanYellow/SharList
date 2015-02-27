@@ -164,7 +164,7 @@
     
                   
                   UITableView *settingsTableview = (UITableView*)[self.view viewWithTag:1];
-                  UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2]];
+                  UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:3]];
                   cell.textLabel.text = NSLocalizedString(@"BSConnect", nil);
                   
               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -469,6 +469,9 @@
     return aBool;
 }
 
+#pragma mark - UIAction View delegate
+
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 4) {
@@ -488,6 +491,7 @@
             }
             
             AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+            manager.requestSerializer = [AFJSONRequestSerializer serializer];
             [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
 
             

@@ -738,6 +738,15 @@
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
+            
+            cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+            cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+            cell.textLabel.layer.shadowOpacity = .95f;
+            
+            
+            cell.detailTextLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+            cell.detailTextLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+            cell.detailTextLabel.layer.shadowOpacity = .95f;
         }
         
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
@@ -754,20 +763,20 @@
         
         // This statement is here for empty key
         // Or else we'll try to compare a NSNull object
-        if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
-            //         If this row is among user current taste list so we put a star
-            if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
-                CALayer *sublayer = [CALayer layer];
-                sublayer.backgroundColor = [UIColor clearColor].CGColor;
-                sublayer.shadowColor = [UIColor clearColor].CGColor;
-                sublayer.frame = CGRectMake(screenWidth - 60, (cellFrame.size.height / 2) - 11, 22, 22);
-                sublayer.contents = (id) [UIImage imageNamed:@"meetingFavoriteSelected"].CGImage;
-                
-                [cell.layer addSublayer:sublayer];
-            } else {
-                cell.imageView.image = nil;
-            }
-        }
+//        if ([userTasteDict objectForKey:[[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"type"]] != [NSNull null]) {
+//            //         If this row is among user current taste list so we put a star
+//            if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
+//                CALayer *sublayer = [CALayer layer];
+//                sublayer.backgroundColor = [UIColor clearColor].CGColor;
+//                sublayer.shadowColor = [UIColor clearColor].CGColor;
+//                sublayer.frame = CGRectMake(screenWidth - 60, (cellFrame.size.height / 2) - 11, 22, 22);
+//                sublayer.contents = (id) [UIImage imageNamed:@"meetingFavoriteSelected"].CGImage;
+//                
+//                [cell.layer addSublayer:sublayer];
+//            } else {
+//                cell.imageView.image = nil;
+//            }
+//        }
         
 //        [UIView transitionWithView:cell
 //                          duration:.7f

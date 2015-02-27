@@ -63,7 +63,7 @@
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.metUserTasteDict = [NSMutableDictionary new];
-    self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas taste]] mutableCopy];
+    self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas[@"userModel"] taste]] mutableCopy];
    
 //    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
     self.navigationController.navigationBar.backIndicatorImage = [UIImage imageNamed:@"list-tab-icon"];
@@ -99,7 +99,7 @@
     
     UIBarButtonItem *addMeetingToFavoriteBtnItem;
     // This list is not among user's favorites
-    if (![self.meetingDatas isFavorite]) {
+    if (![self.meetingDatas[@"userModel"] isFavorite]) {
         addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
     } else {
         addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
@@ -132,7 +132,7 @@
     tableFooter.textAlignment = NSTextAlignmentCenter;
     tableFooter.opaque = YES;
     tableFooter.font = [UIFont boldSystemFontOfSize:15];
-    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [self.meetingDatas numberOfMeetings]]];
+    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [self.meetingDatas[@"userModel"] numberOfMeetings]]];
 
     //___________________
     // Uitableview of user selection (what user likes) initWithStyle:UITableViewStylePlain
@@ -163,7 +163,7 @@
             return;
         }
         NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"];
-        NSDictionary *apiParams = @{@"fbiduser" : [self.meetingDatas fbid], @"isspecificuser" : @"yes"};
+        NSDictionary *apiParams = @{@"fbiduser" : [self.meetingDatas[@"userModel"] fbid], @"isspecificuser" : @"yes"};
 
         [manager POST:urlAPI
           parameters:apiParams
@@ -184,7 +184,7 @@
 //    
 //    return;
     
-    if ([self.meetingDatas isFavorite]) {
+    if ([self.meetingDatas[@"userModel"] isFavorite]) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
 
@@ -213,11 +213,12 @@
     UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
     metUserFBView.backgroundColor = [UIColor clearColor];
     metUserFBView.tag = 4;
+
     
     int intWidthScreen = screenWidth;
     int heightImg = 172;
     
-    NSString *fbMetUserString = [[self.meetingDatas fbid] stringValue];
+    NSString *fbMetUserString = [[self.meetingDatas[@"userModel"] fbid] stringValue];
     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
     
     UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
@@ -230,12 +231,44 @@
     gradientLayer.frame = metUserFBImgView.frame;
     [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
     [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
-    UIColor *topGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.65];
-    UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.65];
+    UIColor *topGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
+    UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
     gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
-
-    
     [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
+    
+    
+    
+    NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
+    [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
+    
+    NSString *strNumberPercent = [percentageFormatter stringFromNumber:self.meetingDatas[@"commonTasteCountPercent"]];
+    
+    UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 24.0, 150.0, 48.0)];
+    commonTasteCountPercentLabel.textColor = [UIColor whiteColor];
+    commonTasteCountPercentLabel.backgroundColor = [UIColor clearColor];
+    commonTasteCountPercentLabel.text = strNumberPercent;
+    commonTasteCountPercentLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:52.0f];
+    commonTasteCountPercentLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
+    commonTasteCountPercentLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+    commonTasteCountPercentLabel.layer.shadowOpacity = .75f;
+    [metUserFBView addSubview:commonTasteCountPercentLabel];
+    
+    
+    CGRect tasteMetUserMessageLabelFrame = CGRectMake(16.0,
+                                                      commonTasteCountPercentLabel.frame.size.height + commonTasteCountPercentLabel.frame.origin.y,
+                                                      190.0f,
+                                                      20.0);
+    
+    UILabel *tasteMetUserMessageLabel = [[UILabel alloc] initWithFrame:tasteMetUserMessageLabelFrame];
+    tasteMetUserMessageLabel.textColor = [UIColor whiteColor];
+    tasteMetUserMessageLabel.backgroundColor = [UIColor clearColor];
+    tasteMetUserMessageLabel.text = NSLocalizedString(@"in common", nil);
+    tasteMetUserMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
+    tasteMetUserMessageLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
+    tasteMetUserMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+    tasteMetUserMessageLabel.layer.shadowOpacity = .75f;
+    [metUserFBView addSubview:tasteMetUserMessageLabel];
+    
     
     userSelectionTableView.tableHeaderView = metUserFBView;
     
@@ -247,6 +280,8 @@
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
     [userSelectRefresh endRefreshing];
     
+
+    
 //    NSDateFormatter *formatter = [NSDateFormatter new];
 //    [formatter setDateFormat:@"MMM d, h:mm a"];
 //    NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
@@ -255,7 +290,7 @@
 //    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
 //    userSelectRefresh.attributedTitle = attributedTitle;
 
-    [self getServerDatasForFbID:[self.meetingDatas fbid]];
+    [self getServerDatasForFbID:[self.meetingDatas[@"userModel"] fbid]];
 }
 
 - (void) seeFbAccount:(UIBarButtonItem*)sender
@@ -315,17 +350,24 @@
                 self.metUserTasteDict = [randomUserTaste mutableCopy];
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
                 
-                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [self.meetingDatas fbid]];
-                UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
+                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [self.meetingDatas[@"userModel"] fbid]];
+                UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
                 oldUserTaste.taste = arrayData;
-//                oldUserTaste.lastMeeting = [NSDate date];
+                [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
                 
                 UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
                 [tableView reloadData];
             } else {
                 UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
                 [noNewDatasAlert show];
+                
+                return;
             }
+        } else {
+            UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [noNewDatasAlert show];
+            
+            return;
         }
         
         self.responseData = nil;
@@ -501,6 +543,11 @@
     }
     
     if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
+        
+        cell.textLabel.frame = CGRectMake(cell.textLabel.frame.origin.x,
+                                          cell.textLabel.frame.origin.y,
+                                          cell.textLabel.frame.size.width - 15,
+                                          cell.textLabel.frame.size.height);
 
         CALayer *sublayer = [CALayer layer];
         sublayer.backgroundColor = [UIColor clearColor].CGColor;
@@ -552,10 +599,10 @@
 {
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-        [self.meetingDatas setIsFavorite:YES];
+        [self.meetingDatas[@"userModel"] setIsFavorite:YES];
     }else{
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
-        [self.meetingDatas setIsFavorite:NO];
+        [self.meetingDatas[@"userModel"] setIsFavorite:NO];
     }
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
