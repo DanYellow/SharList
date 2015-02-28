@@ -1164,7 +1164,7 @@
             }
             [self displayUserTasteList];
         } else {
-            NSLog(@"no user datas");
+//            NSLog(@"no user datas");
         }
         
         UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
