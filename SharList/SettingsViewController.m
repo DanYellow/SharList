@@ -108,7 +108,7 @@
 
 - (void) showBetaSeriesConnect
 {
-    UIAlertView *alert =[[UIAlertView alloc ] initWithTitle:NSLocalizedString(@"BSConnect", nil)
+    UIAlertView *alert =[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"BSConnect", nil)
                                                     message:NSLocalizedString(@"BSExplaination", nil)
                                                    delegate:self
                                           cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
@@ -518,13 +518,12 @@
 
                       
                       UITableView *settingsTableview = (UITableView*)[self.view viewWithTag:1];
-                      UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2]];
+                      UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:3]];
                       cell.textLabel.text = NSLocalizedString(@"BSDisconnect", nil);
 
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                       NSLog(@"Error: %@", error);
                   }];
-
         }
     }
 }

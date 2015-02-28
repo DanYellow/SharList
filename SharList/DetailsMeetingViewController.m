@@ -107,6 +107,8 @@
     addMeetingToFavoriteBtnItem.tag = 2;
     addMeetingToFavoriteBtnItem.enabled = YES;
     
+    
+    
 //    UIBarButtonItem *seeFBUserMetAccountBtnItem;
 //    seeFBUserMetAccountBtnItem  = [[UIBarButtonItem alloc] initWithTitle:@"fb" style:UIBarButtonItemStylePlain target:self action:@selector(seeFbAccount:)];
     
@@ -147,6 +149,10 @@
     userSelectionTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     userSelectionTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:userSelectionTableView];
+    
+    if ([userSelectionTableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [userSelectionTableView setSeparatorInset:UIEdgeInsetsZero];
+    }
     
     // If the current user list is among user's favorites and the meeting have been made one hour ago
     // He can fetch his update to follow him
@@ -513,6 +519,7 @@
     }
 }
 
+
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
@@ -530,7 +537,7 @@
     imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
     
     if (cell == nil) {
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.backgroundColor = [UIColor clearColor];
         cell.textLabel.frame = cellFrame;
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
@@ -543,19 +550,7 @@
     }
     
     if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
-        
-        cell.textLabel.frame = CGRectMake(cell.textLabel.frame.origin.x,
-                                          cell.textLabel.frame.origin.y,
-                                          cell.textLabel.frame.size.width - 15,
-                                          cell.textLabel.frame.size.height);
-
-        CALayer *sublayer = [CALayer layer];
-        sublayer.backgroundColor = [UIColor clearColor].CGColor;
-        sublayer.shadowColor = [UIColor clearColor].CGColor;
-        sublayer.frame = CGRectMake(screenWidth - 60, (cellFrame.size.height / 2) - 11, 22, 22);
-        sublayer.contents = (id) [UIImage imageNamed:@"meetingFavoriteSelected"].CGImage;
-        
-        [cell.layer addSublayer:sublayer];
+        cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
     } else {
         cell.imageView.image = nil;
     }

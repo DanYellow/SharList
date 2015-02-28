@@ -362,7 +362,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view insertSubview:infoMediaView atIndex:1];
     
     // We display the BS part only if the device's user iPhone is in French
-    if ([userLanguage isEqualToString:@"fr"]) {
+    if ([userLanguage isEqualToString:@"fr"] && [self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
         NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
         if (BSUserToken != nil || [BSUserToken isKindOfClass:[NSNull class]]) {
             [self connectWithBSAccount:BSUserToken];

@@ -758,8 +758,13 @@
         cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.60];
         cell.textLabel.textColor = [UIColor whiteColor];
         
-        cell.textLabel.layer.contents = [UIImage imageNamed:@"meetingFavoriteSelected"];
 //        cell.alpha = .7f;
+        
+        if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
+            cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        } else {
+            cell.imageView.image = nil;
+        }
         
         // This statement is here for empty key
         // Or else we'll try to compare a NSNull object

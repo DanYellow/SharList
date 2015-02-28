@@ -16,8 +16,13 @@
 @property (retain, nonatomic) id model;
 @property (nonatomic) NSString *name;
 
+@property (nonatomic, assign) BOOL favorite;
+
 
 - (void) setModel:(id) s;
 - (id) model;
+
+- (void) setFavorite:(BOOL)aFavorite;
+- (BOOL) favorite;
 
 @end
