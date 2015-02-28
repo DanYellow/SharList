@@ -21,6 +21,7 @@
 // 5 : Alertview for betaseries
 // 6 : connectBSButton
 // 7 : alertEnableAnonymousMode
+// 8 : enableAnonSwitch
 
 @implementation SettingsViewController
 
@@ -289,6 +290,7 @@
             enableAnonSwitch.onTintColor = [UIColor colorWithRed:(26.0f/255.0f) green:(79.0f/255.0f) blue:(103.0f/255.0f) alpha:1.0f];
             enableAnonSwitch.enabled = YES;
             [enableAnonSwitch addTarget:self action:@selector(enableAnonSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+            enableAnonSwitch.tag = 8;
             
             if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
                 enableAnonSwitch.on = NO;
@@ -395,14 +397,16 @@
 - (void) enableAnonSwitchChanged:(id)sender
 {
     UISwitch *enableAnonSwitch = sender;
-    if (enableAnonSwitch.on) {
+    
+    if (enableAnonSwitch.on && ![[NSUserDefaults standardUserDefaults] boolForKey:@"isMessageIndicatorForAnonymousModeHaveBeenShowed"]) {
         UIAlertView *alertEnableAnonymousMode = [[UIAlertView alloc] initWithTitle:@""
-                                                                           message:NSLocalizedString(@"Enable anonymous mode message", nil)                                                       delegate:nil
+                                                                           message:NSLocalizedString(@"Enable anonymous mode message", nil)                                                       delegate:self
                                               cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                               otherButtonTitles:nil];
         alertEnableAnonymousMode.tag = 7;
         [alertEnableAnonymousMode show];
     }
+
     enableAnonSwitch.enabled = NO;
     BOOL anonModeEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"];
     anonModeEnabled = !anonModeEnabled;
@@ -423,7 +427,6 @@
     [manager POST:urlAPI
        parameters:apiParams
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//              NSLog(@"responseObject : %@", responseObject);
               enableAnonSwitch.enabled = YES;
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //              NSLog(@"Error: %@", error);
@@ -525,6 +528,15 @@
                       NSLog(@"Error: %@", error);
                   }];
         }
+    } else if (alertView.tag == 7) {
+        if (buttonIndex == alertView.cancelButtonIndex) {
+            // We show message about anonymous mode only one time
+            [[NSUserDefaults standardUserDefaults] setBool:@1 forKey:@"isMessageIndicatorForAnonymousModeHaveBeenShowed"];
+        }
+//        else if (buttonIndex == 1) { // User touch "cancel"
+//            UISwitch *enableAnonSwitch = (UISwitch*)[self.view viewWithTag:8];
+//            enableAnonSwitch.on = NO;
+//        }
     }
 }
 

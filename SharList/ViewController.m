@@ -725,7 +725,7 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
+//    CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
     
     NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
     NSString *title, *year, *imdbID;

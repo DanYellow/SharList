@@ -7,6 +7,7 @@
 */
 
 "an error" = "An error has occurred";
+"Cancel" = "Cancel";
 
 "Introduce the world what you love" = "Introduce the world what you like";
 
@@ -62,7 +63,8 @@
 "restricted denied" = "Shound is allow to use your location. Please enable it in your Settings \n(Shound > Location > Always)";
 "geoloc disabled" = "The location services seems to be disabled from the Settings";
 "Enable anonymous mode" = "Be anonymous";
-"Enable anonymous mode message" = "Activating anonymous mode, you'll not able to see others users' profile images. (They can't see yours, of course";
+"Enable anonymous mode message" = "Activating anonymous mode, you'll not able to see discovered users' profile images. (They can't see yours)";
+"OK reminder me later" = "OK. Remind me next time";
 
 // DetailsMediaViewController
 "Added" = "Added";
