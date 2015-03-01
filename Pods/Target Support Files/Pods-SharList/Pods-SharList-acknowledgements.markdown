@@ -327,6 +327,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  OTHER DEALINGS IN THE SOFTWARE.
 
 
+## Parse
+
+See https://www.parse.com/about/terms
+
 ## SWTableViewCell
 
 Copyright (c) 2013 Christopher Wendel

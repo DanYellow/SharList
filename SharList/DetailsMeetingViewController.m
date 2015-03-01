@@ -164,6 +164,12 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     
+    
+    
+    
+    // Display the percent match between current user and the user met
+    [self displayMatchRateList];
+    
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
         if (![self connected]) {
             return;
@@ -214,13 +220,8 @@
 
 - (void) displayMetUserfbImgProfile
 {
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
-    
-    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
-    metUserFBView.backgroundColor = [UIColor clearColor];
-    metUserFBView.tag = 4;
+    UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
 
-    
     int intWidthScreen = screenWidth;
     int heightImg = 172;
     
@@ -231,7 +232,7 @@
     [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:[UIImage animatedImageNamed:@"list-tab-icon2" duration:.1f]];
     metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
     metUserFBImgView.tag = 5;
-    [metUserFBView addSubview:metUserFBImgView];
+    [metUserFBView insertSubview:metUserFBImgView atIndex:0];
     
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     gradientLayer.frame = metUserFBImgView.frame;
@@ -241,9 +242,16 @@
     UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
     gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
     [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
+}
+
+- (void) displayMatchRateList
+{
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     
-    
-    
+    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
+    metUserFBView.backgroundColor = [UIColor clearColor];
+    metUserFBView.tag = 4;
+
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
@@ -259,7 +267,6 @@
     commonTasteCountPercentLabel.layer.shadowOpacity = .75f;
     [metUserFBView addSubview:commonTasteCountPercentLabel];
     
-    
     CGRect tasteMetUserMessageLabelFrame = CGRectMake(16.0,
                                                       commonTasteCountPercentLabel.frame.size.height + commonTasteCountPercentLabel.frame.origin.y,
                                                       190.0f,
@@ -274,7 +281,6 @@
     tasteMetUserMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
     tasteMetUserMessageLabel.layer.shadowOpacity = .75f;
     [metUserFBView addSubview:tasteMetUserMessageLabel];
-    
     
     userSelectionTableView.tableHeaderView = metUserFBView;
     

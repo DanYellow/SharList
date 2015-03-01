@@ -29,6 +29,8 @@ PODS:
   - MagicalRecord (2.2):
     - MagicalRecord/Core (= 2.2)
   - MagicalRecord/Core (2.2)
+  - Parse (1.6.3):
+    - Bolts (~> 1.1)
   - SWTableViewCell (0.3.6)
 
 DEPENDENCIES:
@@ -37,6 +39,7 @@ DEPENDENCIES:
   - Facebook-iOS-SDK (~> 3.13)
   - JLTMDbClient (~> 0.2)
   - MagicalRecord (~> 2.2)
+  - Parse (~> 1.6)
   - SWTableViewCell (~> 0.3.6)
 
 SPEC CHECKSUMS:
@@ -46,6 +49,7 @@ SPEC CHECKSUMS:
   Facebook-iOS-SDK: 5854404b4b651f612a8ef79ca06d766858f4cb8e
   JLTMDbClient: b24f6c3a2031a1445c9ee14d9b68d82c16d27cfb
   MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224
+  Parse: f725f76ef200c5127420690fc6882e57c3813923
   SWTableViewCell: f5cbe30c49c4e5b97231c076f17331caaf3f6244
 
 COCOAPODS: 0.35.0

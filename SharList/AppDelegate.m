@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 
+#import <Parse/Parse.h>
+
 @interface AppDelegate ()
 
 @property (nonatomic, retain) UITabBarController *tabBarController;
@@ -23,8 +25,20 @@
     
     [MagicalRecord setupAutoMigratingCoreDataStack];
     
+    // APNS + Parse part
+    [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
+                  clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
+    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
+                                                    UIUserNotificationTypeBadge |
+                                                    UIUserNotificationTypeSound);
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes
+                                                                             categories:nil];
+    [application registerUserNotificationSettings:settings];
+    [application registerForRemoteNotifications];
     
-    [application setMinimumBackgroundFetchInterval:3000]; //40 min | 3600 = BGFETCHDELAY
+    
+    
+    [application setMinimumBackgroundFetchInterval:BGFETCHDELAY]; //40 min | 3600 = BGFETCHDELAY
 
     
     ViewController *viewController = [ViewController new];
@@ -137,6 +151,20 @@
     [application registerForRemoteNotifications];
 }
 #endif
+
+
+#pragma mark - Parse + APNS
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    // Store the deviceToken in the current installation and save it to Parse.
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
+    [currentInstallation saveInBackground];
+    [PFPush subscribeToChannelInBackground:@"foo"];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
