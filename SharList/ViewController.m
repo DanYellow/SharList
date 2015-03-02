@@ -24,6 +24,7 @@
 // 7 : emptyResult : Message for no results
 // 8 : emptyUserTasteLabel : Message for no user taste
 // 9 : searchLoadingIndicator of search
+// 10 : metUserFBView
 
 
 @implementation ViewController
@@ -277,6 +278,110 @@
     }
 }
 
+#pragma marl - header tableview
+- (void) updateCurrentUserStats
+{
+    int index = 0, tagRange = 10000;
+    for (id key in userTasteDict) {
+        if ([userTasteDict objectForKey:key] != [NSNull null]) {
+            UILabel *statCount = (UILabel*)[self.view viewWithTag:tagRange + index];
+            NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:key] count]] stringValue];
+            statCount.text = statCountNumber;
+            
+            index++;
+        }
+    }
+}
+
+- (void) displayCurrentUserStats
+{
+    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
+    
+    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
+    metUserFBView.backgroundColor = [UIColor clearColor];
+    metUserFBView.tag = 10;
+    
+    int index = 0, extIndex = 0, tagRange = 10000;
+    float widthViews = 99.0f;
+    for (id key in userTasteDict) {
+        NSString *title = [NSLocalizedString([categoryList objectAtIndex:extIndex], nil) uppercaseString];
+        if ([userTasteDict objectForKey:key] != [NSNull null]) {
+            CALayer *rightBorder = [CALayer layer];
+            rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 70.0f);
+            rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
+
+            CGRect statContainerFrame = CGRectMake(0 + (95 * index),
+                                                    metUserFBView.frame.size.height - 70,
+                                                    widthViews, 70);
+            UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
+            statContainer.backgroundColor = [UIColor clearColor];
+            [metUserFBView addSubview:statContainer];
+
+            if ( ![key isEqualToString:[[userTasteDict allKeys] lastObject]] ) {
+                [statContainer.layer addSublayer:rightBorder];
+            }
+            
+            UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, widthViews, 30)];
+            statTitle.textColor = [UIColor whiteColor];
+            statTitle.backgroundColor = [UIColor clearColor];
+            statTitle.text = title;
+            statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
+            statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+            statTitle.layer.shadowRadius = 2.5;
+            statTitle.layer.shadowOpacity = 0.75;
+            [statContainer addSubview:statTitle];
+            
+            UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(12, statContainer.frame.size.height - 34, widthViews, 35.0)];
+            statCount.textColor = [UIColor whiteColor];
+            statCount.backgroundColor = [UIColor clearColor];
+            statCount.text = title;
+            statCount.tag = tagRange + index;
+            statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
+            statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
+            statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+            statCount.layer.shadowRadius = 2.5;
+            statCount.layer.shadowOpacity = 0.75;
+            NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:key] count]] stringValue];
+            statCount.text = statCountNumber;
+            
+            [statContainer insertSubview:statCount atIndex:10];
+            
+            index++;
+        }
+        extIndex++;
+    }
+    
+//    NSLog(@"userTasteDict : %@", userTasteDict);
+    
+    userTasteListTableView.tableHeaderView = metUserFBView;
+    
+    [userTasteListTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
+    
+    [self displayCurrentUserfbImgProfile];
+}
+
+- (void) displayCurrentUserfbImgProfile
+{
+    UIView *metUserFBView = (UIView*)[self.view viewWithTag:10];
+
+    int intWidthScreen = screenWidth;
+    int heightImg = 172;
+    
+    NSString *fbMetUserString = [[userPreferences objectForKey:@"currentUserfbID"] stringValue];
+    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
+    
+    UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
+    [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:[UIImage animatedImageNamed:@"list-tab-icon2" duration:.1f]];
+    metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
+    metUserFBImgView.backgroundColor = [UIColor clearColor];
+    [metUserFBView insertSubview:metUserFBImgView atIndex:0];
+    
+    UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    effectView.frame = metUserFBImgView.bounds;
+    [metUserFBImgView addSubview:effectView];
+}
+
 
 - (void) fetchUserDatas
 {
@@ -456,6 +561,9 @@
         appnameView.hidden = YES;
         appnameView.alpha = 0;
         userSelectionTableView.alpha = 1;
+        
+        [self displayCurrentUserStats];
+        
         
         return;
     }
@@ -1068,6 +1176,7 @@
 - (void) userListHaveBeenUpdateNotificationEvent:(NSNotification *)note
 {
     [self userListHaveBeenUpdate:[note userInfo]];
+    
 }
 
 
@@ -1078,6 +1187,8 @@
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
+    
+    [self updateCurrentUserStats];
 }
 
 - (void) updateUserLocation:(NSNumber*)userfbID
