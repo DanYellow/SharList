@@ -626,6 +626,9 @@
     
     [loadingIndicator startAnimating];
     
+    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+    [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+    
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             [loadingIndicator stopAnimating];
