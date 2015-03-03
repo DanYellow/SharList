@@ -13,6 +13,7 @@
 
 "serie" = "TV Series";
 "movie" = "movies";
+"book" = "books";
 "buy" = "buy";
 "buy %@" = "buy %@";
 

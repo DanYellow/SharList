@@ -117,8 +117,6 @@
     [self.window setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     [self.window makeKeyAndVisible];
     
-    
-    
     // Ask for remote notification
     [self registerForRemoteNotification];
     
@@ -129,15 +127,18 @@
 {
     // If user is not connected to facebook, no bg task for him
     // and said to iOS's algorithm to "push" back manage
-    if (!FBSession.activeSession.isOpen) {
-        completionHandler(UIBackgroundFetchResultNoData);
-        return;
-    }
     
-    MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
-    [meetingsListViewController fetchNewDataWithCompletionHandler:^(UIBackgroundFetchResult result) {
-        completionHandler(result);
-    }];
+    NSLog(@"foof");
+    
+//    if (!FBSession.activeSession.isOpen) {
+//        completionHandler(UIBackgroundFetchResultNoData);
+//        return;
+//    }
+//    
+//    MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
+//    [meetingsListViewController fetchNewDataWithCompletionHandler:^(UIBackgroundFetchResult result) {
+//        completionHandler(result);
+//    }];
 }
 
 - (void)registerForRemoteNotification {
@@ -159,7 +160,7 @@
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation setDeviceTokenFromData:deviceToken];
     [currentInstallation saveInBackground];
-    [PFPush subscribeToChannelInBackground:@"foo"];
+//    [PFPush subscribeToChannelInBackground:@"foo"];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {

@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import <Parse/Parse.h>
 
 //Vendors
 #import "AFNetworking.h"

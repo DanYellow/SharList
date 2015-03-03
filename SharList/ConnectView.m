@@ -103,6 +103,7 @@
 
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
 {
+    // 364885553677637
     NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
     [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];

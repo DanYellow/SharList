@@ -75,6 +75,7 @@
     // Build the array from the plist
     settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
+    // We get the datas of current user to compare it to the current list
     UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                       withValue:[userPreferences objectForKey:@"currentUserfbID"]];
     currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
@@ -214,7 +215,8 @@
     }
 }
 
-- (BOOL) connected {
+- (BOOL) connected
+{
     return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
@@ -284,7 +286,7 @@
     
     userSelectionTableView.tableHeaderView = metUserFBView;
     
-    [userSelectionTableView setContentOffset:CGPointMake(0, metUserFBView.bounds.size.height)];
+    [userSelectionTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
 }
 
 - (void) updateCurrentUser
@@ -598,12 +600,30 @@
 
 - (void) addAsFavorite:(UIBarButtonItem*)sender
 {
+    NSString *currentUserPFChannelName = @"sh_channel_";
+    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[self.meetingDatas[@"userModel"] fbid] stringValue]];
+   
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    
+    // Current list seen is added to user favs discovers
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
         [self.meetingDatas[@"userModel"] setIsFavorite:YES];
-    }else{
+        
+        // If the user add this discover among his favorites.
+        // He listen to his channel on Parse
+        if (![[currentInstallation objectForKey:@"channels"] containsObject:currentUserPFChannelName]) {
+            [PFPush subscribeToChannelInBackground:currentUserPFChannelName];
+        }
+    } else {
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
         [self.meetingDatas[@"userModel"] setIsFavorite:NO];
+        
+        // If the user withdraw this discover among his favorites.
+        // He doesn't listen to his channel on Parse anymore
+        if ([[currentInstallation objectForKey:@"channels"] containsObject:currentUserPFChannelName]) {
+            [PFPush unsubscribeFromChannelInBackground:currentUserPFChannelName];
+        }
     }
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
