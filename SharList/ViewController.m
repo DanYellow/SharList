@@ -353,8 +353,6 @@
         extIndex++;
     }
     
-//    NSLog(@"userTasteDict : %@", userTasteDict);
-    
     userTasteListTableView.tableHeaderView = metUserFBView;
     
     [userTasteListTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height

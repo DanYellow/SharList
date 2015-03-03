@@ -164,6 +164,12 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     
+    
+    
+    
+    // Display the percent match between current user and the user met
+    [self displayMatchRateList];
+    
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
         if (![self connected]) {
             return;
@@ -214,13 +220,8 @@
 
 - (void) displayMetUserfbImgProfile
 {
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
-    
-    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
-    metUserFBView.backgroundColor = [UIColor clearColor];
-    metUserFBView.tag = 4;
+    UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
 
-    
     int intWidthScreen = screenWidth;
     int heightImg = 172;
     
@@ -231,7 +232,7 @@
     [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:[UIImage animatedImageNamed:@"list-tab-icon2" duration:.1f]];
     metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
     metUserFBImgView.tag = 5;
-    [metUserFBView addSubview:metUserFBImgView];
+    [metUserFBView insertSubview:metUserFBImgView atIndex:0];
     
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     gradientLayer.frame = metUserFBImgView.frame;
@@ -241,9 +242,16 @@
     UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
     gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
     [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
+}
+
+- (void) displayMatchRateList
+{
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     
-    
-    
+    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
+    metUserFBView.backgroundColor = [UIColor clearColor];
+    metUserFBView.tag = 4;
+
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
@@ -258,7 +266,6 @@
     commonTasteCountPercentLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
     commonTasteCountPercentLabel.layer.shadowOpacity = .75f;
     [metUserFBView addSubview:commonTasteCountPercentLabel];
-    
     
     CGRect tasteMetUserMessageLabelFrame = CGRectMake(16.0,
                                                       commonTasteCountPercentLabel.frame.size.height + commonTasteCountPercentLabel.frame.origin.y,
@@ -275,10 +282,72 @@
     tasteMetUserMessageLabel.layer.shadowOpacity = .75f;
     [metUserFBView addSubview:tasteMetUserMessageLabel];
     
-    
     userSelectionTableView.tableHeaderView = metUserFBView;
     
+    [self displayCurrentUserStats];
+    
     [userSelectionTableView setContentOffset:CGPointMake(0, metUserFBView.bounds.size.height)];
+}
+
+
+- (void) displayCurrentUserStats
+{
+    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
+    
+    UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
+    
+    int index = 0, extIndex = 0, tagRange = 10000;
+    float widthViews = 99.0f;
+    for (id key in self.metUserTasteDict) {
+        NSString *title = [NSLocalizedString([[self.metUserTasteDict allKeys] objectAtIndex:extIndex], nil) uppercaseString];
+        
+        if ([self.metUserTasteDict objectForKey:key] != [NSNull null]) {
+            
+            CALayer *rightBorder = [CALayer layer];
+            rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
+            rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
+            
+            CGRect statContainerFrame = CGRectMake(16 + (95 * index),
+                                                   metUserFBView.frame.size.height - 60,
+                                                   widthViews, 60);
+            UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
+            statContainer.backgroundColor = [UIColor clearColor];
+            [metUserFBView addSubview:statContainer];
+            
+            if ( ![key isEqualToString:[[self.metUserTasteDict allKeys] lastObject]] ) {
+                [statContainer.layer addSublayer:rightBorder];
+            }
+            
+            UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
+            statTitle.textColor = [UIColor whiteColor];
+            statTitle.backgroundColor = [UIColor clearColor];
+            statTitle.text = title;
+            statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
+            statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+            statTitle.layer.shadowRadius = 2.5;
+            statTitle.layer.shadowOpacity = 0.75;
+            [statContainer addSubview:statTitle];
+            
+            UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
+            statCount.textColor = [UIColor whiteColor];
+            statCount.backgroundColor = [UIColor clearColor];
+            statCount.text = title;
+            statCount.tag = tagRange + index;
+            statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
+            statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
+            statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+            statCount.layer.shadowRadius = 2.5;
+            statCount.layer.shadowOpacity = 0.75;
+            NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:key] count]] stringValue];
+            statCount.text = statCountNumber;
+            
+            [statContainer insertSubview:statCount atIndex:10];
+            
+            index++;
+        }
+        extIndex++;
+    }
+    
 }
 
 - (void) updateCurrentUser
