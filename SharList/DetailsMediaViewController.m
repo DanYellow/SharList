@@ -1183,13 +1183,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         
         NSString *currentUserPFChannelName = @"sh_channel_";
         currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] stringValue]];
-        
+        NSNumber *facebookID = [NSNumber numberWithInteger:[[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] integerValue]];
         NSTimeInterval interval = 60*60*24*7; // 1 week
         NSDictionary *data = @{
                                @"alert" : @"J'ai mis ma liste à jour",
                                @"badge" : @"Increment",
                                @"content-available": @1,
-                               @"p" : @"vmRZXZ1Dvo", //Put user fbid
+                               @"userfbid" : facebookID, //Put user fbid
                                @"sounds" : @""};
         PFPush *push = [PFPush new];
         [push setChannels:@[ currentUserPFChannelName ]];

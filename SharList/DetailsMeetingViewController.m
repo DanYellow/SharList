@@ -62,8 +62,17 @@
     screenHeight = screenRect.size.height;
     
     userPreferences = [NSUserDefaults standardUserDefaults];
+    
+    userMet = [UserTaste MR_findFirstByAttribute:@"fbid"
+                                                  withValue:self.meetingDatas[@"userMetFbId"]];
+    
+    // We get the datas of current user to compare it to the current list
+    UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
+                                                      withValue:[userPreferences objectForKey:@"currentUserfbID"]];
+    currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
+    
     self.metUserTasteDict = [NSMutableDictionary new];
-    self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.meetingDatas[@"userModel"] taste]] mutableCopy];
+    self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet taste]] mutableCopy];
    
 //    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
     self.navigationController.navigationBar.backIndicatorImage = [UIImage imageNamed:@"list-tab-icon"];
@@ -75,10 +84,7 @@
     // Build the array from the plist
     settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
-    // We get the datas of current user to compare it to the current list
-    UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
-                                                      withValue:[userPreferences objectForKey:@"currentUserfbID"]];
-    currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
+
     
 //    NSLog(@"self.metUserTasteDict : %@", self.metUserTasteDict);
     
@@ -98,9 +104,10 @@
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
     
+    
     UIBarButtonItem *addMeetingToFavoriteBtnItem;
     // This list is not among user's favorites
-    if (![self.meetingDatas[@"userModel"] isFavorite]) {
+    if (![userMet isFavorite]) {
         addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
     } else {
         addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
@@ -135,7 +142,7 @@
     tableFooter.textAlignment = NSTextAlignmentCenter;
     tableFooter.opaque = YES;
     tableFooter.font = [UIFont boldSystemFontOfSize:15];
-    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [self.meetingDatas[@"userModel"] numberOfMeetings]]];
+    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [userMet numberOfMeetings]]];
 
     //___________________
     // Uitableview of user selection (what user likes) initWithStyle:UITableViewStylePlain
@@ -176,7 +183,7 @@
             return;
         }
         NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"];
-        NSDictionary *apiParams = @{@"fbiduser" : [self.meetingDatas[@"userModel"] fbid], @"isspecificuser" : @"yes"};
+        NSDictionary *apiParams = @{@"fbiduser" : [userMet fbid], @"isspecificuser" : @"yes"};
 
         [manager POST:urlAPI
           parameters:apiParams
@@ -197,7 +204,7 @@
 //    
 //    return;
     
-    if ([self.meetingDatas[@"userModel"] isFavorite]) {
+    if ([userMet isFavorite]) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
 
@@ -227,7 +234,7 @@
     int intWidthScreen = screenWidth;
     int heightImg = 172;
     
-    NSString *fbMetUserString = [[self.meetingDatas[@"userModel"] fbid] stringValue];
+    NSString *fbMetUserString = [self.meetingDatas[@"userMetFbId"] stringValue];
     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
     
     UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
@@ -361,7 +368,7 @@
 //    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
 //    userSelectRefresh.attributedTitle = attributedTitle;
 
-    [self getServerDatasForFbID:[self.meetingDatas[@"userModel"] fbid]];
+    [self getServerDatasForFbID:self.meetingDatas[@"userMetFbId"]];
 }
 
 - (void) seeFbAccount:(UIBarButtonItem*)sender
@@ -389,7 +396,6 @@
     [request setHTTPMethod:@"POST"];
     
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&isspecificuser=%@", userfbID, @"true"];
-    
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
@@ -421,7 +427,7 @@
                 self.metUserTasteDict = [randomUserTaste mutableCopy];
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
                 
-                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [self.meetingDatas[@"userModel"] fbid]];
+                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", self.meetingDatas[@"userMetFbId"]];
                 UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
                 oldUserTaste.taste = arrayData;
                 [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
@@ -658,14 +664,14 @@
 - (void) addAsFavorite:(UIBarButtonItem*)sender
 {
     NSString *currentUserPFChannelName = @"sh_channel_";
-    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[self.meetingDatas[@"userModel"] fbid] stringValue]];
+    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[self.meetingDatas[@"userMetFbId"] stringValue]];
    
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     
     // Current list seen is added to user favs discovers
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-        [self.meetingDatas[@"userModel"] setIsFavorite:YES];
+        [userMet setIsFavorite:YES];
         
         // If the user add this discover among his favorites.
         // He listen to his channel on Parse
@@ -674,7 +680,7 @@
         }
     } else {
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
-        [self.meetingDatas[@"userModel"] setIsFavorite:NO];
+        [userMet setIsFavorite:NO];
         
         // If the user withdraw this discover among his favorites.
         // He doesn't listen to his channel on Parse anymore

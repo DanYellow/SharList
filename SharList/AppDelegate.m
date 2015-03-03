@@ -39,17 +39,6 @@
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     NSLog(@"[[PFUser currentUser]objectId] : %@ | %@", [[PFUser currentUser] objectId], currentInstallation);
     
-    
-    NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-    
-    // Create a pointer to the Photo object
-    NSString *photoId = [notificationPayload objectForKey:@"p"];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"nil" message:photoId delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    [alert show];
-    application.applicationIconBadgeNumber = 0;
-//    PFObject *targetPhoto = [PFObject objectWithoutDataWithClassName:@"Photo"
-//                                                            objectId:photoId];
-    
     [application setMinimumBackgroundFetchInterval:BGFETCHDELAY]; //40 min | 3600 = BGFETCHDELAY
 
     
@@ -140,17 +129,15 @@
     // If user is not connected to facebook, no bg task for him
     // and said to iOS's algorithm to "push" back manage
     
-    NSLog(@"foof");
+    if (!FBSession.activeSession.isOpen) {
+        completionHandler(UIBackgroundFetchResultNoData);
+        return;
+    }
     
-//    if (!FBSession.activeSession.isOpen) {
-//        completionHandler(UIBackgroundFetchResultNoData);
-//        return;
-//    }
-//    
-//    MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
-//    [meetingsListViewController fetchNewDataWithCompletionHandler:^(UIBackgroundFetchResult result) {
-//        completionHandler(result);
-//    }];
+    MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
+    [meetingsListViewController fetchNewDataWithCompletionHandler:^(UIBackgroundFetchResult result) {
+        completionHandler(result);
+    }];
 }
 
 - (void)registerForRemoteNotification {
@@ -177,6 +164,11 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
+    
+    NSString *photoId = [NSString stringWithFormat:@"%@", [userInfo objectForKey:@"userfbid"]];
+    NSLog(@"photoId : %@, %@", photoId, NSStringFromClass([photoId class]));
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"nil" message:photoId delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

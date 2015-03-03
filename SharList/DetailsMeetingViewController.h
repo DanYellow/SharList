@@ -31,6 +31,7 @@
     
     NSUserDefaults *userPreferences;
     NSDictionary *currentUserTaste;
+    UserTaste *userMet;
 }
 
 
