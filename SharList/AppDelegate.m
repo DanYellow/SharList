@@ -36,7 +36,19 @@
     [application registerUserNotificationSettings:settings];
     [application registerForRemoteNotifications];
     
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    NSLog(@"[[PFUser currentUser]objectId] : %@ | %@", [[PFUser currentUser] objectId], currentInstallation);
     
+    
+    NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    
+    // Create a pointer to the Photo object
+    NSString *photoId = [notificationPayload objectForKey:@"p"];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"nil" message:photoId delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
+    application.applicationIconBadgeNumber = 0;
+//    PFObject *targetPhoto = [PFObject objectWithoutDataWithClassName:@"Photo"
+//                                                            objectId:photoId];
     
     [application setMinimumBackgroundFetchInterval:BGFETCHDELAY]; //40 min | 3600 = BGFETCHDELAY
 
@@ -194,6 +206,12 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if (currentInstallation.badge != 0) {
+        currentInstallation.badge = 0;
+        [currentInstallation saveEventually];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
