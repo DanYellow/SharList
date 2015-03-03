@@ -291,9 +291,7 @@
 
 
 - (void) displayCurrentUserStats
-{
-    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
-    
+{    
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
     
     int index = 0, extIndex = 0, tagRange = 10000;
@@ -347,7 +345,6 @@
         }
         extIndex++;
     }
-    
 }
 
 - (void) updateCurrentUser
