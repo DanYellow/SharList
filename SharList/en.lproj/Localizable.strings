@@ -48,7 +48,7 @@
 "nothing common" = "Nothing in common. Discover !";
 "things common" = "Things in common, but also to discover";
 "in common" = "taste in common";
-"%@ in common" = "%@% taste in common";
+"%@ in common" = "%@ taste in common";
 
 //Settings view controller
 "Settings" = "Settings";

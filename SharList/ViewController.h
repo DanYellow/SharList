@@ -66,10 +66,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 - (void) userListHaveBeenUpdate:(NSDictionary *)dict;
 - (void) fetchDatasFromServerWithQuery:(NSString*)query completion:(void (^)(id result))completion;
 
-
-
-
-
+- (void) displayCurrentUserfbImgProfile;
+- (void) displayCurrentUserStats;
 
 
 @end
