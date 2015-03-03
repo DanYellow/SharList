@@ -303,9 +303,11 @@
     
     int index = 0, extIndex = 0, tagRange = 10000;
     float widthViews = 99.0f;
-    for (id key in userTasteDict) {
+    for (id key in categoryList) {
         NSString *title = [NSLocalizedString([categoryList objectAtIndex:extIndex], nil) uppercaseString];
+
         if ([userTasteDict objectForKey:key] != [NSNull null]) {
+            
             CALayer *rightBorder = [CALayer layer];
             rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 70.0f);
             rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
@@ -317,7 +319,7 @@
             statContainer.backgroundColor = [UIColor clearColor];
             [metUserFBView addSubview:statContainer];
 
-            if ( ![key isEqualToString:[[userTasteDict allKeys] lastObject]] ) {
+            if ( ![key isEqualToString:[categoryList lastObject]] ) {
                 [statContainer.layer addSublayer:rightBorder];
             }
             
@@ -1061,7 +1063,7 @@
                     [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
                                      withRowAnimation:UITableViewRowAnimationFade];
                 }
-
+                [self updateCurrentUserStats];
 //                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
 //                           withRowAnimation:UITableViewRowAnimationFade];
 //                [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:YES];
