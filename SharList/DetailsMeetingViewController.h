@@ -42,6 +42,7 @@
 - (void) showTutorial;
 - (void) addAsFavorite:(UIBarButtonItem*)sender;
 - (void) displayMetUserfbImgProfile;
+- (void) displayMetUserStats;
 
 
 @end
