@@ -95,7 +95,7 @@
 "PrivacyContent" = "Votre nom et prénom sur le réseau social Facebook ne sont en aucun cas enregistrés par l'application ou par les services externes de l'application.";
 "whatIsApp" = "Shound vous permet de faire découvrir au monde ce que vous aimez. Les utilisateurs autour de vous peuvent savoir vos films et séries favoris.";
 //Show them your tastes.
-"datasOrigins" = "Les données des films et séries proviennent de l'API de themoviedb.";
+"datasOrigins" = "Les données des films et séries proviennent de l'API de themoviedb. Les films et séries présentes dans le moteur de recherche de l'application appartiennent à leur ayant droit.";
 "Credits" = "Crédits";
 
 //Facebook

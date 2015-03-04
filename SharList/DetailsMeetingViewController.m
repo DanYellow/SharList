@@ -21,7 +21,7 @@
 // 3 : TutorialView
 // 4 : metUserFBView
 // 5 : metUserFBImgView
-
+// 6 : refreshBtn
 
 @implementation DetailsMeetingViewController
 
@@ -117,11 +117,6 @@
     
     
     
-//    UIBarButtonItem *seeFBUserMetAccountBtnItem;
-//    seeFBUserMetAccountBtnItem  = [[UIBarButtonItem alloc] initWithTitle:@"fb" style:UIBarButtonItemStylePlain target:self action:@selector(seeFbAccount:)];
-    
-    self.navigationItem.rightBarButtonItems = @[addMeetingToFavoriteBtnItem];
-    
 
 //    NSDateFormatter *foo = [NSDateFormatter new];
 //    foo.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
@@ -204,22 +199,32 @@
 //    
 //    return;
     
+    NSMutableArray *rightBarButtonItemsArray = [NSMutableArray new];
+    [rightBarButtonItemsArray addObject:addMeetingToFavoriteBtnItem];
+
     if ([userMet isFavorite]) {
+
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
 
-        UIRefreshControl *userSelectRefreshControl = [[UIRefreshControl alloc] init];
-        userSelectRefreshControl.backgroundColor = [UIColor clearColor];
-        userSelectRefreshControl.tintColor = [UIColor whiteColor];
-        userSelectRefreshControl.tag = 2;
-        [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
-        [userSelectionTableView addSubview:userSelectRefreshControl];
+//        UIRefreshControl *userSelectRefreshControl = [[UIRefreshControl alloc] init];
+//        userSelectRefreshControl.backgroundColor = [UIColor clearColor];
+//        userSelectRefreshControl.tintColor = [UIColor whiteColor];
+//        userSelectRefreshControl.tag = 2;
+//        [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
+//        [userSelectionTableView addSubview:userSelectRefreshControl];
         
-        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]) {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMeetingFavTutorial"];
-            [self showTutorial];
-        }
+        UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(updateCurrentUser)];
+        [rightBarButtonItemsArray addObject:refreshBtn];
+        
+//        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]) {
+//            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMeetingFavTutorial"];
+//            [self showTutorial];
+//        }
     }
+    
+   
+    self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
 }
 
 - (BOOL) connected
@@ -300,73 +305,104 @@
 {
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
     
-    int index = 0, extIndex = 0, tagRange = 10000;
     float widthViews = 99.0f;
-    for (id key in self.metUserTasteDict) {
-        NSString *title = [NSLocalizedString([[self.metUserTasteDict allKeys] objectAtIndex:extIndex], nil) uppercaseString];
-        
-        if ([self.metUserTasteDict objectForKey:key] != [NSNull null]) {
-            
-            CALayer *rightBorder = [CALayer layer];
-            rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
-            rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
-            
-            CGRect statContainerFrame = CGRectMake(16 + (95 * index),
-                                                   metUserFBView.frame.size.height - 60,
-                                                   widthViews, 60);
-            UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
-            statContainer.backgroundColor = [UIColor clearColor];
-            [metUserFBView addSubview:statContainer];
-            
-            if ( ![key isEqualToString:[[self.metUserTasteDict allKeys] lastObject]] ) {
-                [statContainer.layer addSublayer:rightBorder];
-            }
-            
-            UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
-            statTitle.textColor = [UIColor whiteColor];
-            statTitle.backgroundColor = [UIColor clearColor];
-            statTitle.text = title;
-            statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
-            statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-            statTitle.layer.shadowRadius = 2.5;
-            statTitle.layer.shadowOpacity = 0.75;
-            [statContainer addSubview:statTitle];
-            
-            UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
-            statCount.textColor = [UIColor whiteColor];
-            statCount.backgroundColor = [UIColor clearColor];
-            statCount.text = title;
-            statCount.tag = tagRange + index;
-            statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
-            statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
-            statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-            statCount.layer.shadowRadius = 2.5;
-            statCount.layer.shadowOpacity = 0.75;
-            NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:key] count]] stringValue];
-            statCount.text = statCountNumber;
-            
-            [statContainer insertSubview:statCount atIndex:10];
-            
-            index++;
+    for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
+        CALayer *rightBorder = [CALayer layer];
+        rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
+        rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
+        NSString *title = [NSLocalizedString([[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i], nil) uppercaseString];
+        CGRect statContainerFrame = CGRectMake(16 + (95 * i),
+                                               metUserFBView.frame.size.height - 60,
+                                               widthViews, 60);
+        UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
+        statContainer.backgroundColor = [UIColor clearColor];
+        [metUserFBView addSubview:statContainer];
+        if ( i != ([[self.metUserTasteDict filterKeysForNullObj] count] - 1)) {
+            [statContainer.layer addSublayer:rightBorder];
         }
-        extIndex++;
+        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
+        statTitle.textColor = [UIColor whiteColor];
+        statTitle.backgroundColor = [UIColor clearColor];
+        statTitle.text = title;
+        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
+        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        statTitle.layer.shadowRadius = 2.5;
+        statTitle.layer.shadowOpacity = 0.75;
+        [statContainer addSubview:statTitle];
+        UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
+        statCount.textColor = [UIColor whiteColor];
+        statCount.backgroundColor = [UIColor clearColor];
+        statCount.text = title;
+        statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
+        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
+        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        statCount.layer.shadowRadius = 2.5;
+        statCount.layer.shadowOpacity = 0.75;
+        NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
+        statCount.text = statCountNumber;
+        [statContainer insertSubview:statCount atIndex:10];
+    }
+}
+
+
+- (void) displayCurrentUserStats
+{    
+    UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
+    
+    float widthViews = 99.0f;
+    
+    for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
+        CALayer *rightBorder = [CALayer layer];
+        rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
+        rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
+        
+        NSString *title = [NSLocalizedString([[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i], nil) uppercaseString];
+        
+        CGRect statContainerFrame = CGRectMake(16 + (95 * i),
+                                               metUserFBView.frame.size.height - 60,
+                                               widthViews, 60);
+        UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
+        statContainer.backgroundColor = [UIColor clearColor];
+        [metUserFBView addSubview:statContainer];
+        
+        if ( i != ([[self.metUserTasteDict filterKeysForNullObj] count] - 1)) {
+            [statContainer.layer addSublayer:rightBorder];
+        }
+        
+        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
+        statTitle.textColor = [UIColor whiteColor];
+        statTitle.backgroundColor = [UIColor clearColor];
+        statTitle.text = title;
+        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
+        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        statTitle.layer.shadowRadius = 2.5;
+        statTitle.layer.shadowOpacity = 0.75;
+        [statContainer addSubview:statTitle];
+        
+        UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
+        statCount.textColor = [UIColor whiteColor];
+        statCount.backgroundColor = [UIColor clearColor];
+        statCount.text = title;
+        statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
+        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
+        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        statCount.layer.shadowRadius = 2.5;
+        statCount.layer.shadowOpacity = 0.75;
+
+        NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
+        statCount.text = statCountNumber;
+        
+        [statContainer insertSubview:statCount atIndex:10];
     }
 }
 
 - (void) updateCurrentUser
 {
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
-    [userSelectRefresh endRefreshing];
+    [userSelectRefresh beginRefreshing];
     
-
-    
-//    NSDateFormatter *formatter = [NSDateFormatter new];
-//    [formatter setDateFormat:@"MMM d, h:mm a"];
-//    NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
-//    NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
-//                                                                forKey:NSForegroundColorAttributeName];
-//    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
-//    userSelectRefresh.attributedTitle = attributedTitle;
+    UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
+    refreshBtn.enabled = NO;
 
     [self getServerDatasForFbID:self.meetingDatas[@"userMetFbId"]];
 }
@@ -437,18 +473,17 @@
             } else {
                 UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
                 [noNewDatasAlert show];
-                
-                return;
             }
         } else {
             UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [noNewDatasAlert show];
-            
-            return;
         }
         
         self.responseData = nil;
         self.responseData = [NSMutableData new];
+        
+        UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
+        refreshBtn.enabled = YES;
         
         UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
         [userSelectRefresh endRefreshing];

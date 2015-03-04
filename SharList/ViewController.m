@@ -278,7 +278,7 @@
     }
 }
 
-#pragma marl - header tableview
+#pragma mark - header tableview
 - (void) updateCurrentUserStats
 {
     int index = 0, tagRange = 10000;
@@ -293,6 +293,7 @@
     }
 }
 
+
 - (void) displayCurrentUserStats
 {
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
@@ -301,59 +302,52 @@
     metUserFBView.backgroundColor = [UIColor clearColor];
     metUserFBView.tag = 10;
     
-    int index = 0, extIndex = 0, tagRange = 10000;
+    int tagRange = 10000;
     float widthViews = 99.0f;
-    for (id key in categoryList) {
-        NSString *title = [NSLocalizedString([categoryList objectAtIndex:extIndex], nil) uppercaseString];
-
-        if ([userTasteDict objectForKey:key] != [NSNull null]) {
-            
-            CALayer *rightBorder = [CALayer layer];
-            rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 70.0f);
-            rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
-
-            CGRect statContainerFrame = CGRectMake(0 + (95 * index),
-                                                    metUserFBView.frame.size.height - 70,
-                                                    widthViews, 70);
-            UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
-            statContainer.backgroundColor = [UIColor clearColor];
-            [metUserFBView addSubview:statContainer];
-
-            if ( ![key isEqualToString:[categoryList lastObject]] ) {
-                [statContainer.layer addSublayer:rightBorder];
-            }
-            
-            UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, widthViews, 30)];
-            statTitle.textColor = [UIColor whiteColor];
-            statTitle.backgroundColor = [UIColor clearColor];
-            statTitle.text = title;
-            statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
-            statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-            statTitle.layer.shadowRadius = 2.5;
-            statTitle.layer.shadowOpacity = 0.75;
-            [statContainer addSubview:statTitle];
-            
-            UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(12, statContainer.frame.size.height - 34, widthViews, 35.0)];
-            statCount.textColor = [UIColor whiteColor];
-            statCount.backgroundColor = [UIColor clearColor];
-            statCount.text = title;
-            statCount.tag = tagRange + index;
-            statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
-            statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
-            statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-            statCount.layer.shadowRadius = 2.5;
-            statCount.layer.shadowOpacity = 0.75;
-            NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:key] count]] stringValue];
-            statCount.text = statCountNumber;
-            
-            [statContainer insertSubview:statCount atIndex:10];
-            
-            index++;
+    for (int i = 0; i < [[userTasteDict filterKeysForNullObj] count]; i++) {
+        NSString *title = [NSLocalizedString([[userTasteDict filterKeysForNullObj] objectAtIndex:i], nil) uppercaseString];
+        
+        CALayer *rightBorder = [CALayer layer];
+        rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 70.0f);
+        rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
+        
+        CGRect statContainerFrame = CGRectMake(0 + (95 * i),
+                                               metUserFBView.frame.size.height - 70,
+                                               widthViews, 70);
+        UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
+        statContainer.backgroundColor = [UIColor clearColor];
+        [metUserFBView addSubview:statContainer];
+        
+        if ( i != ([[userTasteDict filterKeysForNullObj] count] - 1)) {
+            [statContainer.layer addSublayer:rightBorder];
         }
-        extIndex++;
+        
+        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, widthViews, 30)];
+        statTitle.textColor = [UIColor whiteColor];
+        statTitle.backgroundColor = [UIColor clearColor];
+        statTitle.text = title;
+        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
+        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        statTitle.layer.shadowRadius = 2.5;
+        statTitle.layer.shadowOpacity = 0.75;
+        [statContainer addSubview:statTitle];
+        
+        UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(12, statContainer.frame.size.height - 34, widthViews, 35.0)];
+        statCount.textColor = [UIColor whiteColor];
+        statCount.backgroundColor = [UIColor clearColor];
+        statCount.text = title;
+        statCount.tag = tagRange + index;
+        statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
+        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
+        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        statCount.layer.shadowRadius = 2.5;
+        statCount.layer.shadowOpacity = 0.75;
+        
+        NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[userTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
+        statCount.text = statCountNumber;
+        
+        [statContainer insertSubview:statCount atIndex:10];
     }
-    
-//    NSLog(@"userTasteDict : %@", userTasteDict);
     
     userTasteListTableView.tableHeaderView = metUserFBView;
     
