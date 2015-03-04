@@ -28,6 +28,7 @@
     // APNS + Parse part
     [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
                   clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
+    
     UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
                                                     UIUserNotificationTypeBadge |
                                                     UIUserNotificationTypeSound);
@@ -36,8 +37,9 @@
     [application registerUserNotificationSettings:settings];
     [application registerForRemoteNotifications];
     
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    NSLog(@"[[PFUser currentUser]objectId] : %@ | %@", [[PFUser currentUser] objectId], currentInstallation);
+//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//    NSLog(@"[[PFUser currentUser]objectId] : %@ | %@", [[PFUser currentUser] objectId], [currentInstallation channels]);
+    
     
     [application setMinimumBackgroundFetchInterval:BGFETCHDELAY]; //40 min | 3600 = BGFETCHDELAY
 
