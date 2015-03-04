@@ -301,28 +301,26 @@
     metUserFBView.backgroundColor = [UIColor clearColor];
     metUserFBView.tag = 10;
     
-    int index = 0, extIndex = 0, tagRange = 10000;
+    int tagRange = 10000;
     float widthViews = 99.0f;
-    for (id key in categoryList) {
-        NSString *title = [NSLocalizedString([categoryList objectAtIndex:extIndex], nil) uppercaseString];
-
-        if ([userTasteDict objectForKey:key] != [NSNull null]) {
+    for (int i = 0; i < [[userTasteDict filterKeysForNullObj] count]; i++) {
+        NSString *title = [NSLocalizedString([[userTasteDict filterKeysForNullObj] objectAtIndex:i], nil) uppercaseString];
             
             CALayer *rightBorder = [CALayer layer];
             rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 70.0f);
             rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
 
-            CGRect statContainerFrame = CGRectMake(0 + (95 * index),
+            CGRect statContainerFrame = CGRectMake(0 + (95 * i),
                                                     metUserFBView.frame.size.height - 70,
                                                     widthViews, 70);
             UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
             statContainer.backgroundColor = [UIColor clearColor];
             [metUserFBView addSubview:statContainer];
-
-            if ( ![key isEqualToString:[categoryList lastObject]] ) {
+        
+            if ( i != ([[userTasteDict filterKeysForNullObj] count] - 1)) {
                 [statContainer.layer addSublayer:rightBorder];
             }
-            
+        
             UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, widthViews, 30)];
             statTitle.textColor = [UIColor whiteColor];
             statTitle.backgroundColor = [UIColor clearColor];
@@ -343,14 +341,11 @@
             statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
             statCount.layer.shadowRadius = 2.5;
             statCount.layer.shadowOpacity = 0.75;
-            NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:key] count]] stringValue];
+        
+            NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[userTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
             statCount.text = statCountNumber;
             
             [statContainer insertSubview:statCount atIndex:10];
-            
-            index++;
-        }
-        extIndex++;
     }
     
     userTasteListTableView.tableHeaderView = metUserFBView;

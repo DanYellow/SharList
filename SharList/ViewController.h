@@ -23,6 +23,8 @@
 
 #import "UserTaste.h"
 
+#import "NSDictionary+FilterKeysForNullObj.h"
+
 @interface ViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate>
 {    

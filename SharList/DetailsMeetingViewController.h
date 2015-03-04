@@ -16,6 +16,7 @@
 #import "DetailsMediaViewController.h"
 
 #import "NSString+SentenceCapitalizedString.h"
+#import "NSDictionary+FilterKeysForNullObj.h"
 
 @protocol UpdateMeetingsListDelegate;
 

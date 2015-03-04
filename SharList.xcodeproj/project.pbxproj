@@ -30,6 +30,7 @@
 		1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */; };
 		1A3C22821A114339005B31E4 /* UserTaste.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C22811A114339005B31E4 /* UserTaste.m */; };
 		1A4953D41A1EBB9500A0C232 /* ShopButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4953D31A1EBB9500A0C232 /* ShopButton.m */; };
+		1A61F5101AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470A1A29E3A0002AC281 /* lens-icon-message.png */; };
 		1A95470E1A29E3A0002AC281 /* lens-icon-message@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470B1A29E3A0002AC281 /* lens-icon-message@2x.png */; };
@@ -113,6 +114,8 @@
 		1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		1A4953D21A1EBB9500A0C232 /* ShopButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopButton.h; sourceTree = "<group>"; };
 		1A4953D31A1EBB9500A0C232 /* ShopButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopButton.m; sourceTree = "<group>"; };
+		1A61F50E1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+FilterKeysForNullObj.h"; sourceTree = "<group>"; };
+		1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+FilterKeysForNullObj.m"; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
 		1A95470A1A29E3A0002AC281 /* lens-icon-message.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lens-icon-message.png"; sourceTree = "<group>"; };
@@ -313,6 +316,8 @@
 				1A024AB41A3A3EF20098F015 /* NSArray+Reverse.m */,
 				1A0EB7761A994BEE000EA307 /* NSString+MD5.h */,
 				1A0EB7771A994BEE000EA307 /* NSString+MD5.m */,
+				1A61F50E1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.h */,
+				1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -583,6 +588,7 @@
 				1AF4745C1A4DD424003ED4AF /* UIButton+TrailerID.m in Sources */,
 				1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */,
 				1A024AB51A3A3EF20098F015 /* NSArray+Reverse.m in Sources */,
+				1A61F5101AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m in Sources */,
 				1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */,
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
 				1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */,

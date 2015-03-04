@@ -294,56 +294,50 @@
 {    
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
     
-    int index = 0, extIndex = 0, tagRange = 10000;
     float widthViews = 99.0f;
-    for (id key in self.metUserTasteDict) {
-        NSString *title = [NSLocalizedString([[self.metUserTasteDict allKeys] objectAtIndex:extIndex], nil) uppercaseString];
+    
+    for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
+        CALayer *rightBorder = [CALayer layer];
+        rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
+        rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
         
-        if ([self.metUserTasteDict objectForKey:key] != [NSNull null]) {
-            
-            CALayer *rightBorder = [CALayer layer];
-            rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
-            rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
-            
-            CGRect statContainerFrame = CGRectMake(16 + (95 * index),
-                                                   metUserFBView.frame.size.height - 60,
-                                                   widthViews, 60);
-            UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
-            statContainer.backgroundColor = [UIColor clearColor];
-            [metUserFBView addSubview:statContainer];
-            
-            if ( ![key isEqualToString:[[self.metUserTasteDict allKeys] lastObject]] ) {
-                [statContainer.layer addSublayer:rightBorder];
-            }
-            
-            UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
-            statTitle.textColor = [UIColor whiteColor];
-            statTitle.backgroundColor = [UIColor clearColor];
-            statTitle.text = title;
-            statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
-            statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-            statTitle.layer.shadowRadius = 2.5;
-            statTitle.layer.shadowOpacity = 0.75;
-            [statContainer addSubview:statTitle];
-            
-            UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
-            statCount.textColor = [UIColor whiteColor];
-            statCount.backgroundColor = [UIColor clearColor];
-            statCount.text = title;
-            statCount.tag = tagRange + index;
-            statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
-            statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
-            statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-            statCount.layer.shadowRadius = 2.5;
-            statCount.layer.shadowOpacity = 0.75;
-            NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:key] count]] stringValue];
-            statCount.text = statCountNumber;
-            
-            [statContainer insertSubview:statCount atIndex:10];
-            
-            index++;
+        NSString *title = [NSLocalizedString([[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i], nil) uppercaseString];
+        
+        CGRect statContainerFrame = CGRectMake(16 + (95 * i),
+                                               metUserFBView.frame.size.height - 60,
+                                               widthViews, 60);
+        UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
+        statContainer.backgroundColor = [UIColor clearColor];
+        [metUserFBView addSubview:statContainer];
+        
+        if ( i != ([[self.metUserTasteDict filterKeysForNullObj] count] - 1)) {
+            [statContainer.layer addSublayer:rightBorder];
         }
-        extIndex++;
+        
+        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
+        statTitle.textColor = [UIColor whiteColor];
+        statTitle.backgroundColor = [UIColor clearColor];
+        statTitle.text = title;
+        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
+        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        statTitle.layer.shadowRadius = 2.5;
+        statTitle.layer.shadowOpacity = 0.75;
+        [statContainer addSubview:statTitle];
+        
+        UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
+        statCount.textColor = [UIColor whiteColor];
+        statCount.backgroundColor = [UIColor clearColor];
+        statCount.text = title;
+        statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
+        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
+        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        statCount.layer.shadowRadius = 2.5;
+        statCount.layer.shadowOpacity = 0.75;
+
+        NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
+        statCount.text = statCountNumber;
+        
+        [statContainer insertSubview:statCount atIndex:10];
     }
 }
 
