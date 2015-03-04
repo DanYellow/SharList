@@ -269,7 +269,7 @@
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
-    NSString *strNumberPercent = [percentageFormatter stringFromNumber:self.meetingDatas[@"commonTasteCountPercent"]];
+    NSString *strNumberPercent = [self calcUserMetPercentMatch];
     
     UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 24.0, 150.0, 48.0)];
     commonTasteCountPercentLabel.textColor = [UIColor whiteColor];
@@ -340,58 +340,6 @@
         statCount.layer.shadowOpacity = 0.75;
         NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
         statCount.text = statCountNumber;
-        [statContainer insertSubview:statCount atIndex:10];
-    }
-}
-
-
-- (void) displayCurrentUserStats
-{    
-    UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
-    
-    float widthViews = 99.0f;
-    
-    for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
-        CALayer *rightBorder = [CALayer layer];
-        rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
-        rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
-        
-        NSString *title = [NSLocalizedString([[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i], nil) uppercaseString];
-        
-        CGRect statContainerFrame = CGRectMake(16 + (95 * i),
-                                               metUserFBView.frame.size.height - 60,
-                                               widthViews, 60);
-        UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
-        statContainer.backgroundColor = [UIColor clearColor];
-        [metUserFBView addSubview:statContainer];
-        
-        if ( i != ([[self.metUserTasteDict filterKeysForNullObj] count] - 1)) {
-            [statContainer.layer addSublayer:rightBorder];
-        }
-        
-        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
-        statTitle.textColor = [UIColor whiteColor];
-        statTitle.backgroundColor = [UIColor clearColor];
-        statTitle.text = title;
-        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
-        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-        statTitle.layer.shadowRadius = 2.5;
-        statTitle.layer.shadowOpacity = 0.75;
-        [statContainer addSubview:statTitle];
-        
-        UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
-        statCount.textColor = [UIColor whiteColor];
-        statCount.backgroundColor = [UIColor clearColor];
-        statCount.text = title;
-        statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
-        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
-        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-        statCount.layer.shadowRadius = 2.5;
-        statCount.layer.shadowOpacity = 0.75;
-
-        NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
-        statCount.text = statCountNumber;
-        
         [statContainer insertSubview:statCount atIndex:10];
     }
 }
@@ -488,6 +436,42 @@
         UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
         [userSelectRefresh endRefreshing];
     }
+}
+
+- (NSString*) calcUserMetPercentMatch
+{
+    NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
+    int commonTasteCount = 0;
+    int currentUserNumberItems = 0;
+
+    for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
+        NSString *key = [[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i];
+
+        if ([currentUserTaste objectForKey:key] != nil && [currentUserTaste objectForKey:key] != (id)[NSNull null]) {
+            currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
+            
+            currentUserNumberItems += [[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"] count];
+        }
+        
+        if ([self.metUserTasteDict objectForKey:key] != nil && [self.metUserTasteDict objectForKey:key] != (id)[NSNull null]) {
+            currentUserMetTasteSet = [NSMutableSet setWithArray:[[self.metUserTasteDict objectForKey:key] valueForKey:@"imdbID"]];
+        }
+        
+        [currentUserMetTasteSet intersectSet:currentUserTasteSet]; //this will give you only the obejcts that are in both sets
+        
+        NSArray* result = [currentUserMetTasteSet allObjects];
+        
+        commonTasteCount += result.count;
+    }
+    
+    CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
+    
+    NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
+    [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
+    
+    NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:commonTasteCountPercent]];
+    
+    return strNumber;
 }
 
 - (void) getImageCellForData:(id)model aCell:(UITableViewCell*)cell

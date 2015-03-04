@@ -549,7 +549,7 @@
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     
     NSDictionary *userMetDatas = @{@"userMetFbId" : [currentUserMet fbid], @"commonTasteCountPercent" : [NSNumber numberWithFloat:commonTasteCountPercent]};
-    
+
     cell.model = userMetDatas;
 //    [cell.model setObject:[NSNumber numberWithFloat:commonTasteCountPercent] forKey:@"commonTasteCountPercent"];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;

@@ -1101,7 +1101,7 @@
 // Title of categories
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    CGFloat fontSize = 18.0f;
+    CGFloat fontSize = 16.0f;
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
 
