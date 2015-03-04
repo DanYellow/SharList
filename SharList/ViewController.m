@@ -336,7 +336,7 @@
         statCount.textColor = [UIColor whiteColor];
         statCount.backgroundColor = [UIColor clearColor];
         statCount.text = title;
-        statCount.tag = tagRange + index;
+        statCount.tag = tagRange + i;
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
         statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
         statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
