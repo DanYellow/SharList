@@ -21,7 +21,7 @@
 // 3 : TutorialView
 // 4 : metUserFBView
 // 5 : metUserFBImgView
-
+// 6 : refreshBtn
 
 @implementation DetailsMeetingViewController
 
@@ -109,11 +109,6 @@
     
     
     
-//    UIBarButtonItem *seeFBUserMetAccountBtnItem;
-//    seeFBUserMetAccountBtnItem  = [[UIBarButtonItem alloc] initWithTitle:@"fb" style:UIBarButtonItemStylePlain target:self action:@selector(seeFbAccount:)];
-    
-    self.navigationItem.rightBarButtonItems = @[addMeetingToFavoriteBtnItem];
-    
 
 //    NSDateFormatter *foo = [NSDateFormatter new];
 //    foo.timeStyle = kCFDateFormatterMediumStyle; // HH:MM:SS
@@ -196,22 +191,31 @@
 //    
 //    return;
     
+    NSMutableArray *rightBarButtonItemsArray = [NSMutableArray new];
+    [rightBarButtonItemsArray addObject:addMeetingToFavoriteBtnItem];
+    
     if ([self.meetingDatas[@"userModel"] isFavorite]) {
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
 
-        UIRefreshControl *userSelectRefreshControl = [[UIRefreshControl alloc] init];
-        userSelectRefreshControl.backgroundColor = [UIColor clearColor];
-        userSelectRefreshControl.tintColor = [UIColor whiteColor];
-        userSelectRefreshControl.tag = 2;
-        [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
-        [userSelectionTableView addSubview:userSelectRefreshControl];
+//        UIRefreshControl *userSelectRefreshControl = [[UIRefreshControl alloc] init];
+//        userSelectRefreshControl.backgroundColor = [UIColor clearColor];
+//        userSelectRefreshControl.tintColor = [UIColor whiteColor];
+//        userSelectRefreshControl.tag = 2;
+//        [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
+//        [userSelectionTableView addSubview:userSelectRefreshControl];
         
-        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]) {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMeetingFavTutorial"];
-            [self showTutorial];
-        }
+        UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(updateCurrentUser)];
+        [rightBarButtonItemsArray addObject:refreshBtn];
+        
+//        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]) {
+//            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMeetingFavTutorial"];
+//            [self showTutorial];
+//        }
     }
+    
+   
+    self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
 }
 
 - (BOOL) connected {
@@ -344,17 +348,10 @@
 - (void) updateCurrentUser
 {
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
-    [userSelectRefresh endRefreshing];
+    [userSelectRefresh beginRefreshing];
     
-
-    
-//    NSDateFormatter *formatter = [NSDateFormatter new];
-//    [formatter setDateFormat:@"MMM d, h:mm a"];
-//    NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
-//    NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
-//                                                                forKey:NSForegroundColorAttributeName];
-//    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
-//    userSelectRefresh.attributedTitle = attributedTitle;
+    UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
+    refreshBtn.enabled = NO;
 
     [self getServerDatasForFbID:[self.meetingDatas[@"userModel"] fbid]];
 }
@@ -426,18 +423,17 @@
             } else {
                 UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
                 [noNewDatasAlert show];
-                
-                return;
             }
         } else {
             UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [noNewDatasAlert show];
-            
-            return;
         }
         
         self.responseData = nil;
         self.responseData = [NSMutableData new];
+        
+        UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
+        refreshBtn.enabled = YES;
         
         UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
         [userSelectRefresh endRefreshing];
