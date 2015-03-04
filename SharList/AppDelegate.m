@@ -28,14 +28,18 @@
     // APNS + Parse part
     [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
                   clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
+
     
-    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
-                                                    UIUserNotificationTypeBadge |
-                                                    UIUserNotificationTypeSound);
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes
-                                                                             categories:nil];
-    [application registerUserNotificationSettings:settings];
-    [application registerForRemoteNotifications];
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)])
+    {
+        UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
+                                                        UIUserNotificationTypeBadge |
+                                                        UIUserNotificationTypeSound);
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes
+                                                                                 categories:nil];
+        [application registerUserNotificationSettings:settings];
+        [application registerForRemoteNotifications];
+    }
     
 //    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 //    NSLog(@"[[PFUser currentUser]objectId] : %@ | %@", [[PFUser currentUser] objectId], [currentInstallation channels]);
@@ -167,10 +171,12 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
     
-    NSString *photoId = [NSString stringWithFormat:@"%@", [userInfo objectForKey:@"userfbid"]];
-    NSLog(@"photoId : %@, %@", photoId, NSStringFromClass([photoId class]));
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"nil" message:photoId delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    [alert show];
+    if(application.applicationState != UIApplicationStateActive) {
+        
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
+    
+    //[UIApplication sharedApplication].applicationState updateCurrentUser
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -200,12 +206,11 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    
+
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    if (currentInstallation.badge != 0) {
-        currentInstallation.badge = 0;
-        [currentInstallation saveEventually];
-    }
+    currentInstallation.badge = 0;
+    application.applicationIconBadgeNumber = 0;
+    [currentInstallation saveEventually];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

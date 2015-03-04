@@ -208,13 +208,26 @@
     
 
     // This method is called when user quit the app
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
     // This method is called when user go back to app
     // User not enable bgfetch
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(navigationItemRightButtonEnablingManagement) name: @"didEnterForeground" object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(navigationItemRightButtonEnablingManagement) name: @"didEnterForeground" object: nil];
     // User enable bgfetch
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushNotificationReceived:) name:@"pushNotificationFavorite" object:nil];
+    
+}
+
+- (void) pushNotificationReceived:(NSNotification*)notification
+{
+    NSDictionary* userInfo = notification.userInfo;
+    
+    DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
+    detailsMeetingViewController.metUserId = [userInfo objectForKey:@"userfbid"];
+    detailsMeetingViewController.delegate = self;
+    [detailsMeetingViewController updateCurrentUser];
+    [self.navigationController pushViewController:detailsMeetingViewController animated:NO];
 }
 
 // This function manage the enable state of refresh button
@@ -441,12 +454,12 @@
     ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
 
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
-    detailsMeetingViewController.meetingDatas = selectedCell.model;
+    detailsMeetingViewController.metUserId = selectedCell.model;
     detailsMeetingViewController.delegate = self;
     
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
-    detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model[@"userModel"] lastMeeting]];
+//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//    formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
+//    detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model[@"userModel"] lastMeeting]];
    
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
@@ -550,7 +563,7 @@
     
     NSDictionary *userMetDatas = @{@"userMetFbId" : [currentUserMet fbid], @"commonTasteCountPercent" : [NSNumber numberWithFloat:commonTasteCountPercent]};
 
-    cell.model = userMetDatas;
+    cell.model = [currentUserMet fbid];
 //    [cell.model setObject:[NSNumber numberWithFloat:commonTasteCountPercent] forKey:@"commonTasteCountPercent"];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.indentationLevel = 1;
@@ -836,6 +849,8 @@
 - (void) didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 

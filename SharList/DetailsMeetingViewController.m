@@ -64,7 +64,11 @@
     userPreferences = [NSUserDefaults standardUserDefaults];
     
     userMet = [UserTaste MR_findFirstByAttribute:@"fbid"
-                                                  withValue:self.meetingDatas[@"userMetFbId"]];
+                                                  withValue:self.metUserId];
+    
+    NSDateFormatter *formatter = [NSDateFormatter new];
+    formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
+    self.title = [formatter stringFromDate:[userMet lastMeeting]];
     
     // We get the datas of current user to compare it to the current list
     UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
@@ -193,11 +197,6 @@
              }];
     }
 
-//    UserTaste *person = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
-//                                           withValue:[self.meetingDatas lastMeeting]];
-//    [person MR_deleteEntity];
-//    
-//    return;
     
     NSMutableArray *rightBarButtonItemsArray = [NSMutableArray new];
     [rightBarButtonItemsArray addObject:addMeetingToFavoriteBtnItem];
@@ -207,13 +206,6 @@
         // Shoud contain raw data from the server
         self.responseData = [NSMutableData new];
 
-//        UIRefreshControl *userSelectRefreshControl = [[UIRefreshControl alloc] init];
-//        userSelectRefreshControl.backgroundColor = [UIColor clearColor];
-//        userSelectRefreshControl.tintColor = [UIColor whiteColor];
-//        userSelectRefreshControl.tag = 2;
-//        [userSelectRefreshControl addTarget:self action:@selector(updateCurrentUser) forControlEvents:UIControlEventValueChanged];
-//        [userSelectionTableView addSubview:userSelectRefreshControl];
-        
         UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(updateCurrentUser)];
         [rightBarButtonItemsArray addObject:refreshBtn];
         
@@ -225,6 +217,7 @@
     
    
     self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
+
 }
 
 - (BOOL) connected
@@ -239,7 +232,7 @@
     int intWidthScreen = screenWidth;
     int heightImg = 172;
     
-    NSString *fbMetUserString = [self.meetingDatas[@"userMetFbId"] stringValue];
+    NSString *fbMetUserString = [self.metUserId stringValue];
     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
     
     UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
@@ -352,7 +345,7 @@
     UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
     refreshBtn.enabled = NO;
 
-    [self getServerDatasForFbID:self.meetingDatas[@"userMetFbId"]];
+    [self getServerDatasForFbID:self.metUserId];
 }
 
 - (void) seeFbAccount:(UIBarButtonItem*)sender
@@ -411,7 +404,7 @@
                 self.metUserTasteDict = [randomUserTaste mutableCopy];
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
                 
-                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", self.meetingDatas[@"userMetFbId"]];
+                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", self.metUserId];
                 UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
                 oldUserTaste.taste = arrayData;
                 [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
@@ -683,7 +676,7 @@
 - (void) addAsFavorite:(UIBarButtonItem*)sender
 {
     NSString *currentUserPFChannelName = @"sh_channel_";
-    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[self.meetingDatas[@"userMetFbId"] stringValue]];
+    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[self.metUserId stringValue]];
    
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     

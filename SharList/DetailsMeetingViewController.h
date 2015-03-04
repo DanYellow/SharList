@@ -36,7 +36,7 @@
 }
 
 
-@property (nonatomic, strong) id meetingDatas;
+@property (nonatomic, strong) id metUserId;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateMeetingsListDelegate> delegate;
 //@property (strong, atomic) UITableView *userSelectionTableView;
@@ -45,6 +45,7 @@
 - (void) addAsFavorite:(UIBarButtonItem*)sender;
 - (void) displayMetUserfbImgProfile;
 - (void) displayMetUserStats;
+- (void) updateCurrentUser;
 
 
 @end

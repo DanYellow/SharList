@@ -1184,11 +1184,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         NSString *currentUserPFChannelName = @"sh_channel_";
         currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] stringValue]];
         NSNumber *facebookID = [NSNumber numberWithInteger:[[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] integerValue]];
+        
         NSTimeInterval interval = 60*60*24*7; // 1 week
         NSDictionary *data = @{
-                               @"alert" : @"J'ai mis ma liste à jour",
+                               @"alert" : NSLocalizedString(@"push remote notif update list", nil),
                                @"badge" : @"Increment",
-                               @"content-available": @1,
+                               @"content-available": @0,
                                @"userfbid" : facebookID, //Put user fbid
                                @"sounds" : @""};
         PFPush *push = [PFPush new];

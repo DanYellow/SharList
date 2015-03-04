@@ -17,6 +17,9 @@
 "buy" = "buy";
 "buy %@" = "buy %@";
 
+"push remote notif update list" = "One of your favorite discoveries was updated";
+
+
 //tab bar controller
 "meetings" = "discoveries";
 "settings" = "settings";
