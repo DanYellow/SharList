@@ -860,14 +860,16 @@
         cell.textLabel.text = title;
         cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.60];
         cell.textLabel.textColor = [UIColor whiteColor];
+
         
-//        cell.alpha = .7f;
-        
-        if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
-            cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-        } else {
-            cell.imageView.image = nil;
+        if (![userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
+            if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
+                cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+            } else {
+                cell.imageView.image = nil;
+            }
         }
+        
         
         // This statement is here for empty key
         // Or else we'll try to compare a NSNull object
@@ -944,7 +946,7 @@
     return cell;
 }
 
--(void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
         [loadingIndicator stopAnimating];

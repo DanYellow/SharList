@@ -259,7 +259,7 @@
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
-    NSString *strNumberPercent = [percentageFormatter stringFromNumber:self.meetingDatas[@"commonTasteCountPercent"]];
+     NSString *strNumberPercent = [self calcUserMetPercentMatch];
     
     UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 24.0, 150.0, 48.0)];
     commonTasteCountPercentLabel.textColor = [UIColor whiteColor];
@@ -440,6 +440,43 @@
     }
 }
 
+- (NSString*) calcUserMetPercentMatch
+{
+    NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
+    int commonTasteCount = 0;
+    int currentUserNumberItems = 0;
+    for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
+        NSString *key = [[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i];
+        
+        if (![[currentUserTaste objectForKey:key] isEqual:[NSNull null]]) {
+            currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
+            currentUserNumberItems += [[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"] count];
+        }
+        
+        if (![[self.metUserTasteDict objectForKey:key] isEqual:[NSNull null]]) {
+            currentUserMetTasteSet = [NSMutableSet setWithArray:[[self.metUserTasteDict objectForKey:key] valueForKey:@"imdbID"]];
+        }
+        [currentUserMetTasteSet intersectSet:currentUserTasteSet]; //this will give you only the obejcts that are in both sets
+        NSArray* result = [currentUserMetTasteSet allObjects];
+        commonTasteCount += result.count;
+    }
+    
+    CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
+    if (isnan(commonTasteCountPercent)) {
+        commonTasteCountPercent = 0.0f;
+    }
+    
+    if (commonTasteCountPercent == (float)1) {
+        commonTasteCountPercent = 0.01;
+    }
+    
+    NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
+    [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
+    NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:commonTasteCountPercent]];
+    
+    return strNumber;
+}
+
 - (void) getImageCellForData:(id)model aCell:(UITableViewCell*)cell
 {
     CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
@@ -605,10 +642,12 @@
         cell.indentationLevel = 1;
     }
     
-    if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
-        cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-    } else {
-        cell.imageView.image = nil;
+    if (![currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
+        if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
+            cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        } else {
+            cell.imageView.image = nil;
+        }
     }
     
     cell.alpha = .3f;
