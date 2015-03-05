@@ -537,7 +537,15 @@
     NSString *detailTextLabelString = @"";
     
     CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
-//    NSLog(@"commonTasteCountPercent : %i", commonTasteCountPercent);
+    if (isnan(commonTasteCountPercent)) {
+        commonTasteCountPercent = 0.0f;
+    }
+    
+    // If the user has only 1% in common
+    if (commonTasteCountPercent == (float)1) {
+        commonTasteCountPercent = 0.01;
+    }
+    
     if (commonTasteCount == 0) {
         cell.detailTextLabel.textColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
         cell.textLabel.textColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];

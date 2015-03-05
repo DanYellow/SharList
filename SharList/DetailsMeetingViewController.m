@@ -632,10 +632,12 @@
         cell.indentationLevel = 1;
     }
     
-    if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
-        cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-    } else {
-        cell.imageView.image = nil;
+    if (![currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
+        if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
+            cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        } else {
+            cell.imageView.image = nil;
+        }
     }
     
     cell.alpha = .3f;

@@ -531,7 +531,7 @@
     } else if (alertView.tag == 7) {
         if (buttonIndex == alertView.cancelButtonIndex) {
             // We show message about anonymous mode only one time
-            [[NSUserDefaults standardUserDefaults] setBool:@1 forKey:@"isMessageIndicatorForAnonymousModeHaveBeenShowed"];
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"isMessageIndicatorForAnonymousModeHaveBeenShowed"];
         }
 //        else if (buttonIndex == 1) { // User touch "cancel"
 //            UISwitch *enableAnonSwitch = (UISwitch*)[self.view viewWithTag:8];

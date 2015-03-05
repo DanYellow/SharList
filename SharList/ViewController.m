@@ -864,10 +864,12 @@
         
 //        cell.alpha = .7f;
         
-        if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
-            cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-        } else {
-            cell.imageView.image = nil;
+        if (![userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
+            if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
+                cell.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+            } else {
+                cell.imageView.image = nil;
+            }
         }
         
         // This statement is here for empty key
