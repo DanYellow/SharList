@@ -324,7 +324,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   mediaLikeNumberLabel.backgroundColor = [UIColor clearColor];
                   mediaLikeNumberLabel.layer.masksToBounds = NO;
                   mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
-                  [mediaLikeNumberLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
                   [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
               }
               

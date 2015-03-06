@@ -48,7 +48,7 @@
     UIView *creditsTextView = [[UIView alloc] initWithFrame:CGRectMake(10, whatIsApp.frame.origin.y + whatIsApp.frame.size.height + 25, screenWidth - 10, 30)];
     creditsTextView.backgroundColor = [UIColor clearColor];
     creditsTextView.opaque = YES;
-    [creditsTextView sizeToFit];
+//    [creditsTextView sizeToFit];
     [self.view addSubview:creditsTextView];
     
     UILabel *creditsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 10, 20)];
@@ -70,11 +70,17 @@
     creditsText.contentInset = UIEdgeInsetsMake(-6, -3, 0, 0);
     [creditsTextView addSubview:creditsText];
     
+    UIView *lLast = [creditsTextView.subviews lastObject];
+    NSInteger ht = lLast.frame.size.height;
     
-    UIView *privacyTextViews = [[UIView alloc] initWithFrame:CGRectMake(10, creditsTextView.frame.origin.y + creditsTextView.frame.size.height + 40, screenWidth - 10, 30)];
+    creditsTextView.frame = CGRectMake(10, whatIsApp.frame.origin.y + whatIsApp.frame.size.height + 25, screenWidth - 10, ht);
+    
+    
+    UIView *privacyTextViews = [[UIView alloc] initWithFrame:CGRectMake(10, creditsTextView.frame.origin.y + creditsTextView.frame.size.height + 20, screenWidth - 10, 30)];
     privacyTextViews.backgroundColor = [UIColor clearColor];
     privacyTextViews.opaque = YES;
     [privacyTextViews sizeToFit];
+    
     [self.view addSubview:privacyTextViews];
     
     UILabel *privacyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 10, 20)];
