@@ -303,7 +303,7 @@
         CALayer *rightBorder = [CALayer layer];
         rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
         rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
-        NSString *title = [NSLocalizedString([[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i], nil) uppercaseString];
+        NSString *title = [NSLocalizedString([[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
         CGRect statContainerFrame = CGRectMake(16 + (95 * i),
                                                metUserFBView.frame.size.height - 60,
                                                widthViews, 60);

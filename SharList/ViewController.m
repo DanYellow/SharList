@@ -305,7 +305,7 @@
     int tagRange = 10000;
     float widthViews = 99.0f;
     for (int i = 0; i < [[userTasteDict filterKeysForNullObj] count]; i++) {
-        NSString *title = [NSLocalizedString([[userTasteDict filterKeysForNullObj] objectAtIndex:i], nil) uppercaseString];
+        NSString *title = [NSLocalizedString([[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
         
         CALayer *rightBorder = [CALayer layer];
         rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 70.0f);
