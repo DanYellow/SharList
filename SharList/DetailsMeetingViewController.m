@@ -419,10 +419,12 @@
                 oldUserTaste.taste = arrayData;
                 [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
                 
+                 [self displayMatchRateList];
+                
                 UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
                 [tableView reloadData];
             } else {
-                if (self.isDisplayedFromPush == YES) {
+                if (self.isDisplayedFromPush != YES) {
                     UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
                     [noNewDatasAlert show];
                 }
