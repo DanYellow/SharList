@@ -30,6 +30,8 @@
 
 #import "SettingsViewController.h"
 
+#import "PFPushManager.h"
+
 
 @protocol UpdateUserTasteListDelegate;
 
@@ -51,6 +53,8 @@
     NSMutableDictionary *userTasteDict;
     
     UIActivityIndicatorView *loadingIndicator;
+    
+    PFPushManager *pfPushManager;
     
     __block NSString *themovieDBID;
 }

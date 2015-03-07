@@ -101,6 +101,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
+    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
     
     
     // Contains globals datas of the project
@@ -1180,24 +1181,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         self.responseData = nil;
         self.responseData = [NSMutableData new];
         
-        NSString *currentUserPFChannelName = @"sh_channel_";
-        currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] stringValue]];
-
-        NSTimeInterval interval = 60*60*24*7; // 1 week
-        NSDictionary *data = @{
-                               @"alert" : @{
-                                   @"loc-key" : @"push remote notif update list"
-                               },
-                               @"badge" : @"Increment",
-                               @"content-available": @0,
-                               @"userfbid" : [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], //Put user fbid
-                               @"sounds" : @""};
         
-        PFPush *push = [PFPush new];
-        [push setChannels:@[ currentUserPFChannelName ]];
-        [push expireAfterTimeInterval:interval];
-        [push setData:data];
-        [push sendPushInBackground];
+        [pfPushManager notifyUpdateList];
     }
 }
 
