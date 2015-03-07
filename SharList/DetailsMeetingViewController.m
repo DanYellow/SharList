@@ -317,6 +317,7 @@
         if ( i != ([[self.metUserTasteDict filterKeysForNullObj] count] - 1)) {
             [statContainer.layer addSublayer:rightBorder];
         }
+        
         UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
         statTitle.textColor = [UIColor whiteColor];
         statTitle.backgroundColor = [UIColor clearColor];
@@ -326,6 +327,7 @@
         statTitle.layer.shadowRadius = 2.5;
         statTitle.layer.shadowOpacity = 0.75;
         [statContainer addSubview:statTitle];
+        
         UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
         statCount.textColor = [UIColor whiteColor];
         statCount.backgroundColor = [UIColor clearColor];
@@ -335,7 +337,8 @@
         statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
         statCount.layer.shadowRadius = 2.5;
         statCount.layer.shadowOpacity = 0.75;
-        NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
+        
+        NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[[self.metUserTasteDict filterKeysForNullObj]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]objectAtIndex:i]] count]] stringValue];
         statCount.text = statCountNumber;
         [statContainer insertSubview:statCount atIndex:10];
     }
@@ -419,8 +422,10 @@
                 UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
                 [tableView reloadData];
             } else {
-                UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                [noNewDatasAlert show];
+                if (self.isDisplayedFromPush == YES) {
+                    UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                    [noNewDatasAlert show];
+                }
             }
         } else {
             UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -615,7 +620,8 @@
     static NSString *CellIdentifier = @"Cell";
     
     // Keys from NSDict is sorted alphabetically
-    NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)] objectAtIndex:indexPath.section];
+    NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
+                                                                          objectAtIndex:indexPath.section];
     NSString *title, *imdbID; // year
     ShareListMediaTableViewCell *cell;
     

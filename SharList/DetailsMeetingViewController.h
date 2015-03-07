@@ -39,6 +39,8 @@
 @property (nonatomic, strong) id metUserId;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateMeetingsListDelegate> delegate;
+@property (assign, nonatomic, getter=isDisplayedFromPush) BOOL isDisplayedFromPush; // Indicate if the view is push from notification
+
 //@property (strong, atomic) UITableView *userSelectionTableView;
 
 - (void) showTutorial;

@@ -343,7 +343,7 @@
         statCount.layer.shadowRadius = 2.5;
         statCount.layer.shadowOpacity = 0.75;
         
-        NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[userTasteDict filterKeysForNullObj] objectAtIndex:i]] count]] stringValue];
+        NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i]] count]] stringValue];
         statCount.text = statCountNumber;
         
         [statContainer insertSubview:statCount atIndex:10];

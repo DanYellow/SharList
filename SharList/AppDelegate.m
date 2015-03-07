@@ -171,7 +171,7 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     
-    if(application.applicationState != UIApplicationStateActive) {
+    if (application.applicationState != UIApplicationStateActive) {
         [PFPush handlePush:userInfo];
         PFInstallation *currentInstallation = [PFInstallation currentInstallation];
         
@@ -179,12 +179,13 @@
         if (currentInstallation.badge <= 1 || application.applicationIconBadgeNumber <= 1) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
         } else {
-            NSLog(@"foo");
         }
+    } else {
+        NSLog(@"didReceiveRemoteNotification active");
     }
     
 
-     NSLog(@"foo");
+    
     
     //[UIApplication sharedApplication].applicationState updateCurrentUser
 }

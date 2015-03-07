@@ -226,6 +226,7 @@
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.metUserId = [userInfo objectForKey:@"userfbid"];
     detailsMeetingViewController.delegate = self;
+    detailsMeetingViewController.isDisplayedFromPush = YES;
     [detailsMeetingViewController updateCurrentUser];
     [self.navigationController pushViewController:detailsMeetingViewController animated:NO];
 }
