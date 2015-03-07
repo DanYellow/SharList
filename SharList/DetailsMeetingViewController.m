@@ -178,9 +178,6 @@
     [self displayMatchRateList];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
-        if (![self connected]) {
-            return;
-        }
         NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"];
         NSDictionary *apiParams = @{@"fbiduser" : [userMet fbid], @"isspecificuser" : @"yes"};
 
@@ -202,12 +199,13 @@
     [rightBarButtonItemsArray addObject:addMeetingToFavoriteBtnItem];
 
     if ([userMet isFavorite]) {
-
-        // Shoud contain raw data from the server
-        self.responseData = [NSMutableData new];
-
         UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(updateCurrentUser)];
+        
         [rightBarButtonItemsArray addObject:refreshBtn];
+        
+        if (![self connected]) {
+            refreshBtn.enabled = NO;
+        }
         
 //        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMeetingFavTutorial"]) {
 //            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMeetingFavTutorial"];
@@ -215,9 +213,7 @@
 //        }
     }
     
-   
     self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
-
 }
 
 - (BOOL) connected
@@ -347,6 +343,9 @@
 
 - (void) updateCurrentUser
 {
+    // Should contain raw data from the server
+    self.responseData = [NSMutableData new];
+    
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
     [userSelectRefresh beginRefreshing];
     
@@ -687,13 +686,32 @@
 {
     NSString *currentUserPFChannelName = @"sh_channel_";
     currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[self.metUserId stringValue]];
-   
+    
+    
+//    UIBarButtonItem *addMeetingToFavoriteBtnItem = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
+    
+
+
+//    self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
+
+
+    NSMutableArray *rightBarButtonItemsArray = [[NSMutableArray alloc] initWithArray:self.navigationItem.rightBarButtonItems];
+    
+    
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     
     // Current list seen is added to user favs discovers
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
         [userMet setIsFavorite:YES];
+        
+        UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(updateCurrentUser)];
+        
+        if (![self connected]) {
+            refreshBtn.enabled = NO;
+        }
+        
+        [rightBarButtonItemsArray addObject:refreshBtn];
         
         // If the user add this discover among his favorites.
         // He listen to his channel on Parse
@@ -703,6 +721,10 @@
     } else {
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
         [userMet setIsFavorite:NO];
+        
+        
+        UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
+        [rightBarButtonItemsArray removeObject:refreshBtn];
         
         // If the user withdraw this discover among his favorites.
         // He doesn't listen to his channel on Parse anymore
@@ -715,6 +737,9 @@
     if ([self.delegate respondsToSelector:@selector(meetingsListHaveBeenUpdate)]) {
         [self.delegate meetingsListHaveBeenUpdate];
     }
+    
+    // We update the rightBarButtonItems
+    self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
 }
 
 #pragma mark - tutorial's methods

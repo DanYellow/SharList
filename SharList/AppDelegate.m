@@ -169,21 +169,22 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [PFPush handlePush:userInfo];
+    
     
     if(application.applicationState != UIApplicationStateActive) {
+        [PFPush handlePush:userInfo];
+        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
         
+        self.tabBarController.selectedIndex = 0;
+        if (currentInstallation.badge <= 1 || application.applicationIconBadgeNumber <= 1) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
+        } else {
+            NSLog(@"foo");
+        }
     }
     
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    // We habe
-    self.tabBarController.selectedIndex = 0;
-    if (currentInstallation.badge <= 1 || application.applicationIconBadgeNumber <= 1) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
-    } else {
-        NSLog(@"foo");
-    }
-    
+
+     NSLog(@"foo");
     
     //[UIApplication sharedApplication].applicationState updateCurrentUser
 }
