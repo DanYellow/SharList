@@ -148,7 +148,7 @@
 
     [self.view addSubview:userMeetingsListTableView];
     
-    // Message for empty list taste
+    // Message for empty list meetings
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  in a meeting to add it among your favorites", nil)];
     UIImage *lensIcon = [UIImage imageNamed:@"favorite-icon-message-alt"];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];

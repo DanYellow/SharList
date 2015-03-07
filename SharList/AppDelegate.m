@@ -28,6 +28,29 @@
     // APNS + Parse part
     [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
                   clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
+    
+    if (FBSession.activeSession.isOpen) {
+        // This statement is here for old users
+        // People with Shound < 1.1.0 don't have remote notification but maybe some favorite
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hookToNotifications"]) {
+            NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+            NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
+            
+            NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
+            
+            NSArray *meetings = [UserTaste MR_findAllWithPredicate:filterPredicates];
+            
+            NSString *currentUserPFChannelName = @"";
+            for (int i = 0; i < meetings.count; i++) {
+                currentUserPFChannelName = @"sh_channel_";
+                currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[[meetings objectAtIndex:i] fbid] stringValue]];
+                [PFPush subscribeToChannelInBackground:currentUserPFChannelName];
+            }
+            
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hookToNotifications"];
+        }
+    }
+    
 
     
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)])

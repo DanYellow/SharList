@@ -694,13 +694,6 @@
 {
     NSString *currentUserPFChannelName = @"sh_channel_";
     currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[self.metUserId stringValue]];
-    
-    
-//    UIBarButtonItem *addMeetingToFavoriteBtnItem = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
-    
-
-
-//    self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
 
 
     NSMutableArray *rightBarButtonItemsArray = [[NSMutableArray alloc] initWithArray:self.navigationItem.rightBarButtonItems];
