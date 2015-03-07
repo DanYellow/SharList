@@ -222,7 +222,7 @@
 - (void) pushNotificationReceived:(NSNotification*)notification
 {
     NSDictionary* userInfo = notification.userInfo;
-    
+    [self.navigationController popToRootViewControllerAnimated:NO];
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.metUserId = [userInfo objectForKey:@"userfbid"];
     detailsMeetingViewController.delegate = self;
@@ -507,8 +507,9 @@
         }
     }
 
+    // Calc of the stats
     UserTaste *currentUserMet = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
-                                                           withValue:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]];
+                                                         withValue:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]];
     
     NSDictionary *currentUserMetTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet taste]] mutableCopy];
     
@@ -516,14 +517,15 @@
     NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
     int commonTasteCount = 0;
     int currentUserNumberItems = 0;
-    for (NSString* key in @[@"serie", @"movie"]) {
-        if ([currentUserTaste objectForKey:key] != nil && [currentUserTaste objectForKey:key] != (id)[NSNull null]) {
+    for (int i = 0; i < [[currentUserMetTaste filterKeysForNullObj] count]; i++) {
+        NSString *key = [[currentUserMetTaste filterKeysForNullObj] objectAtIndex:i];
+        if (![[currentUserTaste objectForKey:key] isEqual:[NSNull null]]) {
             currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
             
             currentUserNumberItems += [[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"] count];
         }
         
-        if ([currentUserMetTaste objectForKey:key] != nil && [currentUserMetTaste objectForKey:key] != (id)[NSNull null]) {
+        if (![[currentUserMetTaste objectForKey:key] isEqual:[NSNull null]]) {
             currentUserMetTasteSet = [NSMutableSet setWithArray:[[currentUserMetTaste objectForKey:key] valueForKey:@"imdbID"]];
         }
         

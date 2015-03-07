@@ -267,12 +267,20 @@
     UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 24.0, 150.0, 48.0)];
     commonTasteCountPercentLabel.textColor = [UIColor whiteColor];
     commonTasteCountPercentLabel.backgroundColor = [UIColor clearColor];
-    commonTasteCountPercentLabel.text = strNumberPercent;
+    commonTasteCountPercentLabel.text = @"0 %";
     commonTasteCountPercentLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:52.0f];
     commonTasteCountPercentLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
     commonTasteCountPercentLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
     commonTasteCountPercentLabel.layer.shadowOpacity = .75f;
     [metUserFBView addSubview:commonTasteCountPercentLabel];
+    
+    CATransition *animation = [CATransition animation];
+    animation.duration = 1.0;
+    animation.type = kCATransitionFade;
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [commonTasteCountPercentLabel.layer addAnimation:animation forKey:@"changeTextTransition"];
+    
+    commonTasteCountPercentLabel.text = strNumberPercent;
     
     CGRect tasteMetUserMessageLabelFrame = CGRectMake(16.0,
                                                       commonTasteCountPercentLabel.frame.size.height + commonTasteCountPercentLabel.frame.origin.y,
@@ -440,13 +448,13 @@
     for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
         NSString *key = [[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i];
 
-        if ([currentUserTaste objectForKey:key] != nil && [currentUserTaste objectForKey:key] != (id)[NSNull null]) {
+        if (![[currentUserTaste objectForKey:key] isEqual:[NSNull null]]) {
             currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
             
             currentUserNumberItems += [[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"] count];
         }
         
-        if ([self.metUserTasteDict objectForKey:key] != nil && [self.metUserTasteDict objectForKey:key] != (id)[NSNull null]) {
+        if (![[self.metUserTasteDict objectForKey:key] isEqual:[NSNull null]]) {
             currentUserMetTasteSet = [NSMutableSet setWithArray:[[self.metUserTasteDict objectForKey:key] valueForKey:@"imdbID"]];
         }
         
@@ -570,7 +578,7 @@
 // Title of categories
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    CGFloat fontSize = 18.0f;
+    CGFloat fontSize = 16.0f;
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
     

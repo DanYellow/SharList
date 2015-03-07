@@ -1182,15 +1182,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         
         NSString *currentUserPFChannelName = @"sh_channel_";
         currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] stringValue]];
-        NSNumber *facebookID = [NSNumber numberWithInteger:[[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] integerValue]];
-        
+
         NSTimeInterval interval = 60*60*24*7; // 1 week
         NSDictionary *data = @{
-                               @"alert" : NSLocalizedString(@"push remote notif update list", nil),
+                               @"alert" : @{
+                                   @"loc-key" : @"push remote notif update list"
+                               },
                                @"badge" : @"Increment",
                                @"content-available": @0,
-                               @"userfbid" : facebookID, //Put user fbid
+                               @"userfbid" : [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], //Put user fbid
                                @"sounds" : @""};
+        
         PFPush *push = [PFPush new];
         [push setChannels:@[ currentUserPFChannelName ]];
         [push expireAfterTimeInterval:interval];

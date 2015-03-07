@@ -17,7 +17,7 @@
 "buy" = "buy";
 "buy %@" = "buy %@";
 
-"push remote notif update list" = "One of your favorite discoveries was updated";
+"push remote notif update list" = "One of your favorite discoveries was updated !";
 
 
 //tab bar controller

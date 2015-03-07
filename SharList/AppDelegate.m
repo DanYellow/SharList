@@ -176,10 +176,12 @@
     }
     
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    if (currentInstallation.badge < 1 || application.applicationIconBadgeNumber < 1) {
+    // We habe
+    self.tabBarController.selectedIndex = 0;
+    if (currentInstallation.badge <= 1 || application.applicationIconBadgeNumber <= 1) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
     } else {
-        self.tabBarController.selectedIndex = 0;
+        NSLog(@"foo");
     }
     
     
