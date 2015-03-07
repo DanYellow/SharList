@@ -68,6 +68,11 @@
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     
+    UIButton* aboutBtn = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    [aboutBtn addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *aboutBarBtnItem = [[UIBarButtonItem alloc] initWithCustomView:aboutBtn];
+    self.navigationItem.rightBarButtonItem = aboutBarBtnItem;
 
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame = self.view.bounds;
@@ -98,12 +103,12 @@
     [self.view addSubview:settingsTableview];
     
     
-    UIButton *aboutButton = [UIButton new];
-    [aboutButton setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
-    [aboutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [aboutButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
-    aboutButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
-    [self.view addSubview:aboutButton];
+//    UIButton *aboutButton = [UIButton new];
+//    [aboutButton setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
+//    [aboutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [aboutButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
+//    aboutButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
+//    [self.view addSubview:aboutButton];
 }
 
 
