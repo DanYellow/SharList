@@ -273,8 +273,6 @@
     
     if ([userPreferences objectForKey:@"currentUserfbID"]) {
         [self userConnectionForFbID:[userPreferences objectForKey:@"currentUserfbID"]];
-        
-        return;
     }
 }
 

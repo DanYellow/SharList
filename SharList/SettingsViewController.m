@@ -101,14 +101,6 @@
     settingsTableview.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     settingsTableview.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:settingsTableview];
-    
-    
-//    UIButton *aboutButton = [UIButton new];
-//    [aboutButton setTitle:NSLocalizedString(@"about", nil) forState:UIControlStateNormal];
-//    [aboutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    [aboutButton addTarget:self action:@selector(displayAboutScreen) forControlEvents:UIControlEventTouchUpInside];
-//    aboutButton.frame = CGRectMake(0, screenHeight - ((49 * 3) + 30), screenWidth, 49);
-//    [self.view addSubview:aboutButton];
 }
 
 

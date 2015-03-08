@@ -64,11 +64,7 @@
         [application registerForRemoteNotifications];
     }
     
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    NSLog(@"[[PFUser currentUser]objectId] : %@ | %@ | %@", [PFUser currentUser], [currentInstallation channels], currentInstallation);
-    
-    
-    [application setMinimumBackgroundFetchInterval:BGFETCHDELAY]; //40 min | 3600 = BGFETCHDELAY
+    [application setMinimumBackgroundFetchInterval:BGFETCHDELAY];
 
     
     ViewController *viewController = [ViewController new];
