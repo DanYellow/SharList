@@ -18,6 +18,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "CCARadialGradientLayer.h"
 #import <JLTMDbClient.h>
+#import <XCDYouTubeKit/XCDYouTubeKit.h>
 
 //Custom views
 #import "ShopButton.h"
@@ -31,6 +32,8 @@
 #import "SettingsViewController.h"
 
 #import "PFPushManager.h"
+
+
 
 
 @protocol UpdateUserTasteListDelegate;

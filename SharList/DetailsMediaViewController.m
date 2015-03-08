@@ -830,16 +830,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) seeTrailerMedia:(UIButton*)sender
 {
-    // [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@", sender.trailerID]]];
-     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.youtube.com/embed/%@?autoplay=1", sender.trailerID]]];
-//    NSLog(@"trailer : %@", [NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@", sender.trailerID]);
+    // Display the youtube video in the app now !
+    XCDYouTubeVideoPlayerViewController *videoPlayerViewController = [[XCDYouTubeVideoPlayerViewController alloc] initWithVideoIdentifier:sender.trailerID];
+    [self presentMoviePlayerViewControllerAnimated:videoPlayerViewController];
     
+    CGAffineTransform landscapeTransform = CGAffineTransformMakeRotation(DegreesToRadians(90));
+    landscapeTransform = CGAffineTransformTranslate (landscapeTransform, +80.0, +100.0);
     
-    
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [webView loadRequest:request];
-    
-    [self.view addSubview:webView];
+    [videoPlayerViewController.view setTransform:landscapeTransform];
 }
 
 
