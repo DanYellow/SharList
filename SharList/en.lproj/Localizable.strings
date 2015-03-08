@@ -39,6 +39,7 @@
 "All" = "All";
 "Favorites" = "Favorites";
 "Met at %@" = "Discovered at %@";
+"updated" = "updated !";
 "nomeetings" = "So it looks like there is none around you to get new discoveries. Talk to them about Shound";
 "%@ meetings" = "%@ discoveries";
 "disabledBGF" = "The background fetch feature is disabled in your Settings. Enabled it to introduce the world what you love without open the app.";

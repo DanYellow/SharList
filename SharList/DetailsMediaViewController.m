@@ -830,10 +830,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) seeTrailerMedia:(UIButton*)sender
 {
-    // Display the youtube video in the app now !
+    // Display the youtube video in the app
     XCDYouTubeVideoPlayerViewController *videoPlayerViewController = [[XCDYouTubeVideoPlayerViewController alloc] initWithVideoIdentifier:sender.trailerID];
     [self presentMoviePlayerViewControllerAnimated:videoPlayerViewController];
     
+    // Rotate the view to see the trailer in landscape
     CGAffineTransform landscapeTransform = CGAffineTransformMakeRotation(DegreesToRadians(90));
     landscapeTransform = CGAffineTransformTranslate (landscapeTransform, +80.0, +100.0);
     

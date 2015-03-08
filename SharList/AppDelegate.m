@@ -51,8 +51,6 @@
         }
     }
     
-
-    
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)])
     {
         UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
@@ -189,16 +187,25 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
+//    NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithObjects:@"foo", @"foo", @"machin", @"pikachu", nil];
+//    NSLog(@"favsUserUpdatedMSet : %@", favsUserUpdatedMSet);
     
+    
+
     if (application.applicationState != UIApplicationStateActive) {
         [PFPush handlePush:userInfo];
         PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-        
+
+        NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"]];
         self.tabBarController.selectedIndex = 0;
         if (currentInstallation.badge <= 1 || application.applicationIconBadgeNumber <= 1) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
         } else {
+            
         }
+        [favsUserUpdatedMSet addObject:userInfo[@"userfbid"]];
+        [[NSUserDefaults standardUserDefaults] setObject:[favsUserUpdatedMSet allObjects] forKey:@"favsIDUpdatedList"];
+//        NSLog(@"favsUserUpdatedMSet : %@ | %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"], favsUserUpdatedMSet);
     } else {
         NSLog(@"didReceiveRemoteNotification active");
     }

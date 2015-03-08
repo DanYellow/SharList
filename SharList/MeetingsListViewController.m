@@ -580,7 +580,13 @@
     cell.indentationLevel = 1;
     
     cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
-    cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]]];; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+    cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+    
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:[currentUserMet fbid]]) {
+        NSString *indicateFavUpdatedString = @" - ";
+        indicateFavUpdatedString = [indicateFavUpdatedString stringByAppendingString:NSLocalizedString(@"updated", nil)];
+        cell.detailTextLabel.text = [cell.detailTextLabel.text stringByAppendingString:indicateFavUpdatedString];
+    }
     
     
 

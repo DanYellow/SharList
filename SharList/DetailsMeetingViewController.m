@@ -88,9 +88,6 @@
     // Build the array from the plist
     settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
-
-    
-//    NSLog(@"self.metUserTasteDict : %@", self.metUserTasteDict);
     
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
@@ -171,9 +168,6 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     
-    
-    
-    
     // Display the percent match between current user and the user met
     [self displayMatchRateList];
     
@@ -214,6 +208,10 @@
     }
     
     self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
+    
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:self.metUserId]) {
+        [self updateCurrentUser];
+    }
 }
 
 - (BOOL) connected
@@ -424,6 +422,7 @@
                 UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
                 [tableView reloadData];
             } else {
+                // We show the alert of "no update list" only if the current user does manually an update
                 if (self.isDisplayedFromPush != YES) {
                     UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:NSLocalizedString(@"no datas updated for this user", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
                     [noNewDatasAlert show];
@@ -442,6 +441,12 @@
         
         UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
         [userSelectRefresh endRefreshing];
+        
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:self.metUserId]) {
+            NSMutableArray *favsIDUpdatedList = [[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] mutableCopy];
+            [favsIDUpdatedList removeObject:self.metUserId];
+            [[NSUserDefaults standardUserDefaults] setObject:favsIDUpdatedList forKey:@"favsIDUpdatedList"];
+        }
     }
 }
 
