@@ -8,6 +8,7 @@
 
 "an error" = "Une erreur est survenue";
 "Cancel" = "Annuler";
+"Ok" = "OK";
 
 "Introduce the world what you love" = "faites découvrir au monde ce que vous aimez";
 "serie" = "séries";
@@ -103,3 +104,12 @@
 
 //Facebook
 "errorConnect" = "Facebook a rencontré une problème";
+
+
+// Facebook post
+"FBLinkShareParams_name" = "Téléchargez Shound";
+"FBLinkShareParams_caption" = "Je suis déjà sur Shound et vous ?";
+"FBLinkShareParams_noapp" = "Il semblerait que vous n'ayez pas l'application Facebook";
+"FBLinkShareParams_posterror" = "Facebook a rencontré un problème";
+"FBLinkShareParams_postsuccess" = "Merci. Vous aidez Shound à être plus populaire !";
+"FBLinkShareParams_postsuccess_title" = "Super !";

@@ -37,7 +37,7 @@
 	<key>FacebookBundleName</key>
 	<string>FacebookSDKOverrides</string>
 	<key>FacebookDisplayName</key>
-	<string>Shar</string>
+	<string>Shound</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>

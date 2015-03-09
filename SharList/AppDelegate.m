@@ -194,18 +194,19 @@
 
     if (application.applicationState != UIApplicationStateActive) {
         [PFPush handlePush:userInfo];
-        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 
-        NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"]];
+        
         self.tabBarController.selectedIndex = 0;
-        if (currentInstallation.badge <= 1 || application.applicationIconBadgeNumber <= 1) {
+        
+        if (application.applicationIconBadgeNumber <= 1) {
+            NSLog(@"application.applicationIconBadgeNumber : %lu", application.applicationIconBadgeNumber);
             [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
         } else {
-            
+            NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"]];
+            [favsUserUpdatedMSet addObject:userInfo[@"userfbid"]];
+            [[NSUserDefaults standardUserDefaults] setObject:[favsUserUpdatedMSet allObjects] forKey:@"favsIDUpdatedList"];
         }
-        [favsUserUpdatedMSet addObject:userInfo[@"userfbid"]];
-        [[NSUserDefaults standardUserDefaults] setObject:[favsUserUpdatedMSet allObjects] forKey:@"favsIDUpdatedList"];
-//        NSLog(@"favsUserUpdatedMSet : %@ | %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"], favsUserUpdatedMSet);
     } else {
         NSLog(@"didReceiveRemoteNotification active");
     }

@@ -8,6 +8,7 @@
 
 "an error" = "An error has occurred";
 "Cancel" = "Cancel";
+"Ok" = "OK";
 
 "Introduce the world what you love" = "Introduce the world what you like";
 
@@ -93,3 +94,12 @@
 
 //Facebook
 "errorConnect" = "Facebook has an issue";
+
+
+// Facebook post
+"FBLinkShareParams_name" = "Download Shound";
+"FBLinkShareParams_caption" = "I'm already use Shound and you ?";
+"FBLinkShareParams_noapp" = "It looks like you haven't Facebook's app";
+"FBLinkShareParams_posterror" = "Facebook has encountered a problem";
+"FBLinkShareParams_postsuccess" = "Thanks you. You help Shound to be more popular";
+"FBLinkShareParams_postsuccess_title" = "Great !";

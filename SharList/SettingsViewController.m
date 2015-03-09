@@ -101,8 +101,53 @@
     settingsTableview.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     settingsTableview.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:settingsTableview];
+    
+    
+    UIButton *btnFoo = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    [btnFoo addTarget:self action:@selector(fbPost) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btnFoo];
 }
 
+- (void) fbPost {
+    FBLinkShareParams *params = [FBLinkShareParams new];
+    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
+    params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
+    params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
+    params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+    
+    [self shareSampleOnFacebook:params];
+}
+
+- (void) shareSampleOnFacebook:(FBLinkShareParams*) params
+{
+    // If the Facebook app is installed and we can present the share dialog
+    if ([FBDialogs canPresentShareDialogWithParams:params]) {
+        [FBDialogs presentShareDialogWithLink:params.link
+                                         name:params.name
+                                      caption:params.caption
+                                  description:nil
+                                      picture:params.picture
+                                  clientState:nil
+                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
+                                          NSLog(@"results : %@", error);
+                                          if(error) {
+                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
+                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
+                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
+                                                                         delegate:nil
+                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+                                          }
+                                      }];
+    } else {
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+    }
+}
 
 - (void) showBetaSeriesConnect
 {
