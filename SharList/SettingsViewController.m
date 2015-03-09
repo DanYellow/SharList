@@ -93,7 +93,7 @@
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareShoundBtn setFrame:CGRectMake(0, 20, screenWidth, 44)];
-    [shareShoundBtn setTitle:@"Parlez de Shound à vos amis" forState:UIControlStateNormal];
+    [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
@@ -563,19 +563,19 @@
     params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
     params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
     params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
-    
+        
     // If the Facebook app is installed and we can present the share dialog
     if ([FBDialogs canPresentShareDialogWithParams:params]) {
         [FBDialogs presentShareDialogWithLink:params.link
                                          name:params.name
-                                      caption:params.caption
-                                  description:nil
+                                      caption:nil
+                                  description:NSLocalizedString(@"FBLinkShareParams_caption", nil)
                                       picture:params.picture
                                   clientState:nil
                                       handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
                                           if(error) {
                                               [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+                                                                    message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
                                                                          delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
                                           } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
                                               [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
