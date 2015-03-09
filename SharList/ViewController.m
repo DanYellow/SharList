@@ -122,7 +122,6 @@
     
     // Uitableview of user selection (what user likes)
     UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
-    //[self computeRatio:800.0 forDimension:screenHeight] + 44
     userTasteListTableView.dataSource = self;
     userTasteListTableView.delegate = self;
     userTasteListTableView.backgroundColor = [UIColor clearColor];
@@ -130,7 +129,6 @@
     userTasteListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userTasteListTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0); //self.bottomLayoutGuide.length
     userTasteListTableView.hidden = YES;
-    //    userSelectionTableViewController.refreshControl = userSelectRefresh;
     userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:userTasteListTableView];
@@ -1361,7 +1359,9 @@
     return img;
 }
 
-# pragma mark - Delegate methods
+
+
+#pragma mark - Delegate methods
 
 // When the user starts to scroll we hide the keyboard
 - (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
