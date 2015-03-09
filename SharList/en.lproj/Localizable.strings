@@ -47,6 +47,8 @@
 "restrictedBGF" = "It looks like you device is not allowed to use the background fetch feature of your device.";
 "no datas updated for this user" = "This user haven't update his list";
 "numberOfJSONErrorsMaxReached" = "Too bad, the server has no datas for you.";
+"localNotificationAlertActionRefresh" = "discover new things";
+"localNotificationAlertBodyRefresh" = "There are always new things to discover";
 
 // DetailsMeetingsViewController
 "met %@ times" = "discovered %@ time(s)";
@@ -55,6 +57,7 @@
 "things common" = "Things in common, but also to discover";
 "in common" = "taste in common";
 "%@ in common" = "%@ taste in common";
+
 
 //Settings view controller
 "Settings" = "Settings";

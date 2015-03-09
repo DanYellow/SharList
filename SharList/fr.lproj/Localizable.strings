@@ -50,6 +50,9 @@
 "full common" = "On peut toujours apprendre des autres";
 "in common" = "de goût en commun";
 "%@ in common" = "%@ de goût en commun";
+"localNotificationAlertActionRefresh" = "découvrir de nouvelles choses";
+"localNotificationAlertBodyRefresh" = "Il y a toujours de nouvelles choses à découvrir";
+
 
 //Settings view controller
 "Settings" = "Réglages";
@@ -70,6 +73,8 @@
 "Enable anonymous mode message" = "En activant l'anonymat, vous ne pourrez plus voir les images de profil des utilisateurs découverts (Ils ne pourront pas voir la vôtre)";
 "OK reminder me later" = "OK. Rappelez-le moi la prochaine fois";
 "Talk about shound" = "Parlez de Shound à vos amis";
+
+
 // Errors for geoloc
 "Oops" = "Oups";
 "geoloc denied" = "Shound n'est pas autorisé à utiliser votre position. Autorisez le dans les Réglages. (Shound > Position > Toujours)";

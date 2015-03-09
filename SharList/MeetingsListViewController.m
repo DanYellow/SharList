@@ -217,6 +217,15 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushNotificationReceived:) name:@"pushNotificationFavorite" object:nil];
     
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    UILocalNotification *localNotification = [UILocalNotification new];
+    localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:15]; //604800 (One week)
+    localNotification.soundName = UILocalNotificationDefaultSoundName;
+    localNotification.applicationIconBadgeNumber = 0;
+    localNotification.alertAction = NSLocalizedString(@"localNotificationAlertActionRefresh", nil);
+    localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyRefresh", nil);
+    localNotification.userInfo = @{@"locatificationName" : @"discoverNew"};
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
 }
 
 - (void) pushNotificationReceived:(NSNotification*)notification
@@ -234,7 +243,7 @@
 // This function manage the enable state of refresh button
 - (void) navigationItemRightButtonEnablingManagement
 {
-    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatasBtnAction)];
+    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatas)];
     self.navigationItem.rightBarButtonItem = refreshBtn;
     
 
@@ -648,7 +657,7 @@
     return [AFNetworkReachabilityManager sharedManager].isReachable;
 }
 
-- (void) fetchUsersDatasBtnAction
+- (void) fetchUsersDatas
 {
     if ([self connected] == NO) {
         [self noInternetAlert];
@@ -757,10 +766,8 @@
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
             numberOfNoResults = 0;
             
-            UILocalNotification *localNotif = [[UILocalNotification alloc] init];
-            
-            localNotif.fireDate = [[NSDate date] dateByAddingTimeInterval: 60];
-            
+            UILocalNotification *localNotif = [UILocalNotification new];
+            localNotif.fireDate = [[NSDate date] dateByAddingTimeInterval: 300];
             localNotif.timeZone = [NSTimeZone defaultTimeZone];
             localNotif.alertBody = NSLocalizedString(@"nomeetings", nil);
             localNotif.soundName = nil;
@@ -797,7 +804,7 @@
             [loadingIndicator stopAnimating];
             return;
         }
-       [self fetchUsersDatasBtnAction];
+       [self fetchUsersDatas];
         numberOfJSONErrors++;
         return;
     }
@@ -860,6 +867,16 @@
     } else {
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     }
+    
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    UILocalNotification *localNotification = [UILocalNotification new];
+    localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:15]; //604800
+//    localNotification.repeatInterval = NSCalendarUnitWeekday;
+    localNotification.alertBody = [NSString stringWithFormat:@"Alert Fired at %@", @"fof"];
+    localNotification.soundName = nil;
+    localNotification.alertAction = @"go back";
+    localNotification.applicationIconBadgeNumber = 0;
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
 }
 
 

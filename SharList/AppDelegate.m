@@ -10,6 +10,8 @@
 
 #import <Parse/Parse.h>
 
+#import "MeetingsListViewController.h"
+
 @interface AppDelegate ()
 
 @property (nonatomic, retain) UITabBarController *tabBarController;
@@ -197,10 +199,9 @@
 //        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 
         
-        self.tabBarController.selectedIndex = 0;
         
+        NSLog(@"application.applicationIconBadgeNumber : %lu", (long)application.applicationIconBadgeNumber);
         if (application.applicationIconBadgeNumber <= 1) {
-            NSLog(@"application.applicationIconBadgeNumber : %lu", application.applicationIconBadgeNumber);
             [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
         } else {
             NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"]];
@@ -210,11 +211,18 @@
     } else {
         NSLog(@"didReceiveRemoteNotification active");
     }
-    
-
-    
-    
     //[UIApplication sharedApplication].applicationState updateCurrentUser
+}
+
+- (void) application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"discoverNew"]) {
+        [[self.tabBarController.tabBar.items objectAtIndex:0] setBadgeValue:nil];
+        self.tabBarController.selectedIndex = 0;
+        
+        MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
+        [meetingsListViewController fetchUsersDatas];
+    }
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
