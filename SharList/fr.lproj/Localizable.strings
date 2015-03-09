@@ -31,6 +31,7 @@
 "No results" = "Aucun résultat";
 "No internet connection" = "Aucune connexion Internet";
 "Delete" = "Retirer";
+"localNotificationAlertBodyNotUpdateList" = "Vous avez découvert de nouvelles choses ? Ajoutez-les";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore découvert d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
@@ -50,7 +51,7 @@
 "full common" = "On peut toujours apprendre des autres";
 "in common" = "de goût en commun";
 "%@ in common" = "%@ de goût en commun";
-"localNotificationAlertActionRefresh" = "découvrir de nouvelles choses";
+"localNotificationAlertActionRefresh" = "découvrir";
 "localNotificationAlertBodyRefresh" = "Il y a toujours de nouvelles choses à découvrir";
 
 

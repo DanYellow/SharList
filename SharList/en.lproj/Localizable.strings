@@ -33,6 +33,7 @@
 "No results" = "No results";
 "No internet connection" = "No Internet connection";
 "Delete" = "Delete";
+"localNotificationAlertBodyNotUpdateList" = "Discover new things ? Add it to your list";
 
 // Meetinglistviewcontroller
 "Tap on  in a meeting to add it among your favorites" = "Tap on  in a discover to add it among your favorites";
@@ -47,7 +48,7 @@
 "restrictedBGF" = "It looks like you device is not allowed to use the background fetch feature of your device.";
 "no datas updated for this user" = "This user haven't update his list";
 "numberOfJSONErrorsMaxReached" = "Too bad, the server has no datas for you.";
-"localNotificationAlertActionRefresh" = "discover new things";
+"localNotificationAlertActionRefresh" = "discover";
 "localNotificationAlertBodyRefresh" = "There are always new things to discover";
 
 // DetailsMeetingsViewController

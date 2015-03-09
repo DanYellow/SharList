@@ -216,16 +216,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushNotificationReceived:) name:@"pushNotificationFavorite" object:nil];
-    
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
-    UILocalNotification *localNotification = [UILocalNotification new];
-    localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:15]; //604800 (One week)
-    localNotification.soundName = UILocalNotificationDefaultSoundName;
-    localNotification.applicationIconBadgeNumber = 0;
-    localNotification.alertAction = NSLocalizedString(@"localNotificationAlertActionRefresh", nil);
-    localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyRefresh", nil);
-    localNotification.userInfo = @{@"locatificationName" : @"discoverNew"};
-    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
 }
 
 - (void) pushNotificationReceived:(NSNotification*)notification
@@ -868,15 +858,35 @@
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     }
     
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
+    // Each time the user press the button refresh
+    // To discover new things he creates a postpone
+    [self cancelLocalNotificationWithValueForKey:@"discoverNew"];
     UILocalNotification *localNotification = [UILocalNotification new];
-    localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:15]; //604800
-//    localNotification.repeatInterval = NSCalendarUnitWeekday;
-    localNotification.alertBody = [NSString stringWithFormat:@"Alert Fired at %@", @"fof"];
-    localNotification.soundName = nil;
-    localNotification.alertAction = @"go back";
+    localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:604800]; //604800 (One week)
+    localNotification.soundName = UILocalNotificationDefaultSoundName;
     localNotification.applicationIconBadgeNumber = 0;
+    localNotification.alertAction = NSLocalizedString(@"localNotificationAlertActionRefresh", nil);
+    localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyRefresh", nil);
+    localNotification.userInfo = @{@"locatificationName" : @"discoverNew"};
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+}
+
+- (void) cancelLocalNotificationWithValueForKey:(NSString*)aValue
+{
+    UIApplication *app = [UIApplication sharedApplication];
+    NSArray *listLocalNotification = [app scheduledLocalNotifications];
+    for (int i = 0; i < [listLocalNotification count]; i++)
+    {
+        UILocalNotification* aLocalNotification = [listLocalNotification objectAtIndex:i];
+        NSDictionary *userInfoCurrent = aLocalNotification.userInfo;
+        NSString *aLocalNotifValue = [NSString stringWithFormat:@"%@", [userInfoCurrent valueForKey:@"locatificationName"]];
+        if ([aLocalNotifValue isEqualToString:aValue])
+        {
+            [app cancelLocalNotification:aLocalNotification];
+            break;
+        }
+    }
 }
 
 

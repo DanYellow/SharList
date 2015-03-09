@@ -10,8 +10,6 @@
 
 #import <Parse/Parse.h>
 
-#import "MeetingsListViewController.h"
-
 @interface AppDelegate ()
 
 @property (nonatomic, retain) UITabBarController *tabBarController;
