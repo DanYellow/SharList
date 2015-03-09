@@ -95,7 +95,7 @@
     [shareShoundBtn setFrame:CGRectMake(0, 20, screenWidth, 44)];
     [shareShoundBtn setTitle:@"Parlez de Shound à vos amis" forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [shareShoundBtn setHighlighted:YES];
+    [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
 
     // UITableview of user selection (what user likes)
