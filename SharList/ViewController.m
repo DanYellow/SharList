@@ -1047,10 +1047,7 @@
     detailsMediaViewController.delegate = self;
 //    // Trick for weird issue about present view and pushview
     detailsMediaViewController.tabBarController.tabBar.hidden = YES;
-    
-    [self disappearsSearchBar];
-    [self.searchController setActive:NO];
-    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+    [self.tabBarController.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 
 // Title of categories
