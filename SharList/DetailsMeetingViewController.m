@@ -356,6 +356,8 @@
     [self getServerDatasForFbID:self.metUserId];
 }
 
+
+// About to remove
 - (void) seeFbAccount:(UIBarButtonItem*)sender
 {
 //    fb://profile/(fbid)
@@ -417,7 +419,7 @@
                 oldUserTaste.taste = arrayData;
                 [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
                 
-                 [self displayMatchRateList];
+                [self displayMatchRateList];
                 
                 UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
                 [tableView reloadData];
@@ -446,6 +448,7 @@
             NSMutableArray *favsIDUpdatedList = [[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] mutableCopy];
             [favsIDUpdatedList removeObject:self.metUserId];
             [[NSUserDefaults standardUserDefaults] setObject:favsIDUpdatedList forKey:@"favsIDUpdatedList"];
+            [[NSNotificationCenter defaultCenter] postNotificationName: @"seenFavUpdated" object:nil userInfo:nil];
         }
     }
 }

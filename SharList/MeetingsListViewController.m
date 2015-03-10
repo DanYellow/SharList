@@ -216,6 +216,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushNotificationReceived:) name:@"pushNotificationFavorite" object:nil];
+    
+    // Called when user see a fav discover
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableview) name:@"seenFavUpdated" object:nil];
 }
 
 - (void) pushNotificationReceived:(NSNotification*)notification
@@ -235,7 +238,6 @@
 {
     UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatas)];
     self.navigationItem.rightBarButtonItem = refreshBtn;
-    
 
     if ([userPreferences objectForKey:@"lastManualUpdate"]) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -536,7 +538,7 @@
         commonTasteCount += result.count;
     }
     
-    NSString *detailTextLabelString = @"";
+    NSString *textLabelString = @"";
     
     CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
     if (isnan(commonTasteCountPercent)) {
@@ -551,30 +553,30 @@
     if (commonTasteCount == 0) {
         cell.detailTextLabel.textColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
         cell.textLabel.textColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
-        detailTextLabelString = NSLocalizedString(@"nothing common", nil);
+        textLabelString = NSLocalizedString(@"nothing common", nil);
     } else {
         NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
         [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
         
         NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:commonTasteCountPercent]];
         
-        detailTextLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ in common", nil), strNumber];
+        textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ in common", nil), strNumber];
         
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.detailTextLabel.textColor = [UIColor whiteColor];
     }
     
-    
+//    NSLog(@"cell.textLabel : %@", cell.textLabel.font);
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
   
-    cell.textLabel.text = detailTextLabelString;
+    cell.textLabel.text = textLabelString;
+    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
     
 //    NSDictionary *userMetDatas = @{@"userMetFbId" : [currentUserMet fbid], @"commonTasteCountPercent" : [NSNumber numberWithFloat:commonTasteCountPercent]};
 
     cell.model = [currentUserMet fbid];
-//    [cell.model setObject:[NSNumber numberWithFloat:commonTasteCountPercent] forKey:@"commonTasteCountPercent"];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.indentationLevel = 1;
     
@@ -585,6 +587,9 @@
         NSString *indicateFavUpdatedString = @" - ";
         indicateFavUpdatedString = [indicateFavUpdatedString stringByAppendingString:NSLocalizedString(@"updated", nil)];
         cell.detailTextLabel.text = [cell.detailTextLabel.text stringByAppendingString:indicateFavUpdatedString];
+        
+        cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:11.0];
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
     }
     
     

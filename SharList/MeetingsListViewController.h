@@ -56,6 +56,7 @@
 - (void) navigationItemRightButtonEnablingManagement;
 - (void) noInternetAlert;
 - (void) fetchUsersDatas;
+- (void) reloadTableview;
 
 
 @end

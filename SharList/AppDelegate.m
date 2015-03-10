@@ -197,14 +197,16 @@
 //        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 
         
-        
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"didReceiveRemoteNotification"];
+//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"didReceiveRemoteNotification"];
         NSLog(@"application.applicationIconBadgeNumber : %lu", (long)application.applicationIconBadgeNumber);
-        if (application.applicationIconBadgeNumber <= 1) {
+        if (application.applicationIconBadgeNumber == 1) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
         } else {
             NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"]];
             [favsUserUpdatedMSet addObject:userInfo[@"userfbid"]];
             [[NSUserDefaults standardUserDefaults] setObject:[favsUserUpdatedMSet allObjects] forKey:@"favsIDUpdatedList"];
+            self.tabBarController.selectedIndex = 0;
         }
     } else {
         NSLog(@"didReceiveRemoteNotification active");
@@ -243,7 +245,13 @@
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     
     // Notify all listener that application have been put in foreground
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"didEnterForeground" object:nil userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"didEnterForeground" object:nil userInfo:nil];
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"didReceiveRemoteNotification"]) {
+        MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
+        [meetingsListViewController reloadTableview];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"didReceiveRemoteNotification"];
+    }
     
     if ([[UIApplication sharedApplication] applicationIconBadgeNumber] > 0) {
         [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", (long)[[UIApplication sharedApplication] applicationIconBadgeNumber]];
