@@ -173,7 +173,7 @@
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
         NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"];
-        NSDictionary *apiParams = @{@"fbiduser" : [userMet fbid], @"isspecificuser" : @"yes"};
+        NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue], @"isspecificuser" : @"yes"};
 
         [manager POST:urlAPI
           parameters:apiParams

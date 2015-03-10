@@ -1143,6 +1143,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // 7 secondes after update user list we update the database with new datas
         // Like this we are "sure" that user really wants to add this media to his list
         [self performSelector:@selector(updateServerDatasForFbIDTimer:) withObject:[NSNumber numberWithBool:isAdding] afterDelay:7.0];
+        
+        [self cancelLocalNotificationWithValueForKey:@"updateList"];
+        UILocalNotification *localNotification = [UILocalNotification new];
+        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:NSCalendarUnitMonth]; //One month later
+        localNotification.soundName = UILocalNotificationDefaultSoundName;
+        localNotification.applicationIconBadgeNumber = 0;
+        localNotification.alertAction = nil;
+        localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyNotUpdateList", nil);
+        localNotification.userInfo = @{@"locatificationName" : @"updateList"};
+        [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     }];
 }
 
@@ -1256,6 +1266,24 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iTunesURLString]];
 }
+
+- (void) cancelLocalNotificationWithValueForKey:(NSString*)aValue
+{
+    UIApplication *app = [UIApplication sharedApplication];
+    NSArray *listLocalNotification = [app scheduledLocalNotifications];
+    for (int i = 0; i < [listLocalNotification count]; i++)
+    {
+        UILocalNotification* aLocalNotification = [listLocalNotification objectAtIndex:i];
+        NSDictionary *userInfoCurrent = aLocalNotification.userInfo;
+        NSString *aLocalNotifValue = [NSString stringWithFormat:@"%@", [userInfoCurrent valueForKey:@"locatificationName"]];
+        if ([aLocalNotifValue isEqualToString:aValue])
+        {
+            [app cancelLocalNotification:aLocalNotification];
+            break;
+        }
+    }
+}
+
 
 
 //<a href="https://itunes.apple.com/fr/movie/scarface-1983/id371011281" target="itunes_store">Scarface (1983)</a>

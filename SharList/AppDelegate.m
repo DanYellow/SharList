@@ -219,6 +219,8 @@
         
         MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
         [meetingsListViewController fetchUsersDatas];
+    } else if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"updateList"]) {
+        self.tabBarController.selectedIndex = 1;
     }
     
 }
