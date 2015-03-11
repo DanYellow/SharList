@@ -707,8 +707,7 @@
     ) {
         if (!self.locationManager) {
             self.locationManager = [CLLocationManager new];
-//            self.locationManager.delegate = self;
-            [self.locationManager startUpdatingLocation];
+            self.locationManager.delegate = self;
         }
         
         self.locationManager.distanceFilter = distanceFilterLocalisation;
@@ -717,6 +716,7 @@
         if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self.locationManager requestAlwaysAuthorization];
         }
+        [self.locationManager startUpdatingLocation];
     }
     
     // If user is accepts geoloc we update his location BEFORE fetch new users
@@ -733,13 +733,13 @@
     return request;
 }
 
-//- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
-//{
-//    CLLocation *currentLocation = [locations lastObject];
-//    
-//    
-////    self.locationManager.location.coordinate.latitude = currentLocation.coordinate.latitude;
-//}
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    CLLocation *currentLocation = [locations lastObject];
+    
+    
+//    self.locationManager.location.coordinate.latitude = currentLocation.coordinate.latitude;
+}
 
 - (void) saveRandomUserDatas:(NSData *)datas
 {

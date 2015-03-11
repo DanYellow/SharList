@@ -42,6 +42,8 @@
     UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
+    
+//    [self updateUserLocation:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -510,22 +512,7 @@
     
     
     // Update location from server
-    if ([userPreferences objectForKey:@"lastManualUpdate"] && [self connected] == YES) {
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        
-        NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
-        
-        NSInteger hours = [lastDataFetchingInterval hour];
-        NSInteger minutes = [lastDataFetchingInterval minute];
-        NSInteger seconds = [lastDataFetchingInterval second];
-        
-        // We update user location to the server at launch only every 2 hours
-        NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        if (delayLastMeetingUser > 3600)
-        {
-            [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
-        }
-    }
+    [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
 }
 
 - (void) displayUserTasteList
@@ -559,8 +546,6 @@
         
         return;
     }
-    
-    
     
     [UIView animateWithDuration:0.5 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -630,59 +615,6 @@
     
     if (completionBlock != nil) completionBlock(YES);
 }
-
-
-//- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
-//{
-//    if(!self.isFirstFBLoginDone) {
-//        return;
-//    }
-//    
-//    FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-//    fbLoginButton.hidden = YES;
-//    // We format the user id (NSString) to an NSNumber to be stored in NSUserDefault key
-//    NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
-//    [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-//    NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
-//    
-//    [userPreferences setObject:fbIDNumber forKey:@"currentUserfbID"];
-//    // This bool is here to manage some weirdo behaviour with SWRevealViewController (not sure)
-//    
-//    
-////    NSLog(@"user %@ | %@:", user, user.objectID);
-//    
-//    // Here we add userid (aka user.objectID) to the database
-//    
-//    //        UserTaste *userTaste = [UserTaste  MR_createEntity];
-//    //        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:productManagers];
-//    //        userTaste.taste = arrayData;
-//    //        userTaste.fbid = [NSNumber numberWithLong:1387984218159370];
-//    //        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-//
-//    [self userConnectionForFbID:fbIDNumber];
-//    
-//    self.FirstFBLoginDone = NO;
-//}
-//
-//
-//// When user logged out
-//- (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
-//{
-////    ConnectViewController *connectViewController = [ConnectViewController new];
-////    
-////    UIWindow* mainWindow = [[UIApplication sharedApplication] keyWindow];
-////    [mainWindow addSubview: connectViewController.view];
-////    [self userLoggedOutOffb:nil completion:^(BOOL success) {
-////        if (success) {
-////            [self.tabBarController setSelectedIndex:0];
-////            FBLoginView *fbLoginButton = (FBLoginView*)[self.view viewWithTag:1];
-////            fbLoginButton.frame = CGRectMake((self.view.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
-////            fbLoginButton.hidden = NO;
-////        } else {
-////            // Could not log in. Display alert to user.
-////        }
-////    }];
-//}
 
 
 #pragma mark - Tableview configuration
@@ -1144,11 +1076,32 @@
 
 - (void) updateUserLocation:(NSNumber*)userfbID
 {
-    if ((!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) && [self connected] == NO) {
+    // Update location from server
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"lastManualUpdate"] &&
+        [self connected] == YES &&
+        [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+        
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        
+
+        NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
+        
+        NSInteger hours = [lastDataFetchingInterval hour];
+        NSInteger minutes = [lastDataFetchingInterval minute];
+        NSInteger seconds = [lastDataFetchingInterval second];
+        
+        // We update user location to the server at launch only every 2 hours
+        NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
+        
+        if (delayLastMeetingUser < 0) // 3600
+        {
+            return;
+        }
+    } else {
         return;
     }
     
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"]) {
+    if ((!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) && [self connected] == NO) {
         return;
     }
     
@@ -1156,20 +1109,28 @@
         self.locationManager = [CLLocationManager new];
         self.locationManager.distanceFilter = distanceFilterLocalisation;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        self.locationManager.delegate = self;
     }
     
     // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
     if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
         [self.locationManager requestAlwaysAuthorization];
     }
-    [self.locationManager startUpdatingLocation];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSDictionary *params = @{@"fbiduser": userfbID,
-                             @"latitude": [NSNumber numberWithDouble:self.locationManager.location.coordinate.latitude],
-                             @"longitude": [NSNumber numberWithDouble:self.locationManager.location.coordinate.longitude]};
+    [self.locationManager startUpdatingLocation];
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    CLLocation *location = [locations lastObject];
+    
+    AFHTTPRequestOperationManager *HTTPManager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *params = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
+                             @"latitude": [NSNumber numberWithDouble:location.coordinate.latitude],
+                             @"longitude": [NSNumber numberWithDouble:location.coordinate.longitude]};
     NSString *updateUserLocationURL = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"];
-    [manager POST:updateUserLocationURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [HTTPManager POST:updateUserLocationURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.locationManager stopUpdatingLocation];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);

@@ -24,7 +24,7 @@
 
 
 #define BGFETCHDELAY 20 //3920
-#define distanceFilterLocalisation 500
+#define distanceFilterLocalisation 700
 
 #define MR_ENABLE_ACTIVE_RECORD_LOGGING 1
 #import "CoreData+MagicalRecord.h"

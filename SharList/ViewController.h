@@ -26,7 +26,7 @@
 #import "NSDictionary+FilterKeysForNullObj.h"
 
 @interface ViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate>
+UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate, CLLocationManagerDelegate>
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;

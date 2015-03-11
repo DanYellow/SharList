@@ -388,6 +388,7 @@
             self.locationManager = [CLLocationManager new];
             self.locationManager.distanceFilter = distanceFilterLocalisation;
             self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+            self.locationManager.delegate = self;
         }
         
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
@@ -395,17 +396,6 @@
             [self.locationManager requestAlwaysAuthorization];
         }
         [self.locationManager startUpdatingLocation];
-        
-        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-        NSDictionary *params = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
-                                 @"latitude": [NSNumber numberWithDouble:self.locationManager.location.coordinate.latitude],
-                                 @"longitude": [NSNumber numberWithDouble:self.locationManager.location.coordinate.longitude]};
-        NSString *updateUserLocationURL = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"];
-        [manager POST:updateUserLocationURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [self.locationManager stopUpdatingLocation];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Error: %@", error);
-        }];
         
         // If user try to enable geoloc but he doesn't enable it
         // He gets an error and the switch is set to false
@@ -463,7 +453,18 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-//    [self.locationManager stopUpdatingLocation];
+    CLLocation *location = [locations lastObject];
+    
+    AFHTTPRequestOperationManager *HTTPManager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *params = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
+                             @"latitude": [NSNumber numberWithDouble:location.coordinate.latitude],
+                             @"longitude": [NSNumber numberWithDouble:location.coordinate.longitude]};
+    NSString *updateUserLocationURL = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"];
+    [HTTPManager POST:updateUserLocationURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self.locationManager stopUpdatingLocation];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 - (BOOL) userLocationAuthorization
