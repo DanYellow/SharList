@@ -11,7 +11,6 @@ target "SharList" do
 	pod 'JLTMDbClient', '~> 0.2'
 	pod 'Parse', '~> 1.6'
 	pod "XCDYouTubeKit", "~> 2.1.1"
-	# pod "youtube-ios-player-helper", "~> 0.1.1"
 end
 
 target "SharListTests" do
