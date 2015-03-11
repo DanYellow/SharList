@@ -22,8 +22,9 @@
 #define DegreesToRadians(x) ((x) * M_PI / 180.0)
 #define CGRectSetPos( r, x, y ) CGRectMake( x, y, r.size.width, r.size.height )
 
-//1800
-#define BGFETCHDELAY 3920 //3920
+
+#define BGFETCHDELAY 20 //3920
+#define distanceFilterLocalisation 500
 
 #define MR_ENABLE_ACTIVE_RECORD_LOGGING 1
 #import "CoreData+MagicalRecord.h"

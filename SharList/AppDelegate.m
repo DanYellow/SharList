@@ -186,42 +186,33 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    
-//    NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithObjects:@"foo", @"foo", @"machin", @"pikachu", nil];
-//    NSLog(@"favsUserUpdatedMSet : %@", favsUserUpdatedMSet);
-    
-    
-
     if (application.applicationState != UIApplicationStateActive) {
         [PFPush handlePush:userInfo];
 //        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 
         
+        NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"]];
+        [favsUserUpdatedMSet addObject:userInfo[@"userfbid"]];
+        [[NSUserDefaults standardUserDefaults] setObject:[favsUserUpdatedMSet allObjects] forKey:@"favsIDUpdatedList"];
+        
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"didReceiveRemoteNotification"];
-//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"didReceiveRemoteNotification"];
-        NSLog(@"application.applicationIconBadgeNumber : %lu", (long)application.applicationIconBadgeNumber);
-        if (application.applicationIconBadgeNumber == 1) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
-        } else {
-            NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"]];
-            [favsUserUpdatedMSet addObject:userInfo[@"userfbid"]];
-            [[NSUserDefaults standardUserDefaults] setObject:[favsUserUpdatedMSet allObjects] forKey:@"favsIDUpdatedList"];
-            self.tabBarController.selectedIndex = 0;
-        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
     } else {
         NSLog(@"didReceiveRemoteNotification active");
     }
-    //[UIApplication sharedApplication].applicationState updateCurrentUser
 }
 
 - (void) application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
     if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"discoverNew"]) {
+        // User doesn't discover thing for a longtime
         [[self.tabBarController.tabBar.items objectAtIndex:0] setBadgeValue:nil];
         self.tabBarController.selectedIndex = 0;
         
         MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
         [meetingsListViewController fetchUsersDatas];
     } else if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"updateList"]) {
+        // User doesn't change his list for a longtime
         self.tabBarController.selectedIndex = 1;
     }
     

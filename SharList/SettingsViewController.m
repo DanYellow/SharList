@@ -383,13 +383,30 @@
     
     if ([switchControl isOn]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"geoLocEnabled"];
-        self.locationManager = [[CLLocationManager alloc] init];
-        self.locationManager.delegate = self;
+        
+        if (!self.locationManager) {
+            self.locationManager = [CLLocationManager new];
+            self.locationManager.distanceFilter = distanceFilterLocalisation;
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        }
+        
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
         if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self.locationManager requestAlwaysAuthorization];
         }
         [self.locationManager startUpdatingLocation];
+        
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        NSDictionary *params = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
+                                 @"latitude": [NSNumber numberWithDouble:self.locationManager.location.coordinate.latitude],
+                                 @"longitude": [NSNumber numberWithDouble:self.locationManager.location.coordinate.longitude]};
+        NSString *updateUserLocationURL = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"];
+        [manager POST:updateUserLocationURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [self.locationManager stopUpdatingLocation];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+        }];
+        
         // If user try to enable geoloc but he doesn't enable it
         // He gets an error and the switch is set to false
         if (![self userLocationAuthorization]) {}
@@ -446,7 +463,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    [self.locationManager stopUpdatingLocation];
+//    [self.locationManager stopUpdatingLocation];
 }
 
 - (BOOL) userLocationAuthorization

@@ -521,7 +521,7 @@
         
         // We update user location to the server at launch only every 2 hours
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        if (delayLastMeetingUser > 7200)
+        if (delayLastMeetingUser > 3600)
         {
             [self updateUserLocation:[userPreferences objectForKey:@"currentUserfbID"]];
         }
@@ -1047,7 +1047,10 @@
     detailsMediaViewController.delegate = self;
 //    // Trick for weird issue about present view and pushview
     detailsMediaViewController.tabBarController.tabBar.hidden = YES;
-    [self.tabBarController.navigationController pushViewController:detailsMediaViewController animated:YES];
+    
+    [self disappearsSearchBar];
+    [self.searchController setActive:NO];
+    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 
 // Title of categories
@@ -1151,7 +1154,7 @@
     
     if (!self.locationManager) {
         self.locationManager = [CLLocationManager new];
-        self.locationManager.distanceFilter = 200;
+        self.locationManager.distanceFilter = distanceFilterLocalisation;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
     }
     

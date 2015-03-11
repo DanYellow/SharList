@@ -225,6 +225,7 @@
 {
     NSDictionary* userInfo = notification.userInfo;
     [self.navigationController popToRootViewControllerAnimated:NO];
+    
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.metUserId = [userInfo objectForKey:@"userfbid"];
     detailsMeetingViewController.delegate = self;
@@ -710,7 +711,7 @@
             [self.locationManager startUpdatingLocation];
         }
         
-        self.locationManager.distanceFilter = 1000;
+        self.locationManager.distanceFilter = distanceFilterLocalisation;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
         if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
