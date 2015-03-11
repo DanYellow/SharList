@@ -633,23 +633,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     overlayAlphaAnim.duration = 0.42;
     overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
     [overlayLayer addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
-    
-    
-//    // Blurred background
-//    UIImageView *bluredBackgroundImageView = [[UIImageView alloc] initWithImage: [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:data[@"Poster"]]]]];
-//    bluredBackgroundImageView.alpha = 0;
-//    [bluredBackgroundImageView setFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-//    
-//    UIVisualEffect *blurEffect;
-//    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-//    
-//    UIVisualEffectView *visualEffectView;
-//    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-//    
-//    visualEffectView.frame = bluredBackgroundImageView.bounds;
-//    [bluredBackgroundImageView addSubview:visualEffectView];
-//    
-//    [infoMediaView insertSubview:bluredBackgroundImageView atIndex:0];
+
 
     UILabel *mediaTitleLabel = (UILabel*)[self.view viewWithTag:4];
     
@@ -662,7 +646,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
     if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
-        // the movie db doesnot provide description for this media
+        // the movie db does not provide description for this media
         mediaDescription.text = NSLocalizedString(@"nodescription", nil);
     } else {
         mediaDescription.text = [data[@"overview"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -690,13 +674,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }
                      completion:nil];
     
-    NSMutableString *genresString = [NSMutableString stringWithString:NSLocalizedString(@"Genres", nil)];
+    NSString *genresString = NSLocalizedString(@"Genres", nil);
+    
+    NSMutableArray *genresArray = [NSMutableArray new];
     for (id genre in data[@"genres"]) {
-        [genresString appendString:[genre[@"name"] stringByAppendingString:@", "]];
+        [genresArray addObject:genre[@"name"]];
     }
     
+    genresString = [genresString stringByAppendingString:[genresArray componentsJoinedByString:@", "]];
+    
     UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaDescriptionY - 38, screenWidth - 30, 25)];
-    mediaGenresLabel.text = [genresString substringToIndex:[genresString length] - 2]; // Space + comma
+    mediaGenresLabel.text = genresString; // Space + comma
     mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
     mediaGenresLabel.textAlignment = NSTextAlignmentLeft;
     mediaGenresLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
