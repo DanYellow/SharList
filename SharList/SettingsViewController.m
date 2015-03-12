@@ -584,7 +584,7 @@
     params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
     params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
     params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
-        
+  
     // If the Facebook app is installed and we can present the share dialog
     if ([FBDialogs canPresentShareDialogWithParams:params]) {
         [FBDialogs presentShareDialogWithLink:params.link

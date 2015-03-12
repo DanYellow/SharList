@@ -21,7 +21,7 @@
 // 3 : emptyFavoritesLabel
 // 4 : emptyMeetingsLabel
 // 5 : segmentedControlView
-// 6 : emptyFacebookFriendsLabel
+// 6 : emptyFacebookFriendsLabelView
 
 @implementation MeetingsListViewController
 
@@ -193,34 +193,40 @@
     
     
     // Message for no meetings /:
-    UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 50)];
+    UIView *emptyFacebookFriendsLabelView = [[UIView alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 99.0)];
+    emptyFacebookFriendsLabelView.tag = 6;
+    emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+    emptyFacebookFriendsLabelView.userInteractionEnabled = YES;
+    emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
+    [userMeetingsListTableView addSubview:emptyFacebookFriendsLabelView];
+    
+    UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, screenWidth - 24, 50)];
     emptyFacebookFriendsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
     emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];
-    emptyFacebookFriendsLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+
     emptyFacebookFriendsLabel.numberOfLines = 0;
     emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
     emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emptyFacebookFriendsLabel.backgroundColor = [UIColor clearColor];
-    emptyFacebookFriendsLabel.tag = 6;
-    emptyFacebookFriendsLabel.hidden = YES;
-    [userMeetingsListTableView addSubview:emptyFacebookFriendsLabel];
+    emptyFacebookFriendsLabel.hidden = NO;
+    [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareShoundBtn setFrame:CGRectMake(0, 55, emptyFacebookFriendsLabel.frame.size.width, 44)];
     [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
-    [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [shareShoundBtn setTitleColor:[UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f] forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
     [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
     shareShoundBtn.highlighted = YES;
-    shareShoundBtn.backgroundColor = [UIColor clearColor];
+    shareShoundBtn.userInteractionEnabled = YES;
+    shareShoundBtn.backgroundColor = [UIColor whiteColor];
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
-    [emptyFacebookFriendsLabel addSubview:shareShoundBtn];
-    
+    [emptyFacebookFriendsLabelView addSubview:shareShoundBtn];
     
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
-    loadingIndicator = [[UIActivityIndicatorView alloc] init];
+    loadingIndicator = [UIActivityIndicatorView new];
     loadingIndicator.center = self.view.center;
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     loadingIndicator.hidesWhenStopped = YES;
@@ -400,8 +406,8 @@
     emptyFavoritesLabel.hidden = YES;
     
     // Vous avez pas d'amis facebook sur Shound
-    UILabel *emptyFacebookFriendsLabel = (UILabel*)[tableView viewWithTag:6];
-    emptyFacebookFriendsLabel.hidden = YES;
+    UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
+    emptyFacebookFriendsLabelView.hidden = YES;
     
     // User have made no meetings
     if ([distinctDays count] == 0) {
@@ -414,7 +420,6 @@
             // Filter disabled
             case 0:
             {
-//                segmentedControlView.hidden = YES;
                 emptyMeetingsLabel.hidden = NO;
             }
                 break;
@@ -423,7 +428,6 @@
             case 1:
             {
                 emptyFavoritesLabel.hidden = NO;
-//                segmentedControlView.hidden = NO;
                 UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
                 userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
             }
@@ -431,9 +435,7 @@
                 
             case 2:
             {
-                emptyFacebookFriendsLabel.hidden = NO;
-                NSLog(@"emptyFacebookFriendsLabel");
-//                segmentedControlView.hidden = NO;
+                emptyFacebookFriendsLabelView.hidden = NO;
                 UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
                 userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
             }
@@ -1004,7 +1006,7 @@
     params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
     params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
     params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
-    
+    NSLog(@"%s", __FUNCTION__);
     // If the Facebook app is installed and we can present the share dialog
     if ([FBDialogs canPresentShareDialogWithParams:params]) {
         [FBDialogs presentShareDialogWithLink:params.link
