@@ -386,10 +386,13 @@
         
         if (!self.locationManager) {
             self.locationManager = [CLLocationManager new];
-            self.locationManager.distanceFilter = distanceFilterLocalisation;
-            self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-            self.locationManager.delegate = self;
         }
+        
+        self.locationManager.delegate = self;
+        self.locationManager.distanceFilter = distanceFilterLocalisation;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        self.locationManager.pausesLocationUpdatesAutomatically = NO;
+        self.locationManager.activityType = CLActivityTypeFitness;
         
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
         if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {

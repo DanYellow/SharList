@@ -41,9 +41,7 @@
     // Animate background of cell selected on press back button
     UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
-    [tableView deselectRowAtIndexPath:tableSelection animated:YES];
-    
-//    [self updateUserLocation:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    [tableView deselectRowAtIndexPath:tableSelection animated:YES];    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -1107,10 +1105,13 @@
     
     if (!self.locationManager) {
         self.locationManager = [CLLocationManager new];
-        self.locationManager.distanceFilter = distanceFilterLocalisation;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-        self.locationManager.delegate = self;
     }
+    
+    self.locationManager.delegate = self;
+    self.locationManager.distanceFilter = distanceFilterLocalisation;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.locationManager.pausesLocationUpdatesAutomatically = NO;
+    self.locationManager.activityType = CLActivityTypeFitness;
     
     // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
     if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
