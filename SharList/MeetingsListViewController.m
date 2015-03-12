@@ -21,6 +21,7 @@
 // 3 : emptyFavoritesLabel
 // 4 : emptyMeetingsLabel
 // 5 : segmentedControlView
+// 6 : emptyFacebookFriendsLabel
 
 @implementation MeetingsListViewController
 
@@ -176,7 +177,7 @@
     emptyFavoritesLabel.hidden = YES;
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
-    // Message for no friends /:
+    // Message for no meetings /:
     UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 110)];
     emptyMeetingsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyMeetingsLabel.text = NSLocalizedString(@"You haven't met a person yet", nil);
@@ -188,12 +189,36 @@
     emptyMeetingsLabel.backgroundColor = [UIColor clearColor];
     emptyMeetingsLabel.tag = 4;
     emptyMeetingsLabel.hidden = YES;
-//    [emptyMeetingsLabel sizeToFit];
-//    emptyMeetingsLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, 20.0f);
     [userMeetingsListTableView addSubview:emptyMeetingsLabel];
     
     
-    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];//[[NSMutableArray alloc] initWithArray:[[foo reverseObjectEnumerator] allObjects]]; //foo
+    // Message for no meetings /:
+    UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 50)];
+    emptyFacebookFriendsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
+    emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];
+    emptyFacebookFriendsLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+    emptyFacebookFriendsLabel.numberOfLines = 0;
+    emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
+    emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    emptyFacebookFriendsLabel.backgroundColor = [UIColor clearColor];
+    emptyFacebookFriendsLabel.tag = 6;
+    emptyFacebookFriendsLabel.hidden = YES;
+    [userMeetingsListTableView addSubview:emptyFacebookFriendsLabel];
+    
+    UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [shareShoundBtn setFrame:CGRectMake(0, 55, emptyFacebookFriendsLabel.frame.size.width, 44)];
+    [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
+    [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
+    [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    shareShoundBtn.highlighted = YES;
+    shareShoundBtn.backgroundColor = [UIColor clearColor];
+    [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
+    [emptyFacebookFriendsLabel addSubview:shareShoundBtn];
+    
+    
+    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
@@ -272,7 +297,7 @@
     
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", @[@"364885553677637", @"10205792663674205"]];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", @[@"364885553677637"]];
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
@@ -285,7 +310,8 @@
             filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
         }
             break;
-            
+        
+        // Facebook friends
         case 2:
         {
             filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, facebookFriendsFilter]];
@@ -326,8 +352,6 @@
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
 
-//    NSLog(@"uniqueDateTimes : %@", distinctDays);
-    
     return [[foo reverseObjectEnumerator] allObjects];
 }
 
@@ -371,24 +395,61 @@
     UILabel *emptyMeetingsLabel = (UILabel*)[tableView viewWithTag:4];
     emptyMeetingsLabel.hidden = YES;
     
-    // Vous n'avez pas rencontré de favoris user
+    // Vous n'avez pas de favoris user
     UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
     emptyFavoritesLabel.hidden = YES;
+    
+    // Vous avez pas d'amis facebook sur Shound
+    UILabel *emptyFacebookFriendsLabel = (UILabel*)[tableView viewWithTag:6];
+    emptyFacebookFriendsLabel.hidden = YES;
     
     // User have made no meetings
     if ([distinctDays count] == 0) {
         // We hide the segmented control on page load
         // only if there is nothing among ALL meetings
         // so user can have no favorites but he still has the segmentedControl
-        if (!self.FilterEnabled) {
-            segmentedControlView.hidden = YES;
-            emptyMeetingsLabel.hidden = NO;
-        } else {
-            emptyFavoritesLabel.hidden = NO;
-            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-            userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+        
+        UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+        switch (segmentedControl.selectedSegmentIndex) {
+            // Filter disabled
+            case 0:
+            {
+//                segmentedControlView.hidden = YES;
+                emptyMeetingsLabel.hidden = NO;
+            }
+                break;
+            
+            // Favorites
+            case 1:
+            {
+                emptyFavoritesLabel.hidden = NO;
+//                segmentedControlView.hidden = NO;
+                UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+                userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+            }
+                break;
+                
+            case 2:
+            {
+                emptyFacebookFriendsLabel.hidden = NO;
+                NSLog(@"emptyFacebookFriendsLabel");
+//                segmentedControlView.hidden = NO;
+                UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+                userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+            }
+                break;
+            default:
+                break;
         }
-   
+        
+//        if (!self.FilterEnabled) {
+//            segmentedControlView.hidden = YES;
+//            emptyMeetingsLabel.hidden = NO;
+//        } else {
+//            emptyFavoritesLabel.hidden = NO;
+//            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+//            userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+//        }
         [loadingIndicator stopAnimating];
     }
 
@@ -435,7 +496,7 @@
 
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", @[@"364885553677637", @"10205792663674205"]];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", @[@"364885553677637"]];
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
@@ -930,6 +991,45 @@
             [app cancelLocalNotification:aLocalNotification];
             break;
         }
+    }
+}
+
+
+#pragma mark - Share facebook
+
+- (void) shareFb
+{
+    FBLinkShareParams *params = [FBLinkShareParams new];
+    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
+    params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
+    params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
+    params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+    
+    // If the Facebook app is installed and we can present the share dialog
+    if ([FBDialogs canPresentShareDialogWithParams:params]) {
+        [FBDialogs presentShareDialogWithLink:params.link
+                                         name:params.name
+                                      caption:nil
+                                  description:NSLocalizedString(@"FBLinkShareParams_caption", nil)
+                                      picture:params.picture
+                                  clientState:nil
+                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
+                                          if(error) {
+                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
+                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
+                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
+                                                                         delegate:nil
+                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+                                          }
+                                      }];
+    } else {
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
     }
 }
 
