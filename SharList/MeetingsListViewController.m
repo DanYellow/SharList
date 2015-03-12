@@ -20,6 +20,7 @@
 // 2 : segmentedControl
 // 3 : emptyFavoritesLabel
 // 4 : emptyMeetingsLabel
+// 5 : segmentedControlView
 
 @implementation MeetingsListViewController
 
@@ -117,11 +118,12 @@
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
     
-    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"All", nil), NSLocalizedString(@"Favorites", nil)]];
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"All", nil), NSLocalizedString(@"Favorites", nil), @"Facebook"]];
     
     segmentedControl.frame = CGRectMake(10, 5, screenWidth - 20, 30);
     [segmentedControl addTarget:self action:@selector(diplayFavoritesMeetings:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
+    segmentedControl.tag = 5;
     segmentedControl.tintColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f];
     [segmentedControlView addSubview:segmentedControl];
     
@@ -221,6 +223,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableview) name:@"seenFavUpdated" object:nil];
 }
 
+
 - (void) pushNotificationReceived:(NSNotification*)notification
 {
     NSDictionary* userInfo = notification.userInfo;
@@ -269,12 +272,28 @@
     
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", @[@"364885553677637", @"10205792663674205"]];
+    
+    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
     NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
-    if (self.isFilterEnabled) {
-        filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
-    }
 
+    switch (segmentedControl.selectedSegmentIndex) {
+        // Favorites
+        case 1:
+        {
+            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
+        }
+            break;
+            
+        case 2:
+        {
+            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, facebookFriendsFilter]];
+        }
+            break;
+        default:
+            break;
+    }
     
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates]; // Order by date of meeting
     
@@ -284,6 +303,11 @@
     //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
     int i = 0;
     int fetchLimit = 42; // We display only the 42 last results
+    
+//    NSMutableArray *uniqueDateTimes = [[NSMutableArray alloc] initWithCapacity:fetchLimit];
+//    uniqueDateTimes = [meetings valueForKeyPath:@"@distinctUnionOfObjects.lastMeeting.dateWithoutTime"];
+//    NSLog(@"uniqueDateTimes : %@", uniqueDateTimes);
+    
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
@@ -302,6 +326,7 @@
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
 
+//    NSLog(@"uniqueDateTimes : %@", distinctDays);
     
     return [[foo reverseObjectEnumerator] allObjects];
 }
@@ -313,7 +338,6 @@
 
 - (void) diplayFavoritesMeetings:(id)sender
 {
-    self.FilterEnabled = !self.FilterEnabled;
     [self reloadTableview];
 }
 
@@ -353,7 +377,7 @@
     
     // User have made no meetings
     if ([distinctDays count] == 0) {
-        //We hide the segmented control on page load
+        // We hide the segmented control on page load
         // only if there is nothing among ALL meetings
         // so user can have no favorites but he still has the segmentedControl
         if (!self.FilterEnabled) {
@@ -364,6 +388,7 @@
             UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
             userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
         }
+   
         [loadingIndicator stopAnimating];
     }
 
@@ -407,26 +432,37 @@
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", @[@"364885553677637", @"10205792663674205"]];
     
-    NSCompoundPredicate *filterPredicates;
-    if (self.isFilterEnabled) {
-        filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
-    } else {
-        filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
+    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+    
+    NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
+    
+    switch (segmentedControl.selectedSegmentIndex) {
+        // Favorites
+        case 1:
+        {
+            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
+        }
+            break;
+            
+        // Facebook friends
+        case 2:
+        {
+            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, facebookFriendsFilter]];
+        }
+            break;
+        default:
+            break;
     }
+
 
     // We don't want the taste of the current user
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
-//    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
-//    if ([meetings count] == 0) {
-//        emptyFavoritesLabel.hidden = NO;
-//        return 0;
-//    } else {
-//        emptyFavoritesLabel.hidden = YES;
-//    }
-    
+
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     [dateFormatter setDateStyle:NSDateFormatterShortStyle];
 
@@ -509,6 +545,7 @@
             [meetingsOfDay addObject:[daysList objectAtIndex:i]];
         }
     }
+
 
     // Calc of the stats
     UserTaste *currentUserMet = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
@@ -637,7 +674,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             completionHandler(UIBackgroundFetchResultFailed);
         } else {
@@ -665,7 +702,7 @@
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     
-    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             [loadingIndicator stopAnimating];
             [self noInternetAlert];
@@ -707,9 +744,10 @@
     ) {
         if (!self.locationManager) {
             self.locationManager = [CLLocationManager new];
-            self.locationManager.delegate = self;
+            
         }
         
+        self.locationManager.delegate = self;
         self.locationManager.distanceFilter = distanceFilterLocalisation;
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
@@ -737,7 +775,7 @@
 {
     CLLocation *currentLocation = [locations lastObject];
     
-    
+//    self.locationManager.location.coordinate.latitude = currentLocation.coordinate.latitude;
 //    self.locationManager.location.coordinate.latitude = currentLocation.coordinate.latitude;
 }
 
