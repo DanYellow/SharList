@@ -301,9 +301,8 @@
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@",
                                    [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     
-    
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", @[@"364885553677637"]];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"]];
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
@@ -328,7 +327,7 @@
     }
     
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates]; // Order by date of meeting
-    
+
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
@@ -498,7 +497,7 @@
 
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", @[@"364885553677637"]];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"]];
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
@@ -667,7 +666,7 @@
         cell.detailTextLabel.textColor = [UIColor whiteColor];
     }
     
-//    NSLog(@"cell.textLabel : %@", cell.textLabel.font);
+
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
   
@@ -1006,7 +1005,7 @@
     params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
     params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
     params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
-    NSLog(@"%s", __FUNCTION__);
+
     // If the Facebook app is installed and we can present the share dialog
     if ([FBDialogs canPresentShareDialogWithParams:params]) {
         [FBDialogs presentShareDialogWithLink:params.link

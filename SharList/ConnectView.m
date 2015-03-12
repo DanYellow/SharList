@@ -95,17 +95,29 @@
 {
     self.hidden = YES;
     
-//    FBRequest* friendsRequest = [FBRequest requestForMyFriends];
+    FBRequest* friendsRequest = [FBRequest requestForMyFriends];
 //        FBRequest* friendsRequest = [FBRequest requestWithGraphPath:@"me?fields=friends.fields(first_name,last_name)" parameters:nil HTTPMethod:@"GET"];
-//    [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-//                                                  NSDictionary* result,
-//                                                  NSError *error) {
-//        NSArray* friends = [result objectForKey:@"friends"];
-//        NSLog(@"%@", result);
-//        for (NSDictionary<FBGraphUser>* friend in friends) {
-//            NSLog(@"I have a friend named %@ with id %@", friend.name, friend.objectID);
-//        }
-//    }];
+    [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+                                                  NSDictionary* result,
+                                                  NSError *error) {
+        NSArray* friends = [result objectForKey:@"friends"];
+        NSLog(@"%@", friends);
+        for (NSDictionary<FBGraphUser>* friend in friends) {
+            NSLog(@"I have a friend named %@ with id %@", friend.name, friend.objectID);
+        }
+    }];
+    
+    NSArray *resultArray = [@[@{
+                                  @"fbid" : @"1387984218155126"
+                                  },@{
+                                  @"fbid" : @"364885553677637"
+                                  },@{
+                                  @"fbid" : @"1387984218155378"
+                                  },@{
+                                  @"fbid" : @"1494405967495234"
+                                  }] valueForKey:@"fbid"];
+
+    [[NSUserDefaults standardUserDefaults] setObject:resultArray forKey:@"facebookFriendsList"];
 }
 
 // User quits the app
