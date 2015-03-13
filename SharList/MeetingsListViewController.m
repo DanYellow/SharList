@@ -22,6 +22,7 @@
 // 4 : emptyMeetingsLabel
 // 5 : segmentedControlView
 // 6 : emptyFacebookFriendsLabelView
+// 7 : allowFriendsBtn
 
 @implementation MeetingsListViewController
 
@@ -192,7 +193,7 @@
     [userMeetingsListTableView addSubview:emptyMeetingsLabel];
     
     
-    // Message for no meetings /:
+    // Message for no fb friends /:
     UIView *emptyFacebookFriendsLabelView = [[UIView alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 99.0)];
     emptyFacebookFriendsLabelView.tag = 6;
     emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
@@ -204,7 +205,6 @@
     emptyFacebookFriendsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
     emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];
-
     emptyFacebookFriendsLabel.numberOfLines = 0;
     emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
     emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -219,10 +219,31 @@
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
     [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
     shareShoundBtn.highlighted = YES;
-    shareShoundBtn.userInteractionEnabled = YES;
     shareShoundBtn.backgroundColor = [UIColor whiteColor];
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     [emptyFacebookFriendsLabelView addSubview:shareShoundBtn];
+    
+    if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
+        UIButton *allowFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [allowFriendsBtn setFrame:CGRectMake(0, shareShoundBtn.frame.origin.y + shareShoundBtn.frame.size.height + 25, emptyFacebookFriendsLabel.frame.size.width, 44)];
+        [allowFriendsBtn setTitle:NSLocalizedString(@"authorize fb friends", nil) forState:UIControlStateNormal];
+        [allowFriendsBtn setTitleColor:[UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f] forState:UIControlStateNormal];
+        [allowFriendsBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
+        [allowFriendsBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+        allowFriendsBtn.highlighted = YES;
+        allowFriendsBtn.tag = 7;
+        allowFriendsBtn.backgroundColor = [UIColor whiteColor];
+        [allowFriendsBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
+        [emptyFacebookFriendsLabelView addSubview:allowFriendsBtn];
+    }
+    
+    
+    UIView *emptyFacebookFriendsLabelLastView = [emptyFacebookFriendsLabelView.subviews lastObject];
+    CGRect frameRect = emptyFacebookFriendsLabelView.frame;
+    frameRect.size.height = emptyFacebookFriendsLabelLastView.frame.size.height + emptyFacebookFriendsLabelLastView.frame.origin.y;
+    emptyFacebookFriendsLabelView.frame = frameRect;
+//    emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+
     
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
@@ -996,7 +1017,17 @@
 }
 
 
-#pragma mark - Share facebook
+#pragma mark - facebook
+
+- (void) allowFacebookFriendsPermission
+{
+    [FBSession.activeSession requestNewPublishPermissions:@[@"user_friends"]
+                                          defaultAudience:FBSessionDefaultAudienceNone
+                                        completionHandler:^(FBSession *session, NSError *error){
+                                            UIButton *allowFriendsBtn = (UIButton*)[self.view viewWithTag:7];
+                                            allowFriendsBtn.hidden = YES;
+                                        }];
+}
 
 - (void) shareFb
 {

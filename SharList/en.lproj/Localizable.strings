@@ -51,6 +51,7 @@
 "numberOfJSONErrorsMaxReached" = "Too bad, the server has no datas for you.";
 "localNotificationAlertActionRefresh" = "discover";
 "localNotificationAlertBodyRefresh" = "There are always new things to discover";
+"authorize fb friends" = "I would like to see my friends";
 
 // DetailsMeetingsViewController
 "met %@ times" = "discovered %@ time(s)";

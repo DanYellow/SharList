@@ -54,7 +54,7 @@
 "%@ in common" = "%@ de goût en commun";
 "localNotificationAlertActionRefresh" = "découvrir";
 "localNotificationAlertBodyRefresh" = "Il y a toujours de nouvelles choses à découvrir";
-
+"authorize fb friends" = "J'aimerais voir mes amis";
 
 //Settings view controller
 "Settings" = "Réglages";

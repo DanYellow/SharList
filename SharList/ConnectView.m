@@ -117,7 +117,7 @@
                                   @"fbid" : @"1494405967495234"
                                   }] valueForKey:@"fbid"];
 
-    [[NSUserDefaults standardUserDefaults] setObject:resultArray forKey:@"facebookFriendsList"];
+    [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
 }
 
 // User quits the app

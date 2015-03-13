@@ -575,7 +575,7 @@
     return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
-#pragma mark - Share facebook
+#pragma mark - facebook
 
 - (void) shareFb
 {
