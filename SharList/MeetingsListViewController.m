@@ -23,6 +23,7 @@
 // 5 : segmentedControlView
 // 6 : emptyFacebookFriendsLabelView
 // 7 : allowFriendsBtn
+// 8 : emptyFacebookFriendsLabel
 
 @implementation MeetingsListViewController
 
@@ -206,20 +207,33 @@
     emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
     emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];
     emptyFacebookFriendsLabel.numberOfLines = 0;
+    emptyFacebookFriendsLabel.tag = 8;
     emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
     emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emptyFacebookFriendsLabel.backgroundColor = [UIColor clearColor];
-    emptyFacebookFriendsLabel.hidden = NO;
+    
+    // If the user refuse the user_friends permission we don't show this part
+    if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
+        emptyFacebookFriendsLabel.hidden = YES;
+    } else {
+        emptyFacebookFriendsLabel.hidden = NO;
+    }
+    
     [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareShoundBtn setFrame:CGRectMake(0, 55, emptyFacebookFriendsLabel.frame.size.width, 44)];
+    if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
+        shareShoundBtn.frame = CGRectMake(0.0, 0.0, screenWidth - 24, 50);
+    }
     [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f] forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
     [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
     shareShoundBtn.highlighted = YES;
     shareShoundBtn.backgroundColor = [UIColor whiteColor];
+//    [self.button setBackgroundImage:image forState:UIControlStateHighlighted];
+    [shareShoundBtn setBackgroundImage:nil forState:UIControlStateHighlighted];
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     [emptyFacebookFriendsLabelView addSubview:shareShoundBtn];
     
@@ -323,7 +337,7 @@
                                    [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"]];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] ];
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
@@ -429,6 +443,10 @@
     UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
     emptyFacebookFriendsLabelView.hidden = YES;
     
+    
+    UILabel *emptyFacebookFriendsLabel = (UILabel*)[emptyFacebookFriendsLabelView viewWithTag:8];
+    emptyFacebookFriendsLabel.hidden = YES;
+    
     // User have made no meetings
     if ([distinctDays count] == 0) {
         // We hide the segmented control on page load
@@ -456,6 +474,11 @@
             case 2:
             {
                 emptyFacebookFriendsLabelView.hidden = NO;
+                if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
+                    emptyFacebookFriendsLabel.hidden = YES;
+                } else {
+                    emptyFacebookFriendsLabel.hidden = NO;
+                }
                 UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
                 userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
             }
@@ -518,7 +541,7 @@
 
     
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"]];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
@@ -713,6 +736,13 @@
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
     }
     
+    // If the user is a facebook friend so we display his facebook profile image
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[currentUserMet fbid] stringValue]]) {
+        [self getImageCellForData:[[currentUserMet fbid] stringValue] aCell:cell];
+    } else {
+        cell.backgroundView = nil;
+    }
+    
     
 
     UIView *bgColorView = [UIView new];
@@ -747,6 +777,34 @@
     if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
       [loadingIndicator stopAnimating];
     }
+}
+
+- (void) getImageCellForData:(NSString*)fbFriendID aCell:(UITableViewCell*)cell
+{
+    CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.frame = cellFrame;
+    [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
+    [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
+    UIColor *topGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
+    UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
+    gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
+    
+    UIImageView *imgBackground = [[UIImageView alloc] initWithFrame:cellFrame];
+    imgBackground.contentMode = UIViewContentModeScaleAspectFill;
+    imgBackground.clipsToBounds = YES;
+    
+    cell.backgroundView = imgBackground;
+    
+    
+//    [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]
+    
+    [imgBackground setImageWithURL:
+     [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbFriendID, (int)cellFrame.size.width, (int)cellFrame.size.height]]
+                  placeholderImage:[UIImage imageNamed:@"TrianglesBG"]]; //10204498235807141
+    [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+
 }
 
 
@@ -1026,6 +1084,9 @@
                                         completionHandler:^(FBSession *session, NSError *error){
                                             UIButton *allowFriendsBtn = (UIButton*)[self.view viewWithTag:7];
                                             allowFriendsBtn.hidden = YES;
+                                            
+//                                            UILabel *emptyFacebookFriendsLabel = (UILabel*)[self.view viewWithTag:8];
+//                                            emptyFacebookFriendsLabel.hidden = NO;
                                         }];
 }
 
