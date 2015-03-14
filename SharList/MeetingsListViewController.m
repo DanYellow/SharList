@@ -739,8 +739,32 @@
     // If the user is a facebook friend so we display his facebook profile image
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[currentUserMet fbid] stringValue]]) {
         [self getImageCellForData:[[currentUserMet fbid] stringValue] aCell:cell];
+        
+        
+        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [[currentUserMet fbid] stringValue]]];
+        NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] substringToIndex:1];
+        NSString *lastNameFirstLetter = [[[facebookFriendDatas valueForKey:@"last_name"] componentsJoinedByString:@""] substringToIndex:1];
+        
+        UILabel *initialPatronymFacebookFriendLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+        initialPatronymFacebookFriendLabel.backgroundColor = [UIColor whiteColor];
+        initialPatronymFacebookFriendLabel.text = [firstNameFirstLetter stringByAppendingString:lastNameFirstLetter];
+        initialPatronymFacebookFriendLabel.textAlignment = NSTextAlignmentCenter;
+        initialPatronymFacebookFriendLabel.textColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
+        initialPatronymFacebookFriendLabel.clipsToBounds = YES;
+        initialPatronymFacebookFriendLabel.layer.cornerRadius = 20.0f;
+//        [cell.imageView addSubview:initialPatronymFacebookFriendLabel];
+        
+        cell.imageView.image = [MeetingsListViewController imageWithView: initialPatronymFacebookFriendLabel];
+        cell.imageView.backgroundColor = [UIColor clearColor];
+        cell.imageView.opaque = YES;
+        
+        cell.imageView.tag = indexPath.row;
+        
+        
+        
     } else {
         cell.backgroundView = nil;
+        cell.imageView.image = nil;
     }
     
     
@@ -757,6 +781,19 @@
 //                    completion:NULL];
     
     return cell;
+}
+
+
++ (UIImage *) imageWithView:(UIView *)view
+{
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, YES, 0.0);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    
+    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return img;
 }
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -796,9 +833,6 @@
     imgBackground.clipsToBounds = YES;
     
     cell.backgroundView = imgBackground;
-    
-    
-//    [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]
     
     [imgBackground setImageWithURL:
      [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbFriendID, (int)cellFrame.size.width, (int)cellFrame.size.height]]
