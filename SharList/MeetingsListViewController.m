@@ -601,10 +601,6 @@
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.metUserId = selectedCell.model;
     detailsMeetingViewController.delegate = self;
-    
-//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//    formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
-//    detailsMeetingViewController.title = [formatter stringFromDate:[selectedCell.model[@"userModel"] lastMeeting]];
    
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
@@ -717,8 +713,6 @@
     cell.textLabel.text = textLabelString;
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
     cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
-    
-//    NSDictionary *userMetDatas = @{@"userMetFbId" : [currentUserMet fbid], @"commonTasteCountPercent" : [NSNumber numberWithFloat:commonTasteCountPercent]};
 
     cell.model = [currentUserMet fbid];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -726,6 +720,9 @@
     
     cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
     cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+    
+    cell.detailTextLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
+    cell.textLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
     
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:[currentUserMet fbid]]) {
         NSString *indicateFavUpdatedString = @" - ";
@@ -740,53 +737,45 @@
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[currentUserMet fbid] stringValue]]) {
         [self getImageCellForData:[[currentUserMet fbid] stringValue] aCell:cell];
         
-        
-        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [[currentUserMet fbid] stringValue]]];
-        NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] substringToIndex:1];
-        NSString *lastNameFirstLetter = [[[facebookFriendDatas valueForKey:@"last_name"] componentsJoinedByString:@""] substringToIndex:1];
-        
-        UILabel *initialPatronymFacebookFriendLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-        initialPatronymFacebookFriendLabel.backgroundColor = [UIColor whiteColor];
-        initialPatronymFacebookFriendLabel.text = [firstNameFirstLetter stringByAppendingString:lastNameFirstLetter];
-        initialPatronymFacebookFriendLabel.textAlignment = NSTextAlignmentCenter;
-        initialPatronymFacebookFriendLabel.textColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
-        initialPatronymFacebookFriendLabel.clipsToBounds = YES;
-        initialPatronymFacebookFriendLabel.layer.cornerRadius = 20.0f;
-//        [cell.imageView addSubview:initialPatronymFacebookFriendLabel];
-        
-        cell.imageView.image = [MeetingsListViewController imageWithView: initialPatronymFacebookFriendLabel];
+        cell.imageView.image = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbid] forDarkBG:NO];
+        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbid] forDarkBG:YES];
         cell.imageView.backgroundColor = [UIColor clearColor];
         cell.imageView.opaque = YES;
         
         cell.imageView.tag = indexPath.row;
-        
-        
-        
     } else {
         cell.backgroundView = nil;
         cell.imageView.image = nil;
     }
-    
-    
 
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
     
-//    cell.alpha = .3;
-//    [UIView transitionWithView:cell
-//                      duration:.5f
-//                       options:UIViewAnimationOptionTransitionCrossDissolve
-//                    animations:^{cell.alpha = 1;}
-//                    completion:NULL];
-    
     return cell;
+}
+
++ (UIImage *) imageFromFacebookFriendInitialForId:(NSNumber*) fbid forDarkBG:(BOOL)isDarkBG
+{
+    NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [fbid stringValue]]];
+    NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] substringToIndex:1];
+    NSString *lastNameFirstLetter = [[[facebookFriendDatas valueForKey:@"last_name"] componentsJoinedByString:@""] substringToIndex:1];
+    
+    UILabel *initialPatronymFacebookFriendLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    initialPatronymFacebookFriendLabel.text = [firstNameFirstLetter stringByAppendingString:lastNameFirstLetter];
+    initialPatronymFacebookFriendLabel.textAlignment = NSTextAlignmentCenter;
+    initialPatronymFacebookFriendLabel.backgroundColor =  (isDarkBG) ? [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0] : [UIColor whiteColor];
+    initialPatronymFacebookFriendLabel.textColor = (isDarkBG) ? [UIColor whiteColor] : [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
+    initialPatronymFacebookFriendLabel.clipsToBounds = YES;
+    initialPatronymFacebookFriendLabel.layer.cornerRadius = 20.0f;
+
+    return [MeetingsListViewController imageWithView:initialPatronymFacebookFriendLabel];
 }
 
 
 + (UIImage *) imageWithView:(UIView *)view
 {
-    UIGraphicsBeginImageContextWithOptions(view.bounds.size, YES, 0.0);
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, 0.0);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
     
     UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
@@ -798,18 +787,6 @@
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    cell.alpha = 0;
-//    [UIView animateWithDuration: 0.1
-//                          delay: 0.0
-//                        options: UIViewAnimationOptionCurveEaseOut
-//                     animations:^{
-//                         cell.alpha = 1;
-//                     }
-//                     completion:^(BOOL finished){
-//                         
-//                     }];
-
-    
     // Called when the last cell is displayed
     if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
       [loadingIndicator stopAnimating];
