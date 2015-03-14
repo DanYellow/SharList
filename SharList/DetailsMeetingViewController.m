@@ -186,15 +186,19 @@
           parameters:apiParams
              success:^(AFHTTPRequestOperation *operation, id responseObject) {
                  // The user met accepts to be public (default behaviour)
-                 if (![responseObject[@"isAnonymous"] boolValue]) {
+                 // Or met user is among current user facebook friends' list
+                 if (![responseObject[@"isAnonymous"] boolValue] || [[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]] ) {
                      [self displayMetUserfbImgProfile];
                  }
-                 
              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                  NSLog(@"Error: %@", error);
              }];
+    } else {
+        // If the current user is anonymous. He still can see his facebook friends photo
+        if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]])
+            [self displayMetUserfbImgProfile];
     }
-
+    
     
     NSMutableArray *rightBarButtonItemsArray = [NSMutableArray new];
     [rightBarButtonItemsArray addObject:addMeetingToFavoriteBtnItem];

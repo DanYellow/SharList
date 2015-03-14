@@ -462,7 +462,9 @@
     NSDictionary *params = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
                              @"latitude": [NSNumber numberWithDouble:location.coordinate.latitude],
                              @"longitude": [NSNumber numberWithDouble:location.coordinate.longitude]};
+    
     NSString *updateUserLocationURL = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"];
+    
     [HTTPManager POST:updateUserLocationURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.locationManager stopUpdatingLocation];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
