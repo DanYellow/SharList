@@ -68,7 +68,14 @@
     
     NSDateFormatter *formatter = [NSDateFormatter new];
     formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
-    self.title = [formatter stringFromDate:[userMet lastMeeting]];
+    
+    
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]]) {
+        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [[userMet fbid] stringValue]]];
+        self.title = [[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
+    } else {
+        self.title = [formatter stringFromDate:[userMet lastMeeting]];
+    }
     
     // We get the datas of current user to compare it to the current list
     UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
