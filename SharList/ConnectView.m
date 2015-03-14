@@ -107,6 +107,7 @@
         } else {
             friends = [result objectForKey:@"data"];
         }
+
         [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
     }];
 }
