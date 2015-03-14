@@ -844,10 +844,10 @@
 
 - (void) fetchUsersDatas
 {
-    if ([self connected] == NO) {
-        [self noInternetAlert];
-        return;
-    }
+//    if ([self connected] == NO) {
+//        [self noInternetAlert];
+//        return;
+//    }
     
     [loadingIndicator startAnimating];
     
@@ -863,12 +863,6 @@
             [self saveRandomUserDatas:data];
         }
     }];
-}
-
-- (void) noInternetAlert
-{
-    UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    [errConnectionAlertView show];
 }
 
 
@@ -894,18 +888,22 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] &&
         [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways
     ) {
+        
         if (!self.locationManager) {
             self.locationManager = [CLLocationManager new];
-            
         }
         
         self.locationManager.delegate = self;
         self.locationManager.distanceFilter = distanceFilterLocalisation;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        self.locationManager.pausesLocationUpdatesAutomatically = NO;
+        self.locationManager.activityType = CLActivityTypeFitness;
+        
         // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
         if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self.locationManager requestAlwaysAuthorization];
         }
+        
         [self.locationManager startUpdatingLocation];
     }
     
@@ -916,7 +914,7 @@
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
     }
     
-
+    [[[UIAlertView alloc] initWithTitle:@"foof" message:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude] delegate:nil cancelButtonTitle:@"Gentoo" otherButtonTitles: nil] show];
 //    [self.locationManager stopUpdatingLocation];
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -1083,6 +1081,13 @@
             break;
         }
     }
+}
+
+
+- (void) noInternetAlert
+{
+    UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"noconnection", nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [errConnectionAlertView show];
 }
 
 

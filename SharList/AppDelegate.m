@@ -247,6 +247,25 @@
     if ([[UIApplication sharedApplication] applicationIconBadgeNumber] > 0) {
         [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", (long)[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     }
+    
+
+    if (FBSession.activeSession) {
+        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
+        //    FBRequest* friendsRequest = [FBRequest requestWithGraphPath:@"me?fields=friends.fields(first_name,last_name)" parameters:nil HTTPMethod:@"GET"];
+        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+                                                      NSDictionary* result,
+                                                      NSError *error) {
+            NSArray* friends;
+            
+            if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
+                friends = @[];
+            } else {
+                friends = [result objectForKey:@"data"];
+            }
+            
+            [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
+        }];
+    }
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
