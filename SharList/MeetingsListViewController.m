@@ -331,7 +331,8 @@
 }
 
 - (NSArray*) fetchDatas
-{    
+{
+    
     // Fetching datas
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@",
                                    [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
@@ -834,8 +835,6 @@
             completionHandler(UIBackgroundFetchResultNewData);
         }
     }];
-    
-//    completionHandler(UIBackgroundFetchResultNewData);
 }
 
 - (BOOL) connected {
@@ -844,10 +843,10 @@
 
 - (void) fetchUsersDatas
 {
-//    if ([self connected] == NO) {
-//        [self noInternetAlert];
-//        return;
-//    }
+    if ([self connected] == NO) {
+        [self noInternetAlert];
+        return;
+    }
     
     [loadingIndicator startAnimating];
     
@@ -931,7 +930,6 @@
 
 - (void) saveRandomUserDatas:(NSData *)datas
 {
-   
     NSString *responseString = [[NSString alloc] initWithData:datas encoding:NSUTF8StringEncoding];
     NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
     

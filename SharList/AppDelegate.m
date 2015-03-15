@@ -249,9 +249,8 @@
     }
     
 
-    if (FBSession.activeSession) {
+    if (FBSession.activeSession && [AFNetworkReachabilityManager sharedManager].isReachable) {
         FBRequest* friendsRequest = [FBRequest requestForMyFriends];
-        //    FBRequest* friendsRequest = [FBRequest requestWithGraphPath:@"me?fields=friends.fields(first_name,last_name)" parameters:nil HTTPMethod:@"GET"];
         [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
                                                       NSDictionary* result,
                                                       NSError *error) {
@@ -265,6 +264,8 @@
             
             [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
         }];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
     }
 }
 

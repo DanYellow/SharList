@@ -10,6 +10,8 @@
 
 #import <FacebookSDK/FacebookSDK.h>
 
+#import "AFNetworking.h"
+
 @interface ConnectView : UIView <FBLoginViewDelegate>
 {
     CGFloat screenWidth;
