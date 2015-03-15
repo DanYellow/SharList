@@ -266,7 +266,6 @@
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     loadingIndicator.hidesWhenStopped = YES;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
-    [loadingIndicator startAnimating];
     [self.view addSubview:loadingIndicator];
     
     
