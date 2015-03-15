@@ -95,6 +95,7 @@
 {
     self.hidden = YES;
     
+    
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
         FBRequest* friendsRequest = [FBRequest requestForMyFriends];
         //    FBRequest* friendsRequest = [FBRequest requestWithGraphPath:@"me?fields=friends.fields(first_name,last_name)" parameters:nil HTTPMethod:@"GET"];
@@ -112,9 +113,10 @@
             [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
         }];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]]) {
+            [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
+        }
     }
-   
 }
 
 // User quits the app

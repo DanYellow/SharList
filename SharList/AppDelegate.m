@@ -265,7 +265,9 @@
             [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
         }];
     } else {
-        [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]]) {
+            [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
+        }
     }
 }
 
