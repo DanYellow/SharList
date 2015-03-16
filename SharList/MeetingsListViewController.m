@@ -466,8 +466,6 @@
             case 1:
             {
                 emptyFavoritesLabel.hidden = NO;
-                UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-                userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
             }
                 break;
                 
@@ -479,8 +477,6 @@
                 } else {
                     emptyFacebookFriendsLabel.hidden = NO;
                 }
-                UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-                userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
             }
                 break;
             default:
@@ -747,6 +743,8 @@
         cell.backgroundView = nil;
         cell.imageView.image = nil;
     }
+    
+    cell.imageView.tag = 1000;
 
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
@@ -768,6 +766,8 @@
     initialPatronymFacebookFriendLabel.textColor = (isDarkBG) ? [UIColor whiteColor] : [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
     initialPatronymFacebookFriendLabel.clipsToBounds = YES;
     initialPatronymFacebookFriendLabel.layer.cornerRadius = 20.0f;
+    
+
 
     return [MeetingsListViewController imageWithView:initialPatronymFacebookFriendLabel];
 }
@@ -778,7 +778,7 @@
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, 0.0);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
     
-    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
     
