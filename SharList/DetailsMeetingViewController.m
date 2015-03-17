@@ -492,6 +492,11 @@
     
     CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
     
+    if (isnan(commonTasteCountPercent)) {
+        commonTasteCountPercent = 0.0f;
+    }
+    
+    
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
