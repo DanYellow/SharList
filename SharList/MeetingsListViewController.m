@@ -912,7 +912,7 @@
         postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
     }
     
-    [[[UIAlertView alloc] initWithTitle:@"foof" message:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude] delegate:nil cancelButtonTitle:@"Gentoo" otherButtonTitles: nil] show];
+
 //    [self.locationManager stopUpdatingLocation];
     [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     

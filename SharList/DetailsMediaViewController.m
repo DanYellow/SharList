@@ -387,7 +387,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view addGestureRecognizer:leftEdgeGesture];
     
     // ---->
-    UISwipeGestureRecognizer *rightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showMediaDetails)];
+    UISwipeGestureRecognizer *rightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showMediaDetails:)];
     rightGesture.direction = UISwipeGestureRecognizerDirectionRight;
     [self.view addGestureRecognizer:rightGesture];
     
@@ -767,7 +767,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      completion:nil];
 }
 
-- (void) showMediaDetails
+- (void) showMediaDetails:(UISwipeGestureRecognizer*)sender
 {
     if ([[UIApplication sharedApplication] isStatusBarHidden] == NO) {
         return;

@@ -254,18 +254,22 @@
         [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
                                                       NSDictionary* result,
                                                       NSError *error) {
-            NSArray* friends;
             
-            if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
-                friends = @[];
-            } else {
-                friends = [result objectForKey:@"data"];
+            if (!error) {
+                NSArray* friends;
+                
+                if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
+                    friends = @[];
+                } else {
+                    friends = [result objectForKey:@"data"];
+                }
+                
+                
+                [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
             }
-            
-            [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
         }];
     } else {
-        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]]) {
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
             [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
         }
     }
