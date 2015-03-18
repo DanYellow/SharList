@@ -50,6 +50,7 @@
 - (void) displayMetUserfbImgProfile;
 - (void) displayMetUserStats;
 - (void) updateCurrentUser;
+- (void) scrollToSectionWithNumber:(UIButton*)sender;
 
 
 @end

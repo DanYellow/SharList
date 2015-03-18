@@ -223,6 +223,21 @@
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:self.metUserId]) {
         [self updateCurrentUser];
     }
+    
+//    UIButton *aFoo = [UIButton buttonWithType:UIButtonTypeInfoDark];
+//    aFoo.frame = CGRectMake(150, 42, 40, 40);
+//    [aFoo addTarget:self action:@selector(foo) forControlEvents:UIControlEventTouchUpOutside];
+//    [self.view addSubview:aFoo];
+}
+
+- (void) scrollToSectionWithNumber:(UIButton*)sender {
+    
+    NSInteger aSectionNumber = sender.tag;
+    
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
+    CGRect sectionRect = [userSelectionTableView rectForSection:aSectionNumber];
+    sectionRect.size.height = userSelectionTableView.frame.size.height - self.navigationController.navigationBar.frame.size.height - 20;
+    [userSelectionTableView scrollRectToVisible:sectionRect animated:YES];
 }
 
 - (BOOL) connected
@@ -307,6 +322,12 @@
     [userSelectionTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
 }
 
+/*
+ * This method display the details about user met
+ * number of movies and films
+ *
+ */
+
 - (void) displayMetUserStats
 {
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
@@ -320,8 +341,13 @@
         CGRect statContainerFrame = CGRectMake(16 + (95 * i),
                                                metUserFBView.frame.size.height - 60,
                                                widthViews, 60);
-        UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
+        UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
         statContainer.backgroundColor = [UIColor clearColor];
+        statContainer.tag = i + 1; // We add one because the first section of a tableview is the header
+        
+        [statContainer addTarget:self action:@selector(scrollToSectionWithNumber:) forControlEvents:UIControlEventTouchUpInside];
+
+        
         [metUserFBView addSubview:statContainer];
         if ( i != ([[self.metUserTasteDict filterKeysForNullObj] count] - 1)) {
             [statContainer.layer addSublayer:rightBorder];
