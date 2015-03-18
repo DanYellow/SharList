@@ -15,7 +15,9 @@
 @property (nonatomic, retain) NSNumber *fbid;
 @property (nonatomic, retain) NSData *taste;
 @property (nonatomic, retain) NSDate *lastMeeting;
+@property (nonatomic, assign) BOOL isFacebookFriend;
 @property (nonatomic, assign) BOOL isFavorite;
+@property (nonatomic, assign) BOOL isRandomDiscover;
 @property (nonatomic, retain) NSNumber *numberOfMeetings;
 
 @end

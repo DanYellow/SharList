@@ -14,7 +14,9 @@
 @dynamic fbid;
 @dynamic taste;
 @dynamic lastMeeting;
+@dynamic isFacebookFriend;
 @dynamic isFavorite;
+@dynamic isRandomDiscover;
 @dynamic numberOfMeetings;
 
 

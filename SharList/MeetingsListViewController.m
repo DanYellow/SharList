@@ -440,11 +440,11 @@
             case 2:
             {
                 emptyFacebookFriendsLabelView.hidden = NO;
-                if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
-//                    emptyFacebookFriendsLabel.hidden = YES;
-                } else {
-                    emptyFacebookFriendsLabel.hidden = NO;
-                }
+//                if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
+////                    emptyFacebookFriendsLabel.hidden = YES;
+//                } else {
+//                    emptyFacebookFriendsLabel.hidden = NO;
+//                }
             }
                 break;
             default:
@@ -705,7 +705,6 @@
         cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbid] forDarkBG:YES];
         cell.imageView.backgroundColor = [UIColor clearColor];
         cell.imageView.opaque = YES;
-        
         cell.imageView.tag = indexPath.row;
     } else {
         cell.backgroundView = nil;
@@ -717,6 +716,7 @@
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
     [cell setSelectedBackgroundView:bgColorView];
+    
     
     return cell;
 }
@@ -989,6 +989,9 @@
         oldUserTaste.fbid = randomUserfbID;
         oldUserTaste.lastMeeting = [NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
+        
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"])
+            oldUserTaste.isRandomDiscover = NO;
     } else {
         // It's a new user
         // So we create a entity in CD for him
@@ -998,6 +1001,9 @@
         userTaste.lastMeeting = [NSDate date];
         userTaste.isFavorite = NO;
         userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
+        
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"])
+            userTaste.isRandomDiscover = NO;
     }
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];

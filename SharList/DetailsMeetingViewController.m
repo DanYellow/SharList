@@ -223,11 +223,6 @@
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:self.metUserId]) {
         [self updateCurrentUser];
     }
-    
-//    UIButton *aFoo = [UIButton buttonWithType:UIButtonTypeInfoDark];
-//    aFoo.frame = CGRectMake(150, 42, 40, 40);
-//    [aFoo addTarget:self action:@selector(foo) forControlEvents:UIControlEventTouchUpOutside];
-//    [self.view addSubview:aFoo];
 }
 
 - (void) scrollToSectionWithNumber:(UIButton*)sender {
