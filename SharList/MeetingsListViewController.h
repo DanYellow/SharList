@@ -57,6 +57,7 @@
 - (void) noInternetAlert;
 - (void) fetchUsersDatas;
 - (void) reloadTableview;
+- (void) manageDisplayOfFacebookFriendsButton;
 
 
 @end

@@ -76,11 +76,10 @@
         appMottoLabel.textAlignment = NSTextAlignmentLeft;
         [appnameView addSubview:appMottoLabel];
         
-        FBLoginView *fbLoginButton = [FBLoginView new];
+        FBLoginView *fbLoginButton = [[FBLoginView alloc] initWithReadPermissions:@[@"user_friends"]];
         fbLoginButton.delegate = self;
         fbLoginButton.frame = CGRectMake((self.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
         fbLoginButton.tag = 1;
-        fbLoginButton.readPermissions = @[@"user_friends"];
         [self addSubview:fbLoginButton];
         
     }
@@ -97,7 +96,6 @@
     
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
         FBRequest* friendsRequest = [FBRequest requestForMyFriends];
-        //    FBRequest* friendsRequest = [FBRequest requestWithGraphPath:@"me?fields=friends.fields(first_name,last_name)" parameters:nil HTTPMethod:@"GET"];
         [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
                                                       NSDictionary* result,
                                                       NSError *error) {
@@ -111,13 +109,17 @@
                 }
                 
                 [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
+            } else {
+                [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
             }
+            
         }];
     } else {
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
             [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
         }
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"userConnectedToFacebook" object:nil userInfo:nil];
 }
 
 // User quits the app
