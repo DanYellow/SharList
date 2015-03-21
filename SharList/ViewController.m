@@ -364,20 +364,56 @@
     int intWidthScreen = screenWidth;
     int heightImg = 172;
     
-    NSString *fbMetUserString = [[userPreferences objectForKey:@"currentUserfbID"] stringValue];
-    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
+    NSString *metUserFBImgURL = nil;
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
+        NSString *fbMetUserString = [[userPreferences objectForKey:@"currentUserfbID"] stringValue];
+        metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
+    }
     
-    UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
-    [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:[UIImage animatedImageNamed:@"list-tab-icon2" duration:.1f]];
-    metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
-    metUserFBImgView.backgroundColor = [UIColor clearColor];
-    [metUserFBView insertSubview:metUserFBImgView atIndex:0];
+    UIImageView *currentUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
+    
+    // We save the raw data of current user facebook image profil
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
+        [currentUserFBImgView addObserver:self
+                               forKeyPath:@"image"
+                                  options:(NSKeyValueObservingOptionNew |
+                                           NSKeyValueObservingOptionOld)
+                                  context:NULL];
+        [currentUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
+    } else {
+        currentUserFBImgView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]];
+    }
+    
+    currentUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
+    currentUserFBImgView.backgroundColor = [UIColor clearColor];
+    [metUserFBView insertSubview:currentUserFBImgView atIndex:0];
     
     UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
-    effectView.frame = metUserFBImgView.bounds;
-    [metUserFBImgView addSubview:effectView];
+    effectView.frame = currentUserFBImgView.bounds;
+    [currentUserFBImgView addSubview:effectView];
+    
+    
 }
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+    if ([keyPath isEqualToString:@"image"]) {
+        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
+            NSData *imgUserfbData = UIImageJPEGRepresentation([object image], .5);
+            [[NSUserDefaults standardUserDefaults] setObject:imgUserfbData forKey:@"currentUserfbImageData"];
+        }
+        
+        @try {
+            [object removeObserver:self forKeyPath:NSStringFromSelector(@selector(isFinished))];
+        }
+        @catch (NSException * __unused exception) {}
+    }
+}
+
 
 - (void) scrollToSectionWithNumber:(UIButton*)sender {
     

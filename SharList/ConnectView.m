@@ -129,6 +129,7 @@
     self.hidden = NO;
     [self.viewController.tabBarController setSelectedIndex:0];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbImageData"];
 }
 
 
