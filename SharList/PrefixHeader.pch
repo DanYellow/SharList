@@ -23,7 +23,7 @@
 #define CGRectSetPos( r, x, y ) CGRectMake( x, y, r.size.width, r.size.height )
 
 
-#define BGFETCHDELAY 20 //3920
+#define BGFETCHDELAY 3920 //3920
 #define distanceFilterLocalisation kCLDistanceFilterNone
 
 #define MR_ENABLE_ACTIVE_RECORD_LOGGING 1

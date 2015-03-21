@@ -412,7 +412,7 @@
     emptyFacebookFriendsLabelView.hidden = YES;
     
     
-    UILabel *emptyFacebookFriendsLabel = (UILabel*)[emptyFacebookFriendsLabelView viewWithTag:8];
+//    UILabel *emptyFacebookFriendsLabel = (UILabel*)[emptyFacebookFriendsLabelView viewWithTag:8];
 //    emptyFacebookFriendsLabel.hidden = YES;
     
     // User have made no meetings
