@@ -71,6 +71,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 - (void) displayCurrentUserfbImgProfile;
 - (void) displayCurrentUserStats;
 
+- (void) scrollToSectionWithNumber:(UIButton*)sender;
+
 
 @end
 

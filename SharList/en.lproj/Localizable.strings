@@ -61,6 +61,7 @@
 "things common" = "Things in common, but also to discover";
 "in common" = "taste in common";
 "%@ in common" = "%@ taste in common";
+"Talk about this discover" = "Talk about this discover";
 
 
 //Settings view controller
@@ -91,6 +92,7 @@
 "tutFavsMessage" = "Use this icon to add it among your list and introduce it to the world";
 "issuesWithDetailsMedia" = "It looks like there is an issue with this view.\nTry later";
 
+
 //AboutViewController
 "About" = "About";
 "whatIsApp" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your tastes.";
@@ -111,3 +113,7 @@
 "FBLinkShareParams_posterror" = "Facebook has encountered a problem";
 "FBLinkShareParams_postsuccess" = "Thanks you. You help Shound to be more popular";
 "FBLinkShareParams_postsuccess_title" = "Great !";
+"FBLinkShareParams_metfriend_name" = "I've met a friend on Shound";
+"FBLinkShareParams_metfriend_desc %@" = "I discovered the taste of %@.\n Do the same";
+"FBLinkShareParams_metfriend_desc_alt" = "Do the same !";
+

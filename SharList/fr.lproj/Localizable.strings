@@ -86,7 +86,8 @@
 
 // DetailsMeetingController
 "met %@ times" = "découvert %@ fois";
-"pull to refresh fav" = "Cette découverte est parmi vos favoris.\nVous pouvez \"tirer-pour-rafraîchir\" pour voir si elle a été mise à jour";
+//"pull to refresh fav" = "Cette découverte est parmi vos favoris.\nVous pouvez \"tirer-pour-rafraîchir\" pour voir si elle a été mise à jour";
+"Talk about this discover" = "Parler de cette découverte";
 
 // DetailsMediaViewController
 "Added" = "Ajouté";
@@ -122,3 +123,7 @@
 "FBLinkShareParams_posterror" = "Facebook a rencontré un problème";
 "FBLinkShareParams_postsuccess" = "Merci. Vous aidez Shound à être plus populaire !";
 "FBLinkShareParams_postsuccess_title" = "Super !";
+"FBLinkShareParams_metfriend_name" = "J'ai rencontré un ami sur Shound";
+"FBLinkShareParams_metfriend_desc %@" = "J'ai découvert les goûts de %@.\n Faites de même";
+"FBLinkShareParams_metfriend_desc_alt" = "Faites de même !";
+

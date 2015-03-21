@@ -294,9 +294,9 @@
 {
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
     
-    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
-    metUserFBView.backgroundColor = [UIColor clearColor];
-    metUserFBView.tag = 10;
+    UIView *currentUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
+    currentUserFBView.backgroundColor = [UIColor clearColor];
+    currentUserFBView.tag = 10;
     
     int tagRange = 10000;
     float widthViews = 99.0f;
@@ -308,11 +308,16 @@
         rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
         
         CGRect statContainerFrame = CGRectMake(0 + (95 * i),
-                                               metUserFBView.frame.size.height - 70,
+                                               currentUserFBView.frame.size.height - 70,
                                                widthViews, 70);
-        UIView *statContainer = [[UIView alloc] initWithFrame:statContainerFrame];
+        
+        UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
         statContainer.backgroundColor = [UIColor clearColor];
-        [metUserFBView addSubview:statContainer];
+        statContainer.tag = i + 1; // We add one because the first section of a tableview is the header
+        
+        [statContainer addTarget:self action:@selector(scrollToSectionWithNumber:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [currentUserFBView addSubview:statContainer];
         
         if ( i != ([[userTasteDict filterKeysForNullObj] count] - 1)) {
             [statContainer.layer addSublayer:rightBorder];
@@ -345,7 +350,7 @@
         [statContainer insertSubview:statCount atIndex:10];
     }
     
-    userTasteListTableView.tableHeaderView = metUserFBView;
+    userTasteListTableView.tableHeaderView = currentUserFBView;
     
     [userTasteListTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
     
@@ -374,6 +379,15 @@
     [metUserFBImgView addSubview:effectView];
 }
 
+- (void) scrollToSectionWithNumber:(UIButton*)sender {
+    
+    NSInteger aSectionNumber = sender.tag;
+    
+    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
+    CGRect sectionRect = [userTasteListTableView rectForSection:aSectionNumber];
+    sectionRect.size.height = userTasteListTableView.frame.size.height - self.navigationController.navigationBar.frame.size.height - 20;
+    [userTasteListTableView scrollRectToVisible:sectionRect animated:YES];
+}
 
 - (void) fetchUserDatas
 {
