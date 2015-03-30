@@ -550,9 +550,14 @@
                       UITableView *settingsTableview = (UITableView*)[self.view viewWithTag:1];
                       UITableViewCell *cell = [settingsTableview cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:3]];
                       cell.textLabel.text = NSLocalizedString(@"BSDisconnect", nil);
+                      
+                      UIAlertView *errorIDBSAlert = [[UIAlertView alloc] initWithTitle:@"Connexion réussie" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                      [errorIDBSAlert show];
 
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                      NSLog(@"Error: %@", error);
+//                      NSLog(@"error : %@", error);
+                      UIAlertView *errorIDBSAlert = [[UIAlertView alloc] initWithTitle:@"Oups" message:@"Une erreur est survenue" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                      [errorIDBSAlert show];
                   }];
         }
     } else if (alertView.tag == 7) {

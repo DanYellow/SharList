@@ -240,13 +240,13 @@
     [self.searchController.view addSubview:UISearchControllerBG];
     
     
-    UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
-    userSelectRefresh.backgroundColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.9f];
-    userSelectRefresh.tintColor = [UIColor whiteColor];
-    userSelectRefresh.tag = 6;
-    [userSelectRefresh addTarget:self
-                          action:@selector(fetchUserDatas)
-                forControlEvents:UIControlEventValueChanged];
+//    UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
+//    userSelectRefresh.backgroundColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.9f];
+//    userSelectRefresh.tintColor = [UIColor whiteColor];
+//    userSelectRefresh.tag = 6;
+//    [userSelectRefresh addTarget:self
+//                          action:@selector(fetchUserDatas)
+//                forControlEvents:UIControlEventValueChanged];
     
 
     categoryList = [@[@"book", @"serie", @"movie"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];

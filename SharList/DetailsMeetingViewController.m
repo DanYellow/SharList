@@ -17,11 +17,12 @@
 
 // Tag list
 // 1 : userSelectionTableView
-// 2 : UIRefreshControl
+// 2 : addMeetingToFavoriteBtnItem
 // 3 : TutorialView
 // 4 : metUserFBView
 // 5 : metUserFBImgView
 // 6 : refreshBtn
+// 7 : UIRefreshControl
 
 @implementation DetailsMeetingViewController
 
@@ -185,6 +186,21 @@
     if ([userSelectionTableView respondsToSelector:@selector(setSeparatorInset:)]) {
         [userSelectionTableView setSeparatorInset:UIEdgeInsetsZero];
     }
+    
+    UIActivityIndicatorView *loadingIndicator = [UIActivityIndicatorView new];
+    loadingIndicator.center = self.view.center;
+    loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    loadingIndicator.hidesWhenStopped = YES;
+    loadingIndicator.tag = 7;
+    loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    [self.view addSubview:loadingIndicator];
+//    UIRefreshControl *userSelectRefresh = [UIRefreshControl new];
+//    userSelectRefresh.backgroundColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.9f];
+//    userSelectRefresh.tintColor = [UIColor whiteColor];
+//    userSelectRefresh.tag = 2;
+//    [userSelectRefresh addTarget:self
+//                          action:@selector(fetchUserDatas)
+//                forControlEvents:UIControlEventValueChanged];
     
     // If the current user list is among user's favorites and the meeting have been made one hour ago
     // He can fetch his update to follow him
@@ -400,8 +416,8 @@
     // Should contain raw data from the server
     self.responseData = [NSMutableData new];
     
-    UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
-    [userSelectRefresh beginRefreshing];
+    UIActivityIndicatorView *loadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:7];
+    [loadingIndicator startAnimating];
     
     UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
     refreshBtn.enabled = NO;
@@ -494,8 +510,8 @@
         UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
         refreshBtn.enabled = YES;
         
-        UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:2];
-        [userSelectRefresh endRefreshing];
+        UIActivityIndicatorView *loadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:7];
+        [loadingIndicator stopAnimating];
         
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:self.metUserId]) {
             NSMutableArray *favsIDUpdatedList = [[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] mutableCopy];
