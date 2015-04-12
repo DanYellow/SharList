@@ -798,9 +798,9 @@
         
         // If the user add this discover among his favorites.
         // He listen to his channel on Parse
-        if (![[currentInstallation objectForKey:@"channels"] containsObject:currentUserPFChannelName]) {
-            [PFPush subscribeToChannelInBackground:currentUserPFChannelName];
-        }
+//        if (![[currentInstallation objectForKey:@"channels"] containsObject:currentUserPFChannelName]) {
+//            [PFPush subscribeToChannelInBackground:currentUserPFChannelName];
+//        }
     } else {
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
         [userMet setIsFavorite:NO];
@@ -811,9 +811,9 @@
         
         // If the user withdraw this discover among his favorites.
         // He doesn't listen to his channel on Parse anymore
-        if ([[currentInstallation objectForKey:@"channels"] containsObject:currentUserPFChannelName]) {
-            [PFPush unsubscribeFromChannelInBackground:currentUserPFChannelName];
-        }
+//        if ([[currentInstallation objectForKey:@"channels"] containsObject:currentUserPFChannelName]) {
+//            [PFPush unsubscribeFromChannelInBackground:currentUserPFChannelName];
+//        }
     }
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
