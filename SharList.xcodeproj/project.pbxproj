@@ -59,6 +59,12 @@
 		1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7AA1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png */; };
 		1AEB2BC01A4B2580000D7C7B /* FacebookSDKOverrides.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1AEB2BBF1A4B2580000D7C7B /* FacebookSDKOverrides.bundle */; };
 		1AEB8BEC1A3636FA004A94C1 /* UILabel+HeightToFit.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */; };
+		1AF42CB81ADB2463008622E6 /* locationMeetingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF42CB21ADB2463008622E6 /* locationMeetingIcon.png */; };
+		1AF42CB91ADB2463008622E6 /* locationMeetingIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF42CB31ADB2463008622E6 /* locationMeetingIcon@2x.png */; };
+		1AF42CBA1ADB2463008622E6 /* locationMeetingIcon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF42CB41ADB2463008622E6 /* locationMeetingIcon@3x.png */; };
+		1AF42CBB1ADB2463008622E6 /* randomMeetingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF42CB51ADB2463008622E6 /* randomMeetingIcon.png */; };
+		1AF42CBC1ADB2463008622E6 /* randomMeetingIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF42CB61ADB2463008622E6 /* randomMeetingIcon@2x.png */; };
+		1AF42CBD1ADB2463008622E6 /* randomMeetingIcon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF42CB71ADB2463008622E6 /* randomMeetingIcon@3x.png */; };
 		1AF474581A4DCBB0003ED4AF /* trailer-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF474561A4DCBAF003ED4AF /* trailer-icon@2x.png */; };
 		1AF474591A4DCBB0003ED4AF /* trailer-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF474571A4DCBAF003ED4AF /* trailer-icon@3x.png */; };
 		1AF4745C1A4DD424003ED4AF /* UIButton+TrailerID.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AF4745B1A4DD424003ED4AF /* UIButton+TrailerID.m */; };
@@ -158,6 +164,12 @@
 		1AEB2BBF1A4B2580000D7C7B /* FacebookSDKOverrides.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FacebookSDKOverrides.bundle; sourceTree = "<group>"; };
 		1AEB8BEA1A3636FA004A94C1 /* UILabel+HeightToFit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+HeightToFit.h"; sourceTree = "<group>"; };
 		1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+HeightToFit.m"; sourceTree = "<group>"; };
+		1AF42CB21ADB2463008622E6 /* locationMeetingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = locationMeetingIcon.png; sourceTree = "<group>"; };
+		1AF42CB31ADB2463008622E6 /* locationMeetingIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "locationMeetingIcon@2x.png"; sourceTree = "<group>"; };
+		1AF42CB41ADB2463008622E6 /* locationMeetingIcon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "locationMeetingIcon@3x.png"; sourceTree = "<group>"; };
+		1AF42CB51ADB2463008622E6 /* randomMeetingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = randomMeetingIcon.png; sourceTree = "<group>"; };
+		1AF42CB61ADB2463008622E6 /* randomMeetingIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "randomMeetingIcon@2x.png"; sourceTree = "<group>"; };
+		1AF42CB71ADB2463008622E6 /* randomMeetingIcon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "randomMeetingIcon@3x.png"; sourceTree = "<group>"; };
 		1AF474561A4DCBAF003ED4AF /* trailer-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trailer-icon@2x.png"; sourceTree = "<group>"; };
 		1AF474571A4DCBAF003ED4AF /* trailer-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trailer-icon@3x.png"; sourceTree = "<group>"; };
 		1AF4745A1A4DD424003ED4AF /* UIButton+TrailerID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+TrailerID.h"; sourceTree = "<group>"; };
@@ -299,6 +311,12 @@
 		1A076DDD1A102B0B00CD725A /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				1AF42CB21ADB2463008622E6 /* locationMeetingIcon.png */,
+				1AF42CB31ADB2463008622E6 /* locationMeetingIcon@2x.png */,
+				1AF42CB41ADB2463008622E6 /* locationMeetingIcon@3x.png */,
+				1AF42CB51ADB2463008622E6 /* randomMeetingIcon.png */,
+				1AF42CB61ADB2463008622E6 /* randomMeetingIcon@2x.png */,
+				1AF42CB71ADB2463008622E6 /* randomMeetingIcon@3x.png */,
 				1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */,
 				1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */,
 				1A16F65A1A458929000BC4AB /* settings-tab-icon@2x.png */,
@@ -554,14 +572,20 @@
 				1AFE13761A32EEAB006F2366 /* meetingFavoriteUnselected@3x.png in Resources */,
 				1A95471A1A29E7DD002AC281 /* favorite-icon-message-alt@2x.png in Resources */,
 				1A9547191A29E7DD002AC281 /* favorite-icon-message-alt.png in Resources */,
+				1AF42CBA1ADB2463008622E6 /* locationMeetingIcon@3x.png in Resources */,
+				1AF42CBD1ADB2463008622E6 /* randomMeetingIcon@3x.png in Resources */,
 				1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */,
+				1AF42CB91ADB2463008622E6 /* locationMeetingIcon@2x.png in Resources */,
+				1AF42CBC1ADB2463008622E6 /* randomMeetingIcon@2x.png in Resources */,
 				1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */,
 				1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */,
+				1AF42CBB1ADB2463008622E6 /* randomMeetingIcon.png in Resources */,
 				1AEB2BC01A4B2580000D7C7B /* FacebookSDKOverrides.bundle in Resources */,
 				1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */,
 				1AFE13741A32EEAB006F2366 /* cart-icon@3x.png in Resources */,
 				1AFE13731A32EEAB006F2366 /* cart-icon@2x.png in Resources */,
 				1A95470F1A29E3A0002AC281 /* lens-icon-message@3x.png in Resources */,
+				1AF42CB81ADB2463008622E6 /* locationMeetingIcon.png in Resources */,
 				1AF474581A4DCBB0003ED4AF /* trailer-icon@2x.png in Resources */,
 				1A16754F1A3F93E300AE7A9D /* InfoPlist.strings in Resources */,
 				1AF474591A4DCBB0003ED4AF /* trailer-icon@3x.png in Resources */,

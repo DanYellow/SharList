@@ -569,18 +569,6 @@
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
 
-- (void) meetingsListHaveBeenUpdate
-{
-//    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted || [[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied) {
-//        return;
-//    }
-
-    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
-    // We update the view behind the user like this when he comes back the view is updated
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
-    [userSelectionTableView reloadData];
-}
-
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -707,8 +695,23 @@
         cell.imageView.opaque = YES;
         cell.imageView.tag = indexPath.row;
     } else {
+        if ([currentUserMet isRandomDiscover]) {
+            cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
+                                                                          forDarkBG:NO
+                                                                     thingsInCommon:commonTasteCount];
+            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
+                                                                                     forDarkBG:YES
+                                                                                thingsInCommon:commonTasteCount];
+        } else {
+            cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:NO thingsInCommon:commonTasteCount];
+            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:YES thingsInCommon:commonTasteCount];
+        }
+//        cell.imageView.highlightedImage = nil;
         cell.backgroundView = nil;
-        cell.imageView.image = nil;
+        
+        cell.imageView.tintColor = [UIColor whiteColor];
+        cell.imageView.backgroundColor = [UIColor clearColor];
+        cell.imageView.layer.cornerRadius = 20.0f;
     }
     
     cell.imageView.tag = 1000;
@@ -721,7 +724,36 @@
     return cell;
 }
 
-+ (UIImage *) imageFromFacebookFriendInitialForId:(NSNumber*) fbid forDarkBG:(BOOL)isDarkBG
+
+- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Called when the last cell is displayed
+    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
+        [loadingIndicator stopAnimating];
+    }
+}
+
++ (UIImage *) imageForCellWithName:(NSString*)imageName forDarkBG:(BOOL)isDarkBG thingsInCommon:(int)thingsInCommonCount
+{
+    UIImage *imageCell = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImageView *imageCellView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    imageCellView.image = imageCell;
+    
+    if (!isDarkBG && thingsInCommonCount == 0) {
+        imageCellView.tintColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
+        
+        return [MeetingsListViewController imageWithView:imageCellView];
+    }
+    
+    imageCellView.tintColor = (isDarkBG) ? [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0] : [UIColor whiteColor];
+    
+    return [MeetingsListViewController imageWithView:imageCellView];
+}
+
+
+
+
++ (UIImage *) imageFromFacebookFriendInitialForId:(NSNumber*)fbid forDarkBG:(BOOL)isDarkBG
 {
     NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [fbid stringValue]]];
     NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] substringToIndex:1];
@@ -730,13 +762,11 @@
     UILabel *initialPatronymFacebookFriendLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     initialPatronymFacebookFriendLabel.text = [firstNameFirstLetter stringByAppendingString:lastNameFirstLetter];
     initialPatronymFacebookFriendLabel.textAlignment = NSTextAlignmentCenter;
-    initialPatronymFacebookFriendLabel.backgroundColor =  (isDarkBG) ? [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0] : [UIColor whiteColor];
+    initialPatronymFacebookFriendLabel.backgroundColor = (isDarkBG) ? [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0] : [UIColor whiteColor];
     initialPatronymFacebookFriendLabel.textColor = (isDarkBG) ? [UIColor whiteColor] : [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
     initialPatronymFacebookFriendLabel.clipsToBounds = YES;
     initialPatronymFacebookFriendLabel.layer.cornerRadius = 20.0f;
     
-
-
     return [MeetingsListViewController imageWithView:initialPatronymFacebookFriendLabel];
 }
 
@@ -753,13 +783,20 @@
     return img;
 }
 
-- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+
+- (void) meetingsListHaveBeenUpdate
 {
-    // Called when the last cell is displayed
-    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
-      [loadingIndicator stopAnimating];
-    }
+    //    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted || [[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied) {
+    //        return;
+    //    }
+    
+    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
+    // We update the view behind the user like this when he comes back the view is updated
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
+    [userSelectionTableView reloadData];
 }
+
+
 
 - (void) getImageCellForData:(NSString*)fbFriendID aCell:(UITableViewCell*)cell
 {
