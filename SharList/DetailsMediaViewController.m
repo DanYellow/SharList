@@ -216,6 +216,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             if (responseObject[@"tv_results"] != nil && [responseObject[@"tv_results"] count] != 0) {
                 NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0], @"language": userLanguage};
                 [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
+                    NSLog(@"responseObject : %@", responseObject[@"last_air_date"]);
                     if(!error){
                         [self setMediaViewForData:responseObject];
                         [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {

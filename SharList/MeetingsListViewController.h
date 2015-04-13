@@ -58,7 +58,9 @@
 - (void) fetchUsersDatas;
 - (void) reloadTableview;
 - (void) manageDisplayOfFacebookFriendsButton;
-+ (UIImage *) imageForCellWithName:(NSString*)imageName ForDarkBG:(BOOL)isDarkBG;
+
++ (UIImage *) imageForCellWithName:(NSString*)imageName forDarkBG:(BOOL)isDarkBG thingsInCommon:(int)thingsInCommonCount;
++ (UIImage *) imageFromFacebookFriendInitialForId:(NSNumber*)fbid forDarkBG:(BOOL)isDarkBG;
 
 
 @end
