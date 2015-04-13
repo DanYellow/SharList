@@ -53,6 +53,13 @@
 "localNotificationAlertActionRefresh" = "discover";
 "localNotificationAlertBodyRefresh" = "There are always new things to discover";
 "authorize fb friends" = "I would like to see my friends";
+// Tutorial part \\
+"refreshmeetingType" = "The refresh button allows to make discoveries, they can be of three types";
+"geolocated" = "Geolocated";
+"geolocatedMeetingExplained" = "Geolocated\nPerfect when you're in foreign country";
+"random" = "Random";
+"randomMeetingExplained" = "Random\nFor those who are not afraid of the unknown";
+
 
 // DetailsMeetingsViewController
 "met %@ times" = "discovered %@ time(s)";

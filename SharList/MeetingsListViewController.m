@@ -24,6 +24,7 @@
 // 6 : emptyFacebookFriendsLabelView
 // 7 : allowFriendsBtn
 // 8 : emptyFacebookFriendsLabel
+// 9 : tutorialView
 
 @implementation MeetingsListViewController
 
@@ -287,7 +288,7 @@
     UIView *tutorialView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
     tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.989f];
     tutorialView.layer.mask = maskWithHole;
-    tutorialView.tag = 8;
+    tutorialView.tag = 9;
     tutorialView.alpha = .25;
     tutorialView.opaque = NO;
     [[[UIApplication sharedApplication] keyWindow] addSubview:tutorialView];
@@ -299,10 +300,10 @@
                      }
                      completion:nil];
     
-    NSLog(@"screenWidth : %f", screenWidth);
+
     // TUTORIAL VIEW
     UITextView *tutFavsMessageTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 40, 90)];
-    tutFavsMessageTV.text = @"Le bouton rafraîchir de faire des découvertes, elles peuvent être de trois types : ";
+    tutFavsMessageTV.text = NSLocalizedString(@"refreshmeetingType", "text to introduce the three types of meetings");
     tutFavsMessageTV.textColor = [UIColor whiteColor];
     tutFavsMessageTV.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     tutFavsMessageTV.editable = NO;
@@ -310,63 +311,93 @@
     tutFavsMessageTV.backgroundColor = [UIColor clearColor];
     [tutFavsMessageTV sizeToFit];
     
-    
-    
-    UIFont *arialFont = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
-    NSDictionary *arialDict = [NSDictionary dictionaryWithObject: arialFont forKey:NSFontAttributeName];
-
-
-    
-
-    CGFloat tutFavsMessageTVYPercentage = 42.0;
+    CGFloat tutFavsMessageTVYPercentage = 35.0;
     CGFloat tutFavsMessageTVY = roundf((screenHeight * tutFavsMessageTVYPercentage) / 100);
     tutFavsMessageTV.center = CGPointMake(self.view.center.x, tutFavsMessageTVY);
     [tutorialView addSubview:tutFavsMessageTV];
+
+
+    CGFloat imgIndicatorWidthPercentage = 14.30;
+    float typeMeetingLabelXSpacePercentage = 4.35;
+    CGFloat typeMeetingLabelWidthPercentage = 81.0;
     
     float typeMeetingY = tutFavsMessageTV.frame.origin.y + tutFavsMessageTV.frame.size.height + 15;
-    
-    
-    CGFloat imgIndicatorWidthPercentage = 14.30;
-    CGFloat imgIndicatorWidth = roundf((tutFavsMessageTV.frame.size.width * imgIndicatorWidthPercentage) / 100);
-    UIImageView *imgIndicator = [[UIImageView alloc] initWithFrame:CGRectMake(tutFavsMessageTV.frame.origin.x,
-                                                                             typeMeetingY,
-                                                                              imgIndicatorWidth, imgIndicatorWidth)];
-    imgIndicator.image = [[UIImage imageNamed:@"location"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    imgIndicator.backgroundColor = [UIColor clearColor];
-    imgIndicator.tintColor = [UIColor whiteColor];
-    [tutorialView addSubview:imgIndicator];
-    
-    float typeMeetingLabelXSpacePercentage = 4.35;
     CGFloat typeMeetingLabelXSpace = roundf((tutFavsMessageTV.frame.size.width * typeMeetingLabelXSpacePercentage) / 100);
-    
-    CGFloat typeMeetingLabelWidthPercentage = 81.0;
     CGFloat typeMeetingLabelWidth = roundf((tutFavsMessageTV.frame.size.width * typeMeetingLabelWidthPercentage) / 100);
-    
-    UILabel *typeMeetingLabel = [[UILabel alloc] initWithFrame:CGRectMake(imgIndicator.frame.origin.x + imgIndicator.frame.size.width + typeMeetingLabelXSpace, typeMeetingY, typeMeetingLabelWidth, 40)];
-    
-    typeMeetingLabel.textColor = [UIColor whiteColor];
-    typeMeetingLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+    CGFloat imgIndicatorWidth = roundf((tutFavsMessageTV.frame.size.width * imgIndicatorWidthPercentage) / 100);
 
-    NSMutableAttributedString *typeMeetingAttrString = [[NSMutableAttributedString alloc] initWithString:@"Géolocalisées \nIdéales quand on est à l'étranger" attributes: nil];
-     NSRange r = [[typeMeetingAttrString string] rangeOfString:@"Géolocalisées"];
-    [typeMeetingAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0] range:NSMakeRange(r.location, r.length)];
+    NSArray *meetingTypesArr = @[@{@"imgName" : @"locationMeetingIcon", @"name" : NSLocalizedString(@"geolocated", nil), @"desc" : NSLocalizedString(@"geolocatedMeetingExplained", nil)},
+                                 @{@"imgName" : @"randomMeetingIcon", @"name" : NSLocalizedString(@"random", nil), @"desc" : NSLocalizedString(@"randomMeetingExplained", nil)}
+                                ];
     
-    typeMeetingLabel.attributedText = typeMeetingAttrString;
-    typeMeetingLabel.backgroundColor = [UIColor purpleColor];
+    for (int i = 0; i < meetingTypesArr.count; i++) {
+        UIImageView *imgIndicator = [[UIImageView alloc] initWithFrame:CGRectMake(tutFavsMessageTV.frame.origin.x,
+                                                                                  typeMeetingY + ((i * 20) + (i * imgIndicatorWidth)),
+                                                                                  imgIndicatorWidth, imgIndicatorWidth)];
+        NSString *imgName = [meetingTypesArr objectAtIndex:i][@"imgName"];
+        imgIndicator.image = [[UIImage imageNamed:imgName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        imgIndicator.backgroundColor = [UIColor clearColor];
+        imgIndicator.tintColor = [UIColor whiteColor];
+        [tutorialView addSubview:imgIndicator];
+        
+        
+        UILabel *typeMeetingLabel = [[UILabel alloc] initWithFrame:CGRectMake(imgIndicator.frame.origin.x + imgIndicator.frame.size.width + typeMeetingLabelXSpace, typeMeetingY + ((i * 20) + (i * imgIndicatorWidth)), typeMeetingLabelWidth, 40)];
+        
+        typeMeetingLabel.textColor = [UIColor whiteColor];
+        typeMeetingLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+        
+        NSString *description = [meetingTypesArr objectAtIndex:i][@"desc"];
+        NSMutableAttributedString *typeMeetingAttrString = [[NSMutableAttributedString alloc] initWithString:description attributes: nil];
+        NSString *stringToHighlight = [meetingTypesArr objectAtIndex:i][@"name"];
+        NSRange r = [[typeMeetingAttrString string] rangeOfString:stringToHighlight];
+        [typeMeetingAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0] range:NSMakeRange(r.location, r.length)];
+        
+        typeMeetingLabel.attributedText = typeMeetingAttrString;
+        typeMeetingLabel.backgroundColor = [UIColor clearColor];
+        typeMeetingLabel.numberOfLines = 0;
+        [tutorialView addSubview:typeMeetingLabel];
+    }
     
-    typeMeetingLabel.numberOfLines = 0;
-    [tutorialView addSubview:typeMeetingLabel];
+    UILabel *notaBene = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tutFavsMessageTV.frame.size.width, 36) ];
+    notaBene.text = @"Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !";
+    notaBene.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+    notaBene.backgroundColor = [UIColor clearColor];
+    notaBene.textAlignment = NSTextAlignmentCenter;
+    notaBene.numberOfLines = 0;
+    notaBene.center = CGPointMake(self.view.center.x, typeMeetingY + 20 + ((meetingTypesArr.count * 20) + (meetingTypesArr.count * imgIndicatorWidth)));
+    notaBene.textColor = [UIColor whiteColor];
+    [tutorialView addSubview:notaBene];
     
-    UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
-    [endTutorial addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
-    [endTutorial setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
+    CALayer *rightBorder = [CALayer layer];
+    rightBorder.frame = CGRectMake(0, 0.0f, notaBene.frame.size.width, 1.0f);
+    rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
+    [notaBene.layer addSublayer:rightBorder];
     
-    endTutorial.frame = CGRectMake(0, screenHeight - 150, screenWidth, 49);
-    endTutorial.tintColor = [UIColor whiteColor];
-    [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
-    [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
-    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
-    [tutorialView addSubview:endTutorial];
+    
+    UIButton *closeTutorialBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [closeTutorialBtn addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
+    [closeTutorialBtn setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
+    
+    closeTutorialBtn.frame = CGRectMake(0, notaBene.frame.size.height + notaBene.frame.origin.y + 35, screenWidth, 20);
+    closeTutorialBtn.tintColor = [UIColor whiteColor];
+    [closeTutorialBtn setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+    [closeTutorialBtn setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+    closeTutorialBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
+    [tutorialView addSubview:closeTutorialBtn];
+}
+
+- (void) hideTutorial
+{
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    UIView *tutorialView = (UIView*)[[[UIApplication sharedApplication] keyWindow] viewWithTag:9];
+    [UIView animateWithDuration:0.25 delay:0.1
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         tutorialView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [tutorialView removeFromSuperview];
+                     }];
 }
 
 - (void) pushNotificationReceived:(NSNotification*)notification
