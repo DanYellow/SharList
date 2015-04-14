@@ -55,7 +55,7 @@
     [self navigationItemRightButtonEnablingManagement];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorial"] && FBSession.activeSession.isOpen) {
-//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
         [self showTutorial];
     }
 }
@@ -120,8 +120,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableview) name:@"seenFavUpdated" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
-    
-//    [self initializer];
 }
 
 // Because of the facebook login we can't load the ui directly
@@ -138,6 +136,11 @@
         alertBGF = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"restrictedBGF", nil) delegate:self cancelButtonTitle:@"OK"  otherButtonTitles:NSLocalizedString(@"Settings", nil), nil];
         [alertBGF show];
         [userPreferences setBool:YES forKey:@"seenAlertForBGF"];
+    }
+    
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorial"] && FBSession.activeSession.isOpen) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
+        [self showTutorial];
     }
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
@@ -984,17 +987,17 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-//    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-//    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@&latitude=%f&longitude=%f", (long)currentUserfbID, @"NO", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
-//    
-//    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:<#(NSString *)#>] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-//        if (error) {
-//            completionHandler(UIBackgroundFetchResultFailed);
-//        } else {
-//            [self saveRandomUserDatas:data];
-//            completionHandler(UIBackgroundFetchResultNewData);
-//        }
-//    }];
+    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, @"NO"];
+    
+    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        if (error) {
+            completionHandler(UIBackgroundFetchResultFailed);
+        } else {
+            [self saveRandomUserDatas:data];
+            completionHandler(UIBackgroundFetchResultNewData);
+        }
+    }];
 }
 
 - (BOOL) connected {
@@ -1014,19 +1017,18 @@
     [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == NO) {
+        NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
+        NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, @"NO"];
         
-    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, @"NO"];
-        
-    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if (error) {
-            [loadingIndicator stopAnimating];
-            [self noInternetAlert];
-        } else {
-            [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
-            [self saveRandomUserDatas:data];
-        }
-    }];
+        [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            if (error) {
+                [loadingIndicator stopAnimating];
+                [self noInternetAlert];
+            } else {
+                [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
+                [self saveRandomUserDatas:data];
+            }
+        }];
     } else {
         if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
             if (!self.locationManager) {
