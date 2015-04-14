@@ -18,7 +18,7 @@
 "buy" = "buy";
 "buy %@" = "buy %@";
 
-"push remote notif update list" = "One of your favorite discoveries was updated !";
+"push remote notif update list" = "One of your favorite discoveries was updated!";
 
 
 //tab bar controller
@@ -43,7 +43,7 @@
 "All" = "All";
 "Favorites" = "Favorites";
 "Met at %@" = "Discovered at %@";
-"updated" = "updated !";
+"updated" = "updated!";
 "nomeetings" = "So it looks like there is none around you to get new discoveries. Talk to them about Shound";
 "%@ meetings" = "%@ discoveries";
 "disabledBGF" = "The background fetch feature is disabled in your Settings. Enabled it to introduce the world what you love without open the app.";
@@ -59,12 +59,12 @@
 "geolocatedMeetingExplained" = "Geolocated\nPerfect when you're in foreign country";
 "random" = "Random";
 "randomMeetingExplained" = "Random\nFor those who are not afraid of the unknown";
-
+"notefacebook" = "Note : If an icon is replaced by initials, you discovered a facebook friend!";
 
 // DetailsMeetingsViewController
 "met %@ times" = "discovered %@ time(s)";
 "pull to refresh fav" = "This discovery is now among your favs.\nYou can \"pull-to-refresh\" to see if this has been updated.";
-"nothing common" = "Nothing in common. Discover !";
+"nothing common" = "Discover! Nothing in common.";
 "things common" = "Things in common, but also to discover";
 "in common" = "taste in common";
 "%@ in common" = "%@ taste in common";
@@ -115,12 +115,12 @@
 
 // Facebook post
 "FBLinkShareParams_name" = "Download Shound";
-"FBLinkShareParams_caption" = "I'm already use Shound and you ?";
+"FBLinkShareParams_caption" = "I'm already use Shound and you?";
 "FBLinkShareParams_noapp" = "It looks like you haven't Facebook's app";
 "FBLinkShareParams_posterror" = "Facebook has encountered a problem";
 "FBLinkShareParams_postsuccess" = "Thanks you. You help Shound to be more popular";
-"FBLinkShareParams_postsuccess_title" = "Great !";
+"FBLinkShareParams_postsuccess_title" = "Great!";
 "FBLinkShareParams_metfriend_name" = "I've met a friend on Shound";
 "FBLinkShareParams_metfriend_desc %@" = "I discovered the taste of %@.\n Do the same";
-"FBLinkShareParams_metfriend_desc_alt" = "Do the same !";
+"FBLinkShareParams_metfriend_desc_alt" = "Do the same!";
 

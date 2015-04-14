@@ -48,7 +48,7 @@
 "restrictedBGF" = "Il semblerait que votre appareil ne soit pas autorisé à actualiser le contenu en arrière-plan.";
 "no datas updated for this user" = "Cet utilisateur n'a pas mis à jour sa liste";
 "numberOfJSONErrorsMaxReached" = "Mince. Le serveur n'a pas de nouvelles choses à vous proposer";
-"nothing common" = "Rien en commun. Découvrez !";
+"nothing common" = "Découvrez ! Rien en commun.";
 "things common" = "On peut toujours apprendre des autres";
 "full common" = "On peut toujours apprendre des autres";
 "in common" = "de goût en commun";
@@ -62,7 +62,7 @@
 "geolocatedMeetingExplained" = "Géolocalisées\nIdéales quand on est à l'étranger";
 "random" = "Aléatoires";
 "randomMeetingExplained" = "Aléatoires\nPour ceux qui n'ont pas peur de l'inconnu";
-
+"notefacebook" = "Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !";
 
 //Settings view controller
 "Settings" = "Réglages";

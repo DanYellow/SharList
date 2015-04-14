@@ -415,6 +415,10 @@
 }
 
 
+- (void) isFinished {
+    NSLog(@"isFinished");
+}
+
 - (void) scrollToSectionWithNumber:(UIButton*)sender {
     
     NSInteger aSectionNumber = sender.tag;

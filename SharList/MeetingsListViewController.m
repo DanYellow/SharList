@@ -53,6 +53,11 @@
     }
     
     [self navigationItemRightButtonEnablingManagement];
+    
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorial"] && FBSession.activeSession.isOpen) {
+//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
+        [self showTutorial];
+    }
 }
 
 - (void) viewWillDisappear:(BOOL)animated
@@ -88,6 +93,17 @@
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
     
+    //Main screen display
+    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
+    
+    CAGradientLayer *gradientBGView = [CAGradientLayer layer];
+    gradientBGView.frame = self.view.bounds;
+    UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
+    UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
+    gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
+    [self.view.layer insertSublayer:gradientBGView atIndex:0];
+    
+    
     // Design on the view
     UIAlertView *alertBGF;
     alertBGF.delegate = self;
@@ -103,17 +119,7 @@
     } else {
         
     }
-    
-    //Main screen display
-    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
-    
-    CAGradientLayer *gradientBGView = [CAGradientLayer layer];
-    gradientBGView.frame = self.view.bounds;
-    UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
-    UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
-    gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
-    [self.view.layer insertSublayer:gradientBGView atIndex:0];
-    
+
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
     segmentedControlView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
@@ -167,7 +173,7 @@
     CGFloat emptyUserTasteLabelPosY = 45; // [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
     
     UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 24, 90)];
-    emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0f];
+    emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur l'étoile} pour ajouter aux favoris
     emptyFavoritesLabel.textColor = [UIColor whiteColor];
     emptyFavoritesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
@@ -208,13 +214,12 @@
         shareShoundBtn.frame = CGRectMake(0.0, 0.0, screenWidth - 24, 50);
     }
     [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
-    [shareShoundBtn setTitleColor:[UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f] forState:UIControlStateNormal];
-    [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
+    [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateHighlighted];
     [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-    shareShoundBtn.highlighted = YES;
-    shareShoundBtn.backgroundColor = [UIColor whiteColor];
-//    [self.button setBackgroundImage:image forState:UIControlStateHighlighted];
-    [shareShoundBtn setBackgroundImage:nil forState:UIControlStateHighlighted];
+    shareShoundBtn.backgroundColor = [UIColor clearColor];
+    shareShoundBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    shareShoundBtn.layer.borderWidth = 2.0f;
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     [emptyFacebookFriendsLabelView addSubview:shareShoundBtn];
 
@@ -255,8 +260,11 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableview) name:@"seenFavUpdated" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
+}
+
+// Because of the facebook login we can't load the ui directly
+- (void) initializer {
     
-    [self showTutorial];
 }
 
 
@@ -359,7 +367,7 @@
     }
     
     UILabel *notaBene = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tutFavsMessageTV.frame.size.width, 36) ];
-    notaBene.text = @"Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !";
+    notaBene.text = NSLocalizedString(@"notefacebook", nil);
     notaBene.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
     notaBene.backgroundColor = [UIColor clearColor];
     notaBene.textAlignment = NSTextAlignmentCenter;
@@ -378,8 +386,9 @@
     [closeTutorialBtn addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
     [closeTutorialBtn setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
     
-    closeTutorialBtn.frame = CGRectMake(0, notaBene.frame.size.height + notaBene.frame.origin.y + 35, screenWidth, 20);
+    closeTutorialBtn.frame = CGRectMake(20, notaBene.frame.size.height + notaBene.frame.origin.y + 35, screenWidth - 40, 30);
     closeTutorialBtn.tintColor = [UIColor whiteColor];
+    closeTutorialBtn.backgroundColor = [UIColor clearColor];
     [closeTutorialBtn setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
     [closeTutorialBtn setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
     closeTutorialBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
@@ -973,14 +982,17 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if (error) {
-            completionHandler(UIBackgroundFetchResultFailed);
-        } else {
-            [self saveRandomUserDatas:data];
-            completionHandler(UIBackgroundFetchResultNewData);
-        }
-    }];
+//    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
+//    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@&latitude=%f&longitude=%f", (long)currentUserfbID, @"NO", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
+//    
+//    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:<#(NSString *)#>] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+//        if (error) {
+//            completionHandler(UIBackgroundFetchResultFailed);
+//        } else {
+//            [self saveRandomUserDatas:data];
+//            completionHandler(UIBackgroundFetchResultNewData);
+//        }
+//    }];
 }
 
 - (BOOL) connected {
@@ -999,7 +1011,12 @@
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     
-    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQuery] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == NO) {
+        
+    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, @"NO"];
+        
+    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
             [loadingIndicator stopAnimating];
             [self noInternetAlert];
@@ -1008,10 +1025,30 @@
             [self saveRandomUserDatas:data];
         }
     }];
+    } else {
+        if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
+            if (!self.locationManager) {
+                self.locationManager = [CLLocationManager new];
+            }
+            
+            self.locationManager.delegate = self;
+            self.locationManager.distanceFilter = distanceFilterLocalisation;
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+            self.locationManager.pausesLocationUpdatesAutomatically = NO;
+            self.locationManager.activityType = CLActivityTypeFitness;
+            
+            // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+            if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+                [self.locationManager requestAlwaysAuthorization];
+            }
+            
+            [self.locationManager startUpdatingLocation];
+        }
+    }
 }
 
 
-- (NSMutableURLRequest*) fetchUsersDatasQuery
+- (NSMutableURLRequest*) fetchUsersDatasQueryWithUrlWithParams:(NSString*)anURL
 {
     self.navigationItem.rightBarButtonItem.enabled = NO;
     
@@ -1026,52 +1063,30 @@
                                                        timeoutInterval:15.0];
     [request setHTTPMethod:@"POST"];
     
-    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-    
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, [[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] ? @"YES" : @"NO"];
-    
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] &&
-        [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways
-    ) {
-        
-        if (!self.locationManager) {
-            self.locationManager = [CLLocationManager new];
-        }
-        
-        self.locationManager.delegate = self;
-        self.locationManager.distanceFilter = distanceFilterLocalisation;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-        self.locationManager.pausesLocationUpdatesAutomatically = NO;
-        self.locationManager.activityType = CLActivityTypeFitness;
-        
-        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
-        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-            [self.locationManager requestAlwaysAuthorization];
-        }
-        
-        [self.locationManager startUpdatingLocation];
-    }
-    
-    // If user is accepts geoloc we update his location BEFORE fetch new users
-    // That's way the meeting is more relevant
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES) {
-        
-        postString = [postString stringByAppendingString:[NSString stringWithFormat:@"&latitude=%f&longitude=%f", self.locationManager.location.coordinate.latitude, self.locationManager.location.coordinate.longitude]];
-    }
-    
 
-//    [self.locationManager stopUpdatingLocation];
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:[anURL dataUsingEncoding:NSUTF8StringEncoding]];
     
     return request;
 }
 
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     CLLocation *currentLocation = [locations lastObject];
+    [self.locationManager stopUpdatingLocation];
+
+    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@&latitude=%f&longitude=%f", (long)currentUserfbID, @"NO", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
     
-//    self.locationManager.location.coordinate.latitude = currentLocation.coordinate.latitude;
-//    self.locationManager.location.coordinate.latitude = currentLocation.coordinate.latitude;
+    [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        if (error) {
+            [loadingIndicator stopAnimating];
+            [self noInternetAlert];
+        } else {
+            [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
+            [self saveRandomUserDatas:data];
+        }
+    }];
 }
 
 - (void) saveRandomUserDatas:(NSData *)datas
@@ -1314,12 +1329,13 @@
         UIButton *allowFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [allowFriendsBtn setFrame:CGRectMake(0, shareShoundBtnFrame.origin.y + shareShoundBtnFrame.size.height + 25, shareShoundBtnFrame.size.width, 44)];
         [allowFriendsBtn setTitle:NSLocalizedString(@"authorize fb friends", nil) forState:UIControlStateNormal];
-        [allowFriendsBtn setTitleColor:[UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f] forState:UIControlStateNormal];
-        [allowFriendsBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
+        [allowFriendsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [allowFriendsBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateHighlighted];
         [allowFriendsBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-        allowFriendsBtn.highlighted = YES;
         allowFriendsBtn.tag = 7;
-        allowFriendsBtn.backgroundColor = [UIColor whiteColor];
+        allowFriendsBtn.backgroundColor = [UIColor clearColor];
+        allowFriendsBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+        allowFriendsBtn.layer.borderWidth = 2.0f;
         [allowFriendsBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
         [emptyFacebookFriendsLabelView addSubview:allowFriendsBtn];
     }
