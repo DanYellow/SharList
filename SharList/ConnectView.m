@@ -22,6 +22,7 @@
 - (id) initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+        self.hidden = YES;
         
 #pragma mark - init view properties
         [self setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];

@@ -120,6 +120,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableview) name:@"seenFavUpdated" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
+    
+    [self maskTest];
 }
 
 // Because of the facebook login we can't load the ui directly
@@ -267,9 +269,38 @@
     UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                       withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
-    
-    
+}
 
+- (void) maskTest {
+    UIView *mask = [[UIView alloc] initWithFrame:CGRectMake(25, 150, 50, 50)];
+    mask.layer.cornerRadius = 25.0f;
+    mask.backgroundColor = [UIColor redColor];
+    [self.view addSubview:mask];
+    
+    CGFloat startAngle = 0;
+    CGPoint center = CGPointMake(25, 25);
+    CGFloat radius = 25.0;
+    
+    CAShapeLayer *maskWithHole = [CAShapeLayer layer];
+    [maskWithHole setPath:[self createPieSliceWithCenter:center radius:radius startAngle:startAngle endAngle:359.5]];
+    [maskWithHole setFillRule:kCAFillRuleEvenOdd];
+    
+    mask.layer.mask = maskWithHole;
+}
+
+- (CGPathRef) createPieSliceWithCenter:(CGPoint)center
+                                radius:(CGFloat)radius
+                            startAngle:(CGFloat)degStartAngle
+                              endAngle:(CGFloat)degEndAngle
+{
+    
+    UIBezierPath *piePath = [UIBezierPath bezierPath];
+    [piePath moveToPoint:center];
+    [piePath addLineToPoint:CGPointMake(center.x + radius * cosf(DegreesToRadians(degStartAngle)), center.y + radius * sinf(DegreesToRadians(degStartAngle)))];
+    [piePath addArcWithCenter:center radius:radius startAngle:DegreesToRadians(degStartAngle) endAngle:DegreesToRadians(degEndAngle) clockwise:YES];
+
+    [piePath closePath]; // this will automatically add a straight line to the center
+    return piePath.CGPath;
 }
 
 
@@ -288,6 +319,8 @@
     [maskPath addLineToPoint:CGPointMake(CGRectGetMaxX(biggerRect), CGRectGetMaxY(biggerRect))];
     [maskPath addLineToPoint:CGPointMake(CGRectGetMaxX(biggerRect), CGRectGetMinY(biggerRect))];
     [maskPath addLineToPoint:CGPointMake(CGRectGetMinX(biggerRect), CGRectGetMinY(biggerRect))];
+    
+    
     
     int radius = 23.0;
     UIBezierPath *circlePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(screenWidth - 50, 18.0, 2.0 * radius, 2.0 * radius) cornerRadius:radius];
@@ -430,8 +463,47 @@
 // This function manage the enable state of refresh button
 - (void) navigationItemRightButtonEnablingManagement
 {
-    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatas)];
+//    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatas)];
+    
+
+    
+
+    
+    
+    UIButton *refreshBtnBarMask = [UIButton buttonWithType:UIButtonTypeCustom];
+    refreshBtnBarMask.frame = CGRectMake(0, 0, 24, 24);
+    refreshBtnBarMask.tintColor = [UIColor colorWithRed:(119.0/255.0f) green:(120.0f/255.0f) blue:(132.0f/255.0f) alpha:1.0f];
+    [refreshBtnBarMask setImage:[[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
+                       forState:UIControlStateNormal];
+    
+    UIButton *refreshBtnBar = [UIButton buttonWithType:UIButtonTypeCustom];
+    refreshBtnBar.frame = CGRectMake(0, 0, 24, 24);
+    [refreshBtnBar addTarget:self action:@selector(fetchUsersDatas) forControlEvents:UIControlEventTouchUpInside];
+    refreshBtnBar.showsTouchWhenHighlighted = NO;
+    refreshBtnBar.alpha = 1.0;
+    
+    UIImage *backButtonImage = [[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    [refreshBtnBar setImage:backButtonImage forState:UIControlStateNormal];
+    
+    CGFloat startAngle = 0.0;
+    CGPoint center = CGPointMake(12, 12);
+    CGFloat radius = 24.0;
+    
+    CAShapeLayer *maskWithHole = [CAShapeLayer layer];
+    [maskWithHole setPath:[self createPieSliceWithCenter:center radius:radius startAngle:startAngle endAngle:59.9]];
+    [maskWithHole setFillRule:kCAFillRuleEvenOdd];
+    
+    refreshBtnBarMask.layer.mask = maskWithHole;
+    
+    [refreshBtnBar addSubview:refreshBtnBarMask];
+    
+    
+    
+    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithCustomView:refreshBtnBar];
+  
+//    refreshBtn.tintColor = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem = refreshBtn;
+
 
     if ([userPreferences objectForKey:@"lastManualUpdate"]) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -444,13 +516,14 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
+        NSLog(@"delayLastMeetingUser : %li", BGFETCHDELAY - delayLastMeetingUser);
         if (delayLastMeetingUser > BGFETCHDELAY) { //BGFETCHDELAY
-            self.navigationItem.rightBarButtonItem.enabled = YES;
+            self.navigationItem.rightBarButtonItem.enabled = YES; // YES
         } else {
             self.navigationItem.rightBarButtonItem.enabled = NO;
         }
     } else {
-        self.navigationItem.rightBarButtonItem.enabled = YES;
+        self.navigationItem.rightBarButtonItem.enabled = YES; // YES
     }
 }
 

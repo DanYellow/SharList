@@ -17,6 +17,7 @@
 		1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC31A0FE20900CD725A /* Images.xcassets */; };
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EB7771A994BEE000EA307 /* NSString+MD5.m */; };
+		1A1251CC1ADDBEC500EA0506 /* refreshBarItem.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */; };
 		1A16754F1A3F93E300AE7A9D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1675511A3F93E300AE7A9D /* InfoPlist.strings */; };
 		1A16F6491A457C17000BC4AB /* liste-tab-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */; };
 		1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */; };
@@ -106,6 +107,7 @@
 		1A076DD21A0FE20900CD725A /* SharListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharListTests.m; sourceTree = "<group>"; };
 		1A0EB7761A994BEE000EA307 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
 		1A0EB7771A994BEE000EA307 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
+		1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = refreshBarItem.png; sourceTree = "<group>"; };
 		1A1675501A3F93E300AE7A9D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A1675521A3F93E800AE7A9D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "liste-tab-icon@2x.png"; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 		1A076DDD1A102B0B00CD725A /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */,
 				1AF42CB21ADB2463008622E6 /* locationMeetingIcon.png */,
 				1AF42CB31ADB2463008622E6 /* locationMeetingIcon@2x.png */,
 				1AF42CB41ADB2463008622E6 /* locationMeetingIcon@3x.png */,
@@ -585,6 +588,7 @@
 				1AFE13741A32EEAB006F2366 /* cart-icon@3x.png in Resources */,
 				1AFE13731A32EEAB006F2366 /* cart-icon@2x.png in Resources */,
 				1A95470F1A29E3A0002AC281 /* lens-icon-message@3x.png in Resources */,
+				1A1251CC1ADDBEC500EA0506 /* refreshBarItem.png in Resources */,
 				1AF42CB81ADB2463008622E6 /* locationMeetingIcon.png in Resources */,
 				1AF474581A4DCBB0003ED4AF /* trailer-icon@2x.png in Resources */,
 				1A16754F1A3F93E300AE7A9D /* InfoPlist.strings in Resources */,
