@@ -120,6 +120,8 @@
             [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
         }
     }
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"mainViewIsReady" object:nil userInfo:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userConnectedToFacebook" object:nil userInfo:nil];
 }
 

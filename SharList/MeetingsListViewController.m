@@ -103,7 +103,29 @@
     gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
+    // Called when the user is connected to facebook
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initializer) name:@"mainViewIsReady" object:nil];
     
+    // This method is called when user quit the app
+    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
+    // This method is called when user go back to app
+    // User not enable bgfetch
+    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(navigationItemRightButtonEnablingManagement) name: @"didEnterForeground" object: nil];
+    // User enable bgfetch
+    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushNotificationReceived:) name:@"pushNotificationFavorite" object:nil];
+    
+    // Called when user see a fav discover
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableview) name:@"seenFavUpdated" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
+    
+//    [self initializer];
+}
+
+// Because of the facebook login we can't load the ui directly
+- (void) initializer {
     // Design on the view
     UIAlertView *alertBGF;
     alertBGF.delegate = self;
@@ -116,10 +138,7 @@
         alertBGF = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"restrictedBGF", nil) delegate:self cancelButtonTitle:@"OK"  otherButtonTitles:NSLocalizedString(@"Settings", nil), nil];
         [alertBGF show];
         [userPreferences setBool:YES forKey:@"seenAlertForBGF"];
-    } else {
-        
     }
-
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
     segmentedControlView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
@@ -154,8 +173,8 @@
     userMeetingsListTableView.tableHeaderView = segmentedControlView;
     userMeetingsListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
     
-//    [userMeetingsListTableView scrollToRowAtIndexPath:0 atScrollPosition:UITableViewScrollPositionTop animated:NO];
-
+    //    [userMeetingsListTableView scrollToRowAtIndexPath:0 atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    
     [self.view addSubview:userMeetingsListTableView];
     
     // Message for empty list meetings
@@ -206,13 +225,14 @@
     emptyFacebookFriendsLabelView.userInteractionEnabled = YES;
     emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
     [userMeetingsListTableView addSubview:emptyFacebookFriendsLabelView];
-
+    
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareShoundBtn setFrame:CGRectMake(0, 55, emptyFacebookFriendsLabelView.frame.size.width, 44)];
     if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
         shareShoundBtn.frame = CGRectMake(0.0, 0.0, screenWidth - 24, 50);
     }
+
     [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateHighlighted];
@@ -222,14 +242,14 @@
     shareShoundBtn.layer.borderWidth = 2.0f;
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     [emptyFacebookFriendsLabelView addSubview:shareShoundBtn];
-
+    
     
     UIView *emptyFacebookFriendsLabelLastView = [emptyFacebookFriendsLabelView.subviews lastObject];
     CGRect frameRect = emptyFacebookFriendsLabelView.frame;
     frameRect.size.height = emptyFacebookFriendsLabelLastView.frame.size.height + emptyFacebookFriendsLabelLastView.frame.origin.y;
     emptyFacebookFriendsLabelView.frame = frameRect;
-//    emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
-
+    //    emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+    
     
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
@@ -242,29 +262,11 @@
     
     
     UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
-                             withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+                                                      withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
     
+    
 
-    // This method is called when user quit the app
-    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(appEnteredBackground) name: @"didEnterBackground" object: nil];
-    // This method is called when user go back to app
-    // User not enable bgfetch
-    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(navigationItemRightButtonEnablingManagement) name: @"didEnterForeground" object: nil];
-    // User enable bgfetch
-    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(meetingsListHaveBeenUpdate) name: @"didEnterForeground" object: nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushNotificationReceived:) name:@"pushNotificationFavorite" object:nil];
-    
-    // Called when user see a fav discover
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableview) name:@"seenFavUpdated" object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
-}
-
-// Because of the facebook login we can't load the ui directly
-- (void) initializer {
-    
 }
 
 
