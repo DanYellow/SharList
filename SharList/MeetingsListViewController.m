@@ -16,15 +16,16 @@
 
 #pragma mark - tag list references
 // Tag list
-// 1 : Tableview of meeting list
-// 2 : segmentedControl
-// 3 : emptyFavoritesLabel
-// 4 : emptyMeetingsLabel
-// 5 : segmentedControlView
-// 6 : emptyFacebookFriendsLabelView
-// 7 : allowFriendsBtn
-// 8 : emptyFacebookFriendsLabel
-// 9 : tutorialView
+// 1  : Tableview of meeting list
+// 2  : segmentedControl
+// 3  : emptyFavoritesLabel
+// 4  : emptyMeetingsLabel
+// 5  : segmentedControlView
+// 6  : emptyFacebookFriendsLabelView
+// 7  : allowFriendsBtn
+// 8  : emptyFacebookFriendsLabel
+// 9  : tutorialView
+// 10 : refreshBtnBar
 
 @implementation MeetingsListViewController
 
@@ -121,7 +122,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
     
-    [self maskTest];
+//    [self maskTest];
 }
 
 // Because of the facebook login we can't load the ui directly
@@ -271,22 +272,22 @@
     currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
 }
 
-- (void) maskTest {
-    UIView *mask = [[UIView alloc] initWithFrame:CGRectMake(25, 150, 50, 50)];
-    mask.layer.cornerRadius = 25.0f;
-    mask.backgroundColor = [UIColor redColor];
-    [self.view addSubview:mask];
-    
-    CGFloat startAngle = 0;
-    CGPoint center = CGPointMake(25, 25);
-    CGFloat radius = 25.0;
-    
-    CAShapeLayer *maskWithHole = [CAShapeLayer layer];
-    [maskWithHole setPath:[self createPieSliceWithCenter:center radius:radius startAngle:startAngle endAngle:359.5]];
-    [maskWithHole setFillRule:kCAFillRuleEvenOdd];
-    
-    mask.layer.mask = maskWithHole;
-}
+//- (void) maskTest {
+//    UIView *mask = [[UIView alloc] initWithFrame:CGRectMake(25, 150, 50, 50)];
+//    mask.layer.cornerRadius = 25.0f;
+//    mask.backgroundColor = [UIColor redColor];
+//    [self.view addSubview:mask];
+//    
+//    CGFloat startAngle = 0;
+//    CGPoint center = CGPointMake(25, 25);
+//    CGFloat radius = 25.0;
+//    
+//    CAShapeLayer *maskWithHole = [CAShapeLayer layer];
+//    [maskWithHole setPath:[self createPieSliceWithCenter:center radius:radius startAngle:startAngle endAngle:69.632653]];
+//    [maskWithHole setFillRule:kCAFillRuleEvenOdd];
+//    
+//    mask.layer.mask = maskWithHole;
+//}
 
 - (CGPathRef) createPieSliceWithCenter:(CGPoint)center
                                 radius:(CGFloat)radius
@@ -301,6 +302,18 @@
 
     [piePath closePath]; // this will automatically add a straight line to the center
     return piePath.CGPath;
+}
+
+- (CGFloat) mappingValue:(CGFloat)valueIn {
+    CGFloat const inMin = 0;
+    CGFloat const inMax = BGFETCHDELAY;
+    
+    CGFloat const outMin = 0;
+    CGFloat const outMax = 320.0;
+    
+    CGFloat valueOut = outMin + (outMax - outMin) * (valueIn - inMin) / (inMax - inMin);
+    
+    return valueOut;
 }
 
 
@@ -465,22 +478,22 @@
 {
 //    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatas)];
     
+    UIView *refreshBtnBarView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
+    refreshBtnBarView.backgroundColor = [UIColor clearColor];
+    refreshBtnBarView.userInteractionEnabled = YES;
 
-    
-
-    
-    
-    UIButton *refreshBtnBarMask = [UIButton buttonWithType:UIButtonTypeCustom];
-    refreshBtnBarMask.frame = CGRectMake(0, 0, 24, 24);
-    refreshBtnBarMask.tintColor = [UIColor colorWithRed:(119.0/255.0f) green:(120.0f/255.0f) blue:(132.0f/255.0f) alpha:1.0f];
-    [refreshBtnBarMask setImage:[[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
-                       forState:UIControlStateNormal];
+//    UIButton *refreshBtnBarMask = [UIButton buttonWithType:UIButtonTypeCustom];
+//    refreshBtnBarMask.frame = CGRectMake(0, 0, 24, 24);
+//    refreshBtnBarMask.tintColor = [UIColor colorWithRed:(119.0/255.0f) green:(120.0f/255.0f) blue:(132.0f/255.0f) alpha:1.0f];
+//    [refreshBtnBarMask setImage:[[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
+//                       forState:UIControlStateNormal];
     
     UIButton *refreshBtnBar = [UIButton buttonWithType:UIButtonTypeCustom];
     refreshBtnBar.frame = CGRectMake(0, 0, 24, 24);
     [refreshBtnBar addTarget:self action:@selector(fetchUsersDatas) forControlEvents:UIControlEventTouchUpInside];
     refreshBtnBar.showsTouchWhenHighlighted = NO;
     refreshBtnBar.alpha = 1.0;
+    refreshBtnBar.enabled = NO;
     
     UIImage *backButtonImage = [[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     [refreshBtnBar setImage:backButtonImage forState:UIControlStateNormal];
@@ -489,22 +502,14 @@
     CGPoint center = CGPointMake(12, 12);
     CGFloat radius = 24.0;
     
-    CAShapeLayer *maskWithHole = [CAShapeLayer layer];
-    [maskWithHole setPath:[self createPieSliceWithCenter:center radius:radius startAngle:startAngle endAngle:59.9]];
-    [maskWithHole setFillRule:kCAFillRuleEvenOdd];
-    
-    refreshBtnBarMask.layer.mask = maskWithHole;
-    
-    [refreshBtnBar addSubview:refreshBtnBarMask];
-    
-    
+    [refreshBtnBarView addSubview:refreshBtnBar];
+
     
     UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithCustomView:refreshBtnBar];
-  
-//    refreshBtn.tintColor = [UIColor whiteColor];
+    refreshBtn.tintColor = [UIColor whiteColor];
+    
     self.navigationItem.rightBarButtonItem = refreshBtn;
-
-
+    
     if ([userPreferences objectForKey:@"lastManualUpdate"]) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
@@ -516,14 +521,67 @@
 
         // If the meeting have been made less than one hour ago we do nothing
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-        NSLog(@"delayLastMeetingUser : %li", BGFETCHDELAY - delayLastMeetingUser);
+    
         if (delayLastMeetingUser > BGFETCHDELAY) { //BGFETCHDELAY
             self.navigationItem.rightBarButtonItem.enabled = YES; // YES
+            [self.timerRefreshBtn invalidate];
+            self.timerRefreshBtn = nil;
         } else {
+            CAShapeLayer *maskWithHole = [CAShapeLayer layer];
+            [maskWithHole setPath:[self createPieSliceWithCenter:center
+                                                          radius:radius
+                                                      startAngle:startAngle
+                                                        endAngle:[self mappingValue:delayLastMeetingUser]]];
+            [maskWithHole setFillRule:kCAFillRuleEvenOdd];
+            refreshBtnBar.layer.mask = maskWithHole;
             self.navigationItem.rightBarButtonItem.enabled = NO;
+            
+            self.timerRefreshBtn = [NSTimer scheduledTimerWithTimeInterval:1.0
+                                             target:self
+                                           selector:@selector(updateRefreshBtnMask)
+                                           userInfo:nil
+                                            repeats:YES];
         }
     } else {
         self.navigationItem.rightBarButtonItem.enabled = YES; // YES
+        [self.timerRefreshBtn invalidate];
+        self.timerRefreshBtn = nil;
+    }
+}
+
+// "Watcher" for the btn refresh. The timer is invalidate if the user reach the limit
+- (void) updateRefreshBtnMask {
+    UIBarButtonItem *item = (UIBarButtonItem *)[self.navigationItem.rightBarButtonItems objectAtIndex:0];
+    UIButton *refreshBtnBar = (UIButton *)item.customView;
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
+    
+    NSInteger hours = [lastDataFetchingInterval hour];
+    NSInteger minutes = [lastDataFetchingInterval minute];
+    NSInteger seconds = [lastDataFetchingInterval second];
+    
+    // If the meeting have been made less than one hour ago we do nothing
+    NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
+    
+    CGFloat startAngle = 0.0;
+    CGPoint center = CGPointMake(12, 12);
+    CGFloat radius = 24.0;
+    
+    CAShapeLayer *maskWithHole = [CAShapeLayer layer];
+    [maskWithHole setPath:[self createPieSliceWithCenter:center
+                                                  radius:radius
+                                              startAngle:startAngle
+                                                endAngle:[self mappingValue:delayLastMeetingUser]]];
+    [maskWithHole setFillRule:kCAFillRuleEvenOdd];
+    refreshBtnBar.layer.mask = maskWithHole;
+    
+    if (delayLastMeetingUser > BGFETCHDELAY) {
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.timerRefreshBtn invalidate];
+            self.timerRefreshBtn = nil;
+        });
     }
 }
 
@@ -1437,6 +1495,7 @@
     [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
 }
 
+#pragma mark - misc
 
 - (void) didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

@@ -50,6 +50,7 @@
 @property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (nonatomic, retain) NSTimer *timerRefreshBtn;
 
 
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
