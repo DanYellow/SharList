@@ -98,6 +98,10 @@
 "gotit" = "Got it";
 "tutFavsMessage" = "Use this icon to add it among your list and introduce it to the world";
 "issuesWithDetailsMedia" = "It looks like there is an issue with this view.\nTry later";
+"last episode date %@" = "Release date of the last episode : %@";
+"next episode date %@" = "Release date of the next episode : %@";
+
+
 
 
 //AboutViewController

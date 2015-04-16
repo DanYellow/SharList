@@ -65,6 +65,12 @@ static dispatch_once_t onceToken;
         service = [service stringByReplacingOccurrencesOfString:@"{id}" withString:keyParameters[@"id"]];
     }
     
+    if ([service rangeOfString:@"{season_number}"].location != NSNotFound) {
+        NSAssert(keyParameters[@"season_number"] != nil, @"Please, add the season_number");
+        keyParameters[@"season_number"] = [keyParameters[@"season_number"] stringValue];
+        service = [service stringByReplacingOccurrencesOfString:@"{season_number}" withString:keyParameters[@"season_number"]];
+    }
+    
     [self GET:service parameters:keyParameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         block(responseObject, nil);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

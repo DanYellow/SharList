@@ -88,6 +88,9 @@ static NSString * const kJLTMDbSearchCompany = @"search/company";
 static NSString * const kJLTMDbTV = @"tv/{id}"; //Custom
 static NSString * const kJLTMDbTVExternalIds = @"tv/{id}/external_ids"; //Custom
 static NSString * const kJLTMDbTVTrailers = @"tv/{id}/videos"; //Custom
+static NSString * const kJLTMDbTVSeasons = @"tv/{id}/season/{season_number}";
 
 static NSString * const kJLTMDbFind = @"find/{id}"; //Custom
+
+
 

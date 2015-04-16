@@ -26,13 +26,17 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 
 - Correction de bugs
 - Améliorations
+- Correction d'un bug critique qui faisait planter l'application
+
+
 
 
 ## Améliorations potentielles
-- Gérer le système de géoloc lors de l'actualisation par bouton (ça garde l'ancienne position)
+- Gérer le système de géoloc lors de l'actualisation par bouton (ça garde l'ancienne position) - **done !!!!**
 - Système de succès (voir liste)
 - Indiquer les comptes premium
 - Voir la liste de followers
+- Ajouter la clé     "last_air_date": "2015-06-04", pour les séries -> savoir la date de diffusion du dernier épisode
 
 
 ### Liste de succès (non-exhaustive)
@@ -44,7 +48,7 @@ _ Nombre de films / séries retirées
 - Nombre de rencontres avec des goûts en commun
 - Distance parcourue au scroll
 
-## Pods dépendances
+## Pods dependancies
 
 - AFNetworking
 - MagicalRecord

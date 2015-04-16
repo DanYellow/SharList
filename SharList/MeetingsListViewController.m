@@ -169,7 +169,7 @@
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"%@ meetings", nil), countMeetings]];
     
     // Uitableview of user selection (what user likes)
-    UITableView *userMeetingsListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 47) style:UITableViewStylePlain];
+    UITableView *userMeetingsListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
     userMeetingsListTableView.dataSource = self;
     userMeetingsListTableView.delegate = self;
     userMeetingsListTableView.backgroundColor = [UIColor clearColor];
@@ -523,9 +523,11 @@
         NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
     
         if (delayLastMeetingUser > BGFETCHDELAY) { //BGFETCHDELAY
-            self.navigationItem.rightBarButtonItem.enabled = YES; // YES
-            [self.timerRefreshBtn invalidate];
-            self.timerRefreshBtn = nil;
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.timerRefreshBtn invalidate];
+                self.timerRefreshBtn = nil;
+            });
         } else {
             CAShapeLayer *maskWithHole = [CAShapeLayer layer];
             [maskWithHole setPath:[self createPieSliceWithCenter:center
@@ -536,16 +538,20 @@
             refreshBtnBar.layer.mask = maskWithHole;
             self.navigationItem.rightBarButtonItem.enabled = NO;
             
-            self.timerRefreshBtn = [NSTimer scheduledTimerWithTimeInterval:1.0
-                                             target:self
-                                           selector:@selector(updateRefreshBtnMask)
-                                           userInfo:nil
-                                            repeats:YES];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.timerRefreshBtn = [NSTimer scheduledTimerWithTimeInterval:2.0
+                                                                        target:self
+                                                                      selector:@selector(updateRefreshBtnMask)
+                                                                      userInfo:nil
+                                                                       repeats:YES];
+            });
         }
     } else {
-        self.navigationItem.rightBarButtonItem.enabled = YES; // YES
-        [self.timerRefreshBtn invalidate];
-        self.timerRefreshBtn = nil;
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.timerRefreshBtn invalidate];
+            self.timerRefreshBtn = nil;
+        });
     }
 }
 
@@ -578,6 +584,8 @@
     
     if (delayLastMeetingUser > BGFETCHDELAY) {
         self.navigationItem.rightBarButtonItem.enabled = YES;
+        // We destroy the timer in the same thread in it was launched
+        NSLog(@"%s", __func__);
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.timerRefreshBtn invalidate];
             self.timerRefreshBtn = nil;

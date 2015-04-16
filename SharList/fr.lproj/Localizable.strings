@@ -109,6 +109,8 @@
 "issuesWithDetailsMedia" = "Il semblerait qu'il y ait une erreur avec cette fiche.\nRéessayez plus tard";
 "BSAdd" = "Ajouter à BetaSeries |";
 "BSRemove" = "Supprimer de BetaSeries |";
+"last episode date %@" = "Date de diffusion du dernier épisode : %@";
+"next episode date %@" = "Date de diffusion du prochain épisode : %@";
 
 //AboutViewController
 "About" = "A propos";

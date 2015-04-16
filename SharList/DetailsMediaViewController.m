@@ -38,6 +38,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 8 : tutorialView
 // 9 : errConnectionAlertView
 // 10 : connectWithBSBtn
+// 11 : mediaGenresLabel
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -221,11 +222,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             if (responseObject[@"tv_results"] != nil && [responseObject[@"tv_results"] count] != 0) {
                 NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0], @"language": userLanguage};
                 [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
-                    NSLog(@"responseObject : %@", responseObject[@"last_air_date"]);
                     if(!error){
                         [self setMediaViewForData:responseObject];
                         [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
-                            
                             // We check if there is a video called "trailer"
                             // if yes we take it
                             // else we take the first video
@@ -238,6 +237,41 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                             if (![trailerID isEqualToString:@""]) {
                                 [self displayTrailerButtonForId:trailerID];
                             }
+                        }];
+                        // Get the date of the next episode
+                        NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
+                                                              @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
+                        
+                        NSString *lastAirEpisode = [responseObject valueForKeyPath:@"last_air_date"];
+                        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+                        dateFormatter.dateFormat = @"yyyy-MM-dd";
+                        NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];
+
+                        
+                        [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVSeasons withParameters:tvSeasonQueryParams andResponseBlock:^(id responseObject, NSError *error) {
+                            NSDateFormatter *dateFormatter = [NSDateFormatter new];
+                            dateFormatter.dateFormat = @"yyyy-MM-dd";
+
+                            NSDate *closestDate = nil;
+                            for (NSDictionary* episode in responseObject[@"episodes"]) {
+                                NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
+                                
+                                NSDate *startDate = [dateFormatter dateFromString:dateString];
+                                if([startDate timeIntervalSinceNow] < 0) {
+                                    continue;
+                                }
+                                
+                                if([startDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
+                                    closestDate = startDate;
+                                }
+                            }
+                            
+                            dateFormatter = [NSDateFormatter new];
+                            dateFormatter.dateFormat = @"dd/MM/yyyy";
+                            
+                            NSString *dateForEpisode = ([dateFormatter stringFromDate:closestDate] != nil) ? [dateFormatter stringFromDate:closestDate] : [dateFormatter stringFromDate:lastAirEpisodeDate];
+                            
+                            [self displayLabelForNextOrLastEpisodeForDate:dateForEpisode];
                         }];
                     } else {
                         [self noInternetConnexionAlert];
@@ -637,14 +671,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     UILabel *mediaTitleLabel = (UILabel*)[self.view viewWithTag:4];
     
-//    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     CGFloat mediaDescriptionWidthPercentage = 82.0;
     CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
-//    CGFloat mediaDescriptionX = [self computeRatio:16 forDimension:screenWidth];
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
     CGFloat mediaDescriptionHeight = (screenHeight * 47.53521127) / 100; //(280 * 100) / 568
 
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(15 /*screenWidth - (screenWidth - 0)*/, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
     if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
         // the movie db does not provide description for this media
         mediaDescription.text = NSLocalizedString(@"nodescription", nil);
@@ -657,11 +689,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.delegate = self;
     mediaDescription.showsHorizontalScrollIndicator = NO;
     mediaDescription.showsVerticalScrollIndicator = NO;
+    mediaDescription.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
-    mediaDescription.contentInset = UIEdgeInsetsMake(-2, -2, 0, 0);
-//    mediaDescription.transform = CGAffineTransformMakeScale(0.7, 0.7);
     mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
     [infoMediaView addSubview:mediaDescription];
     
@@ -697,37 +728,40 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaGenresLabel.layer.masksToBounds = NO;
     mediaGenresLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
     [mediaGenresLabel sizeToFit];
-//    [mediaGenresLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
+    mediaGenresLabel.tag = 11;
     [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
-    
     
     [loadingIndicator stopAnimating];
 }
 
 
-- (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt
-{
-    UIInterpolatingMotionEffect *xAxis;
-    xAxis = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.x"
-                                                            type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+
+- (void) displayLabelForNextOrLastEpisodeForDate:(NSString*)aDateString {
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.dateFormat = @"dd/MM/yyyy";
+    NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:aDateString];
     
-    xAxis.minimumRelativeValue = [NSNumber numberWithInt:aInt*-1];
-    xAxis.maximumRelativeValue = [NSNumber numberWithInt:aInt];
     
-    UIInterpolatingMotionEffect *yAxis;
-    yAxis = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.y"
-                                                            type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     
-    yAxis.minimumRelativeValue = [NSNumber numberWithInt:aInt*-1];
-    yAxis.maximumRelativeValue = [NSNumber numberWithInt:aInt];
+    UIView *mediaGenresLabel = (UIView*)[infoMediaView viewWithTag:11];
     
-    UIMotionEffectGroup *motionGroup = [[UIMotionEffectGroup alloc] init];
-    motionGroup.motionEffects = @[xAxis];
+    int mediaGenresLabelY = mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 5;
     
-    return motionGroup;
+    UILabel *lastEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaGenresLabelY, screenWidth - 30, 25)];
+    lastEpisodeDateLabel.text = ([lastAirEpisodeDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode date %@", nil), aDateString] : [NSString stringWithFormat:NSLocalizedString(@"last episode date %@", nil), aDateString];
+    lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
+    lastEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;
+    lastEpisodeDateLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+    lastEpisodeDateLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    lastEpisodeDateLabel.layer.shadowRadius = 2.5;
+    lastEpisodeDateLabel.layer.shadowOpacity = 0.75;
+    lastEpisodeDateLabel.backgroundColor = [UIColor clearColor];
+    lastEpisodeDateLabel.layer.masksToBounds = NO;
+    lastEpisodeDateLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
+    
+    [infoMediaView addSubview:lastEpisodeDateLabel];
 }
-
-
 
 #pragma mark - Custom Events
 
