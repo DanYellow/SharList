@@ -58,7 +58,7 @@
 "geolocated" = "Geolocated";
 "geolocatedMeetingExplained" = "Geolocated\nPerfect when you're in foreign country";
 "random" = "Random";
-"randomMeetingExplained" = "Random\nFor those who are not afraid of the unknown";
+"randomMeetingExplained" = "Random\nThe unknown does not scare you";
 "notefacebook" = "Note : If an icon is replaced by initials, you discovered a facebook friend!";
 
 // DetailsMeetingsViewController

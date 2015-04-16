@@ -585,7 +585,6 @@
     if (delayLastMeetingUser > BGFETCHDELAY) {
         self.navigationItem.rightBarButtonItem.enabled = YES;
         // We destroy the timer in the same thread in it was launched
-        NSLog(@"%s", __func__);
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.timerRefreshBtn invalidate];
             self.timerRefreshBtn = nil;
@@ -1155,6 +1154,11 @@
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     
+    [self startFetchingRandomUser];
+}
+
+- (void) startFetchingRandomUser
+{
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == NO) {
         NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
         NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, @"NO"];

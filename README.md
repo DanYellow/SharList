@@ -27,7 +27,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Correction de bugs
 - Améliorations
 - Correction d'un bug critique qui faisait planter l'application
-
+- Ajout de la date de sortie du dernier / prochain épisode d'une série
 
 
 

@@ -242,12 +242,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                         NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
                                                               @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
                         
-                        NSString *lastAirEpisode = [responseObject valueForKeyPath:@"last_air_date"];
+                        NSString *lastAirEpisode = (NSString*)[responseObject valueForKeyPath:@"last_air_date"];
                         NSDateFormatter *dateFormatter = [NSDateFormatter new];
                         dateFormatter.dateFormat = @"yyyy-MM-dd";
                         NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];
 
-                        
                         [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVSeasons withParameters:tvSeasonQueryParams andResponseBlock:^(id responseObject, NSError *error) {
                             NSDateFormatter *dateFormatter = [NSDateFormatter new];
                             dateFormatter.dateFormat = @"yyyy-MM-dd";
@@ -266,10 +265,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                 }
                             }
                             
-                            dateFormatter = [NSDateFormatter new];
-                            dateFormatter.dateFormat = @"dd/MM/yyyy";
+
+                           
+//                            dateFormatter.dateFormat = @"dd/MM/yyyy";
                             
-                            NSString *dateForEpisode = ([dateFormatter stringFromDate:closestDate] != nil) ? [dateFormatter stringFromDate:closestDate] : [dateFormatter stringFromDate:lastAirEpisodeDate];
+//                            NSString *dateForEpisode = ([dateFormatter stringFromDate:closestDate] != nil) ? [dateFormatter stringFromDate:closestDate] : [dateFormatter stringFromDate:lastAirEpisodeDate];
+                            NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
                             
                             [self displayLabelForNextOrLastEpisodeForDate:dateForEpisode];
                         }];
@@ -736,11 +737,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
 
-- (void) displayLabelForNextOrLastEpisodeForDate:(NSString*)aDateString {
+- (void) displayLabelForNextOrLastEpisodeForDate:(NSDate*)aDate {
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    dateFormatter.timeStyle = NSDateFormatterNoStyle;
     dateFormatter.dateFormat = @"dd/MM/yyyy";
-    NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:aDateString];
+    dateFormatter.dateStyle = NSDateFormatterShortStyle;
     
+    NSString *lastAirEpisodeDateString = [dateFormatter stringFromDate:aDate];
     
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     
@@ -749,7 +753,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     int mediaGenresLabelY = mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 5;
     
     UILabel *lastEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaGenresLabelY, screenWidth - 30, 25)];
-    lastEpisodeDateLabel.text = ([lastAirEpisodeDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode date %@", nil), aDateString] : [NSString stringWithFormat:NSLocalizedString(@"last episode date %@", nil), aDateString];
+    lastEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode date %@", nil), lastAirEpisodeDateString] : [NSString stringWithFormat:NSLocalizedString(@"last episode date %@", nil), lastAirEpisodeDateString];
     lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
     lastEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;
     lastEpisodeDateLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
