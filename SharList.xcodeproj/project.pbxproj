@@ -29,6 +29,7 @@
 		1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */; };
 		1A3C22821A114339005B31E4 /* UserTaste.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C22811A114339005B31E4 /* UserTaste.m */; };
 		1A4953D41A1EBB9500A0C232 /* ShopButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4953D31A1EBB9500A0C232 /* ShopButton.m */; };
+		1A5682A81AE19809007D6D93 /* UIImage+ColorImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5682A71AE19809007D6D93 /* UIImage+ColorImage.m */; };
 		1A61F5101AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */; };
 		1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6744B01AAB4BB000FA610F /* PFPushManager.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
@@ -126,6 +127,8 @@
 		1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		1A4953D21A1EBB9500A0C232 /* ShopButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopButton.h; sourceTree = "<group>"; };
 		1A4953D31A1EBB9500A0C232 /* ShopButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopButton.m; sourceTree = "<group>"; };
+		1A5682A61AE19809007D6D93 /* UIImage+ColorImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ColorImage.h"; sourceTree = "<group>"; };
+		1A5682A71AE19809007D6D93 /* UIImage+ColorImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ColorImage.m"; sourceTree = "<group>"; };
 		1A61F50E1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+FilterKeysForNullObj.h"; sourceTree = "<group>"; };
 		1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+FilterKeysForNullObj.m"; sourceTree = "<group>"; };
 		1A6744AF1AAB4BB000FA610F /* PFPushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFPushManager.h; sourceTree = "<group>"; };
@@ -358,6 +361,8 @@
 				1A0EB7771A994BEE000EA307 /* NSString+MD5.m */,
 				1A61F50E1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.h */,
 				1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */,
+				1A5682A61AE19809007D6D93 /* UIImage+ColorImage.h */,
+				1A5682A71AE19809007D6D93 /* UIImage+ColorImage.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -659,6 +664,7 @@
 				1AEB8BEC1A3636FA004A94C1 /* UILabel+HeightToFit.m in Sources */,
 				1A024AB81A3A52DC0098F015 /* AboutViewController.m in Sources */,
 				1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */,
+				1A5682A81AE19809007D6D93 /* UIImage+ColorImage.m in Sources */,
 				1A9666461A312302006969A7 /* NSString+SentenceCapitalizedString.m in Sources */,
 				1A36E3131A9D4C1C004B0DBC /* ConnectView.m in Sources */,
 				1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */,

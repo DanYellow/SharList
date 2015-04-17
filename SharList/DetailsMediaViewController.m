@@ -379,12 +379,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
               buyButton.frame = CGRectMake(0, screenHeight + 50, screenWidth, 50);
               buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
+              [buyButton setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:(22.0f/255.0f) green:(22.0f/255.0f) blue:(22.0f/255.0f) alpha:1.0f]] forState:UIControlStateHighlighted];
               
               [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
               [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
-              [buyButton setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+              [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
               [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-              [buyButton setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
               
               if ([self.itunesIDString length] != 0) {
                   [infoMediaView insertSubview:buyButton atIndex:42];
@@ -548,11 +548,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     titleBuyMedia.textColor = [UIColor whiteColor];
     titleBuyMedia.backgroundColor = [UIColor clearColor];
     titleBuyMedia.opaque = NO;
+    titleBuyMedia.lineBreakMode = NSLineBreakByWordWrapping;
     titleBuyMedia.font = [UIFont fontWithName:@"HelveticaNeue" size:19.0f];
     
     NSMutableAttributedString *typeMeetingAttrString = [[NSMutableAttributedString alloc] initWithString:[[NSString stringWithFormat:NSLocalizedString(@"buy %@", nil), self.mediaDatas[@"name"]] uppercaseString] attributes: nil];
     
-    NSString *stringToHighlight = NSLocalizedString(@"buy", nil);
+    NSString *stringToHighlight = [NSLocalizedString(@"buy", nil) uppercaseString];
     NSRange r = [[typeMeetingAttrString string] rangeOfString:stringToHighlight];
     [typeMeetingAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:19.0] range:NSMakeRange(r.location, r.length)];
     
@@ -612,29 +613,31 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGRect lineFrame = CGRectMake(0, 18, 35, 4);
     
     
-    UIButton *crossButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    crossButton.frame = CGRectMake([self computeRatio:250 forDimension:screenWidth], screenHeight - [self computeRatio:116 forDimension:screenHeight], 50, 50);
-    [crossButton addTarget:self action:@selector(hideBuyScreen) forControlEvents:UIControlEventTouchUpInside];
-    crossButton.backgroundColor = [UIColor clearColor];
-    crossButton.layer.borderColor = [UIColor whiteColor].CGColor;
-    crossButton.layer.borderWidth = 1.0f;
-    crossButton.layer.cornerRadius = 25;
-    crossButton.center = CGPointMake(self.view.center.x, crossButton.frame.origin.y);
-    [displayBuyView addSubview:crossButton];
+    UIButton *closeBuyScreenWindowBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    closeBuyScreenWindowBtn.frame = CGRectMake([self computeRatio:250 forDimension:screenWidth], screenHeight - [self computeRatio:116 forDimension:screenHeight], 50, 50);
+    [closeBuyScreenWindowBtn addTarget:self action:@selector(hideBuyScreen) forControlEvents:UIControlEventTouchUpInside];
+    closeBuyScreenWindowBtn.backgroundColor = [UIColor clearColor];
+    closeBuyScreenWindowBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    closeBuyScreenWindowBtn.layer.borderWidth = 1.0f;
+    closeBuyScreenWindowBtn.layer.cornerRadius = 25;
+    closeBuyScreenWindowBtn.layer.masksToBounds = YES;
+    [closeBuyScreenWindowBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.4]] forState:UIControlStateHighlighted];
+    closeBuyScreenWindowBtn.center = CGPointMake(self.view.center.x, closeBuyScreenWindowBtn.frame.origin.y);
+    [displayBuyView addSubview:closeBuyScreenWindowBtn];
     
     UIView *lineRight = [[UIView alloc] initWithFrame:lineFrame];
     lineRight.backgroundColor = [UIColor whiteColor];
-    lineRight.center = CGPointMake(crossButton.frame.size.width / 2, crossButton.frame.size.height / 2);
+    lineRight.center = CGPointMake(closeBuyScreenWindowBtn.frame.size.width / 2, closeBuyScreenWindowBtn.frame.size.height / 2);
     lineRight.transform = CGAffineTransformMakeRotation(DegreesToRadians(-45));
     lineRight.userInteractionEnabled = NO;
-    [crossButton addSubview:lineRight];
+    [closeBuyScreenWindowBtn addSubview:lineRight];
     
     UIView *lineLeft = [[UIView alloc] initWithFrame:lineFrame];
     lineLeft.backgroundColor = [UIColor whiteColor];
     lineLeft.userInteractionEnabled = NO;
-    lineLeft.center = CGPointMake(crossButton.frame.size.width / 2, crossButton.frame.size.height / 2);
+    lineLeft.center = CGPointMake(closeBuyScreenWindowBtn.frame.size.width / 2, closeBuyScreenWindowBtn.frame.size.height / 2);
     lineLeft.transform = CGAffineTransformMakeRotation(DegreesToRadians(45));
-    [crossButton addSubview:lineLeft];
+    [closeBuyScreenWindowBtn addSubview:lineLeft];
     
     
     // Create array of all shop buttons one time only
@@ -759,8 +762,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     
-
-    
     UILabel *mediaTitleLabel = (UILabel*)[infoMediaView viewWithTag:4];
     
     int lastEpisodeDateLabelY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 5; //mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 3;
@@ -770,6 +771,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     lastEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
     // If an episode of this serie is release today we notify the user
     lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? NSLocalizedString(@"release today", nil) : lastEpisodeDateLabel.text;
+    // If an episode of this serie is release tomorrow we notify the user
+    lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? NSLocalizedString(@"release tomorrow", nil) : lastEpisodeDateLabel.text;
     
     lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
     lastEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;
@@ -1014,9 +1017,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                     [self performSelector:@selector(enableButtonWithDelay) withObject:nil afterDelay:1.75];
                     self.navigationController.navigationItem.backBarButtonItem.enabled = YES;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Error: %@", error);
-            
-//            NSLog(@"operation: %@", operation);
+            NSLog(@"Error: %@", error);            
         }];
     }
 }

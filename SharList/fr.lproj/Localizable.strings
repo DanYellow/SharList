@@ -114,6 +114,7 @@
 "next episode %@" = "Prochain épisode : %@";
 "ended serie" = "Série terminée";
 "release today" = "Nouvel épisode aujourd'hui !";
+"release tomorrow" = "Demain !";
 
 //AboutViewController
 "About" = "A propos";

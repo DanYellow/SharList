@@ -130,7 +130,6 @@
     userTasteListTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0); //self.bottomLayoutGuide.length
     userTasteListTableView.hidden = YES;
     userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:userTasteListTableView];
     
     // UITableview of results
@@ -293,6 +292,17 @@
 - (void) displayCurrentUserStats
 {
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
+    
+    // This part hides by default the tableheader of the view if 
+    BOOL willShowTableHeader = NO;
+    for (int i = 0; i < userTasteListTableView.numberOfSections; i++) {
+        if ([userTasteListTableView.dataSource tableView:userTasteListTableView numberOfRowsInSection:i] != 0) {
+            willShowTableHeader = YES;
+        }
+    }
+    if (!willShowTableHeader) {
+        return;
+    }
     
     UIView *currentUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
     currentUserFBView.backgroundColor = [UIColor clearColor];
@@ -913,6 +923,13 @@
     }];
 }
 
+- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
+        [loadingIndicator stopAnimating];
+    }
+}
+
 - (void) displayLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell andDate:(NSDate*)aDate
 {
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -930,14 +947,6 @@
     aCell.detailTextLabel.textColor = [UIColor whiteColor];
 }
 
-
-
--(void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
-        [loadingIndicator stopAnimating];
-    }
-}
 
 - (void) getImageCellForData:(id)model aCell:(UITableViewCell*)cell
 {

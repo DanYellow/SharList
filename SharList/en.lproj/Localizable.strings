@@ -102,6 +102,7 @@
 "next episode date %@" = "Release date of the next episode: %@";
 "release today" = "New episode today!";
 "next episode %@" = "Next episode: %@";
+"release tomorrow" = "Tomorrow!";
 
 
 //AboutViewController
