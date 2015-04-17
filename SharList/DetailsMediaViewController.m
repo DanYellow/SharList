@@ -252,16 +252,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                             dateFormatter.dateFormat = @"yyyy-MM-dd";
 
                             NSDate *closestDate = nil;
+
                             for (NSDictionary* episode in responseObject[@"episodes"]) {
-                                NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
-                                
-                                NSDate *startDate = [dateFormatter dateFromString:dateString];
-                                if([startDate timeIntervalSinceNow] < 0) {
-                                    continue;
-                                }
-                                
-                                if([startDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
-                                    closestDate = startDate;
+                                if ([episode objectForKey:@"air_date"] != (id)[NSNull null]) {
+                                    NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
+                                    
+                                    NSDate *startDate = [dateFormatter dateFromString:dateString];
+                                    if([startDate timeIntervalSinceNow] < 0) {
+                                        continue;
+                                    }
+                                    
+                                    if([startDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
+                                        closestDate = startDate;
+                                    }
                                 }
                             }
                             
