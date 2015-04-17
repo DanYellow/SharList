@@ -73,9 +73,6 @@
 @property (nonatomic, assign) NSMutableDictionary *mediaDatasDict;
 
 
-
-
-- (UIMotionEffectGroup*) UIMotionEffectGroupwithValue:(int)aInt;
 - (UIImage *) takeSnapshotOfView:(UIView *)view;
 
 - (void) addMediaToUserList;

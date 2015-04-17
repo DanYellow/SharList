@@ -798,6 +798,9 @@
         cell.textLabel.text = title;
         cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.60];
         cell.textLabel.textColor = [UIColor whiteColor];
+        cell.detailTextLabel.text = year;
+        cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
+        cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
         
 //        cell.alpha = .7f;
         
@@ -835,9 +838,14 @@
         cell.textLabel.layer.shadowOpacity = .75f;
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
-
+        
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
         
+        if ([[rowsOfSection objectAtIndex:indexPath.row][@"type"] isEqualToString:@"serie"]) {
+            [self getLastNextReleaseSerieEpisodeForCell:cell];
+        } else {
+            cell.detailTextLabel.text = @"";
+        }
         
         if (imdbID != nil) {
             [self getImageCellForData:[rowsOfSection objectAtIndex:indexPath.row] aCell:cell];
@@ -852,14 +860,77 @@
     }
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.detailTextLabel.text = year;
-    cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
-    cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
     cell.indentationLevel = 1;
     
     
     return cell;
 }
+
+- (void) getLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell
+{
+    NSDictionary *queryParams =  @{@"id": [aCell.model objectForKey:@"imdbID"], @"external_source": @"imdb_id"};
+
+    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
+        if(!error){
+            NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0]};
+            
+            [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
+                if(!error){
+                    // Get the date of the next episode
+                    NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
+                                                          @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
+                    
+                    NSString *lastAirEpisode = (NSString*)[responseObject valueForKeyPath:@"last_air_date"];
+                    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+                    dateFormatter.dateFormat = @"yyyy-MM-dd";
+                    NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];
+                    
+                    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVSeasons withParameters:tvSeasonQueryParams andResponseBlock:^(id responseObject, NSError *error) {
+                        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+                        dateFormatter.dateFormat = @"yyyy-MM-dd";
+                        
+                        NSDate *closestDate = nil;
+                        for (NSDictionary* episode in responseObject[@"episodes"]) {
+                            NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
+                            
+                            NSDate *startDate = [dateFormatter dateFromString:dateString];
+                            if([startDate timeIntervalSinceNow] < 0) {
+                                continue;
+                            }
+                            
+                            if([startDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
+                                closestDate = startDate;
+                            }
+                        }
+                        
+                        NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
+                        [self displayLastNextReleaseSerieEpisodeForCell:aCell andDate:dateForEpisode];
+                    }];
+                }
+            }];
+        
+        }
+    }];
+}
+
+- (void) displayLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell andDate:(NSDate*)aDate
+{
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    dateFormatter.timeStyle = NSDateFormatterNoStyle;
+    dateFormatter.dateFormat = @"dd/MM/yyyy";
+    dateFormatter.dateStyle = NSDateFormatterShortStyle;
+    
+    NSString *lastAirEpisodeDateString = [dateFormatter stringFromDate:aDate];
+        
+    aCell.detailTextLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
+    aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? NSLocalizedString(@"release today", nil) : aCell.detailTextLabel.text;
+    
+    aCell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
+    aCell.detailTextLabel.textColor = [UIColor whiteColor];
+}
+
+
 
 -(void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -906,8 +977,9 @@
     
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
-            if ([model[@"type"] isEqualToString:@"serie"] && [[responseObject valueForKeyPath:@"tv_results.poster_path"] count] != 0) {
-                imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
+            if ([model[@"type"] isEqualToString:@"serie"] &&
+                [[responseObject valueForKeyPath:@"tv_results.poster_path"] count] != 0) {
+                    imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
             } else {
                 if([responseObject[@"poster_path"] length] != 0) {
                     imgURL = responseObject[@"poster_path"];

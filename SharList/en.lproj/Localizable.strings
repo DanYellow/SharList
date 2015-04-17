@@ -59,7 +59,7 @@
 "geolocatedMeetingExplained" = "Geolocated\nPerfect when you're in foreign country";
 "random" = "Random";
 "randomMeetingExplained" = "Random\nThe unknown does not scare you";
-"notefacebook" = "Note : If an icon is replaced by initials, you discovered a facebook friend!";
+"notefacebook" = "Note: If an icon is replaced by initials, you discovered a facebook friend!";
 
 // DetailsMeetingsViewController
 "met %@ times" = "discovered %@ time(s)";
@@ -98,10 +98,10 @@
 "gotit" = "Got it";
 "tutFavsMessage" = "Use this icon to add it among your list and introduce it to the world";
 "issuesWithDetailsMedia" = "It looks like there is an issue with this view.\nTry later";
-"last episode date %@" = "Release date of the last episode : %@";
-"next episode date %@" = "Release date of the next episode : %@";
-
-
+"last episode date %@" = "Release date of the last episode: %@";
+"next episode date %@" = "Release date of the next episode: %@";
+"release today" = "New episode today!";
+"next episode %@" = "Next episode: %@";
 
 
 //AboutViewController
@@ -127,4 +127,3 @@
 "FBLinkShareParams_metfriend_name" = "I've met a friend on Shound";
 "FBLinkShareParams_metfriend_desc %@" = "I discovered the taste of %@.\n Do the same";
 "FBLinkShareParams_metfriend_desc_alt" = "Do the same!";
-

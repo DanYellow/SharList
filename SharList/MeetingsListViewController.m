@@ -122,6 +122,9 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
     
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(invalidateTimer) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
 //    [self maskTest];
 }
 
@@ -482,11 +485,6 @@
     refreshBtnBarView.backgroundColor = [UIColor clearColor];
     refreshBtnBarView.userInteractionEnabled = YES;
 
-//    UIButton *refreshBtnBarMask = [UIButton buttonWithType:UIButtonTypeCustom];
-//    refreshBtnBarMask.frame = CGRectMake(0, 0, 24, 24);
-//    refreshBtnBarMask.tintColor = [UIColor colorWithRed:(119.0/255.0f) green:(120.0f/255.0f) blue:(132.0f/255.0f) alpha:1.0f];
-//    [refreshBtnBarMask setImage:[[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
-//                       forState:UIControlStateNormal];
     
     UIButton *refreshBtnBar = [UIButton buttonWithType:UIButtonTypeCustom];
     refreshBtnBar.frame = CGRectMake(0, 0, 24, 24);
@@ -539,11 +537,13 @@
             self.navigationItem.rightBarButtonItem.enabled = NO;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.timerRefreshBtn = [NSTimer scheduledTimerWithTimeInterval:2.0
-                                                                        target:self
-                                                                      selector:@selector(updateRefreshBtnMask)
-                                                                      userInfo:nil
-                                                                       repeats:YES];
+                if(!self.timerRefreshBtn.isValid) {
+                    self.timerRefreshBtn = [NSTimer scheduledTimerWithTimeInterval:2.0
+                                                                            target:self
+                                                                          selector:@selector(updateRefreshBtnMask)
+                                                                          userInfo:nil
+                                                                           repeats:YES];
+                }
             });
         }
     } else {
@@ -584,17 +584,22 @@
     
     if (delayLastMeetingUser > BGFETCHDELAY) {
         self.navigationItem.rightBarButtonItem.enabled = YES;
-        // We destroy the timer in the same thread in it was launched
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.timerRefreshBtn invalidate];
-            self.timerRefreshBtn = nil;
-        });
+        
+        [self invalidateTimer];
     }
+}
+
+- (void) invalidateTimer
+{
+    // We destroy the timer in the same thread in it was launched
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.timerRefreshBtn invalidate];
+        self.timerRefreshBtn = nil;
+    });
 }
 
 - (NSArray*) fetchDatas
 {
-    
     // Fetching datas
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@",
                                    [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];

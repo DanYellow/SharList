@@ -111,6 +111,9 @@
 "BSRemove" = "Supprimer de BetaSeries |";
 "last episode date %@" = "Date de diffusion du dernier épisode : %@";
 "next episode date %@" = "Date de diffusion du prochain épisode : %@";
+"next episode %@" = "Prochain épisode : %@";
+"ended serie" = "Série terminée";
+"release today" = "Nouvel épisode aujourd'hui !";
 
 //AboutViewController
 "About" = "A propos";
@@ -132,7 +135,7 @@
 "FBLinkShareParams_posterror" = "Facebook a rencontré un problème";
 "FBLinkShareParams_postsuccess" = "Merci. Vous aidez Shound à être plus populaire !";
 "FBLinkShareParams_postsuccess_title" = "Super !";
-"FBLinkShareParams_metfriend_name" = "J'ai rencontré un ami sur Shound";
+"FBLinkShareParams_metfriend_name" = "J'ai découvert un ami sur Shound";
 "FBLinkShareParams_metfriend_desc %@" = "J'ai découvert les goûts de %@.\n Faites de même";
 "FBLinkShareParams_metfriend_desc_alt" = "Faites de même !";
 

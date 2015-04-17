@@ -265,11 +265,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                 }
                             }
                             
-
-                           
-//                            dateFormatter.dateFormat = @"dd/MM/yyyy";
-                            
-//                            NSString *dateForEpisode = ([dateFormatter stringFromDate:closestDate] != nil) ? [dateFormatter stringFromDate:closestDate] : [dateFormatter stringFromDate:lastAirEpisodeDate];
                             NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
                             
                             [self displayLabelForNextOrLastEpisodeForDate:dateForEpisode];
@@ -296,9 +291,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     
     
-    CGFloat mediaTitleLabelY = [self computeRatio:240 forDimension:imgMediaHeight];
+    CGFloat mediaTitleLabelY = [self computeRatio:236 forDimension:imgMediaHeight];
     
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth - 30, 65)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth - 30, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
@@ -316,7 +311,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
     mediaTitleLabel.tag = 4;
     [mediaTitleLabel sizeToFit];
-//    [mediaTitleLabel addMotionEffect:[self UIMotionEffectGroupwithValue:7]];
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
@@ -348,12 +342,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               
               NSDecimalNumber *amountNumber = [NSDecimalNumber decimalNumberWithString:responseObject[@"hits"]];
               NSString *numberString = [numberFormatter stringFromNumber:amountNumber];
-              // https://itunes.apple.com/fr/lookup/id705992412
+
               if ([mediaLikeNumber integerValue] > 1) {
                   // Aimé par X personnes
                   NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %@ people", nil), numberString];
                   
-                  UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 2, screenWidth, 25)];
+                  UILabel *mediaGenresLabel = (UILabel*)[infoMediaView viewWithTag:11];
+                  int mediaLikeNumberLabelY = mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 6;
+                  
+                  
+                  UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaLikeNumberLabelY, screenWidth, 25)];
                   mediaLikeNumberLabel.text = mediaLikeNumberString;
                   mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
                   mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
@@ -365,7 +363,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   mediaLikeNumberLabel.tag = 5;
                   mediaLikeNumberLabel.backgroundColor = [UIColor clearColor];
                   mediaLikeNumberLabel.layer.masksToBounds = NO;
-                  mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
+                  mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
                   [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
               }
               
@@ -547,8 +545,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     titleBuyMedia.textColor = [UIColor whiteColor];
     titleBuyMedia.backgroundColor = [UIColor clearColor];
     titleBuyMedia.opaque = NO;
-    titleBuyMedia.text = [[NSString stringWithFormat:NSLocalizedString(@"buy %@", nil), self.mediaDatas[@"name"]] uppercaseString];
     titleBuyMedia.font = [UIFont fontWithName:@"HelveticaNeue" size:19.0f];
+    
+    NSMutableAttributedString *typeMeetingAttrString = [[NSMutableAttributedString alloc] initWithString:[[NSString stringWithFormat:NSLocalizedString(@"buy %@", nil), self.mediaDatas[@"name"]] uppercaseString] attributes: nil];
+    
+    NSString *stringToHighlight = NSLocalizedString(@"buy", nil);
+    NSRange r = [[typeMeetingAttrString string] rangeOfString:stringToHighlight];
+    [typeMeetingAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:19.0] range:NSMakeRange(r.location, r.length)];
+    
+    titleBuyMedia.attributedText = typeMeetingAttrString;
+    
+    
     titleBuyMedia.textAlignment = NSTextAlignmentCenter;
     titleBuyMedia.numberOfLines = 0;
     titleBuyMedia.lineBreakMode = NSLineBreakByWordWrapping;
@@ -579,7 +586,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
 //    CGFloat itunesBuyButtonPosY = amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + (38/2);
     UIColor *itunesGray = [UIColor colorWithRed:(166.0f/255.0f) green:(166.0f/255.0f) blue:(166.0f/255.0f) alpha:1.0f];
-//    UIColor *itunesGrayDarker = [UIColor colorWithRed:(133.0f/255.0f) green:(133.0f/255.0f) blue:(133.0f/255.0f) alpha:1.0f];
+    UIColor *itunesGrayHighlight = [UIColor colorWithRed:(133.0f/255.0f) green:(133.0f/255.0f) blue:(133.0f/255.0f) alpha:1.0f];
     
     ShopButton *itunesBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
     itunesBuyButton.tag = 401;
@@ -587,6 +594,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [itunesBuyButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
     itunesBuyButton.titleLabel.font = buttonFont;
     [itunesBuyButton setTitleColor:itunesGray forState:UIControlStateNormal];
+    [itunesBuyButton setTitleColor:itunesGrayHighlight forState:UIControlStateHighlighted];
     itunesBuyButton.frame = CGRectMake(buttonPos.x, buttonPos.y + 30, buttonSize.width, buttonSize.height);
     //CGRectMake(buttonPos.x, itunesBuyButtonPosY, buttonSize.width, buttonSize.height);
     itunesBuyButton.backgroundColor = [UIColor clearColor];
@@ -715,7 +723,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     genresString = [genresString stringByAppendingString:[genresArray componentsJoinedByString:@", "]];
     
-    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaDescriptionY - 38, screenWidth - 30, 25)];
+    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaDescriptionY - 34, screenWidth - 30, 25)];
     mediaGenresLabel.text = genresString; // Space + comma
     mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
     mediaGenresLabel.textAlignment = NSTextAlignmentLeft;
@@ -748,13 +756,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     
-    UIView *mediaGenresLabel = (UIView*)[infoMediaView viewWithTag:11];
+
     
-    int mediaGenresLabelY = mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 5;
+    UILabel *mediaTitleLabel = (UILabel*)[infoMediaView viewWithTag:4];
     
-    UILabel *lastEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaGenresLabelY, screenWidth - 30, 25)];
-    lastEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode date %@", nil), lastAirEpisodeDateString] : [NSString stringWithFormat:NSLocalizedString(@"last episode date %@", nil), lastAirEpisodeDateString];
-    lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
+    int lastEpisodeDateLabelY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 5; //mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 3;
+
+    UILabel *lastEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, lastEpisodeDateLabelY, screenWidth - 30, 25)];
+    
+    lastEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
+    // If an episode of this serie is release today we notify the user
+    lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? NSLocalizedString(@"release today", nil) : lastEpisodeDateLabel.text;
+    
+    lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
     lastEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;
     lastEpisodeDateLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
     lastEpisodeDateLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
@@ -762,7 +776,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     lastEpisodeDateLabel.layer.shadowOpacity = 0.75;
     lastEpisodeDateLabel.backgroundColor = [UIColor clearColor];
     lastEpisodeDateLabel.layer.masksToBounds = NO;
-    lastEpisodeDateLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
+    lastEpisodeDateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0];
     
     [infoMediaView addSubview:lastEpisodeDateLabel];
 }
@@ -1328,6 +1342,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } else {
         ratio = ratio/2; // Because we are in retina
     }
+    
     
     return roundf(ratio);
 }

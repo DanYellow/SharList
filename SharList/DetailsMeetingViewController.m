@@ -717,7 +717,7 @@
     imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
     
     if (cell == nil) {
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         cell.backgroundColor = [UIColor clearColor];
         cell.textLabel.frame = cellFrame;
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
@@ -745,6 +745,12 @@
         [self getImageCellForData:cell.model aCell:cell];
     }
     
+    if ([[rowsOfSection objectAtIndex:indexPath.row][@"type"] isEqualToString:@"serie"]) {
+        [self getLastNextReleaseSerieEpisodeForCell:cell];
+    } else {
+        cell.detailTextLabel.text = @"";
+    }
+    
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.7f]];
     [cell setSelectedBackgroundView:bgColorView];
@@ -758,6 +764,74 @@
     
     
     return cell;
+}
+
+- (void) getLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell
+{
+
+    NSDictionary *queryParams =  @{@"id": [aCell.model objectForKey:@"imdbID"], @"external_source": @"imdb_id"};
+    
+    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
+        if(!error){
+            
+            NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0]};
+            
+            [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
+                if(!error){
+                    // Get the date of the next episode
+                    NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
+                                                          @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
+                    
+                    NSString *lastAirEpisode = (NSString*)[responseObject valueForKeyPath:@"last_air_date"];
+                    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+                    dateFormatter.dateFormat = @"yyyy-MM-dd";
+                    NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];
+                    
+                    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVSeasons withParameters:tvSeasonQueryParams andResponseBlock:^(id responseObject, NSError *error) {
+                        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+                        dateFormatter.dateFormat = @"yyyy-MM-dd";
+                        
+                        NSDate *closestDate = nil;
+                        for (NSDictionary* episode in responseObject[@"episodes"]) {
+                            NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
+                            
+                            NSDate *startDate = [dateFormatter dateFromString:dateString];
+                            if([startDate timeIntervalSinceNow] < 0) {
+                                continue;
+                            }
+                            
+                            if([startDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
+                                closestDate = startDate;
+                            }
+                        }
+                        
+                        NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
+                        [self displayLastNextReleaseSerieEpisodeForCell:aCell andDate:dateForEpisode];
+                    }];
+                }
+            }];
+            
+        }
+    }];
+}
+
+
+- (void) displayLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell andDate:(NSDate*)aDate
+{
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    dateFormatter.timeStyle = NSDateFormatterNoStyle;
+    dateFormatter.dateFormat = @"dd/MM/yyyy";
+    dateFormatter.dateStyle = NSDateFormatterShortStyle;
+    
+    NSString *lastAirEpisodeDateString = [dateFormatter stringFromDate:aDate];
+
+    aCell.detailTextLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
+    // If an episode of this serie is release today we notify the user
+    aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? NSLocalizedString(@"release today", nil) : aCell.detailTextLabel.text;
+    
+    aCell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
+    aCell.detailTextLabel.textColor = [UIColor whiteColor];
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -781,7 +855,7 @@
     NSMutableArray *rightBarButtonItemsArray = [[NSMutableArray alloc] initWithArray:self.navigationItem.rightBarButtonItems];
     
     
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     
     // Current list seen is added to user favs discovers
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
@@ -879,7 +953,7 @@
     params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
     params.name = NSLocalizedString(@"FBLinkShareParams_metfriend_name", nil);
     params.caption = [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.navigationController.title];
-    params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+    params.picture = [NSURL URLWithString:@"http://www.shound.fr/shound_logo_fb.jpg"];
     
     // [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.title]
     
