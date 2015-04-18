@@ -100,7 +100,7 @@
 "issuesWithDetailsMedia" = "It looks like there is an issue with this view.\nTry later";
 "last episode date %@" = "Release date of the last episode: %@";
 "next episode date %@" = "Release date of the next episode: %@";
-"release today" = "New episode today!";
+"release today" = "Today!";
 "next episode %@" = "Next episode: %@";
 "release tomorrow" = "Tomorrow!";
 

@@ -203,14 +203,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // We used now themoviedb
     // But database still have ids from imdb and only movie in themoviedb uses them
     // and I don't have time / want now to fill the db w/ themoviedb's id
-    
     if ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) {
         apiLink = kJLTMDbMovie;
         queryParams = @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage};
         trailerApiLink = kJLTMDbMovieTrailers;
-    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
+    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ([self.mediaDatas[@"themoviedbID"] isEqualToString:@""] || ![self.mediaDatas objectForKey:@"themoviedbID"])) {
         apiLink = kJLTMDbFind;
+        trailerApiLink = kJLTMDbTVTrailers;
         queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"};
+    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ![self.mediaDatas[@"themoviedbID"] isEqualToString:@""] && [self.mediaDatas objectForKey:@"themoviedbID"]) {
+        apiLink = kJLTMDbTV;
+        queryParams =  @{@"id": self.mediaDatas[@"themoviedbID"], @"language": userLanguage};
         trailerApiLink = kJLTMDbTVTrailers;
     } else {
         return;
@@ -224,58 +227,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                 [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
                     if(!error){
                         [self setMediaViewForData:responseObject];
-                        [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
-                            // We check if there is a video called "trailer"
-                            // if yes we take it
-                            // else we take the first video
-                            if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
-                                trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
-                            } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
-                                trailerID = [responseObject valueForKeyPath:@"results.key"][0];
-                            }
-                            
-                            if (![trailerID isEqualToString:@""]) {
-                                [self displayTrailerButtonForId:trailerID];
-                            }
-                        }];
-                        // Get the date of the next episode
-                        NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
-                                                              @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
-                        
-                        NSString *lastAirEpisode = (NSString*)[responseObject valueForKeyPath:@"last_air_date"];
-                        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-                        dateFormatter.dateFormat = @"yyyy-MM-dd";
-                        NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];
-
-                        [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVSeasons withParameters:tvSeasonQueryParams andResponseBlock:^(id responseObject, NSError *error) {
-                            NSDateFormatter *dateFormatter = [NSDateFormatter new];
-                            dateFormatter.dateFormat = @"yyyy-MM-dd";
-
-                            NSDate *closestDate = nil;
-
-                            for (NSDictionary* episode in responseObject[@"episodes"]) {
-                                if ([episode objectForKey:@"air_date"] != (id)[NSNull null]) {
-                                    NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
-                                    
-                                    NSDate *startDate = [dateFormatter dateFromString:dateString];
-                                    if([startDate timeIntervalSinceNow] < 0) {
-                                        continue;
-                                    }
-                                    
-                                    if([startDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
-                                        closestDate = startDate;
-                                    }
-                                }
-                            }
-                            
-                            NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
-                            
-                            [self displayLabelForNextOrLastEpisodeForDate:dateForEpisode];
-                        }];
-                    } else {
-                        [self noInternetConnexionAlert];
+                        [self getTrailerAndNextEpisodeDateForResponse:responseObject];
                     }
                 }];
+            // It's a serie directly from themoviedbapi
+            } else if([responseObject objectForKey:@"number_of_seasons"] != nil) {
+                [self setMediaViewForData:responseObject];
+                [self getTrailerAndNextEpisodeDateForResponse:responseObject];
             } else {
                 [self setMediaViewForData:responseObject];
                 [[JLTMDbClient sharedAPIInstance] GET:trailerApiLink withParameters:@{@"id": self.mediaDatas[@"imdbID"]} andResponseBlock:^(id responseObject, NSError *error) {
@@ -347,27 +305,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               NSString *numberString = [numberFormatter stringFromNumber:amountNumber];
 
               if ([mediaLikeNumber integerValue] > 1) {
-                  // Aimé par X personnes
-                  NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %@ people", nil), numberString];
-                  
-                  UILabel *mediaGenresLabel = (UILabel*)[infoMediaView viewWithTag:11];
-                  int mediaLikeNumberLabelY = mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 6;
-                  
-                  
-                  UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaLikeNumberLabelY, screenWidth, 25)];
-                  mediaLikeNumberLabel.text = mediaLikeNumberString;
-                  mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
-                  mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
-                  mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-                  mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-                  mediaLikeNumberLabel.layer.shadowRadius = 2.5;
-                  mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
-                  mediaLikeNumberLabel.clipsToBounds = NO;
-                  mediaLikeNumberLabel.tag = 5;
-                  mediaLikeNumberLabel.backgroundColor = [UIColor clearColor];
-                  mediaLikeNumberLabel.layer.masksToBounds = NO;
-                  mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
-                  [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:10];
+                  self.numberLikesString = numberString;
               }
               
               self.itunesIDString = responseObject[@"itunesID"];
@@ -432,6 +370,59 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UISwipeGestureRecognizer *rightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showMediaDetails:)];
     rightGesture.direction = UISwipeGestureRecognizerDirectionRight;
     [self.view addGestureRecognizer:rightGesture];
+}
+
+- (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
+{
+    __block NSString *trailerID = @"";
+    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
+        // We check if there is a video called "trailer"
+        // if yes we take it
+        // else we take the first video
+        if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
+            trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
+        } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
+            trailerID = [responseObject valueForKeyPath:@"results.key"][0];
+        }
+        
+        if (![trailerID isEqualToString:@""]) {
+            [self displayTrailerButtonForId:trailerID];
+        }
+    }];
+    // Get the date of the next episode
+    NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
+                                          @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
+    
+    NSString *lastAirEpisode = (NSString*)[responseObject valueForKeyPath:@"last_air_date"];
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.dateFormat = @"yyyy-MM-dd";
+    NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];
+    
+    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVSeasons withParameters:tvSeasonQueryParams andResponseBlock:^(id responseObject, NSError *error) {
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        dateFormatter.dateFormat = @"yyyy-MM-dd";
+        
+        NSDate *closestDate = nil;
+        
+        for (NSDictionary* episode in responseObject[@"episodes"]) {
+            if ([episode objectForKey:@"air_date"] != (id)[NSNull null]) {
+                NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
+                
+                NSDate *startDate = [dateFormatter dateFromString:dateString];
+                if([startDate timeIntervalSinceNow] < 0) {
+                    continue;
+                }
+                
+                if([startDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
+                    closestDate = startDate;
+                }
+            }
+        }
+        
+        NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
+        
+        [self displayLabelForNextOrLastEpisodeForDate:dateForEpisode];
+    }];
 }
 
 #pragma mark - Overlay views
@@ -720,6 +711,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }
                      completion:nil];
     
+    
     NSString *genresString = NSLocalizedString(@"Genres", nil);
     
     NSMutableArray *genresArray = [NSMutableArray new];
@@ -746,6 +738,28 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaGenresLabel.tag = 11;
     [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
     
+    if ([self.numberLikesString integerValue] > 1) {
+        // Like by X people
+        NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %@ people", nil), self.numberLikesString];
+        
+        int mediaLikeNumberLabelY = mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 6;
+        
+        UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaLikeNumberLabelY, screenWidth, 25)];
+        mediaLikeNumberLabel.text = mediaLikeNumberString;
+        mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
+        mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
+        mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+        mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+        mediaLikeNumberLabel.layer.shadowRadius = 2.5;
+        mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
+        mediaLikeNumberLabel.clipsToBounds = NO;
+        mediaLikeNumberLabel.tag = 5;
+        mediaLikeNumberLabel.backgroundColor = [UIColor clearColor];
+        mediaLikeNumberLabel.layer.masksToBounds = NO;
+        mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
+        [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:11];
+    }
+    
     [loadingIndicator stopAnimating];
 }
 
@@ -770,9 +784,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     lastEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
     // If an episode of this serie is release today we notify the user
-    lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? NSLocalizedString(@"release today", nil) : lastEpisodeDateLabel.text;
+    lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), NSLocalizedString(@"release today", @"aujourd'hui !")] : lastEpisodeDateLabel.text;
     // If an episode of this serie is release tomorrow we notify the user
-    lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? NSLocalizedString(@"release tomorrow", nil) : lastEpisodeDateLabel.text;
+    lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : lastEpisodeDateLabel.text;
     
     lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
     lastEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;

@@ -113,7 +113,7 @@
 "next episode date %@" = "Date de diffusion du prochain épisode : %@";
 "next episode %@" = "Prochain épisode : %@";
 "ended serie" = "Série terminée";
-"release today" = "Nouvel épisode aujourd'hui !";
+"release today" = "Aujourd'hui !";
 "release tomorrow" = "Demain !";
 
 //AboutViewController

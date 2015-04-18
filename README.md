@@ -39,6 +39,12 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Voir la liste de followers
 - Ajouter la clé     "last_air_date": "2015-06-04", pour les séries -> savoir la date de diffusion du dernier épisode
 
+## API
+
+### Media
+#### Récupérer un média
+
+
 
 ### Liste de succès (non-exhaustive)
 - Nombre de rencontres
