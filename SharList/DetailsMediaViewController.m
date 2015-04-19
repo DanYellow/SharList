@@ -408,13 +408,20 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             if ([episode objectForKey:@"air_date"] != (id)[NSNull null]) {
                 NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
                 
-                NSDate *startDate = [dateFormatter dateFromString:dateString];
-                if([startDate timeIntervalSinceNow] < 0) {
+                NSDate *episodeDate = [dateFormatter dateFromString:dateString];
+
+                if([episodeDate timeIntervalSinceNow] < -100000) {
                     continue;
                 }
                 
-                if([startDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
-                    closestDate = startDate;
+                // If the the date is today so we break the loop
+                if ([[NSCalendar currentCalendar] isDateInToday:episodeDate] || !closestDate) {
+                    closestDate = episodeDate;
+                    break;
+                }
+                
+                if([episodeDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
+                    closestDate = episodeDate;
                 }
             }
         }
