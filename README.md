@@ -45,10 +45,48 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 Cette API est l'API tierce principale de l'application, elle permet de récupérer les données des films et des séries.
 Clef API The movie DB : f09cf27014943c8114e504bf5fbd352b (http://docs.themoviedb.apiary.io)
 
-
+#### Betaseries
 Clef API Betaseries : 8bc04c11b4c283b72a3fa48cfc6149f3 (https://www.betaseries.com/api/docs)
 - Ajouter / retirer une série au compte betaserie de l'utilisateur : https://api.betaseries.com/shows/display
 -- Paramètres : imdb_id : id imdb de la série (fournie par l'API de Shound) | client_id : clef d'api pour Betaseries
+
+#### Shound
+User
+{
+    "id":"174",
+    "fbiduser":"1405994199720672",
+    "user_favs":
+                {
+                    "book" : null, 
+                    "movie" : [
+                        {
+                            "imdbID" : "tt1034032",
+                            "themoviedbID" : "", 
+                            "id" : "1438",
+                            "year" : "2009",
+                            "type" : "movie",
+                            "hits" : "0",
+                            "name" : "Ultimate Game"
+                        }],
+                    "serie" : null
+                }",
+    "last_position_lat":"0",
+    "last_position_long":"0",
+    "last_update":"2015-04-17 22:57:24",
+    "isAnonymous":"0",
+    "isFamous":"0"
+}
+
+id : auto-increment
+fbiduser : unique - string
+user_favs : JSON Object (converted to string object in database) - ALL KEYS MUST EXISTS - Put null if someone has no items for a key
+last_position_lat : double - Last position of user latitude
+last_position_long : double - Last position of user longitude
+last_update : date - last update of user list | Automatically updated by the database
+isAnonymous : Boolean | Useful to hide or not user in meetings
+isFamous : Boolean | Useful to know if a meeting is done with someone famous
+
+WIP : Build of a REAL API under sf 2.6
 
 
 ## Design 
