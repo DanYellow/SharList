@@ -1228,7 +1228,7 @@
     [self.locationManager stopUpdatingLocation];
 
     NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@&latitude=%f&longitude=%f", (long)currentUserfbID, @"NO", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@&latitude=%f&longitude=%f", (long)currentUserfbID, @"YES", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
     
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
