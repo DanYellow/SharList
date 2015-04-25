@@ -44,8 +44,6 @@
     [[self navigationController] tabBarItem].badgeValue = nil;
     
     if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
-        //        ConnectViewController *connectViewController = [ConnectViewController new];
-        
         ConnectView *connectView = [[ConnectView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         connectView.viewController = self;
         
@@ -129,7 +127,8 @@
 }
 
 // Because of the facebook login we can't load the ui directly
-- (void) initializer {
+- (void) initializer
+{
     // Design on the view
     UIAlertView *alertBGF;
     alertBGF.delegate = self;
@@ -168,6 +167,7 @@
     tableFooter.textAlignment = NSTextAlignmentCenter;
     tableFooter.opaque = YES;
     tableFooter.font = [UIFont boldSystemFontOfSize:15];
+    
     NSNumber *countMeetings = [NSNumber numberWithInt:[[UserTaste MR_numberOfEntities] intValue] - 1]; // We remove current user
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"%@ meetings", nil), countMeetings]];
     

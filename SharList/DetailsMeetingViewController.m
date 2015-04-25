@@ -607,7 +607,7 @@
                 imgURL = responseObject[@"poster_path"];
             }
             
-            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", imgURL];
+            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396%@", imgURL];
             [imgBackground setImageWithURL:
              [NSURL URLWithString:imgDistURL]
                           placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];

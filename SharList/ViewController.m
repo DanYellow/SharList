@@ -882,6 +882,10 @@
 
     [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
+            if ([[responseObject valueForKeyPath: @"tv_results"] count] == 0) {
+                aCell.detailTextLabel.text = @"";
+                return;
+            }
             NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0]};
             
             [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
@@ -1007,7 +1011,8 @@
                 }
             }
             
-            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", imgURL];
+            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396%@", imgURL];
+        
             [imgBackground setImageWithURL:
              [NSURL URLWithString:imgDistURL]
                           placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];

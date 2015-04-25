@@ -656,7 +656,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
 
     UIImageView *imgMedia = [UIImageView new];
-    NSURL *imgMediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", data[@"poster_path"]]];
+    NSURL *imgMediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396%@", data[@"poster_path"]]];
     
     [imgMedia setImageWithURL:imgMediaURL
              placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
@@ -743,6 +743,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaGenresLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
     [mediaGenresLabel sizeToFit];
     mediaGenresLabel.tag = 11;
+    mediaGenresLabel.alpha = (genresArray.count == 0) ? 0 : 1;
     [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
     
     if ([self.numberLikesString integerValue] > 1) {
@@ -1210,14 +1211,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [self performSelector:@selector(updateServerDatasForFbIDTimer:) withObject:[NSNumber numberWithBool:isAdding] afterDelay:7.0];
         
         [self cancelLocalNotificationWithValueForKey:@"updateList"];
-        UILocalNotification *localNotification = [UILocalNotification new];
-        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:NSCalendarUnitMonth]; //One month later
-        localNotification.soundName = UILocalNotificationDefaultSoundName;
-        localNotification.applicationIconBadgeNumber = 0;
-        localNotification.alertAction = nil;
-        localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyNotUpdateList", nil);
-        localNotification.userInfo = @{@"locatificationName" : @"updateList"};
-        [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+//        UILocalNotification *localNotification = [UILocalNotification new];
+//        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:NSCalendarUnitMonth]; //One month later
+//        localNotification.soundName = UILocalNotificationDefaultSoundName;
+//        localNotification.applicationIconBadgeNumber = 0;
+//        localNotification.alertAction = nil;
+//        localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyNotUpdateList", nil);
+//        localNotification.userInfo = @{@"locatificationName" : @"updateList"};
+//        [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     }];
 }
 
