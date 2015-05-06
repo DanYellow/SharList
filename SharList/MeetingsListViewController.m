@@ -476,16 +476,10 @@
     [self.navigationController pushViewController:detailsMeetingViewController animated:NO];
 }
 
+
 // This function manage the enable state of refresh button
 - (void) navigationItemRightButtonEnablingManagement
 {
-//    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(fetchUsersDatas)];
-    
-    UIView *refreshBtnBarView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
-    refreshBtnBarView.backgroundColor = [UIColor clearColor];
-    refreshBtnBarView.userInteractionEnabled = YES;
-
-    
     UIButton *refreshBtnBar = [UIButton buttonWithType:UIButtonTypeCustom];
     refreshBtnBar.frame = CGRectMake(0, 0, 24, 24);
     [refreshBtnBar addTarget:self action:@selector(fetchUsersDatas) forControlEvents:UIControlEventTouchUpInside];
@@ -499,9 +493,6 @@
     CGFloat startAngle = 0.0;
     CGPoint center = CGPointMake(12, 12);
     CGFloat radius = 24.0;
-    
-    [refreshBtnBarView addSubview:refreshBtnBar];
-
     
     UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithCustomView:refreshBtnBar];
     refreshBtn.tintColor = [UIColor whiteColor];
@@ -1336,7 +1327,7 @@
         oldUserTaste.lastMeeting = [NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
         
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"])
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
             oldUserTaste.isRandomDiscover = NO;
     } else {
         // It's a new user
@@ -1348,10 +1339,10 @@
         userTaste.isFavorite = NO;
         userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
         
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"])
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
             userTaste.isRandomDiscover = NO;
     }
-    
+
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 
     // We set to 0 the count of no results fetch location
