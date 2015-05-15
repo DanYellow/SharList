@@ -304,7 +304,8 @@
         return;
     }
     
-    UIView *currentUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
+    
+    UIView *currentUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, ceilf(screenWidth / GOLDENRATIO))];
     currentUserFBView.backgroundColor = [UIColor clearColor];
     currentUserFBView.tag = 10;
     
@@ -314,11 +315,11 @@
         NSString *title = [NSLocalizedString([[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
         
         CALayer *rightBorder = [CALayer layer];
-        rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 70.0f);
+        rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 75.0f);
         rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
         
         CGRect statContainerFrame = CGRectMake(0 + (95 * i),
-                                               currentUserFBView.frame.size.height - 70,
+                                               currentUserFBView.frame.size.height - 75,
                                                widthViews, 70);
         
         UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
@@ -333,14 +334,14 @@
             [statContainer.layer addSublayer:rightBorder];
         }
         
-        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, widthViews, 30)];
+        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(12, -5, widthViews, 30)];
         statTitle.textColor = [UIColor whiteColor];
         statTitle.backgroundColor = [UIColor clearColor];
         statTitle.text = title;
-        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
-        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-        statTitle.layer.shadowRadius = 2.5;
-        statTitle.layer.shadowOpacity = 0.75;
+//        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
+//        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+//        statTitle.layer.shadowRadius = 2.5;
+//        statTitle.layer.shadowOpacity = 0.75;
         [statContainer addSubview:statTitle];
         
         UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(12, statContainer.frame.size.height - 34, widthViews, 35.0)];
@@ -349,10 +350,10 @@
         statCount.text = title;
         statCount.tag = tagRange + i;
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
-        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
-        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-        statCount.layer.shadowRadius = 2.5;
-        statCount.layer.shadowOpacity = 0.75;
+//        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
+//        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+//        statCount.layer.shadowRadius = 2.5;
+//        statCount.layer.shadowOpacity = 0.75;
         
         NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i]] count]] stringValue];
         statCount.text = statCountNumber;
@@ -372,7 +373,7 @@
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:10];
 
     int intWidthScreen = screenWidth;
-    int heightImg = 172;
+    int heightImg = ceilf(intWidthScreen / GOLDENRATIO);
     
     NSString *metUserFBImgURL = nil;
     if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {

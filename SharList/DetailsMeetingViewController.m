@@ -231,7 +231,7 @@
                  NSLog(@"Error: %@", error);
              }];
     } else {
-        // If the current user is anonymous. He still can see his facebook friends photo
+        // If the current user is anonymous. He still show his facebook profile photo to his friends
         if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]])
             [self displayMetUserfbImgProfile];
     }
@@ -282,7 +282,7 @@
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
 
     int intWidthScreen = screenWidth;
-    int heightImg = 172;
+    int heightImg = ceilf(intWidthScreen / GOLDENRATIO);
     
     NSString *fbMetUserString = [self.metUserId stringValue];
     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
@@ -307,32 +307,25 @@
 {
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     
-    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 172)];
+    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, ceilf(screenWidth / GOLDENRATIO))];
     metUserFBView.backgroundColor = [UIColor clearColor];
     metUserFBView.tag = 4;
 
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
-    NSString *strNumberPercent = [self calcUserMetPercentMatch];
-    
     UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 24.0, 150.0, 48.0)];
     commonTasteCountPercentLabel.textColor = [UIColor whiteColor];
     commonTasteCountPercentLabel.backgroundColor = [UIColor clearColor];
-    commonTasteCountPercentLabel.text = @"0 %";
+    commonTasteCountPercentLabel.text = [self calcUserMetPercentMatch];
     commonTasteCountPercentLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:52.0f];
-    commonTasteCountPercentLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
-    commonTasteCountPercentLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-    commonTasteCountPercentLabel.layer.shadowOpacity = .75f;
+//    commonTasteCountPercentLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
+//    commonTasteCountPercentLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+//    commonTasteCountPercentLabel.layer.shadowOpacity = .75f;
+    
     [metUserFBView addSubview:commonTasteCountPercentLabel];
     
-    CATransition *animation = [CATransition animation];
-    animation.duration = 1.0;
-    animation.type = kCATransitionFade;
-    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [commonTasteCountPercentLabel.layer addAnimation:animation forKey:@"changeTextTransition"];
     
-    commonTasteCountPercentLabel.text = strNumberPercent;
     
     CGRect tasteMetUserMessageLabelFrame = CGRectMake(16.0,
                                                       commonTasteCountPercentLabel.frame.size.height + commonTasteCountPercentLabel.frame.origin.y,
@@ -344,9 +337,9 @@
     tasteMetUserMessageLabel.backgroundColor = [UIColor clearColor];
     tasteMetUserMessageLabel.text = NSLocalizedString(@"in common", nil);
     tasteMetUserMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
-    tasteMetUserMessageLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
-    tasteMetUserMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-    tasteMetUserMessageLabel.layer.shadowOpacity = .75f;
+//    tasteMetUserMessageLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
+//    tasteMetUserMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+//    tasteMetUserMessageLabel.layer.shadowOpacity = .75f;
     [metUserFBView addSubview:tasteMetUserMessageLabel];
     
     userSelectionTableView.tableHeaderView = metUserFBView;
@@ -367,11 +360,12 @@
     float widthViews = 99.0f;
     for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
         CALayer *rightBorder = [CALayer layer];
-        rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 60.0f);
+        rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 65.0f);
         rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
+        
         NSString *title = [NSLocalizedString([[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
         CGRect statContainerFrame = CGRectMake(16 + (95 * i),
-                                               metUserFBView.frame.size.height - 60,
+                                               metUserFBView.frame.size.height - 65,
                                                widthViews, 60);
         UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
         statContainer.backgroundColor = [UIColor clearColor];
@@ -385,14 +379,14 @@
             [statContainer.layer addSublayer:rightBorder];
         }
         
-        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthViews, 30)];
+        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, -5, widthViews, 30)];
         statTitle.textColor = [UIColor whiteColor];
         statTitle.backgroundColor = [UIColor clearColor];
         statTitle.text = title;
-        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
-        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-        statTitle.layer.shadowRadius = 2.5;
-        statTitle.layer.shadowOpacity = 0.75;
+//        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
+//        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+//        statTitle.layer.shadowRadius = 2.5;
+//        statTitle.layer.shadowOpacity = 0.75;
         [statContainer addSubview:statTitle];
         
         UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
@@ -400,10 +394,10 @@
         statCount.backgroundColor = [UIColor clearColor];
         statCount.text = title;
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
-        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
-        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-        statCount.layer.shadowRadius = 2.5;
-        statCount.layer.shadowOpacity = 0.75;
+//        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
+//        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+//        statCount.layer.shadowRadius = 2.5;
+//        statCount.layer.shadowOpacity = 0.75;
         
         NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[[self.metUserTasteDict filterKeysForNullObj]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]objectAtIndex:i]] count]] stringValue];
         statCount.text = statCountNumber;
