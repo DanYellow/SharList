@@ -179,7 +179,6 @@
     
     // Empty list view
     UIView *userTasteListTableViewEmptyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
-//    userTasteListTableViewEmptyView.center = CGPointMake(self.view.center.x, self.view.center.y);
     userTasteListTableViewEmptyView.backgroundColor = [UIColor clearColor];
     userTasteListTableViewEmptyView.tag = 8;
     userTasteListTableViewEmptyView.hidden = YES;
@@ -205,9 +204,6 @@
     emptyUserTasteLabel.numberOfLines = 0;
     emptyUserTasteLabel.textAlignment = NSTextAlignmentCenter;
     emptyUserTasteLabel.backgroundColor = [UIColor clearColor];
-//    emptyUserTasteLabel.tag = 8;
-//    emptyUserTasteLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
-//    emptyUserTasteLabel.hidden = YES;
     [userTasteListTableViewEmptyView addSubview:emptyUserTasteLabel];
     
     int retrieveFacebookLikesLabelY = emptyUserTasteLabel.frame.size.height + emptyUserTasteLabel.frame.origin.y + 10;
@@ -218,8 +214,6 @@
     retrieveFacebookLikesLabel.textColor = [UIColor whiteColor];
     retrieveFacebookLikesLabel.numberOfLines = 0;
     retrieveFacebookLikesLabel.textAlignment = NSTextAlignmentCenter;
-//    retrieveFacebookLikesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
-//    retrieveFacebookLikesLabel.hidden = YES;
     [userTasteListTableViewEmptyView addSubview:retrieveFacebookLikesLabel];
     
     
@@ -336,6 +330,14 @@
             index++;
         }
     }
+    
+    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
+    
+    // If the table is empty we remove the rest
+    if (userTasteListTableView.numberOfSections == 0) {
+        userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+        userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    }
 }
 
 
@@ -440,7 +442,7 @@
     
     [tableFooterView addSubview:getUserFacebookLikesBtn];
     
-    userTasteListTableView.tableHeaderView = tableFooterView;
+    userTasteListTableView.tableFooterView = tableFooterView;
 }
 
 - (void) displayCurrentUserfbImgProfile
@@ -953,7 +955,7 @@
 - (void) getLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell
 {
     NSDictionary *queryParams =  @{@"id": [aCell.model objectForKey:@"imdbID"], @"external_source": @"imdb_id"};
-
+    [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             if ([[responseObject valueForKeyPath: @"tv_results"] count] == 0) {
@@ -961,7 +963,7 @@
                 return;
             }
             NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0]};
-            
+            [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
             [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
                 if(!error){
                     // Get the date of the next episode
@@ -1280,7 +1282,12 @@
     userSelectionTableView.hidden = NO;
     [userSelectionTableView reloadData];
     
-    [self updateCurrentUserStats];
+    UIView *currentUserFBView = (UIView*)[self.view viewWithTag:10];
+    if (!currentUserFBView) {
+        [self displayCurrentUserStats];
+    } else {
+        [self updateCurrentUserStats];
+    }
 }
 
 - (void) updateUserLocation:(NSNumber*)userfbID
@@ -1428,7 +1435,6 @@
     return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
-
 - (void) getUserFacebookLikes:(UIButton*)sender {
     sender.enabled = NO;
     if (![[FBSession.activeSession permissions] containsObject:@"user_likes"]) {
@@ -1442,8 +1448,12 @@
     }
 }
 
+
+
 - (void) getUserLikesForSender:(UIButton*)sender
 {
+    UIView *userTasteListTableViewEmptyView = (UIView*)[self.view viewWithTag:8];
+    
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
     NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
@@ -1492,8 +1502,18 @@
                                 } completion:^(BOOL success, NSError *error) {
                                     [self synchronizeUserListWithServer];
                                     
+                                    
+
                                     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
                                     [userTasteListTableView reloadData];
+                                    
+                                    
+                                    // We want to call the following function only once
+                                    // so we check if the uitableview's header exists (it will exists after)
+                                    UIView *currentUserFBView = (UIView*)[self.view viewWithTag:10];
+                                    if (!currentUserFBView) {
+                                        [self displayCurrentUserStats];
+                                    }
                                 }];
                             } else {
                                 sender.enabled = YES;
