@@ -24,6 +24,7 @@
 #import "UserTaste.h"
 
 #import "NSDictionary+FilterKeysForNullObj.h"
+#import "NSString+URLEncodeValue.m"
 
 @interface ViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate, CLLocationManagerDelegate>

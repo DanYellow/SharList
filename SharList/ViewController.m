@@ -25,6 +25,7 @@
 // 8 : emptyUserTasteLabel : Message for no user taste
 // 9 : searchLoadingIndicator of search
 // 10 : metUserFBView
+// 11 : getUserFacebookLikesBtn
 
 
 @implementation ViewController
@@ -135,7 +136,7 @@
     
     [getUserFacebookLikesBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
     [getUserFacebookLikesBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
-    getUserFacebookLikesBtn.tag = 7;
+    getUserFacebookLikesBtn.tag = 11;
     getUserFacebookLikesBtn.backgroundColor = [UIColor clearColor];
     getUserFacebookLikesBtn.layer.borderColor = [UIColor whiteColor].CGColor;
     getUserFacebookLikesBtn.layer.borderWidth = 2.0f;
@@ -1195,13 +1196,13 @@
 {
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userTasteDict
-                                                       options:0 // Pass 0 if you don't care about the readability of the generated string
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
-//        NSLog(@"Got an error: %@", error);
         return nil;
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        jsonString = [NSString urlEncodeValue:jsonString];
    
         return jsonString;
     }
@@ -1210,7 +1211,6 @@
 - (void) userListHaveBeenUpdateNotificationEvent:(NSNotification *)note
 {
     [self userListHaveBeenUpdate:[note userInfo]];
-    
 }
 
 
@@ -1386,13 +1386,8 @@
 
 - (void) getUserLikesForSender:(UIButton*)sender
 {
-    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
-    // Build the array from the plist
-    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
-    
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
-    
     NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
 //    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];
     NSString *queryParams = @"?fbiduser=fb456742";
@@ -1417,16 +1412,17 @@
                                               JSONObjectWithData:data
                                               options:NSJSONReadingMutableContainers
                                               error:&error];
-                    
-                    sender.enabled = YES;
-                    [loadingIndicator stopAnimating];
-                    
+
                     if (!error) {
                         // If the server send and error
                         if ([jsonData objectForKey:@"error"]) {
 //                            NSLog(@"error : %@", jsonData[@"error"]);
                         } else {
-                            if (![userTasteDict isEqualToDictionary:jsonData[@"response"]]) {
+                            NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
+                            [userDatasFromServer setValue:[NSNull null] forKey:@"book"];
+                            NSLog(@"string : %@ | %@ | %li | %li", userTasteDict, userDatasFromServer, [userDatasFromServer count], [userTasteDict count]);
+
+                            if (![userTasteDict isEqualToDictionary:userDatasFromServer]) {
                                 userTasteDict = [jsonData[@"response"] mutableCopy];
                                 [userTasteDict setValue:[NSNull null] forKey:@"book"];
                                 
@@ -1437,15 +1433,75 @@
                                     userTaste.taste = arrayData;
                                     
                                 } completion:^(BOOL success, NSError *error) {
+                                    [self synchronizeUserListWithServer];
+                                    
                                     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
                                     [userTasteListTableView reloadData];
                                 }];
+                            } else {
+                                sender.enabled = YES;
+                                [loadingIndicator stopAnimating];
                             }
                         }
                         
                     }
                     
                 }] resume];
+}
+
+- (void) synchronizeUserListWithServer
+{
+    UIButton *getUserFacebookLikesBtn = (UIButton*)[self.view viewWithTag:11];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/list"];
+
+    NSString *userTasteJSON = [self updateTasteForServer];
+    NSString *queryParams = [NSString stringWithFormat:@"fbiduser=%@", @"fb456742"];
+    
+    NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    
+    [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"JSON: %@", responseObject);
+        
+        getUserFacebookLikesBtn.enabled = YES;
+        [getUserFacebookLikesBtn setTitle:@"Liste synchronisée" forState:UIControlStateDisabled];
+        [loadingIndicator stopAnimating];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+    
+    
+//    NSURL *URL = [NSURL URLWithString:shoundAPIPath];
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+//    [request setHTTPMethod:@"PATCH"];
+//    [request setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+//    [request setHTTPBody:[queryParams dataUsingEncoding:NSUTF8StringEncoding]];
+//    
+//    NSLog(@"queryParams : %@", request pro);
+//    
+//    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+//    
+//    [[session dataTaskWithRequest:request
+//                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+//                    NSDictionary *jsonData = [NSJSONSerialization
+//                                              JSONObjectWithData:data
+//                                              options:NSJSONReadingMutableContainers
+//                                              error:&error];
+//                    
+//                    if (!error) {
+//                        // If the server send and error
+//                        if ([jsonData objectForKey:@"error"]) {
+//                            NSLog(@"error : %@", jsonData[@"error"]);
+//                        } else {
+//                            NSLog(@"response : %@", jsonData[@"response"]);
+//                        }
+//                    } else {
+//                        NSLog(@"error : %@", error);
+//                    }
+//                    
+//     }] resume];
 }
 
 #pragma mark - Content filtering

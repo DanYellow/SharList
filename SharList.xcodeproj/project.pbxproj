@@ -23,6 +23,7 @@
 		1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */; };
 		1A16F65C1A458929000BC4AB /* settings-tab-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F65A1A458929000BC4AB /* settings-tab-icon@2x.png */; };
 		1A16F65D1A458929000BC4AB /* settings-tab-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F65B1A458929000BC4AB /* settings-tab-icon@3x.png */; };
+		1A1BE6111B06869C00B813CD /* NSString+URLEncodeValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1BE6101B06869C00B813CD /* NSString+URLEncodeValue.m */; };
 		1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewController.m */; };
 		1A36E3131A9D4C1C004B0DBC /* ConnectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36E3121A9D4C1C004B0DBC /* ConnectView.m */; };
 		1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */; };
@@ -115,6 +116,8 @@
 		1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-tab-icon2@2x.png"; sourceTree = "<group>"; };
 		1A16F65A1A458929000BC4AB /* settings-tab-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings-tab-icon@2x.png"; sourceTree = "<group>"; };
 		1A16F65B1A458929000BC4AB /* settings-tab-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settings-tab-icon@3x.png"; sourceTree = "<group>"; };
+		1A1BE60F1B06869C00B813CD /* NSString+URLEncodeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncodeValue.h"; sourceTree = "<group>"; };
+		1A1BE6101B06869C00B813CD /* NSString+URLEncodeValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncodeValue.m"; sourceTree = "<group>"; };
 		1A1D6E431A1099C00090C598 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		1A1D6E441A1099C00090C598 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		1A36E3111A9D4C1C004B0DBC /* ConnectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectView.h; sourceTree = "<group>"; };
@@ -349,6 +352,8 @@
 		1A0EFAAD1A32736700FEA01D /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				1A1BE60F1B06869C00B813CD /* NSString+URLEncodeValue.h */,
+				1A1BE6101B06869C00B813CD /* NSString+URLEncodeValue.m */,
 				1AF4745A1A4DD424003ED4AF /* UIButton+TrailerID.h */,
 				1AF4745B1A4DD424003ED4AF /* UIButton+TrailerID.m */,
 				1A9666441A312302006969A7 /* NSString+SentenceCapitalizedString.h */,
@@ -651,6 +656,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A1BE6111B06869C00B813CD /* NSString+URLEncodeValue.m in Sources */,
 				1AF4745C1A4DD424003ED4AF /* UIButton+TrailerID.m in Sources */,
 				1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */,
 				1A024AB51A3A3EF20098F015 /* NSArray+Reverse.m in Sources */,

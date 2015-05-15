@@ -29,6 +29,7 @@
 #import "UILabel+HeightToFit.h"
 #import "UIButton+TrailerID.h"
 #import "UIImage+ColorImage.h"
+#import "NSString+URLEncodeValue.m"
 
 #import "SettingsViewController.h"
 
