@@ -1216,7 +1216,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         }
         // 7 secondes after update user list we update the database with new datas
         // Like this we are "sure" that user really wants to add this media to his list
-        [self performSelector:@selector(updateServerDatasForFbIDTimer:) withObject:[NSNumber numberWithBool:isAdding] afterDelay:7.0];
+        
+        [[ViewController class] performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.0];
+        // [pfPushManager notifyUpdateList];
         
         [self cancelLocalNotificationWithValueForKey:@"updateList"];
 //        UILocalNotification *localNotification = [UILocalNotification new];
@@ -1232,78 +1234,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 #pragma mark - Server part
 
-- (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding
-{
-    [self updateServerDatasForFbID:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] forAdding:isAdding];
-}
 
 - (BOOL) connected {
     return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
-// This methods allows to retrieve and send (?) user datas from the server
-- (void) updateServerDatasForFbID:(NSNumber*)userfbID forAdding:(NSNumber*)isAdding
-{
-    if ([self connected] == NO)
-        return;
-    
-    
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateDatas.php"]];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
-                                                       timeoutInterval:10.0];
-    [request setHTTPMethod:@"POST"];
-    
-    // We send the json to the server only when we need it
-    NSString *userTasteJSON = [self updateTasteForServer];
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&userTaste=%@&isAdding=%@&imdbID=%@&themovieDBID=%@", userfbID, userTasteJSON, [isAdding boolValue] ? @"YES" : @"NO", self.mediaDatas[@"imdbID"], themovieDBID];
-    
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-    [conn start];
-}
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    [self.responseData appendData:data];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    if (self.responseData != nil) {
-        self.responseData = nil;
-        self.responseData = [NSMutableData new];
-        
-        
-        [pfPushManager notifyUpdateList];
-    }
-}
-
-// This method retrieve an readable json of user taste for the database
-- (NSString *) updateTasteForServer
-{
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userTasteDict
-                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
-                                                         error:&error];
-    if (!jsonData) {
-//        NSLog(@"Got an error: %@", error);
-        UIAlertView *errorServer = [[UIAlertView alloc] initWithTitle:@"Erreur" message:@"La synchronisation avec le serveur n'a pas pu avoir lieu" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [errorServer show];
-        return nil;
-    } else {
-        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        jsonString = [NSString urlEncodeValue:jsonString];
-    
-        return jsonString;
-    }
-}
-//
-//
-//+ (NSString *)urlEncodeValue:(NSString *)str
-//{
-//    NSString *result = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)str, NULL, CFSTR(":/?#[]@!$&’()*+,;="), kCFStringEncodingUTF8));
-//    return result;
-//}
 
 
 - (void) noInternetConnexionAlert

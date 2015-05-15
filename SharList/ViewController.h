@@ -76,6 +76,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 
 - (void) getUserLikes;
 - (void) getUserLikesForSender:(UIButton*)sender;
+- (void) synchronizeUserListWithServer;
 
 @end
 

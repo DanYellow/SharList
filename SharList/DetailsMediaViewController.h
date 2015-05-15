@@ -35,6 +35,8 @@
 
 #import "PFPushManager.h"
 
+#import "ViewController.h"
+
 
 
 

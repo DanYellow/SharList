@@ -1420,7 +1420,6 @@
                         } else {
                             NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
                             [userDatasFromServer setValue:[NSNull null] forKey:@"book"];
-                            NSLog(@"string : %@ | %@ | %li | %li", userTasteDict, userDatasFromServer, [userDatasFromServer count], [userTasteDict count]);
 
                             if (![userTasteDict isEqualToDictionary:userDatasFromServer]) {
                                 userTasteDict = [jsonData[@"response"] mutableCopy];
@@ -1454,51 +1453,19 @@
     UIButton *getUserFacebookLikesBtn = (UIButton*)[self.view viewWithTag:11];
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/list"];
 
-    NSString *userTasteJSON = [self updateTasteForServer];
-    NSString *queryParams = [NSString stringWithFormat:@"fbiduser=%@", @"fb456742"];
     
-//    NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
-//    
-//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-//    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
-//    
-//    [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        getUserFacebookLikesBtn.enabled = YES;
-//        [getUserFacebookLikesBtn setTitle:@"Liste synchronisée" forState:UIControlStateDisabled];
-//        [loadingIndicator stopAnimating];
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        NSLog(@"Error: %@", error);
-//    }];
+    NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
     
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
     
-    NSURL *URL = [NSURL URLWithString:shoundAPIPath];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    [request setHTTPMethod:@"PATCH"];
-    [request setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
-    [request setHTTPBody:[queryParams dataUsingEncoding:NSUTF8StringEncoding]];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    
-    [[session dataTaskWithRequest:request
-                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                    NSDictionary *jsonData = [NSJSONSerialization
-                                              JSONObjectWithData:data
-                                              options:NSJSONReadingMutableContainers
-                                              error:&error];
-                    
-                    if (!error) {
-                        // If the server send and error
-                        if ([jsonData objectForKey:@"error"]) {
-                            NSLog(@"error : %@", jsonData[@"error"]);
-                        } else {
-                            NSLog(@"response : %@", jsonData[@"response"]);
-                        }
-                    } else {
-                        NSLog(@"error : %@", error);
-                    }
-                    
-     }] resume];
+    [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        getUserFacebookLikesBtn.enabled = YES;
+        [getUserFacebookLikesBtn setTitle:@"Liste synchronisée" forState:UIControlStateDisabled];
+        [loadingIndicator stopAnimating];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 #pragma mark - Content filtering
