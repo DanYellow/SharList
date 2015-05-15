@@ -27,7 +27,7 @@
 //Viewcontroller
 "e.g." = "ex.";
 "Tap on " = "Appuyez sur  ";
-"Tap on  to fill your list" = "Appuyez sur   pour remplir votre liste";
+"Tap on  to fill your list" = "Appuyez sur   pour entrer une recherche";
 "No results" = "Aucun résultat";
 "No internet connection" = "Aucune connexion Internet";
 "Delete" = "Retirer";
