@@ -1217,7 +1217,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // 7 secondes after update user list we update the database with new datas
         // Like this we are "sure" that user really wants to add this media to his list
         
-        [[ViewController class] performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.0];
+//        [[ViewController class] performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.0];
         // [pfPushManager notifyUpdateList];
         
         [self cancelLocalNotificationWithValueForKey:@"updateList"];

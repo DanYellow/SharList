@@ -35,7 +35,7 @@
 
 #import "PFPushManager.h"
 
-#import "ViewController.h"
+//#import "ViewController.h"
 
 
 
@@ -88,7 +88,6 @@
 
 - (void) addPhysics;
 - (void) saveMediaUpdateForAdding:(BOOL)isAdding;
-- (void) updateServerDatasForFbIDTimer:(NSNumber*)isAdding;
 - (void) displayTrailerButtonForId:(NSString*)aTrailerID;
 - (void) seeTrailerMedia:(UIButton*)sender;
 - (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView;

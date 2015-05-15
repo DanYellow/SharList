@@ -122,27 +122,7 @@
     
 
     
-    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 80)];
-    
-    UIButton *getUserFacebookLikesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [getUserFacebookLikesBtn setFrame:CGRectMake(18, 25, screenWidth - 36, 54)];
-    [getUserFacebookLikesBtn setTitle:NSLocalizedString(@"add my likes", nil) forState:UIControlStateNormal];
-    [getUserFacebookLikesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [getUserFacebookLikesBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
 
-    
-    [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
-    [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
-    
-    [getUserFacebookLikesBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-    [getUserFacebookLikesBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
-    getUserFacebookLikesBtn.tag = 11;
-    getUserFacebookLikesBtn.backgroundColor = [UIColor clearColor];
-    getUserFacebookLikesBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-    getUserFacebookLikesBtn.layer.borderWidth = 2.0f;
-    [getUserFacebookLikesBtn addTarget:self action:@selector(getUserFacebookLikes:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [tableFooterView addSubview:getUserFacebookLikesBtn];
     
     // Uitableview of user selection (what user likes)
     UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
@@ -153,7 +133,8 @@
     userTasteListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userTasteListTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0); //self.bottomLayoutGuide.length
     userTasteListTableView.hidden = YES;
-    userTasteListTableView.tableFooterView = tableFooterView;
+    userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    userTasteListTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view insertSubview:userTasteListTableView atIndex:1];
     
     // UITableview of results
@@ -192,7 +173,18 @@
     emptyResultLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 75.0);
     emptyResultLabel.hidden = YES;
     [self.searchResultsController.tableView addSubview:emptyResultLabel];
-
+    
+    
+    
+    
+    // Empty list view
+    UIView *userTasteListTableViewEmptyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
+//    userTasteListTableViewEmptyView.center = CGPointMake(self.view.center.x, self.view.center.y);
+    userTasteListTableViewEmptyView.backgroundColor = [UIColor clearColor];
+    userTasteListTableViewEmptyView.tag = 8;
+    userTasteListTableViewEmptyView.hidden = YES;
+    userTasteListTableViewEmptyView.opaque = YES;
+    [userTasteListTableView addSubview:userTasteListTableViewEmptyView];
     
     // Message for empty list taste
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  to fill your list", nil)];
@@ -206,18 +198,61 @@
     NSRange r = [[attributedString string] rangeOfString:NSLocalizedString(@"Tap on ", nil)];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
-    CGFloat emptyUserTasteLabelPosY = 45;// [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
-    
-    UILabel *emptyUserTasteLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, emptyUserTasteLabelPosY, screenWidth, 90)];
+    UILabel *emptyUserTasteLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
     emptyUserTasteLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyUserTasteLabel.attributedText = attributedString; //Appuyez {sur la loupe} pour rechercher
     emptyUserTasteLabel.textColor = [UIColor whiteColor];
     emptyUserTasteLabel.numberOfLines = 0;
     emptyUserTasteLabel.textAlignment = NSTextAlignmentCenter;
-    emptyUserTasteLabel.tag = 8;
-    emptyUserTasteLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
-    emptyUserTasteLabel.hidden = YES;
-    [userTasteListTableView addSubview:emptyUserTasteLabel];
+    emptyUserTasteLabel.backgroundColor = [UIColor clearColor];
+//    emptyUserTasteLabel.tag = 8;
+//    emptyUserTasteLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+//    emptyUserTasteLabel.hidden = YES;
+    [userTasteListTableViewEmptyView addSubview:emptyUserTasteLabel];
+    
+    int retrieveFacebookLikesLabelY = emptyUserTasteLabel.frame.size.height + emptyUserTasteLabel.frame.origin.y + 10;
+    
+    UILabel *retrieveFacebookLikesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, retrieveFacebookLikesLabelY, screenWidth, 30)];
+    retrieveFacebookLikesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    retrieveFacebookLikesLabel.text = @"Remplissez votre liste avec Facebook"; //Appuyez {sur la loupe} pour rechercher
+    retrieveFacebookLikesLabel.textColor = [UIColor whiteColor];
+    retrieveFacebookLikesLabel.numberOfLines = 0;
+    retrieveFacebookLikesLabel.textAlignment = NSTextAlignmentCenter;
+//    retrieveFacebookLikesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+//    retrieveFacebookLikesLabel.hidden = YES;
+    [userTasteListTableViewEmptyView addSubview:retrieveFacebookLikesLabel];
+    
+    
+    int getUserFacebookLikesBtnY = retrieveFacebookLikesLabel.frame.size.height + retrieveFacebookLikesLabel.frame.origin.y + 5;
+    
+    UIButton *getUserFacebookLikesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [getUserFacebookLikesBtn setFrame:CGRectMake(18, getUserFacebookLikesBtnY, screenWidth - 36, 54)];
+    [getUserFacebookLikesBtn setTitle:NSLocalizedString(@"get my likes", nil) forState:UIControlStateNormal];
+    [getUserFacebookLikesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [getUserFacebookLikesBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    
+    
+    [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
+    
+    [getUserFacebookLikesBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [getUserFacebookLikesBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
+    getUserFacebookLikesBtn.backgroundColor = [UIColor clearColor];
+    getUserFacebookLikesBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    getUserFacebookLikesBtn.layer.borderWidth = 2.0f;
+    [getUserFacebookLikesBtn addTarget:self action:@selector(getUserFacebookLikes:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [userTasteListTableViewEmptyView addSubview:getUserFacebookLikesBtn];
+    
+    UIView *emptyViewLastView = userTasteListTableViewEmptyView.subviews.lastObject;
+    
+    CGRect userTasteListTableViewEmptyViewFrame = emptyViewLastView.frame;
+    userTasteListTableViewEmptyViewFrame.size.height = emptyViewLastView.frame.size.height + emptyViewLastView.frame.origin.y;
+    userTasteListTableViewEmptyViewFrame.size.width = screenWidth;
+    userTasteListTableViewEmptyViewFrame.origin.x = 0;
+    
+    userTasteListTableViewEmptyView.frame = userTasteListTableViewEmptyViewFrame;
+    userTasteListTableViewEmptyView.center = CGPointMake(self.view.center.x, self.view.center.y - self.tabBarController.tabBar.frame.size.height);
     
     
     // Definition of uisearchcontroller
@@ -378,9 +413,34 @@
     
     userTasteListTableView.tableHeaderView = currentUserFBView;
     
-    [userTasteListTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
-    
+    [userTasteListTableView setContentOffset:CGPointMake(0, 0)];
+
     [self displayCurrentUserfbImgProfile];
+    
+    
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 80)];
+    
+    UIButton *getUserFacebookLikesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [getUserFacebookLikesBtn setFrame:CGRectMake(18, 25, screenWidth - 36, 54)];
+    [getUserFacebookLikesBtn setTitle:NSLocalizedString(@"add my likes", nil) forState:UIControlStateNormal];
+    [getUserFacebookLikesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [getUserFacebookLikesBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    
+    
+    [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
+    
+    [getUserFacebookLikesBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [getUserFacebookLikesBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
+    getUserFacebookLikesBtn.tag = 11;
+    getUserFacebookLikesBtn.backgroundColor = [UIColor clearColor];
+    getUserFacebookLikesBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    getUserFacebookLikesBtn.layer.borderWidth = 2.0f;
+    [getUserFacebookLikesBtn addTarget:self action:@selector(getUserFacebookLikes:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [tableFooterView addSubview:getUserFacebookLikesBtn];
+    
+    userTasteListTableView.tableHeaderView = tableFooterView;
 }
 
 - (void) displayCurrentUserfbImgProfile
@@ -418,8 +478,6 @@
     UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
     effectView.frame = currentUserFBImgView.bounds;
     [currentUserFBImgView addSubview:effectView];
-    
-    
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -742,7 +800,7 @@
     } else {
         
         // User have no list of taste
-        UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
+        UIView *userTasteListTableViewEmptyView = (UIView*)[self.view viewWithTag:8];
         BOOL IsTableViewEmpty = YES;
         // This loop is here to check the content of all NSDict keys
         for (int i = 0; i < [[userTasteDict allKeys] count]; i++) {
@@ -754,12 +812,12 @@
         }
         
         if (IsTableViewEmpty == YES && (FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"])) {
-            emptyUserTasteLabel.hidden = NO;
+            userTasteListTableViewEmptyView.hidden = NO;
             [loadingIndicator stopAnimating];
             
             return 0;
         }
-        emptyUserTasteLabel.hidden = YES;
+        userTasteListTableViewEmptyView.hidden = YES;
         
         return userTasteDict.count;
     }
@@ -1464,7 +1522,7 @@
         [getUserFacebookLikesBtn setTitle:@"Liste synchronisée" forState:UIControlStateDisabled];
         [loadingIndicator stopAnimating];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
+//        NSLog(@"Error: %@", error);
     }];
 }
 
