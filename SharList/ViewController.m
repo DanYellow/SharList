@@ -119,6 +119,24 @@
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     [self.view addSubview:loadingIndicator];
     
+
+    
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 100)];
+    
+    UIButton *getUserFacebookLikesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [getUserFacebookLikesBtn setFrame:CGRectMake(18, 25, screenWidth - 36, 54)];
+    [getUserFacebookLikesBtn setTitle:NSLocalizedString(@"add my likes", nil) forState:UIControlStateNormal];
+    [getUserFacebookLikesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [getUserFacebookLikesBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [getUserFacebookLikesBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
+    getUserFacebookLikesBtn.tag = 7;
+    getUserFacebookLikesBtn.backgroundColor = [UIColor clearColor];
+    getUserFacebookLikesBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    getUserFacebookLikesBtn.layer.borderWidth = 2.0f;
+    [getUserFacebookLikesBtn addTarget:self action:@selector(getUserFacebookLikes) forControlEvents:UIControlEventTouchUpInside];
+    
+    [tableFooterView addSubview:getUserFacebookLikesBtn];
     
     // Uitableview of user selection (what user likes)
     UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
@@ -129,7 +147,7 @@
     userTasteListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userTasteListTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0); //self.bottomLayoutGuide.length
     userTasteListTableView.hidden = YES;
-    userTasteListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    userTasteListTableView.tableFooterView = tableFooterView;
     [self.view addSubview:userTasteListTableView];
     
     // UITableview of results
@@ -1356,6 +1374,42 @@
     return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
+
+- (void) getUserFacebookLikes {
+//    NSLog(@"%s", __FUNCTION__);
+    
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php"];
+    
+    
+    NSURL *URL = [NSURL URLWithString:shoundAPIPath];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    [request setHTTPMethod:@"GET"];
+    [request setValue:@"toto" forHTTPHeaderField:@"X-Shound"];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    
+    [[session dataTaskWithRequest:request
+                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                    
+                    NSDictionary *jsonData = [NSJSONSerialization
+                                              JSONObjectWithData:data
+                                              options:NSJSONReadingMutableContainers
+                                              error:&error];
+                    NSLog(@"error : %@", jsonData);
+                    
+                }] resume];
+//    NSLog(@"shoundAPIPath : %@", shoundAPIPath);
+//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+//    [manager GET:shoundAPIPath parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"JSON: %@", responseObject);
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        NSLog(@"Error: %@", error);
+//    }];
+
+}
 
 #pragma mark - Content filtering
 

@@ -6,6 +6,8 @@
 	<string>8bc04c11b4c283b72a3fa48cfc6149f3</string>
 	<key>apiPath</key>
 	<string>http://api.shound.fr/</string>
+	<key>apiPathLocal</key>
+	<string>http://192.168.1.79/ShoundAPI/web/</string>
 	<key>appversion</key>
 	<string>Shound v1.0</string>
 	<key>facebookAccountURL</key>

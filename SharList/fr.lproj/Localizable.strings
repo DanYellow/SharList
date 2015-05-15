@@ -32,6 +32,7 @@
 "No internet connection" = "Aucune connexion Internet";
 "Delete" = "Retirer";
 "localNotificationAlertBodyNotUpdateList" = "Vous avez découvert de nouvelles choses ? Ajoutez-les";
+"add my likes" = "Ajouter mes likes Facebook";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore découvert d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";

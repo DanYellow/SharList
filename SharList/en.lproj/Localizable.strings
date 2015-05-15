@@ -34,6 +34,7 @@
 "No internet connection" = "No Internet connection";
 "Delete" = "Delete";
 "localNotificationAlertBodyNotUpdateList" = "Discover new things ? Add it to your list";
+"add my likes" = "Add my Facebook likes";
 
 // Meetinglistviewcontroller
 "Tap on  in a meeting to add it among your favorites" = "Tap on  in a discover to add it among your favorites";

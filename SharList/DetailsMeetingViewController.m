@@ -419,22 +419,6 @@
     [self getServerDatasForFbID:self.metUserId];
 }
 
-
-// About to remove
-- (void) seeFbAccount:(UIBarButtonItem*)sender
-{
-//    fb://profile/(fbid)
-    NSURL *fbAccountURL = [NSURL URLWithString:@"fb://profile/10205792663674205"];
-    [[UIApplication sharedApplication] openURL:fbAccountURL];
-//        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://www.facebook.com/app_scoped_user_id/10205792663674205", nil]]];
-//    
-    // 10205792663674205
-    // 1494405967495387
-    
-//    https://graph.facebook.com/1494405967495387/picture?width=230&height=120
-//
-}
-
 #pragma mark - server communication
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID

@@ -207,11 +207,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         apiLink = kJLTMDbMovie;
         queryParams = @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage};
         trailerApiLink = kJLTMDbMovieTrailers;
-    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ([self.mediaDatas[@"themoviedbID"] isEqualToString:@""] || ![self.mediaDatas objectForKey:@"themoviedbID"])) {
+    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ([self.mediaDatas[@"themoviedbID"] isEqualToString:@""] || ![self.mediaDatas objectForKey:@"themoviedbID"] || [[self.mediaDatas objectForKey:@"themoviedbID"] isEqualToString:@"(null)"])) {
         apiLink = kJLTMDbFind;
         trailerApiLink = kJLTMDbTVTrailers;
         queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"};
-    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ![self.mediaDatas[@"themoviedbID"] isEqualToString:@""] && [self.mediaDatas objectForKey:@"themoviedbID"]) {
+    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ![self.mediaDatas[@"themoviedbID"] isEqualToString:@""]  && [self.mediaDatas objectForKey:@"themoviedbID"]) {
         apiLink = kJLTMDbTV;
         queryParams =  @{@"id": self.mediaDatas[@"themoviedbID"], @"language": userLanguage};
         trailerApiLink = kJLTMDbTVTrailers;
