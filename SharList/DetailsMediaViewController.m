@@ -404,12 +404,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         
         NSDate *closestDate = nil;
         
+        int episodeNumber = 0;
         for (NSDictionary* episode in responseObject[@"episodes"]) {
             if ([episode objectForKey:@"air_date"] != (id)[NSNull null]) {
                 NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
                 
                 NSDate *episodeDate = [dateFormatter dateFromString:dateString];
-
+                episodeNumber++;
                 if([episodeDate timeIntervalSinceNow] < -100000) {
                     continue;
                 }
@@ -425,10 +426,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                 }
             }
         }
-        
+
         NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
         
-        [self displayLabelForNextOrLastEpisodeForDate:dateForEpisode];
+        [self displayLabelForNextOrLastEpisodeForDate:dateForEpisode
+                                  andSeasonForEpisode:[NSString stringWithFormat:@"S%02iE%02i", [tvSeasonQueryParams[@"season_number"] intValue], episodeNumber]];
+
     }];
 }
 
@@ -773,7 +776,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
 
-- (void) displayLabelForNextOrLastEpisodeForDate:(NSDate*)aDate {
+- (void) displayLabelForNextOrLastEpisodeForDate:(NSDate*)aDate andSeasonForEpisode:(NSString*)aEpisodeString
+{
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     [dateFormatter setDateStyle:NSDateFormatterShortStyle];
     dateFormatter.timeStyle = NSDateFormatterNoStyle;
@@ -786,8 +790,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UILabel *mediaTitleLabel = (UILabel*)[infoMediaView viewWithTag:4];
     
-    int lastEpisodeDateLabelY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 5; //mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 3;
-
+    int lastEpisodeDateLabelY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 5;
+    
     UILabel *lastEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, lastEpisodeDateLabelY, screenWidth - 30, 25)];
     
     lastEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
@@ -796,6 +800,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // If an episode of this serie is release tomorrow we notify the user
     lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : lastEpisodeDateLabel.text;
     
+    if ([aDate timeIntervalSinceNow] > 0) {
+        lastEpisodeDateLabel.text = [lastEpisodeDateLabel.text stringByAppendingString:[NSString stringWithFormat:@" - %@", aEpisodeString]];
+    }
+
     lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
     lastEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;
     lastEpisodeDateLabel.layer.shadowColor = [[UIColor blackColor] CGColor];

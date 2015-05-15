@@ -792,12 +792,14 @@
                         dateFormatter.dateFormat = @"yyyy-MM-dd";
                         
                         NSDate *closestDate = nil;
+                        int episodeNumber = 0;
+                        
                         for (NSDictionary* episode in responseObject[@"episodes"]) {
                             if ([episode objectForKey:@"air_date"] != (id)[NSNull null]) {
                                 NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
                                 
                                 NSDate *episodeDate = [dateFormatter dateFromString:dateString];
-                                
+                                episodeNumber++;
                                 if([episodeDate timeIntervalSinceNow] < -100000) {
                                     continue;
                                 }
@@ -815,7 +817,9 @@
                         }
                         
                         NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
-                        [self displayLastNextReleaseSerieEpisodeForCell:aCell andDate:dateForEpisode];
+                        [self displayLastNextReleaseSerieEpisodeForCell:aCell
+                                                                   date:dateForEpisode
+                                                    andSeasonForEpisode:[NSString stringWithFormat:@"S%02iE%02i", [tvSeasonQueryParams[@"season_number"] intValue], episodeNumber]];
                     }];
                 }
             }];
@@ -825,7 +829,7 @@
 }
 
 
-- (void) displayLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell andDate:(NSDate*)aDate
+- (void) displayLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell date:(NSDate*)aDate andSeasonForEpisode:(NSString*)aEpisodeString
 {
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     [dateFormatter setDateStyle:NSDateFormatterShortStyle];
@@ -834,16 +838,25 @@
     dateFormatter.dateStyle = NSDateFormatterShortStyle;
     
     NSString *lastAirEpisodeDateString = [dateFormatter stringFromDate:aDate];
-
+    
     aCell.detailTextLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
     // If an episode of this serie is release today we notify the user
     aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), NSLocalizedString(@"release today", @"aujourd'hui !")] : aCell.detailTextLabel.text;
     // If an episode of this serie is release tomorrow we notify the user
     aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : aCell.detailTextLabel.text;
     
+    if ([aDate timeIntervalSinceNow] > 0) {
+        aCell.detailTextLabel.text = [aCell.detailTextLabel.text stringByAppendingString:[NSString stringWithFormat:@" - %@", aEpisodeString]];
+    }
+    
+    
     aCell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
     aCell.detailTextLabel.textColor = [UIColor whiteColor];
+    aCell.detailTextLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+    aCell.detailTextLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+    aCell.detailTextLabel.layer.shadowOpacity = .85f;
 }
+
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {

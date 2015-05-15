@@ -88,7 +88,6 @@
 }
 
 
-
 #pragma mark - facebook
 // User is logged
 - (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
@@ -139,7 +138,7 @@
 - (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
 {
     // 364885553677637
-    NSNumberFormatter *fbIDFormatter = [[NSNumberFormatter alloc] init];
+    NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
     [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
 //    NSLog(@"user : %@", user);

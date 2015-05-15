@@ -8,25 +8,35 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 
 ## Mises à jour
 
-### v 1.1.0
+### v 1.1.0 - Released
 
 - Gestion de Betaseries, vous pouvez ajouter une série sur votre compte Betaseries
 - Affichage du taux de "match" entre votre liste et celle d'un utilisateur tierce
 - Possibilité de voir l'image de profil Facebook d'un utilisateur rencontré
 - Correction de bugs
 
-### v 1.1.1
+### v 1.1.1 - Released
 
 - Ajout de notifications lors de la mise à jour d'un favori
 - Améliorations
 
-### v 1.1.2
+### v 1.1.2 - Released
 
 - Correction de bugs
 - Amélioration de l'expérience utilisateur
 - Correction d'un bug critique qui faisait planter l'application
 - Ajout de la date de sortie du prochain épisode d'une série
 - Différentiation des différents types de découvertes
+
+### v 1.1.3 - Not Released
+
+- Correction de bugs
+- Ajout du numéro du prochain épisode
+
+### v 1.2.0
+
+- New API !
+- Gestion des likes Facebook
 
 
 
