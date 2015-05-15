@@ -33,7 +33,7 @@
 "Delete" = "Retirer";
 "localNotificationAlertBodyNotUpdateList" = "Vous avez découvert de nouvelles choses ? Ajoutez-les";
 "add my likes" = "Ajouter mes likes Facebook";
-"get my likes" = "Récupérer mes likes Facebook";
+"get my likes" = "Remplir avec mes likes";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore découvert d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
