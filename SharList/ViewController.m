@@ -112,29 +112,34 @@
     
     
     // Loading indicator of the app
-    loadingIndicator = [[UIActivityIndicatorView alloc] init];
+    loadingIndicator = [UIActivityIndicatorView new];
     loadingIndicator.center = self.view.center;
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     loadingIndicator.hidesWhenStopped = YES;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
-    [self.view addSubview:loadingIndicator];
+    [self.view insertSubview:loadingIndicator atIndex:1000];
     
 
     
-    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 100)];
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 80)];
     
     UIButton *getUserFacebookLikesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [getUserFacebookLikesBtn setFrame:CGRectMake(18, 25, screenWidth - 36, 54)];
     [getUserFacebookLikesBtn setTitle:NSLocalizedString(@"add my likes", nil) forState:UIControlStateNormal];
     [getUserFacebookLikesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [getUserFacebookLikesBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+
+    
     [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
+    
     [getUserFacebookLikesBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
     [getUserFacebookLikesBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
     getUserFacebookLikesBtn.tag = 7;
     getUserFacebookLikesBtn.backgroundColor = [UIColor clearColor];
     getUserFacebookLikesBtn.layer.borderColor = [UIColor whiteColor].CGColor;
     getUserFacebookLikesBtn.layer.borderWidth = 2.0f;
-    [getUserFacebookLikesBtn addTarget:self action:@selector(getUserFacebookLikes) forControlEvents:UIControlEventTouchUpInside];
+    [getUserFacebookLikesBtn addTarget:self action:@selector(getUserFacebookLikes:) forControlEvents:UIControlEventTouchUpInside];
     
     [tableFooterView addSubview:getUserFacebookLikesBtn];
     
@@ -148,7 +153,7 @@
     userTasteListTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0); //self.bottomLayoutGuide.length
     userTasteListTableView.hidden = YES;
     userTasteListTableView.tableFooterView = tableFooterView;
-    [self.view addSubview:userTasteListTableView];
+    [self.view insertSubview:userTasteListTableView atIndex:1];
     
     // UITableview of results
     self.searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
@@ -255,15 +260,6 @@
     UISearchControllerBG.backgroundColor = [UIColor colorWithRed:(44.0f/255.0f) green:(61.0f/255.0f) blue:(69.0f/255.0f) alpha:1];
     
     [self.searchController.view addSubview:UISearchControllerBG];
-    
-    
-//    UIRefreshControl *userSelectRefresh = [[UIRefreshControl alloc] init];
-//    userSelectRefresh.backgroundColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.9f];
-//    userSelectRefresh.tintColor = [UIColor whiteColor];
-//    userSelectRefresh.tag = 6;
-//    [userSelectRefresh addTarget:self
-//                          action:@selector(fetchUserDatas)
-//                forControlEvents:UIControlEventValueChanged];
     
 
     categoryList = [@[@"book", @"serie", @"movie"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
@@ -1375,40 +1371,81 @@
 }
 
 
-- (void) getUserFacebookLikes {
-//    NSLog(@"%s", __FUNCTION__);
-    
+- (void) getUserFacebookLikes:(UIButton*)sender {
+    sender.enabled = NO;
+    if (![[FBSession.activeSession permissions] containsObject:@"user_likes"]) {
+        [FBSession.activeSession requestNewPublishPermissions:@[@"user_likes"]
+                                              defaultAudience:FBSessionDefaultAudienceNone
+                                            completionHandler:^(FBSession *session, NSError *error){
+                                                [self getUserLikesForSender:sender];
+                                            }];
+    } else {
+        [self getUserLikesForSender:sender];
+    }
+}
+
+- (void) getUserLikesForSender:(UIButton*)sender
+{
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
     // Build the array from the plist
     settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php"];
     
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
+
+    
+    NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
+//    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];
+    NSString *queryParams = @"?fbiduser=fb456742";
+    
+
+    shoundAPIPath = [shoundAPIPath stringByAppendingString:queryParams];
     
     NSURL *URL = [NSURL URLWithString:shoundAPIPath];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     [request setHTTPMethod:@"GET"];
-    [request setValue:@"toto" forHTTPHeaderField:@"X-Shound"];
+    [request setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    [request setValue:fbAccessToken forHTTPHeaderField:@"X-fbtoken"];
+
+    
+    [loadingIndicator startAnimating];
     
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
     
     [[session dataTaskWithRequest:request
                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                    
                     NSDictionary *jsonData = [NSJSONSerialization
                                               JSONObjectWithData:data
                                               options:NSJSONReadingMutableContainers
                                               error:&error];
-                    NSLog(@"error : %@", jsonData);
+                    
+                    sender.enabled = YES;
+                    [loadingIndicator stopAnimating];
+                    
+                    if (!error) {
+                        // If the server send and error
+                        if ([jsonData objectForKey:@"error"]) {
+//                            NSLog(@"error : %@", jsonData[@"error"]);
+                        } else {
+                            if (![userTasteDict isEqualToDictionary:jsonData[@"response"]]) {
+                                userTasteDict = [jsonData[@"response"] mutableCopy];
+                                [userTasteDict setValue:[NSNull null] forKey:@"book"];
+                                
+                                [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+                                    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+                                    UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+                                    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+                                    userTaste.taste = arrayData;
+                                    
+                                } completion:^(BOOL success, NSError *error) {
+                                    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
+                                    [userTasteListTableView reloadData];
+                                }];
+                            }
+                        }
+                        
+                    }
                     
                 }] resume];
-//    NSLog(@"shoundAPIPath : %@", shoundAPIPath);
-//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-//    [manager GET:shoundAPIPath parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"JSON: %@", responseObject);
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        NSLog(@"Error: %@", error);
-//    }];
-
 }
 
 #pragma mark - Content filtering

@@ -73,6 +73,8 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 
 - (void) scrollToSectionWithNumber:(UIButton*)sender;
 
+- (void) getUserLikes;
+- (void) getUserLikesForSender:(UIButton*)sender;
 
 @end
 
