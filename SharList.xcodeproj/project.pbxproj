@@ -19,6 +19,9 @@
 		1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EB7771A994BEE000EA307 /* NSString+MD5.m */; };
 		1A1251CC1ADDBEC500EA0506 /* refreshBarItem.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */; };
 		1A1515E31B077A590083CCAD /* MediaMessagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1515E21B077A590083CCAD /* MediaMessagesViewController.m */; };
+		1A1515E71B07D1FE0083CCAD /* newMessageBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1515E41B07D1FE0083CCAD /* newMessageBtn.png */; };
+		1A1515E81B07D1FE0083CCAD /* newMessageBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1515E51B07D1FE0083CCAD /* newMessageBtn@2x.png */; };
+		1A1515E91B07D1FE0083CCAD /* newMessageBtn@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1515E61B07D1FE0083CCAD /* newMessageBtn@3x.png */; };
 		1A16754F1A3F93E300AE7A9D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A1675511A3F93E300AE7A9D /* InfoPlist.strings */; };
 		1A16F6491A457C17000BC4AB /* liste-tab-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */; };
 		1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F6561A458482000BC4AB /* list-tab-icon2@2x.png */; };
@@ -113,6 +116,9 @@
 		1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = refreshBarItem.png; sourceTree = "<group>"; };
 		1A1515E11B077A590083CCAD /* MediaMessagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaMessagesViewController.h; sourceTree = "<group>"; };
 		1A1515E21B077A590083CCAD /* MediaMessagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaMessagesViewController.m; sourceTree = "<group>"; };
+		1A1515E41B07D1FE0083CCAD /* newMessageBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = newMessageBtn.png; sourceTree = "<group>"; };
+		1A1515E51B07D1FE0083CCAD /* newMessageBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "newMessageBtn@2x.png"; sourceTree = "<group>"; };
+		1A1515E61B07D1FE0083CCAD /* newMessageBtn@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "newMessageBtn@3x.png"; sourceTree = "<group>"; };
 		1A1675501A3F93E300AE7A9D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A1675521A3F93E800AE7A9D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A16F6481A457C17000BC4AB /* liste-tab-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "liste-tab-icon@2x.png"; sourceTree = "<group>"; };
@@ -323,6 +329,9 @@
 		1A076DDD1A102B0B00CD725A /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				1A1515E41B07D1FE0083CCAD /* newMessageBtn.png */,
+				1A1515E51B07D1FE0083CCAD /* newMessageBtn@2x.png */,
+				1A1515E61B07D1FE0083CCAD /* newMessageBtn@3x.png */,
 				1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */,
 				1AF42CB21ADB2463008622E6 /* locationMeetingIcon.png */,
 				1AF42CB31ADB2463008622E6 /* locationMeetingIcon@2x.png */,
@@ -591,6 +600,8 @@
 				1A16F6491A457C17000BC4AB /* liste-tab-icon@2x.png in Resources */,
 				1ACDC9041A23D3AA0032B857 /* Settings.plist in Resources */,
 				1A16F65D1A458929000BC4AB /* settings-tab-icon@3x.png in Resources */,
+				1A1515E91B07D1FE0083CCAD /* newMessageBtn@3x.png in Resources */,
+				1A1515E71B07D1FE0083CCAD /* newMessageBtn.png in Resources */,
 				1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */,
 				1AFE13751A32EEAB006F2366 /* meetingFavoriteSelected@3x.png in Resources */,
 				1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */,
@@ -600,6 +611,7 @@
 				1A9547191A29E7DD002AC281 /* favorite-icon-message-alt.png in Resources */,
 				1AF42CBA1ADB2463008622E6 /* locationMeetingIcon@3x.png in Resources */,
 				1AF42CBD1ADB2463008622E6 /* randomMeetingIcon@3x.png in Resources */,
+				1A1515E81B07D1FE0083CCAD /* newMessageBtn@2x.png in Resources */,
 				1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */,
 				1AF42CB91ADB2463008622E6 /* locationMeetingIcon@2x.png in Resources */,
 				1AF42CBC1ADB2463008622E6 /* randomMeetingIcon@2x.png in Resources */,

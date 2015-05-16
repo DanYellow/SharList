@@ -73,7 +73,6 @@
     [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
     
     [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"responseObject : %@", responseObject[@"response"]);
         if (responseObject[@"response"]) {
             self.messages = responseObject[@"response"];
             [self displayMessages];
@@ -107,9 +106,9 @@
     UIView *emptyTableView = [[UIView alloc] initWithFrame:CGRectMake(0, (floorf(((screenHeight*30.80985915) / 100)) - 118), screenWidth, 120)];
     emptyTableView.backgroundColor = [UIColor clearColor];
     emptyTableView.tag = 2;
-    emptyTableView.hidden = NO;
+    emptyTableView.hidden = YES;
     emptyTableView.opaque = YES;
-    [messagesTableView addSubview:emptyTableView];
+    [messagesTableView insertSubview:emptyTableView aboveSubview:messagesTableView];
     
     
     NSMutableAttributedString *WSQuoteAttrString = [[NSMutableAttributedString alloc] initWithString:[NSLocalizedString(@"WSQuote", "William Shakespeare quote") uppercaseString] attributes:nil];
@@ -137,8 +136,33 @@
     authorLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
 
     [emptyTableView addSubview:authorLabel];
+    
+    
+    UIImage *newMessageBtnImage = [[UIImage imageNamed:@"newMessageBtn"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    UIButton *newMessageBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    newMessageBtn.frame = CGRectMake(0, authorLabel.frame.size.height + authorLabel.frame.origin.y + 28, 113, 113);
+    newMessageBtn.tintColor = [UIColor colorWithRed:(223.0/255) green:(223.0/255) blue:(223.0/255) alpha:1.0];
+    
+    [newMessageBtn setImage:newMessageBtnImage forState:UIControlStateNormal];
+    newMessageBtn.contentMode = UIViewContentModeScaleToFill;
+    newMessageBtn.center = CGPointMake(self.view.center.x, newMessageBtn.center.y);
+    newMessageBtn.backgroundColor = [UIColor clearColor];
+    [newMessageBtn addTarget:self action:@selector(postNewMessage) forControlEvents:UIControlEventTouchUpInside];
+ 
+    [emptyTableView addSubview:newMessageBtn];
+    
+    
+    UIView *emptyViewLastView = emptyTableView.subviews.lastObject;
+    CGRect emptyTableViewFrame = emptyTableView.frame;
+    emptyTableViewFrame.size.height = emptyViewLastView.frame.size.height + emptyViewLastView.frame.origin.y;
+    emptyTableView.frame = emptyTableViewFrame;
 }
 
+- (void) postNewMessage
+{
+    NSLog(@"%s", __FUNCTION__);
+}
 
 #pragma mark - UITableView functions
 
@@ -206,6 +230,12 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    UIView *emptyTableView = (UIView*)[self.view viewWithTag:2];
+    
+    if ([self.messages count] < 1) {
+        emptyTableView.hidden = NO;
+    }
+    
     return [self.messages count];
 }
 
