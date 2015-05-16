@@ -267,9 +267,10 @@
     NSInteger aSectionNumber = sender.tag;
     
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
-    CGRect sectionRect = [userSelectionTableView rectForSection:aSectionNumber];
-    sectionRect.size.height = userSelectionTableView.frame.size.height - self.navigationController.navigationBar.frame.size.height - 20;
-    [userSelectionTableView scrollRectToVisible:sectionRect animated:YES];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
+    [userSelectionTableView scrollToRowAtIndexPath:indexPath
+                                  atScrollPosition:UITableViewScrollPositionTop
+                                          animated:YES];
 }
 
 - (BOOL) connected
@@ -383,6 +384,7 @@
         statTitle.textColor = [UIColor whiteColor];
         statTitle.backgroundColor = [UIColor clearColor];
         statTitle.text = title;
+        statTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
 //        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
 //        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
 //        statTitle.layer.shadowRadius = 2.5;
@@ -393,7 +395,7 @@
         statCount.textColor = [UIColor whiteColor];
         statCount.backgroundColor = [UIColor clearColor];
         statCount.text = title;
-        statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
+        statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
 //        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
 //        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
 //        statCount.layer.shadowRadius = 2.5;

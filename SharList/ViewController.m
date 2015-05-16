@@ -353,6 +353,7 @@
     followersTitle.textColor = [UIColor whiteColor];
     followersTitle.backgroundColor = [UIColor clearColor];
     followersTitle.text = [@"Abonnés" uppercaseString];
+    followersTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
     followersTitle.textAlignment = NSTextAlignmentRight;
     [followersLabelContainerBtn addSubview:followersTitle];
     
@@ -445,6 +446,7 @@
         statTitle.textColor = [UIColor whiteColor];
         statTitle.backgroundColor = [UIColor clearColor];
         statTitle.text = title;
+        statTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
 //        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
 //        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
 //        statTitle.layer.shadowRadius = 2.5;
@@ -556,7 +558,7 @@
 
 
 - (void) isFinished {
-    NSLog(@"isFinished");
+//    NSLog(@"isFinished");
 }
 
 - (void) scrollToSectionWithNumber:(UIButton*)sender {
@@ -564,9 +566,10 @@
     NSInteger aSectionNumber = sender.tag;
     
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
-    CGRect sectionRect = [userTasteListTableView rectForSection:aSectionNumber];
-    sectionRect.size.height = userTasteListTableView.frame.size.height - self.navigationController.navigationBar.frame.size.height - 20;
-    [userTasteListTableView scrollRectToVisible:sectionRect animated:YES];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
+    [userTasteListTableView scrollToRowAtIndexPath:indexPath
+                                  atScrollPosition:UITableViewScrollPositionTop
+                                          animated:YES];
 }
 
 - (void) fetchUserDatas
