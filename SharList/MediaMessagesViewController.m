@@ -146,17 +146,17 @@
     
     dateMessageString = [[self.messages objectAtIndex:indexPath.row] valueForKeyPath:@"message.date.date"];
     
+    // Exemple date : 2015-05-10 17:28:12
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
     
     NSDate *dateMessage = [dateFormatter dateFromString:dateMessageString];
     
-    NSLog(@"%@, %@, %@", [dateFormatter stringFromDate:dateMessage], dateMessage, dateMessageString);
+    dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd at HH:mm" , nil);
     
-    UILabel *dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 20, messageContainer.frame.size.width, 13)];
+    UILabel *dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 15, messageContainer.frame.size.width, 13)];
     dateMessageLabel.textAlignment = NSTextAlignmentRight;
-    dateMessageLabel.text = @"16/05/2015";
+    dateMessageLabel.text =  [dateFormatter stringFromDate:dateMessage];
     dateMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
     dateMessageLabel.textColor = [UIColor colorWithRed:(124.0/255.0) green:(124.0/255.0) blue:(124.0/255.0) alpha:1.0];
     dateMessageLabel.layer.shadowColor = [UIColor blackColor].CGColor;
@@ -179,7 +179,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 85.0f;
+    return 90.0f;
 }
 
 - (void) dismissModal

@@ -122,6 +122,9 @@
 "release today" = "Aujourd'hui !";
 "release tomorrow" = "Demain !";
 
+// MediaMessageViewController
+"yyyy/MM/dd at HH:mm" = "yyyy/MM/dd à HH:mm";
+
 //AboutViewController
 "About" = "A propos";
 "Privacy" = "Confidentialité";

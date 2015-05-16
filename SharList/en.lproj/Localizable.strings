@@ -110,6 +110,8 @@
 "next episode %@" = "Next episode: %@";
 "release tomorrow" = "Tomorrow!";
 
+// MediaMessageViewController
+"yyyy/MM/dd at HH:mm" = "yyyy/MM/dd at HH:mm";
 
 //AboutViewController
 "About" = "About";

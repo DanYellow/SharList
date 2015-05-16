@@ -782,7 +782,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) displayLabelForNextOrLastEpisodeForDate:(NSDate*)aDate andSeasonForEpisode:(NSString*)aEpisodeString
 {
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
     dateFormatter.timeStyle = NSDateFormatterNoStyle;
     dateFormatter.dateFormat = @"dd/MM/yyyy";
     dateFormatter.dateStyle = NSDateFormatterShortStyle;
