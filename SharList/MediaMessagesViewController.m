@@ -16,7 +16,8 @@
 
 #pragma mark - tag list references
 // Tag list
-// 1  : UITableview
+// 1  : messagesTableView
+// 2  : emptyTableView
 
 @implementation MediaMessagesViewController
 
@@ -73,13 +74,12 @@
     
     [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"responseObject : %@", responseObject[@"response"]);
-         NSLog(@"responseObject : %@", responseObject[@"error"]);
         if (responseObject[@"response"]) {
             self.messages = responseObject[@"response"];
             [self displayMessages];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                NSLog(@"Error: %@", error);
+        NSLog(@"Error: %@", error);
     }];
 }
 
@@ -101,6 +101,42 @@
     messagesTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     messagesTableView.allowsSelection = NO;
     [self.view insertSubview:messagesTableView atIndex:1];
+    
+    
+    // Empty list view
+    UIView *emptyTableView = [[UIView alloc] initWithFrame:CGRectMake(0, (floorf(((screenHeight*30.80985915) / 100)) - 118), screenWidth, 120)];
+    emptyTableView.backgroundColor = [UIColor clearColor];
+    emptyTableView.tag = 2;
+    emptyTableView.hidden = NO;
+    emptyTableView.opaque = YES;
+    [messagesTableView addSubview:emptyTableView];
+    
+    
+    NSMutableAttributedString *WSQuoteAttrString = [[NSMutableAttributedString alloc] initWithString:[NSLocalizedString(@"WSQuote", "William Shakespeare quote") uppercaseString] attributes:nil];
+    NSRange hellStringRange = [[WSQuoteAttrString string] rangeOfString:[NSLocalizedString(@"hell", nil) uppercaseString]];
+    [WSQuoteAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:18.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
+    NSRange devilsStringRange = [[WSQuoteAttrString string] rangeOfString:[NSLocalizedString(@"devils", nil) uppercaseString]];
+    [WSQuoteAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:18.0] range:NSMakeRange(devilsStringRange.location, devilsStringRange.length)];
+    
+    UILabel *WSQuoteLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 36)];
+    WSQuoteLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:18.0f];
+    WSQuoteLabel.attributedText = WSQuoteAttrString;
+    WSQuoteLabel.textColor = [UIColor whiteColor];
+    WSQuoteLabel.numberOfLines = 2;
+    WSQuoteLabel.textAlignment = NSTextAlignmentCenter;
+    [WSQuoteLabel sizeToFit];
+    WSQuoteLabel.backgroundColor = [UIColor clearColor];
+    WSQuoteLabel.center = CGPointMake(self.view.center.x, WSQuoteLabel.center.y);
+    
+    [emptyTableView addSubview:WSQuoteLabel];
+    
+    UILabel *authorLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, WSQuoteLabel.frame.size.height + 11, screenWidth, 14)];
+    authorLabel.text = @"W. Shakespeare";
+    authorLabel.textAlignment = NSTextAlignmentCenter;
+    authorLabel.textColor = [UIColor colorWithRed:(223.0/255) green:(223.0/255) blue:(223.0/255) alpha:1.0];
+    authorLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+
+    [emptyTableView addSubview:authorLabel];
 }
 
 

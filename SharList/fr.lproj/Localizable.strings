@@ -124,6 +124,9 @@
 
 // MediaMessageViewController
 "yyyy/MM/dd at HH:mm" = "yyyy/MM/dd à HH:mm";
+"WSQuote" = "L'enfer est vide,\n tous les démons sont ici";
+"hell" = "enfer";
+"devils" = "démons";
 
 //AboutViewController
 "About" = "A propos";
