@@ -1479,13 +1479,9 @@
                                               options:NSJSONReadingMutableContainers
                                               error:&error];
 
-//                    sender.enabled = YES;
-//                    [loadingIndicator stopAnimating];
-                    NSLog(@"response : %@ \n %@", response, jsonData);
                     if (!error) {
                         // If the server send and error
                         if ([jsonData objectForKey:@"error"]) {
-                            NSLog(@"error : %@", jsonData[@"error"]);
                             sender.enabled = YES;
                             [loadingIndicator stopAnimating];
                         } else {
@@ -1523,7 +1519,6 @@
                             }
                         }
                     } else {
-                        NSLog(@"error : %@", error);
                         sender.enabled = YES;
                         [loadingIndicator stopAnimating];
                     }

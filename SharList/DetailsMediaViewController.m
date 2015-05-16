@@ -1242,59 +1242,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) synchronizeUserListWithServer
 {
-    NSString *userTasteJSON = [self updateTasteForServer];
-//
-//    
-//    
-//    NSString* newStr = [[NSString alloc] initWithData:[userTasteJSON dataUsingEncoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding];
-//    NSLog(@"userTasteJSON : %@", newStr);
-    
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/list"];
     
-//    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"list": [self updateTasteForServer]};
+    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"list": [self updateTasteForServer]};
+
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     
-    
-    NSString *post = [NSString stringWithFormat:@"list=%@&fbiduser=%@", userTasteJSON, @"fb456742"];
-    
-    NSData *postData = [post dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
-    
-    NSURL *URL = [NSURL URLWithString:shoundAPIPath];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    [request setHTTPMethod:@"PATCH"];
-    NSLog(@"post : %@", post);
-    [request setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setHTTPBody:postData];
-    
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    
-    [[session dataTaskWithRequest:request
-                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                    NSDictionary *jsonData = [NSJSONSerialization
-                                              JSONObjectWithData:data
-                                              options:NSJSONReadingMutableContainers
-                                              error:&error];
-                    
-                    if (!error) {
-                        // If the server send and error
-                        if ([jsonData objectForKey:@"error"]) {
-                            NSLog(@"error : %@", jsonData[@"error"]);
-                        } else {
-                            NSLog(@"response : %@", jsonData[@"response"]);
-                        }
-                    } else {
-                        NSLog(@"error : %@", error);
-                    }
-    }] resume];
-    
-//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-//    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
-//    
-//    [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //         NSLog(@"responseObject: %@", responseObject);
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //                NSLog(@"Error: %@", error);
-//    }];
+    }];
 }
 
 // This method retrieve an readable json of user taste for the database
