@@ -16,6 +16,11 @@
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
+    
+    NSDictionary *settingsDict;
 }
+
+@property (strong, nonatomic) NSString *mediaId;
+
 
 @end

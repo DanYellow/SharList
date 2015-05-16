@@ -1146,7 +1146,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) displayMessageForMediaWithId:(UIBarButtonItem*)sender
 {
     MediaMessagesViewController *mediaMessagesViewController = [MediaMessagesViewController new];
-    
+    mediaMessagesViewController.mediaId = self.mediaDatas[@"imdbID"];
     
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];
     bluredImageView.alpha = 0.99f;
