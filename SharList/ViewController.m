@@ -340,6 +340,59 @@
     }
 }
 
+- (void) displayUserFollowers
+{
+    float widthViews = 99.0f;
+    UIView *currentUserFBView = (UIView*)[self.view viewWithTag:10];
+    
+    UIButton *followersLabelContainerBtn = [[UIButton alloc] initWithFrame:CGRectMake(currentUserFBView.frame.size.width - widthViews,
+                                                                                      currentUserFBView.frame.size.height - 75,
+                                                                                      widthViews, 70)];
+    
+    UILabel *followersTitle = [[UILabel alloc] initWithFrame:CGRectMake(-12, -5, widthViews, 30)];
+    followersTitle.textColor = [UIColor whiteColor];
+    followersTitle.backgroundColor = [UIColor clearColor];
+    followersTitle.text = [@"Abonnés" uppercaseString];
+    followersTitle.textAlignment = NSTextAlignmentRight;
+    [followersLabelContainerBtn addSubview:followersTitle];
+    
+    
+    UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(-22, followersLabelContainerBtn.frame.size.height - 34, widthViews + 10, 35.0)];
+    statCount.textColor = [UIColor whiteColor];
+    statCount.backgroundColor = [UIColor clearColor];
+    statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
+
+    statCount.backgroundColor = [UIColor clearColor];
+    statCount.textAlignment = NSTextAlignmentRight;
+    [followersLabelContainerBtn addSubview:statCount];
+    
+    [currentUserFBView addSubview:followersLabelContainerBtn];
+    
+        NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/followers"];
+    
+    NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    
+    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
+        [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+        NSNumber *followersNumber = [NSNumber numberWithInteger:[responseObject[@"response"] count]];
+        
+        statCount.text = [followersNumber stringValue];
+        
+        if ([responseObject[@"response"] count] > 1) {
+            followersTitle.text = [NSLocalizedString(@"followers", nil) uppercaseString];
+        } else {
+            followersTitle.text = [NSLocalizedString(@"follower", nil) uppercaseString];
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        //        NSLog(@"Error: %@", error);
+    }];
+}
+
 
 - (void) displayCurrentUserStats
 {
@@ -356,13 +409,15 @@
         return;
     }
     
+    int tagRange = 10000;
+    float widthViews = 99.0f;
     
     UIView *currentUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, ceilf(screenWidth / GOLDENRATIO))];
     currentUserFBView.backgroundColor = [UIColor clearColor];
     currentUserFBView.tag = 10;
     
-    int tagRange = 10000;
-    float widthViews = 99.0f;
+    
+    
     for (int i = 0; i < [[userTasteDict filterKeysForNullObj] count]; i++) {
         NSString *title = [NSLocalizedString([[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
         
@@ -399,7 +454,6 @@
         UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(12, statContainer.frame.size.height - 34, widthViews, 35.0)];
         statCount.textColor = [UIColor whiteColor];
         statCount.backgroundColor = [UIColor clearColor];
-        statCount.text = title;
         statCount.tag = tagRange + i;
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
 //        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
@@ -414,9 +468,9 @@
     }
     
     userTasteListTableView.tableHeaderView = currentUserFBView;
-    
     [userTasteListTableView setContentOffset:CGPointMake(0, 0)];
 
+    [self displayUserFollowers];
     [self displayCurrentUserfbImgProfile];
     
     
@@ -1118,7 +1172,7 @@
     
     [rightUtilityButtons sw_addUtilityButtonWithColor:
      [UIColor colorWithRed:(236.0/255.0f) green:(31.0/255.0f) blue:(63.0/255.0f) alpha:1.0]
-                     title:@"Retirer"];
+                     title:NSLocalizedString(@"Remove", nil)];
 
     return rightUtilityButtons;
 }
@@ -1132,8 +1186,6 @@
             UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
             
             __block NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
-
-//            [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] removeObject:cell.model];
             
             NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] mutableCopy];
             [updatedUserTaste removeObjectsInArray:[updatedUserTaste filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"imdbID == %@", [cell.model valueForKey:@"imdbID"]]]];
@@ -1150,16 +1202,12 @@
                 BOOL lastItem = ([[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] count] == 0);
                 
                 if (lastItem) {
-//                    [userTasteDict removeObjectForKey:[cell.model valueForKey:@"type"]];
                     [tableView reloadData];
                 } else {
                     [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
                                      withRowAnimation:UITableViewRowAnimationFade];
                 }
                 [self updateCurrentUserStats];
-//                [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
-//                           withRowAnimation:UITableViewRowAnimationFade];
-//                [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:YES];
             }];
             break;
         }
@@ -1504,7 +1552,7 @@
                                     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
                                     [userTasteListTableView reloadData];
                                     
-                                    [sender setTitle:@"Liste synchronisée" forState:UIControlStateDisabled];
+                                    [sender setTitle:NSLocalizedString(@"list synchronized", nil) forState:UIControlStateDisabled];
                                     
                                     // We want to call the following function only once
                                     // so we check if the uitableview's header exists (it will exists after)
