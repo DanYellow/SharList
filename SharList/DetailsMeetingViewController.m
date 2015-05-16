@@ -391,6 +391,8 @@
 //        statTitle.layer.shadowOpacity = 0.75;
         [statContainer addSubview:statTitle];
         
+        
+        
         UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
         statCount.textColor = [UIColor whiteColor];
         statCount.backgroundColor = [UIColor clearColor];

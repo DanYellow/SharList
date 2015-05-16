@@ -170,6 +170,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIBarButtonItem *addMediaToFavoriteBtnItem;
     
+    // User has data of this type
     if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] class] != [NSNull class]) {
         // This media is not among user list
         // Because imdbID's key is unique we check if this key is among user media list api key
@@ -189,8 +190,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
     }
     
+    UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(displayMessageForMediaWithId:)];
     
-    self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
+    
+    self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem, messagesBarBtn];
 
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
@@ -1138,6 +1141,31 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }];
 }
 
+#pragma mark - displayMessageForMediaWithId
+
+- (void) displayMessageForMediaWithId:(UIBarButtonItem*)sender
+{
+    MediaMessagesViewController *mediaMessagesViewController = [MediaMessagesViewController new];
+    
+    
+    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];
+    bluredImageView.alpha = 0.99f;
+    [bluredImageView setFrame:mediaMessagesViewController.view.frame];
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = bluredImageView.bounds;
+    
+    [bluredImageView addSubview:visualEffectView];
+    [mediaMessagesViewController.view addSubview:bluredImageView];
+    
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mediaMessagesViewController];
+    navigationController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    [self.navigationController presentViewController:navigationController animated:YES completion:nil];
+}
 
 
 #pragma mark - Saving user list
