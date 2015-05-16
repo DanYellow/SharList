@@ -9,6 +9,7 @@
 "an error" = "Une erreur est survenue";
 "Cancel" = "Annuler";
 "Ok" = "OK";
+"Remove" = "Retirer";
 
 "Introduce the world what you love" = "faites découvrir au monde ce que vous aimez";
 "serie" = "séries";
@@ -34,6 +35,9 @@
 "localNotificationAlertBodyNotUpdateList" = "Vous avez découvert de nouvelles choses ? Ajoutez-les";
 "add my likes" = "Ajouter mes likes Facebook";
 "get my likes" = "Remplir avec mes likes";
+"list synchronized" = "Liste synchronisée";
+"followers" = "abonnés";
+"follower" = "abonné";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore découvert d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
