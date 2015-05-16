@@ -29,6 +29,12 @@
     [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
                   clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
     
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if (![[currentInstallation objectForKey:@"channels"] containsObject:@"appInfos"]) {
+        [PFPush subscribeToChannelInBackground:@"appInfos"];
+    }
+
+    
 //    if (FBSession.activeSession.isOpen) {
 //        // This statement is here for old users
 //        // People with Shound < 1.1.0 don't have remote notification but maybe some favorite
