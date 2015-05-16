@@ -1217,7 +1217,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // 7 secondes after update user list we update the database with new datas
         // Like this we are "sure" that user really wants to add this media to his list
         
-//        [[ViewController class] performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.0];
+        [self performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:0.5]; // 7.0
         // [pfPushManager notifyUpdateList];
         
         [self cancelLocalNotificationWithValueForKey:@"updateList"];
@@ -1240,6 +1240,79 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 }
 
 
+- (void) synchronizeUserListWithServer
+{
+    NSString *userTasteJSON = [self updateTasteForServer];
+//
+//    
+//    
+//    NSString* newStr = [[NSString alloc] initWithData:[userTasteJSON dataUsingEncoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding];
+//    NSLog(@"userTasteJSON : %@", newStr);
+    
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/list"];
+    
+//    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"list": [self updateTasteForServer]};
+    
+    
+    NSString *post = [NSString stringWithFormat:@"list=%@&fbiduser=%@", userTasteJSON, @"fb456742"];
+    
+    NSData *postData = [post dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+    
+    NSURL *URL = [NSURL URLWithString:shoundAPIPath];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    [request setHTTPMethod:@"PATCH"];
+    NSLog(@"post : %@", post);
+    [request setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPBody:postData];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    
+    [[session dataTaskWithRequest:request
+                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                    NSDictionary *jsonData = [NSJSONSerialization
+                                              JSONObjectWithData:data
+                                              options:NSJSONReadingMutableContainers
+                                              error:&error];
+                    
+                    if (!error) {
+                        // If the server send and error
+                        if ([jsonData objectForKey:@"error"]) {
+                            NSLog(@"error : %@", jsonData[@"error"]);
+                        } else {
+                            NSLog(@"response : %@", jsonData[@"response"]);
+                        }
+                    } else {
+                        NSLog(@"error : %@", error);
+                    }
+    }] resume];
+    
+//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+//    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+//    
+//    [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//         NSLog(@"responseObject: %@", responseObject);
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                NSLog(@"Error: %@", error);
+//    }];
+}
+
+// This method retrieve an readable json of user taste for the database
+- (NSString *) updateTasteForServer
+{
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userTasteDict
+                                                       options:0
+                                                         error:&error];
+    if (!jsonData) {
+        return nil;
+    } else {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//        jsonString = [NSString urlEncodeValue:jsonString];
+        
+        return jsonString;
+    }
+}
 
 
 - (void) noInternetConnexionAlert

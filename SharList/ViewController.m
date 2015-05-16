@@ -1451,9 +1451,7 @@
 
 
 - (void) getUserLikesForSender:(UIButton*)sender
-{
-    UIView *userTasteListTableViewEmptyView = (UIView*)[self.view viewWithTag:8];
-    
+{    
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
     NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
@@ -1481,10 +1479,15 @@
                                               options:NSJSONReadingMutableContainers
                                               error:&error];
 
+//                    sender.enabled = YES;
+//                    [loadingIndicator stopAnimating];
+                    NSLog(@"response : %@ \n %@", response, jsonData);
                     if (!error) {
                         // If the server send and error
                         if ([jsonData objectForKey:@"error"]) {
-//                            NSLog(@"error : %@", jsonData[@"error"]);
+                            NSLog(@"error : %@", jsonData[@"error"]);
+                            sender.enabled = YES;
+                            [loadingIndicator stopAnimating];
                         } else {
                             NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
                             [userDatasFromServer setValue:[NSNull null] forKey:@"book"];
@@ -1501,12 +1504,11 @@
                                     
                                 } completion:^(BOOL success, NSError *error) {
                                     [self synchronizeUserListWithServer];
-                                    
-                                    
-
+        
                                     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
                                     [userTasteListTableView reloadData];
                                     
+                                    [sender setTitle:@"Liste synchronisée" forState:UIControlStateDisabled];
                                     
                                     // We want to call the following function only once
                                     // so we check if the uitableview's header exists (it will exists after)
@@ -1520,7 +1522,10 @@
                                 [loadingIndicator stopAnimating];
                             }
                         }
-                        
+                    } else {
+                        NSLog(@"error : %@", error);
+                        sender.enabled = YES;
+                        [loadingIndicator stopAnimating];
                     }
                     
                 }] resume];
@@ -1532,14 +1537,13 @@
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/list"];
 
     
-    NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
+    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"list": userTasteDict};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
     
     [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         getUserFacebookLikesBtn.enabled = YES;
-        [getUserFacebookLikesBtn setTitle:@"Liste synchronisée" forState:UIControlStateDisabled];
         [loadingIndicator stopAnimating];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //        NSLog(@"Error: %@", error);
