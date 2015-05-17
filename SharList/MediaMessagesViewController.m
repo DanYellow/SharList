@@ -138,6 +138,21 @@
 
 - (void) displayMessages
 {
+    UIScrollView *highlightMessagesSV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, screenWidth + 50, 120)];
+    highlightMessagesSV.backgroundColor = [UIColor colorWithRed:(244.0/255.0) green:(244.0/255.0) blue:(244.0/255.0) alpha:.3];
+    highlightMessagesSV.center = CGPointMake(self.view.center.x, highlightMessagesSV.center.y);
+    
+    CALayer *highlightMessagesSVBottomBorder = [CALayer layer];
+    highlightMessagesSVBottomBorder.frame = CGRectMake(0, 119, screenWidth, 1.0f);
+    highlightMessagesSVBottomBorder.backgroundColor = [UIColor whiteColor].CGColor;
+    [highlightMessagesSV.layer addSublayer:highlightMessagesSVBottomBorder];
+    
+    CALayer *highlightMessagesSVTopBorder = [CALayer layer];
+    highlightMessagesSVTopBorder.frame = CGRectMake(0, 0, screenWidth, 1.0f);
+    highlightMessagesSVTopBorder.backgroundColor = [UIColor whiteColor].CGColor;
+    [highlightMessagesSV.layer addSublayer:highlightMessagesSVTopBorder];
+    
+    
     UITableView *messagesTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
                                                                                    118,
                                                                                    screenWidth,
@@ -150,7 +165,8 @@
     messagesTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     messagesTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0);
     messagesTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    messagesTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    messagesTableView.tableHeaderView = highlightMessagesSV;
+    messagesTableView.tableHeaderView.hidden = YES;
     messagesTableView.allowsSelection = NO;
     [self.view insertSubview:messagesTableView atIndex:1];
     
@@ -247,14 +263,24 @@
     
     message = [[self.messages objectAtIndex:indexPath.row] valueForKeyPath:@"message.text"];
     
-    UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 10, floorf(((screenWidth * 85.53125) / 100)), 65)];
+    UITextView *messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 10, floorf(((screenWidth * 85.53125) / 100)), 65)];
     messageLabel.text = message;
-    messageLabel.numberOfLines = 0;
+    messageLabel.editable = NO;
+    messageLabel.tag = 60;
     messageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
     messageLabel.textColor = [UIColor whiteColor];
+    messageLabel.alpha = 0;
     messageLabel.backgroundColor = [UIColor clearColor];
-    [messageLabel sizeToFit];
+    
+    CGSize scrollableSize = messageLabel.frame.size;
+    [messageLabel setContentSize:scrollableSize];
+    
     [messageContainer addSubview:messageLabel];
+    
+    UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    effectView.frame = cellFrame;
+//    [messageContainer addSubview:effectView];
     
     
     dateMessageString = [[self.messages objectAtIndex:indexPath.row] valueForKeyPath:@"message.date.date"];
@@ -279,11 +305,11 @@
     
     [cell.contentView addSubview:messageContainer];
     
+    UILongPressGestureRecognizer *longPressCellGesture = [[UILongPressGestureRecognizer alloc]
+                                          initWithTarget:self action:@selector(displayMessage:)];
+    longPressCellGesture.minimumPressDuration = 1.0; //seconds
+    [cell addGestureRecognizer:longPressCellGesture];
     
-    UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-    UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
-    effectView.frame = cellFrame;
-//    [cell.contentView addSubview:effectView];
     
     return cell;
 }
@@ -293,6 +319,9 @@
     
     if ([self.messages count] < 1) {
         emptyTableView.hidden = NO;
+    } else {
+        // We show the header if there are messages
+        tableView.tableHeaderView.hidden = NO;
     }
     
     return [self.messages count];
@@ -305,6 +334,15 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 90.0f;
+}
+
+
+#pragma mark - other functions
+
+- (void) displayMessage:(UILongPressGestureRecognizer*)sender
+{
+    UITextView *messageLabel = (UITextView*)[sender.view viewWithTag:60];
+    messageLabel.alpha = 1;
 }
 
 - (void) dismissModal

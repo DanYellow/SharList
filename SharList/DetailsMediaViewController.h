@@ -73,7 +73,7 @@
 @property (nonatomic, strong) id mediaDatas;
 @property (nonatomic, retain) NSMutableData *responseData;
 @property (nonatomic, retain) NSString *itunesIDString;
-@property (nonatomic, retain) NSString *numberLikesString;
+@property (nonatomic, strong) NSString *numberLikesString;
 @property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;
 @property (nonatomic, assign) NSMutableDictionary *mediaDatasDict;
 

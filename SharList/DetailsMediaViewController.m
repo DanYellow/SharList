@@ -299,7 +299,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [manager GET:shoundAPIPath parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               NSNumber *mediaLikeNumber = [responseObject valueForKeyPath:@"response.hits"];
-              NSLog(@"mediaLikeNumber : %@", mediaLikeNumber);
+              
               NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
               [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
               
@@ -319,7 +319,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
               if ([mediaLikeNumber integerValue] > 1) {
                   self.numberLikesString = numberString;
-                  NSLog(@"numberString : %@", numberString);
               }
               
               self.itunesIDString = [responseObject valueForKeyPath:@"response.itunesId"];
