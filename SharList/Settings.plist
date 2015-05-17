@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>apiPathBeta</key>
+	<string>http://danyellow.ilotreseau.net/web/</string>
 	<key>betaseriesAPIKey</key>
 	<string>8bc04c11b4c283b72a3fa48cfc6149f3</string>
 	<key>apiPath</key>
