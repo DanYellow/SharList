@@ -96,7 +96,7 @@
     [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (responseObject[@"response"]) {
             self.comments = responseObject[@"response"];
-            [self displayMessages];
+            [self displayComments];
 //            NSLog(@"messages : %@", self.messages);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -158,7 +158,7 @@
     [self.view insertSubview:hellView atIndex:50];
 }
 
-- (void) displayMessages
+- (void) displayComments
 {
 
     // Table view
@@ -219,19 +219,19 @@
     [emptyTableView addSubview:authorLabel];
     
     
-    UIImage *newMessageBtnImage = [[UIImage imageNamed:@"newMessageBtn"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *newCommentsBtnImage = [[UIImage imageNamed:@"newMessageBtn"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
-    UIButton *newMessageBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    newMessageBtn.frame = CGRectMake(0, authorLabel.frame.size.height + authorLabel.frame.origin.y + 28, 113, 113);
-    newMessageBtn.tintColor = [UIColor colorWithRed:(223.0/255) green:(223.0/255) blue:(223.0/255) alpha:1.0];
+    UIButton *newCommentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    newCommentBtn.frame = CGRectMake(0, authorLabel.frame.size.height + authorLabel.frame.origin.y + 28, 113, 113);
+    newCommentBtn.tintColor = [UIColor colorWithRed:(223.0/255) green:(223.0/255) blue:(223.0/255) alpha:1.0];
     
-    [newMessageBtn setImage:newMessageBtnImage forState:UIControlStateNormal];
-    newMessageBtn.contentMode = UIViewContentModeScaleToFill;
-    newMessageBtn.center = CGPointMake(self.view.center.x, newMessageBtn.center.y);
-    newMessageBtn.backgroundColor = [UIColor clearColor];
-    [newMessageBtn addTarget:self action:@selector(postNewMessage) forControlEvents:UIControlEventTouchUpInside];
+    [newCommentBtn setImage:newCommentsBtnImage forState:UIControlStateNormal];
+    newCommentBtn.contentMode = UIViewContentModeScaleToFill;
+    newCommentBtn.center = CGPointMake(self.view.center.x, newCommentBtn.center.y);
+    newCommentBtn.backgroundColor = [UIColor clearColor];
+    [newCommentBtn addTarget:self action:@selector(postNewMessage) forControlEvents:UIControlEventTouchUpInside];
  
-    [emptyTableView addSubview:newMessageBtn];
+    [emptyTableView addSubview:newCommentBtn];
     
     
     UIView *emptyViewLastView = emptyTableView.subviews.lastObject;
@@ -358,7 +358,7 @@
                     discoverCommentViewTextView.tag = 60;
                     
                     UILongPressGestureRecognizer *longPressCellGesture = [[UILongPressGestureRecognizer alloc]
-                                                                          initWithTarget:self action:@selector(displayMessage:)];
+                                                                          initWithTarget:self action:@selector(displayComment:)];
                     longPressCellGesture.minimumPressDuration = 1.0;
                     [discoverCommentView addGestureRecognizer:longPressCellGesture];
                 }
@@ -468,7 +468,7 @@
     [cell.contentView addSubview:messageContainer];
     
     UILongPressGestureRecognizer *longPressCellGesture = [[UILongPressGestureRecognizer alloc]
-                                          initWithTarget:self action:@selector(displayMessage:)];
+                                          initWithTarget:self action:@selector(displayComment:)];
     longPressCellGesture.minimumPressDuration = 1.0; //seconds
     [cell addGestureRecognizer:longPressCellGesture];
     
@@ -512,7 +512,7 @@
 
 #pragma mark - other functions
 
-- (void) displayMessage:(UILongPressGestureRecognizer*)sender
+- (void) displayComment:(UILongPressGestureRecognizer*)sender
 {
     UITextView *messageLabel = (UITextView*)[sender.view viewWithTag:60];
     messageLabel.alpha = 1;
