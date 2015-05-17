@@ -123,10 +123,18 @@
 "release tomorrow" = "Demain !";
 
 // MediaMessageViewController
-"yyyy/MM/dd at HH:mm" = "yyyy/MM/dd à HH:mm";
+"yyyy/MM/dd at HH:mm" = "dd/MM/yyyy à HH:mm";
 "WSQuote" = "L'enfer est vide,\n tous les démons sont ici";
 "hell" = "enfer";
 "devils" = "démons";
+"comment friend %@" = "Le commentaire de %@";
+"comment friend elision %@" = "Le commentaire d'%@";
+"comment discover" = "Le commentaire de votre découverte";
+"comment user" = "Votre commentaire";
+"no comment discover" = "Votre découverte n'a pas encore commenté";
+"no comment friend %@" = "%@ n'a pas encore commenté";
+"no comment user" = "Vous n'avez pas encore commenté";
+
 
 //AboutViewController
 "About" = "A propos";

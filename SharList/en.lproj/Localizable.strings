@@ -115,6 +115,13 @@
 "WSQuote" = "Hell is empty And \n the devils are here";
 "hell" = "enfer";
 "devils " = "devils";
+"comment friend %@" = "%@'s comment";
+"comment friend elision %@" = "%@'s comment";
+"comment discover" = "Discovery's comment";
+"comment user" = "Your comment";
+"no comment discover" = "Your discovery hasn't yet commented";
+"no comment friend %@" = "%@ hasn't yet commented";
+"no comment user" = "You haven't yet comment";
 
 
 //AboutViewController

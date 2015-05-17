@@ -18,6 +18,7 @@
 // Tag list
 // 1  : messagesTableView
 // 2  : emptyTableView
+// 3  : highlightMessagesSV
 
 @implementation MediaMessagesViewController
 
@@ -40,7 +41,8 @@
     }
 }
 
-- (void)viewDidLoad {
+- (void) viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
@@ -78,12 +80,13 @@
         if (responseObject[@"response"]) {
             self.messages = responseObject[@"response"];
             [self displayMessages];
+//            NSLog(@"messages : %@", self.messages);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
     
-    
+    self.title = [@"Commentaires" uppercaseString];
 //    [self easterEgg];
 }
 
@@ -138,38 +141,26 @@
 
 - (void) displayMessages
 {
-    UIScrollView *highlightMessagesSV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, screenWidth + 50, 120)];
-    highlightMessagesSV.backgroundColor = [UIColor colorWithRed:(244.0/255.0) green:(244.0/255.0) blue:(244.0/255.0) alpha:.3];
-    highlightMessagesSV.center = CGPointMake(self.view.center.x, highlightMessagesSV.center.y);
-    
-    CALayer *highlightMessagesSVBottomBorder = [CALayer layer];
-    highlightMessagesSVBottomBorder.frame = CGRectMake(0, 119, screenWidth, 1.0f);
-    highlightMessagesSVBottomBorder.backgroundColor = [UIColor whiteColor].CGColor;
-    [highlightMessagesSV.layer addSublayer:highlightMessagesSVBottomBorder];
-    
-    CALayer *highlightMessagesSVTopBorder = [CALayer layer];
-    highlightMessagesSVTopBorder.frame = CGRectMake(0, 0, screenWidth, 1.0f);
-    highlightMessagesSVTopBorder.backgroundColor = [UIColor whiteColor].CGColor;
-    [highlightMessagesSV.layer addSublayer:highlightMessagesSVTopBorder];
-    
-    
-    UITableView *messagesTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
-                                                                                   118,
+
+    // Table view
+    UITableView *commentsTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
+                                                                                   98,
                                                                                    screenWidth,
-                                                                                   CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds))
+                                                                                   CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds) - 98)
                                                                   style:UITableViewStylePlain];
-    messagesTableView.dataSource = self;
-    messagesTableView.delegate = self;
-    messagesTableView.backgroundColor = [UIColor clearColor];
-    messagesTableView.tag = 1;
-    messagesTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    messagesTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0);
-    messagesTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    messagesTableView.tableHeaderView = highlightMessagesSV;
-    messagesTableView.tableHeaderView.hidden = YES;
-    messagesTableView.allowsSelection = NO;
-    [self.view insertSubview:messagesTableView atIndex:1];
+    commentsTableView.dataSource = self;
+    commentsTableView.delegate = self;
+    commentsTableView.backgroundColor = [UIColor clearColor];
+    commentsTableView.tag = 1;
+    commentsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    commentsTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0);
+    commentsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+//    commentsTableView.tableHeaderView = highlightMessagesSV;
+//    commentsTableView.tableHeaderView.hidden = YES;
+    commentsTableView.allowsSelection = NO;
+    [self.view insertSubview:commentsTableView atIndex:1];
     
+    [self displayDiscoverAndUserCommentForDatas];
     
     // Empty list view
     UIView *emptyTableView = [[UIView alloc] initWithFrame:CGRectMake(0, (floorf(((screenHeight*30.80985915) / 100)) - 118), screenWidth, 120)];
@@ -177,7 +168,7 @@
     emptyTableView.tag = 2;
     emptyTableView.hidden = YES;
     emptyTableView.opaque = YES;
-    [messagesTableView insertSubview:emptyTableView aboveSubview:messagesTableView];
+    [commentsTableView insertSubview:emptyTableView aboveSubview:commentsTableView];
     
     
     NSMutableAttributedString *WSQuoteAttrString = [[NSMutableAttributedString alloc] initWithString:[NSLocalizedString(@"WSQuote", "William Shakespeare quote") uppercaseString] attributes:nil];
@@ -228,6 +219,155 @@
     emptyTableView.frame = emptyTableViewFrame;
 }
 
+- (void) displayDiscoverAndUserCommentForDatas
+{
+    UITableView *commentsTableView = (UITableView*)[self.view viewWithTag:1];
+    
+    UIScrollView *highlightMessagesSV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 140)];
+    highlightMessagesSV.backgroundColor = [UIColor colorWithRed:(244.0/255.0) green:(244.0/255.0) blue:(244.0/255.0) alpha:.3];
+    highlightMessagesSV.center = CGPointMake(self.view.center.x, highlightMessagesSV.center.y);
+    highlightMessagesSV.pagingEnabled = YES;
+    highlightMessagesSV.contentSize = CGSizeMake(screenWidth*2, 140);
+    highlightMessagesSV.showsHorizontalScrollIndicator = NO;
+    
+    CALayer *highlightMessagesSVBottomBorder = [CALayer layer];
+    highlightMessagesSVBottomBorder.frame = CGRectMake(-(highlightMessagesSV.frame.size.width / 2), highlightMessagesSV.frame.size.height - 1, screenWidth*3, 1.0f);
+    highlightMessagesSVBottomBorder.backgroundColor = [UIColor whiteColor].CGColor;
+    [highlightMessagesSV.layer addSublayer:highlightMessagesSVBottomBorder];
+    
+    CALayer *highlightMessagesSVTopBorder = [CALayer layer];
+    highlightMessagesSVTopBorder.frame = CGRectMake(-(highlightMessagesSV.frame.size.width / 2), 0, screenWidth*3, 1.0f);
+    highlightMessagesSVTopBorder.backgroundColor = [UIColor whiteColor].CGColor;
+    [highlightMessagesSV.layer addSublayer:highlightMessagesSVTopBorder];
+    
+    
+    commentsTableView.tableHeaderView = highlightMessagesSV;
+    
+    NSString *userId = @"fb456742";
+    
+    NSString *discoveryId = nil;
+    if (self.userDiscoverId) {
+        
+    } else {
+        discoveryId = @"10205919757172919";
+    }
+    
+    
+    // 10205919757172919
+    NSPredicate *predicateDiscover = [NSPredicate predicateWithFormat:@"fbId == %@", discoveryId];
+    NSArray *filteredDiscover = [[NSArray alloc] initWithArray:[self.messages filteredArrayUsingPredicate:predicateDiscover]];
+    
+    NSPredicate *predicateUser = [NSPredicate predicateWithFormat:@"fbId == %@", userId];
+    NSArray *filteredUser = [[NSArray alloc] initWithArray:[self.messages filteredArrayUsingPredicate:predicateUser]];
+    
+    NSMutableArray *filteredDatas = [[NSMutableArray alloc] initWithArray:[filteredDiscover arrayByAddingObjectsFromArray:filteredUser]];
+
+    // Manage the case which the user reach the page without a discover
+    int loopIteration = 2;
+    
+    // We add a null object at index 0 if the user discover
+    // doesn't made a meeting
+    if ([filteredDatas count] == 1) {
+        [filteredDatas insertObject:[NSNull null] atIndex:0];
+    }
+    
+    // There no data for current user and the user discovered
+    if ([filteredDatas count] == 0) {
+        [filteredDatas insertObject:[NSNull null] atIndex:0];
+        [filteredDatas insertObject:[NSNull null] atIndex:1];
+    }
+    
+    NSLog(@"filteredDatas : %@", filteredDatas);
+
+    for (int i = 0; i < loopIteration; i++) {
+        NSMutableDictionary *datas;
+
+        if (![filteredDatas[i] isEqual:[NSNull null] ]) {
+            datas = [[NSMutableDictionary alloc] initWithDictionary:filteredDatas[i]];
+        }
+        
+        int discoverCommentViewLabelX = (screenWidth * i);
+        
+        CGRect discoverCommentViewFrame = highlightMessagesSV.frame;
+        discoverCommentViewFrame.origin.x = discoverCommentViewLabelX;
+        
+        UIView *discoverCommentView = [[UIView alloc] initWithFrame:discoverCommentViewFrame];
+        discoverCommentView.opaque = YES;
+        discoverCommentView.backgroundColor = [UIColor clearColor];
+        [highlightMessagesSV addSubview:discoverCommentView];
+        
+        UILabel *discoverCommentViewLabel = [[UILabel alloc] initWithFrame:CGRectMake(18, 18, screenWidth, 14)];
+        discoverCommentViewLabel.textColor = [UIColor colorWithRed:(41.0/255.0) green:(41.0/255.0) blue:(41.0/255.0) alpha:1.0];
+        discoverCommentViewLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:12.0];
+        [discoverCommentView addSubview:discoverCommentViewLabel];
+        
+        int discoverCommentViewTextViewY = discoverCommentViewLabel.frame.size.height + discoverCommentViewLabel.frame.origin.y + 6;
+        UITextView *discoverCommentViewTextView = [[UITextView alloc] initWithFrame:CGRectMake(18, discoverCommentViewTextViewY, floorf(((screenWidth * 85.53125) / 100)), 70)];
+        discoverCommentViewTextView.editable = NO;
+        discoverCommentViewTextView.tag = 60;
+        discoverCommentViewTextView.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
+        discoverCommentViewTextView.textColor = [UIColor whiteColor];
+        discoverCommentViewTextView.alpha = 1;
+        discoverCommentViewTextView.showsVerticalScrollIndicator = NO;
+        discoverCommentViewTextView.contentInset = UIEdgeInsetsMake(-10, -5, 0, 0);
+        discoverCommentViewTextView.scrollEnabled = NO;
+        discoverCommentViewTextView.backgroundColor = [UIColor clearColor];
+        [discoverCommentView addSubview:discoverCommentViewTextView];
+        
+        UILabel *dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, discoverCommentView.frame.size.height - 20, discoverCommentView.frame.size.width - 21, 13)];
+        dateMessageLabel.textAlignment = NSTextAlignmentRight;
+        
+        dateMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
+        dateMessageLabel.textColor = [UIColor colorWithRed:(41.0/255.0) green:(41.0/255.0) blue:(41.0/255.0) alpha:1.0];
+        [discoverCommentView addSubview:dateMessageLabel];
+        
+        
+        if (datas) {
+            if ([userId isEqualToString:[datas valueForKeyPath:@"fbId"]]) {
+                discoverCommentViewLabel.text = NSLocalizedString(@"comment user", nil);
+            } else {
+                if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[datas valueForKeyPath:@"fbId"]]) {
+                    NSPredicate *friendPredicate = [NSPredicate predicateWithFormat:@"id == %@", [filteredDatas[i] valueForKeyPath:@"fbId"]];
+                    NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:friendPredicate];
+                    NSString *facebookFriendName = (NSString*)[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
+                    discoverCommentViewLabel.text = [NSString stringWithFormat:NSLocalizedString(@"comment friend %@", nil), facebookFriendName];
+                } else {
+                    discoverCommentViewLabel.text = NSLocalizedString(@"comment discover", nil);
+                }
+            }
+            discoverCommentViewTextView.text = [datas valueForKeyPath:@"message.text"];
+            
+            // Exemple date : 2015-05-10 17:28:12
+            NSDateFormatter *dateFormatter = [NSDateFormatter new];
+            dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+            NSDate *dateMessage = [dateFormatter dateFromString:[datas valueForKeyPath:@"message.date.date"]];
+            dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd at HH:mm" , nil);
+            
+            dateMessageLabel.text =  [dateFormatter stringFromDate:dateMessage];
+        } else {
+            if (i == 1) {
+                discoverCommentViewLabel.text = NSLocalizedString(@"no comment user", nil);
+            } else {
+                if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:discoveryId]) {
+                    
+                    NSPredicate *friendPredicate = [NSPredicate predicateWithFormat:@"id == %@", discoveryId];
+                    NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:friendPredicate];
+                    NSString *facebookFriendName = (NSString*)[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
+                    discoverCommentViewLabel.text = [NSString stringWithFormat:NSLocalizedString(@"no comment friend %@", nil), facebookFriendName];
+                    
+                } else {
+                    discoverCommentViewLabel.text = NSLocalizedString(@"no comment discover", nil);
+                }
+            }
+            
+        }
+    }
+    
+
+    
+    
+}
+
 - (void) postNewMessage
 {
     NSLog(@"%s", __FUNCTION__);
@@ -263,17 +403,20 @@
     
     message = [[self.messages objectAtIndex:indexPath.row] valueForKeyPath:@"message.text"];
     
-    UITextView *messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 10, floorf(((screenWidth * 85.53125) / 100)), 65)];
+    UITextView *messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 10, floorf(((screenWidth * 85.53125) / 100)), 76)];
     messageLabel.text = message;
     messageLabel.editable = NO;
     messageLabel.tag = 60;
     messageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
     messageLabel.textColor = [UIColor whiteColor];
     messageLabel.alpha = 0;
+    messageLabel.showsVerticalScrollIndicator = NO;
+    messageLabel.scrollEnabled = NO;
+    messageLabel.contentInset = UIEdgeInsetsMake(-10, 0, 0, 0);
     messageLabel.backgroundColor = [UIColor clearColor];
     
-    CGSize scrollableSize = messageLabel.frame.size;
-    [messageLabel setContentSize:scrollableSize];
+//    CGSize scrollableSize = messageLabel.frame.size;
+//    [messageLabel setContentSize:scrollableSize];
     
     [messageContainer addSubview:messageLabel];
     
@@ -333,7 +476,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 90.0f;
+    return 115.0f;
 }
 
 

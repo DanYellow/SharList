@@ -21,6 +21,7 @@
 }
 
 @property (strong, nonatomic) NSString *mediaId;
+@property (strong, nonatomic) NSString *userDiscoverId;
 
 
 @end
