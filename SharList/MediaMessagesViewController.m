@@ -10,7 +10,7 @@
 
 @interface MediaMessagesViewController ()
 
-@property(strong, nonatomic) NSMutableArray *messages;
+@property(strong, nonatomic) NSMutableArray *comments;
 
 @end
 
@@ -19,6 +19,7 @@
 // 1  : messagesTableView
 // 2  : emptyTableView
 // 3  : highlightMessagesSV
+// 4  : searchLoadingIndicator
 
 @implementation MediaMessagesViewController
 
@@ -39,6 +40,8 @@
             [layer removeFromSuperlayer];
         }
     }
+    
+    self.title = [@"Commentaires" uppercaseString];
 }
 
 - (void) viewDidLoad
@@ -69,7 +72,21 @@
 //        [self easterEgg];
 //    });
     
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/messages"];
+    
+    UIActivityIndicatorView *messagesLoadingIndicator = [UIActivityIndicatorView new];
+    messagesLoadingIndicator.center = self.view.center;
+    messagesLoadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    messagesLoadingIndicator.hidesWhenStopped = YES;
+    messagesLoadingIndicator.tag = 4;
+    messagesLoadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    messagesLoadingIndicator.backgroundColor = [UIColor redColor];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.view addSubview:messagesLoadingIndicator];
+        [messagesLoadingIndicator startAnimating];
+    });
+    
+    [messagesLoadingIndicator stopAnimating];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comments"];
     
     NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
     
@@ -78,7 +95,7 @@
     
     [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (responseObject[@"response"]) {
-            self.messages = responseObject[@"response"];
+            self.comments = responseObject[@"response"];
             [self displayMessages];
 //            NSLog(@"messages : %@", self.messages);
         }
@@ -86,8 +103,10 @@
         NSLog(@"Error: %@", error);
     }];
     
-    self.title = [@"Commentaires" uppercaseString];
+    
 //    [self easterEgg];
+    
+
 }
 
 - (void) easterEgg
@@ -144,7 +163,7 @@
 
     // Table view
     UITableView *commentsTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
-                                                                                   98,
+                                                                                   80,
                                                                                    screenWidth,
                                                                                    CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds) - 98)
                                                                   style:UITableViewStylePlain];
@@ -160,7 +179,9 @@
     commentsTableView.allowsSelection = NO;
     [self.view insertSubview:commentsTableView atIndex:1];
     
-    [self displayDiscoverAndUserCommentForDatas];
+    if ([self.comments count] > 1) {
+        [self displayDiscoverAndUserCommentForDatas];
+    }
     
     // Empty list view
     UIView *emptyTableView = [[UIView alloc] initWithFrame:CGRectMake(0, (floorf(((screenHeight*30.80985915) / 100)) - 118), screenWidth, 120)];
@@ -249,16 +270,16 @@
     if (self.userDiscoverId) {
         
     } else {
-        discoveryId = @"10205919757172919";
+        discoveryId = @"fb456745"; //10205919757172919 | fb456745
     }
     
     
     // 10205919757172919
     NSPredicate *predicateDiscover = [NSPredicate predicateWithFormat:@"fbId == %@", discoveryId];
-    NSArray *filteredDiscover = [[NSArray alloc] initWithArray:[self.messages filteredArrayUsingPredicate:predicateDiscover]];
+    NSArray *filteredDiscover = [[NSArray alloc] initWithArray:[self.comments filteredArrayUsingPredicate:predicateDiscover]];
     
     NSPredicate *predicateUser = [NSPredicate predicateWithFormat:@"fbId == %@", userId];
-    NSArray *filteredUser = [[NSArray alloc] initWithArray:[self.messages filteredArrayUsingPredicate:predicateUser]];
+    NSArray *filteredUser = [[NSArray alloc] initWithArray:[self.comments filteredArrayUsingPredicate:predicateUser]];
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] initWithArray:[filteredDiscover arrayByAddingObjectsFromArray:filteredUser]];
 
@@ -277,8 +298,6 @@
         [filteredDatas insertObject:[NSNull null] atIndex:1];
     }
     
-    NSLog(@"filteredDatas : %@", filteredDatas);
-
     for (int i = 0; i < loopIteration; i++) {
         NSMutableDictionary *datas;
 
@@ -307,7 +326,6 @@
         discoverCommentViewTextView.tag = 60;
         discoverCommentViewTextView.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
         discoverCommentViewTextView.textColor = [UIColor whiteColor];
-        discoverCommentViewTextView.alpha = 1;
         discoverCommentViewTextView.showsVerticalScrollIndicator = NO;
         discoverCommentViewTextView.contentInset = UIEdgeInsetsMake(-10, -5, 0, 0);
         discoverCommentViewTextView.scrollEnabled = NO;
@@ -325,22 +343,33 @@
         if (datas) {
             if ([userId isEqualToString:[datas valueForKeyPath:@"fbId"]]) {
                 discoverCommentViewLabel.text = NSLocalizedString(@"comment user", nil);
+                discoverCommentViewTextView.alpha = 1;
             } else {
+                // It's an user's facebook friend
                 if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[datas valueForKeyPath:@"fbId"]]) {
                     NSPredicate *friendPredicate = [NSPredicate predicateWithFormat:@"id == %@", [filteredDatas[i] valueForKeyPath:@"fbId"]];
                     NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:friendPredicate];
                     NSString *facebookFriendName = (NSString*)[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
                     discoverCommentViewLabel.text = [NSString stringWithFormat:NSLocalizedString(@"comment friend %@", nil), facebookFriendName];
+                    discoverCommentViewTextView.alpha = 1;
                 } else {
+                    discoverCommentViewTextView.alpha = .01;
                     discoverCommentViewLabel.text = NSLocalizedString(@"comment discover", nil);
+                    discoverCommentViewTextView.tag = 60;
+                    
+                    UILongPressGestureRecognizer *longPressCellGesture = [[UILongPressGestureRecognizer alloc]
+                                                                          initWithTarget:self action:@selector(displayMessage:)];
+                    longPressCellGesture.minimumPressDuration = 1.0;
+                    [discoverCommentView addGestureRecognizer:longPressCellGesture];
                 }
+                
             }
-            discoverCommentViewTextView.text = [datas valueForKeyPath:@"message.text"];
+            discoverCommentViewTextView.text = [datas valueForKeyPath:@"comment.text"];
             
             // Exemple date : 2015-05-10 17:28:12
             NSDateFormatter *dateFormatter = [NSDateFormatter new];
             dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-            NSDate *dateMessage = [dateFormatter dateFromString:[datas valueForKeyPath:@"message.date.date"]];
+            NSDate *dateMessage = [dateFormatter dateFromString:[datas valueForKeyPath:@"comment.date.date"]];
             dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd at HH:mm" , nil);
             
             dateMessageLabel.text =  [dateFormatter stringFromDate:dateMessage];
@@ -359,7 +388,6 @@
                     discoverCommentViewLabel.text = NSLocalizedString(@"no comment discover", nil);
                 }
             }
-            
         }
     }
     
@@ -401,7 +429,7 @@
     messageContainerBottomBorder.backgroundColor = [UIColor colorWithRed:(87.0/255.0) green:(86.0/255.0) blue:(75.0/255.0) alpha:1.0].CGColor;
     [messageContainer.layer addSublayer:messageContainerBottomBorder];
     
-    message = [[self.messages objectAtIndex:indexPath.row] valueForKeyPath:@"message.text"];
+    message = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"];
     
     UITextView *messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 10, floorf(((screenWidth * 85.53125) / 100)), 76)];
     messageLabel.text = message;
@@ -409,24 +437,15 @@
     messageLabel.tag = 60;
     messageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
     messageLabel.textColor = [UIColor whiteColor];
-    messageLabel.alpha = 0;
+    messageLabel.alpha = .01;
     messageLabel.showsVerticalScrollIndicator = NO;
     messageLabel.scrollEnabled = NO;
     messageLabel.contentInset = UIEdgeInsetsMake(-10, 0, 0, 0);
     messageLabel.backgroundColor = [UIColor clearColor];
     
-//    CGSize scrollableSize = messageLabel.frame.size;
-//    [messageLabel setContentSize:scrollableSize];
-    
     [messageContainer addSubview:messageLabel];
     
-    UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-    UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
-    effectView.frame = cellFrame;
-//    [messageContainer addSubview:effectView];
-    
-    
-    dateMessageString = [[self.messages objectAtIndex:indexPath.row] valueForKeyPath:@"message.date.date"];
+    dateMessageString = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.date.date"];
     
     // Exemple date : 2015-05-10 17:28:12
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -460,14 +479,17 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     UIView *emptyTableView = (UIView*)[self.view viewWithTag:2];
     
-    if ([self.messages count] < 1) {
+    // There is no messages
+    if ([self.comments count] < 1) {
         emptyTableView.hidden = NO;
+        UIActivityIndicatorView *messagesLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
+        [messagesLoadingIndicator stopAnimating];
     } else {
         // We show the header if there are messages
         tableView.tableHeaderView.hidden = NO;
     }
     
-    return [self.messages count];
+    return [self.comments count];
 }
 
 //- (CGFloat) tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -477,6 +499,14 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 115.0f;
+}
+
+- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row) {
+        UIActivityIndicatorView *messagesLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
+        [messagesLoadingIndicator stopAnimating];
+    }
 }
 
 

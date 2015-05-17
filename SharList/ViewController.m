@@ -148,7 +148,7 @@
     self.searchResultsController.tableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     self.searchResultsController.tableView.separatorInset = UIEdgeInsetsZero;
     
-    UIActivityIndicatorView *searchLoadingIndicator = [[UIActivityIndicatorView alloc] init];
+    UIActivityIndicatorView *searchLoadingIndicator = [UIActivityIndicatorView new];
     searchLoadingIndicator.center = self.searchResultsController.tableView.center;
     searchLoadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     searchLoadingIndicator.hidesWhenStopped = YES;

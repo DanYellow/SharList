@@ -353,7 +353,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
               
               
-              NSNumber *numberMessages = [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.messageCount"] integerValue]];
+              NSNumber *numberMessages = [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.commentsCount"] integerValue]];
               
               UIButton *messagesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
               [messagesBtn addTarget:self action:@selector(displayMessageForMediaWithId:) forControlEvents:UIControlEventTouchUpInside];
