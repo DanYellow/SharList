@@ -190,9 +190,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
     }
     
-    UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(displayMessageForMediaWithId:)];
-    
-    
+    UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"listMessagesNavIcon@2x"]
+                                                                       style:UIBarButtonItemStylePlain
+                                                                      target:self
+                                                                      action:@selector(displayMessageForMediaWithId:)];
     self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem, messagesBarBtn];
 
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
@@ -802,7 +803,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // If an episode of this serie is release tomorrow we notify the user
     lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : lastEpisodeDateLabel.text;
     
-    if ([aDate timeIntervalSinceNow] > 0) {
+    if ([aDate timeIntervalSinceNow] > 0 || [[NSCalendar currentCalendar] isDateInToday:aDate] || [[NSCalendar currentCalendar] isDateInTomorrow:aDate]) {
         lastEpisodeDateLabel.text = [lastEpisodeDateLabel.text stringByAppendingString:[NSString stringWithFormat:@" - %@", aEpisodeString]];
     }
 

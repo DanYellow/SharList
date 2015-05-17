@@ -827,12 +827,12 @@
     // If an episode of this serie is release tomorrow we notify the user
     aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : aCell.detailTextLabel.text;
     
-    if ([aDate timeIntervalSinceNow] > 0) {
+    if ([aDate timeIntervalSinceNow] > 0 || [[NSCalendar currentCalendar] isDateInToday:aDate] || [[NSCalendar currentCalendar] isDateInTomorrow:aDate]) {
         aCell.detailTextLabel.text = [aCell.detailTextLabel.text stringByAppendingString:[NSString stringWithFormat:@" - %@", aEpisodeString]];
     }
     
     
-    aCell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
+    aCell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
     aCell.detailTextLabel.textColor = [UIColor whiteColor];
     aCell.detailTextLabel.layer.shadowColor = [UIColor blackColor].CGColor;
     aCell.detailTextLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);

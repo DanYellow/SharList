@@ -45,7 +45,7 @@
     // Do any additional setup after loading the view.
     
 //    self.view.backgroundColor = [UIColor colorWithWhite:1 alpha:.1];
-    self.view.backgroundColor = [UIColor clearColor];
+    self.view.backgroundColor = [UIColor blackColor];
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissModal)];
     
@@ -62,10 +62,12 @@
     settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
 
-    
+    // http://stackoverflow.com/questions/26907352/how-to-draw-radial-gradients-in-a-calayer
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self easterEgg];
+//    });
     
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/messages"];
-    
     
     NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
     
@@ -80,8 +82,59 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
+    
+    
+//    [self easterEgg];
 }
 
+- (void) easterEgg
+{
+    CAShapeLayer *maskWithHole = [CAShapeLayer layer];
+    
+    CGRect biggerRect = CGRectMake(0, 0, screenWidth, screenHeight);
+    
+    UIBezierPath *maskPath = [UIBezierPath bezierPath];
+    [maskPath moveToPoint:CGPointMake(CGRectGetMinX(biggerRect), CGRectGetMinY(biggerRect))];
+    [maskPath addLineToPoint:CGPointMake(CGRectGetMinX(biggerRect), CGRectGetMaxY(biggerRect))];
+    [maskPath addLineToPoint:CGPointMake(CGRectGetMaxX(biggerRect), CGRectGetMaxY(biggerRect))];
+    [maskPath addLineToPoint:CGPointMake(CGRectGetMaxX(biggerRect), CGRectGetMinY(biggerRect))];
+    [maskPath addLineToPoint:CGPointMake(CGRectGetMinX(biggerRect), CGRectGetMinY(biggerRect))];
+    
+    int radius = 23.0;
+    UIBezierPath *circlePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake((screenWidth  - (2.0 * radius)) / 2, (screenHeight - (2.0 * radius)) / 2, 2.0 * radius, 2.0 * radius) cornerRadius:radius];
+    [maskPath appendPath:circlePath];
+    
+    [maskWithHole setPath:[maskPath CGPath]];
+    [maskWithHole setFillRule:kCAFillRuleEvenOdd];
+    [maskWithHole setFillColor:[[UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f] CGColor]];
+
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    NSArray *colors = @[
+                       (id)[[UIColor colorWithWhite:0 alpha:1] CGColor],
+                       (id)[[UIColor colorWithWhite:0 alpha:0] CGColor],
+                       (id)[[UIColor colorWithWhite:0 alpha:1] CGColor]
+                       ];
+    [gradientLayer setColors:colors];
+    gradientLayer.locations = @[[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:.5], [NSNumber numberWithFloat:1.]];
+    
+//    [NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0],
+//     [NSNumber numberWithFloat:20 / view.frame.size.height],
+//     [NSNumber numberWithFloat:(view.frame.size.height - 20) / view.frame.size.height],
+//     [NSNumber numberWithFloat:1.], nil]
+    [gradientLayer setStartPoint:CGPointMake(0.5f, 0.5f)];
+    [gradientLayer setEndPoint:CGPointMake(0.5f, 0.5f)];
+    gradientLayer.frame = self.view.bounds;
+//    gradientLayer.layer.mask = gradientLayer;
+
+    
+    UIView *hellView = [[UIView alloc] initWithFrame:self.view.bounds];
+    hellView.backgroundColor = [UIColor redColor];
+    hellView.alpha = 1;
+    hellView.layer.mask = gradientLayer;
+//    [hellView.layer insertSublayer:gradient atIndex:0];
+    [self.view insertSubview:hellView atIndex:50];
+}
 
 - (void) displayMessages
 {
@@ -225,6 +278,12 @@
     [messageContainer addSubview:dateMessageLabel];
     
     [cell.contentView addSubview:messageContainer];
+    
+    
+    UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    effectView.frame = cellFrame;
+//    [cell.contentView addSubview:effectView];
     
     return cell;
 }
