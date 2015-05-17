@@ -190,11 +190,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
     }
     
-    UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"listMessagesNavIcon@2x"]
-                                                                       style:UIBarButtonItemStylePlain
-                                                                      target:self
-                                                                      action:@selector(displayMessageForMediaWithId:)];
-    self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem, messagesBarBtn];
+//    UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"listMessagesNavIcon@2x"]
+//                                                                       style:UIBarButtonItemStylePlain
+//                                                                      target:self
+//                                                                      action:@selector(displayMessageForMediaWithId:)];
+    
+
+//    self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
@@ -254,7 +256,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         }
     }];
 
-    
+    // If the user is not connected to Internet it can still add a card to his account
+//    if (![self connected]) {
+//        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
+//    }
     
     CGFloat mediaTitleLabelY = [self computeRatio:236 forDimension:imgMediaHeight];
     
@@ -281,38 +286,43 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     // This NSDict will be used to set id to local media
     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getmedia.php"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media"];
+    
+    NSDictionary *parameters = @{@"imdbId": self.mediaDatas[@"imdbID"]};
 
     NSURL *baseURL = [NSURL URLWithString:@"https://api.themoviedb.org/3/"];
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
     manager.securityPolicy.allowInvalidCertificates = YES;
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
-    [manager POST:shoundAPIPath parameters:@{ @"imdbid" : self.mediaDatas[@"imdbID"] }
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
+    [manager.requestSerializer setValue:@"mince" forHTTPHeaderField:@"X-Shound"];
+    
+    [manager GET:shoundAPIPath parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-              NSNumber *mediaLikeNumber = responseObject[@"hits"];
+              NSNumber *mediaLikeNumber = [responseObject valueForKeyPath:@"response.hits"];
+              NSLog(@"mediaLikeNumber : %@", mediaLikeNumber);
               NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
               [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
               
               if (!self.mediaDatas[@"id"]) {
-                  [tempDict setObject:(NSString *)responseObject[@"id"] forKey:@"id"];
+                  [tempDict setObject:(NSString *)[responseObject valueForKeyPath:@"response.id"] forKey:@"id"];
                   self.mediaDatas = tempDict;
               }
               
               // If the name of the media change in the database, the user keep the last name in the db
               if (responseObject[@"name"] != nil && ![self.mediaDatas[@"name"] isEqualToString:(NSString *)responseObject[@"name"]]) {
-                  [tempDict setObject:(NSString *)responseObject[@"name"] forKey:@"name"];
+                  [tempDict setObject:(NSString *)[responseObject valueForKeyPath:@"response.name"] forKey:@"name"];
                   self.mediaDatas = tempDict;
               }
               
-              NSDecimalNumber *amountNumber = [NSDecimalNumber decimalNumberWithString:responseObject[@"hits"]];
-              NSString *numberString = [numberFormatter stringFromNumber:amountNumber];
+//              NSDecimalNumber *amountNumber = [NSDecimalNumber decimalNumberWithString:[responseObject valueForKeyPath:@"response.hits"]];
+              NSString *numberString = [numberFormatter stringFromNumber:mediaLikeNumber];
 
               if ([mediaLikeNumber integerValue] > 1) {
                   self.numberLikesString = numberString;
+                  NSLog(@"numberString : %@", numberString);
               }
               
-              self.itunesIDString = responseObject[@"itunesID"];
+              self.itunesIDString = [responseObject valueForKeyPath:@"response.itunesId"];
               
               UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
               [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
@@ -325,9 +335,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               
               [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
               [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
-              [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
+              [buyButton setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f]
+                              forState:UIControlStateHighlighted];
               [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
               
+              // There is no link to itunes
               if ([self.itunesIDString length] != 0) {
                   [infoMediaView insertSubview:buyButton atIndex:42];
                   
@@ -338,6 +350,28 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                    }
                                    completion:nil];
               }
+              
+              [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
+              
+              
+              NSNumber *numberMessages = [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.messageCount"] integerValue]];
+              
+              UIButton *messagesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+              [messagesBtn addTarget:self action:@selector(displayMessageForMediaWithId:) forControlEvents:UIControlEventTouchUpInside];
+              [messagesBtn setTitle:[numberFormatter stringFromNumber:numberMessages] forState:UIControlStateNormal];
+              messagesBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+              [messagesBtn setImage:[[UIImage imageNamed:@"listMessagesNavIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
+                           forState:UIControlStateNormal];
+              messagesBtn.frame = CGRectMake(0, 0, 55, 24);
+              messagesBtn.backgroundColor = [UIColor clearColor];
+              [messagesBtn setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f] forState:UIControlStateHighlighted];
+              messagesBtn.imageEdgeInsets = UIEdgeInsetsMake(0, messagesBtn.titleLabel.frame.size.width, 0, -messagesBtn.titleLabel.frame.size.width - 5);
+              messagesBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.imageView.frame.size.width, 3, messagesBtn.imageView.frame.size.width + 10);
+              messagesBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+              
+              UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithCustomView:messagesBtn];
+              
+              self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem, messagesBarBtn];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"error : %@", error);
     }];
