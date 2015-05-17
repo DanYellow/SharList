@@ -35,7 +35,7 @@
 
 #import "PFPushManager.h"
 
-#import "MediaMessagesViewController.h"
+#import "MediaCommentsViewController.h"
 
 
 

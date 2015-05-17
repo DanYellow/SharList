@@ -18,7 +18,7 @@
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EB7771A994BEE000EA307 /* NSString+MD5.m */; };
 		1A1251CC1ADDBEC500EA0506 /* refreshBarItem.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */; };
-		1A1515E31B077A590083CCAD /* MediaMessagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1515E21B077A590083CCAD /* MediaMessagesViewController.m */; };
+		1A1515E31B077A590083CCAD /* MediaCommentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1515E21B077A590083CCAD /* MediaCommentsViewController.m */; };
 		1A1515E71B07D1FE0083CCAD /* newMessageBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1515E41B07D1FE0083CCAD /* newMessageBtn.png */; };
 		1A1515E81B07D1FE0083CCAD /* newMessageBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1515E51B07D1FE0083CCAD /* newMessageBtn@2x.png */; };
 		1A1515E91B07D1FE0083CCAD /* newMessageBtn@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1515E61B07D1FE0083CCAD /* newMessageBtn@3x.png */; };
@@ -117,8 +117,8 @@
 		1A0EB7761A994BEE000EA307 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
 		1A0EB7771A994BEE000EA307 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 		1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = refreshBarItem.png; sourceTree = "<group>"; };
-		1A1515E11B077A590083CCAD /* MediaMessagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaMessagesViewController.h; sourceTree = "<group>"; };
-		1A1515E21B077A590083CCAD /* MediaMessagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaMessagesViewController.m; sourceTree = "<group>"; };
+		1A1515E11B077A590083CCAD /* MediaCommentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCommentsViewController.h; sourceTree = "<group>"; };
+		1A1515E21B077A590083CCAD /* MediaCommentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaCommentsViewController.m; sourceTree = "<group>"; };
 		1A1515E41B07D1FE0083CCAD /* newMessageBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = newMessageBtn.png; sourceTree = "<group>"; };
 		1A1515E51B07D1FE0083CCAD /* newMessageBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "newMessageBtn@2x.png"; sourceTree = "<group>"; };
 		1A1515E61B07D1FE0083CCAD /* newMessageBtn@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "newMessageBtn@3x.png"; sourceTree = "<group>"; };
@@ -276,7 +276,7 @@
 				1ACDC9081A23E6780032B857 /* MeetingsListViewController */,
 				1AE9E7A81A2683770072EF91 /* DetailsMeetingViewController */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
-				1A1515E01B0778C60083CCAD /* MediaMessagesViewController */,
+				1A1515E01B0778C60083CCAD /* MediaCommentsViewController */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
 				1A9A63591A37A41B00E47234 /* AboutViewController */,
@@ -394,13 +394,13 @@
 			name = Categories;
 			sourceTree = "<group>";
 		};
-		1A1515E01B0778C60083CCAD /* MediaMessagesViewController */ = {
+		1A1515E01B0778C60083CCAD /* MediaCommentsViewController */ = {
 			isa = PBXGroup;
 			children = (
-				1A1515E11B077A590083CCAD /* MediaMessagesViewController.h */,
-				1A1515E21B077A590083CCAD /* MediaMessagesViewController.m */,
+				1A1515E11B077A590083CCAD /* MediaCommentsViewController.h */,
+				1A1515E21B077A590083CCAD /* MediaCommentsViewController.m */,
 			);
-			name = MediaMessagesViewController;
+			name = MediaCommentsViewController;
 			sourceTree = "<group>";
 		};
 		1A1D6E461A1099C60090C598 /* SettingsViewController */ = {
@@ -708,7 +708,7 @@
 				1A024AB81A3A52DC0098F015 /* AboutViewController.m in Sources */,
 				1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */,
 				1A5682A81AE19809007D6D93 /* UIImage+ColorImage.m in Sources */,
-				1A1515E31B077A590083CCAD /* MediaMessagesViewController.m in Sources */,
+				1A1515E31B077A590083CCAD /* MediaCommentsViewController.m in Sources */,
 				1A9666461A312302006969A7 /* NSString+SentenceCapitalizedString.m in Sources */,
 				1A36E3131A9D4C1C004B0DBC /* ConnectView.m in Sources */,
 				1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */,

@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 Jean-Louis Danielo. All rights reserved.
 //
 
-#import "MediaMessagesViewController.h"
+#import "MediaCommentsViewController.h"
 
-@interface MediaMessagesViewController ()
+@interface MediaCommentsViewController ()
 
 @property(strong, nonatomic) NSMutableArray *comments;
 
@@ -21,7 +21,7 @@
 // 3  : highlightMessagesSV
 // 4  : searchLoadingIndicator
 
-@implementation MediaMessagesViewController
+@implementation MediaCommentsViewController
 
 - (void)viewWillAppear:(BOOL)animated
 {

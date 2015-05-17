@@ -1178,12 +1178,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) displayMessageForMediaWithId:(UIBarButtonItem*)sender
 {
-    MediaMessagesViewController *mediaMessagesViewController = [MediaMessagesViewController new];
-    mediaMessagesViewController.mediaId = self.mediaDatas[@"imdbID"];
+    MediaCommentsViewController *mediaCommentsViewController = [MediaCommentsViewController new];
+    mediaCommentsViewController.mediaId = self.mediaDatas[@"imdbID"];
     
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];
     bluredImageView.alpha = 0.99f;
-    [bluredImageView setFrame:mediaMessagesViewController.view.frame];
+    [bluredImageView setFrame:mediaCommentsViewController.view.frame];
     
     UIVisualEffect *blurEffect;
     blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -1193,9 +1193,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     visualEffectView.frame = bluredImageView.bounds;
     
     [bluredImageView addSubview:visualEffectView];
-    [mediaMessagesViewController.view addSubview:bluredImageView];
+    [mediaCommentsViewController.view addSubview:bluredImageView];
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mediaMessagesViewController];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mediaCommentsViewController];
     navigationController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     [self.navigationController presentViewController:navigationController animated:YES completion:nil];
 }

@@ -12,7 +12,7 @@
 //Vendors
 #import "AFNetworking.h"
 
-@interface MediaMessagesViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface MediaCommentsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
