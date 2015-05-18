@@ -215,26 +215,30 @@
     // Display the percent match between current user and the user met
     [self displayMatchRateList];
     
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
-        NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"];
-        NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue], @"isspecificuser" : @"yes"};
-
-        [manager POST:urlAPI
-          parameters:apiParams
-             success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                 // The user met accepts to be public (default behaviour)
-                 // Or met user is among current user facebook friends' list
-                 if (![responseObject[@"isAnonymous"] boolValue] || [[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]] ) {
-                     [self displayMetUserfbImgProfile];
-                 }
-             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                 NSLog(@"Error: %@", error);
-             }];
-    } else {
-        // If the current user is anonymous. He still show his facebook profile photo to his friends
-        if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]])
-            [self displayMetUserfbImgProfile];
-    }
+//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
+//
+//    } else {
+//        // If the current user is anonymous. He still show his facebook profile photo to his friends
+//        if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]])
+//            [self displayMetUserfbImgProfile];
+//    }
+    
+    NSString *urlAPI = [[settingsDict valueForKey:@"apiPathBeta"] stringByAppendingString:@"user/user/list"];
+    NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue]};
+    // NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue], @"isspecificuser" : @"yes"};
+    
+    [manager GET:urlAPI
+       parameters:apiParams
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              // The user met accepts to be public (default behaviour)
+              // Or met user is among current user facebook friends' list
+//              if (![responseObject[@"isAnonymous"] boolValue] || [[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]] ) {
+              NSLog(@"doo : %@", responseObject[@"response"]);
+//              [self displayMetUserfbImgProfileForDatas:responseObject[@"response"]];
+//              }
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"Error: %@", error);
+          }];
     
     
     NSMutableArray *rightBarButtonItemsArray = [NSMutableArray new];
@@ -273,12 +277,67 @@
                                           animated:YES];
 }
 
+- (void) displayUserFollowers
+{
+    float widthViews = 99.0f;
+    UIView *currentUserFBView = (UIView*)[self.view viewWithTag:10];
+    
+    UIButton *followersLabelContainerBtn = [[UIButton alloc] initWithFrame:CGRectMake(currentUserFBView.frame.size.width - widthViews,
+                                                                                      currentUserFBView.frame.size.height - 75,
+                                                                                      widthViews, 70)];
+    
+    UILabel *followersTitle = [[UILabel alloc] initWithFrame:CGRectMake(-12, -5, widthViews, 30)];
+    followersTitle.textColor = [UIColor whiteColor];
+    followersTitle.backgroundColor = [UIColor clearColor];
+    followersTitle.text = [@"Abonnés" uppercaseString];
+    
+    followersTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
+    followersTitle.textAlignment = NSTextAlignmentRight;
+    [followersLabelContainerBtn addSubview:followersTitle];
+    
+    
+    UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(-22, followersLabelContainerBtn.frame.size.height - 34, widthViews + 10, 35.0)];
+    statCount.textColor = [UIColor whiteColor];
+    statCount.backgroundColor = [UIColor clearColor];
+    statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
+    statCount.text = 0;
+    statCount.backgroundColor = [UIColor clearColor];
+    statCount.textAlignment = NSTextAlignmentRight;
+    [followersLabelContainerBtn addSubview:statCount];
+    
+    [currentUserFBView addSubview:followersLabelContainerBtn];
+    
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/followers"];
+    
+    NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    
+    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
+        [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+        NSNumber *followersNumber = [NSNumber numberWithInteger:[responseObject[@"response"] count]];
+        
+        statCount.text = [followersNumber stringValue];
+        
+        if ([responseObject[@"response"] count] > 1) {
+            followersTitle.text = [NSLocalizedString(@"followers", nil) uppercaseString];
+        } else {
+            followersTitle.text = [NSLocalizedString(@"follower", nil) uppercaseString];
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        //        NSLog(@"Error: %@", error);
+    }];
+}
+
 - (BOOL) connected
 {
     return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
-- (void) displayMetUserfbImgProfile
+- (void) displayMetUserfbImgProfileForDatas:(NSDictionary*)datas
 {
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
 

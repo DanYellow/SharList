@@ -352,7 +352,8 @@
     UILabel *followersTitle = [[UILabel alloc] initWithFrame:CGRectMake(-12, -5, widthViews, 30)];
     followersTitle.textColor = [UIColor whiteColor];
     followersTitle.backgroundColor = [UIColor clearColor];
-    followersTitle.text = [@"Abonnés" uppercaseString];
+    followersTitle.text = [@"" uppercaseString];
+
     followersTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
     followersTitle.textAlignment = NSTextAlignmentRight;
     [followersLabelContainerBtn addSubview:followersTitle];
@@ -362,14 +363,14 @@
     statCount.textColor = [UIColor whiteColor];
     statCount.backgroundColor = [UIColor clearColor];
     statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
-
+    statCount.text = 0;
     statCount.backgroundColor = [UIColor clearColor];
     statCount.textAlignment = NSTextAlignmentRight;
     [followersLabelContainerBtn addSubview:statCount];
     
     [currentUserFBView addSubview:followersLabelContainerBtn];
-    
-        NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/followers"];
+    // apiPath | apiPathBeta
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathBeta"] stringByAppendingString:@"user.php/user/followers"];
     
     NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
     
@@ -390,7 +391,7 @@
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        //        NSLog(@"Error: %@", error);
+                NSLog(@"Error: %@", error);
     }];
 }
 
@@ -1503,7 +1504,7 @@
 
 - (void) getUserLikesForSender:(UIButton*)sender
 {    
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathBeta"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
     NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
 //    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];

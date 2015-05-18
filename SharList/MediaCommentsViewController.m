@@ -85,7 +85,11 @@
         [messagesLoadingIndicator startAnimating];
     });
     
-    [messagesLoadingIndicator stopAnimating];
+    
+    
+    UIBarButtonItem *addEditCommentBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addMessageNavIcon"] style:UIBarButtonItemStylePlain target:self action:@selector(addEditComment:)];
+    self.navigationItem.rightBarButtonItem = addEditCommentBarBtn;
+    
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comments"];
     
     NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
@@ -101,6 +105,7 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
+        [messagesLoadingIndicator stopAnimating];
     }];
     
     
@@ -516,6 +521,11 @@
 {
     UITextView *messageLabel = (UITextView*)[sender.view viewWithTag:60];
     messageLabel.alpha = 1;
+}
+
+- (void) addEditComment:(UIBarButtonItem*)sender
+{
+    
 }
 
 - (void) dismissModal

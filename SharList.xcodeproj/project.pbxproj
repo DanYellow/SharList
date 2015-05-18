@@ -32,6 +32,9 @@
 		1A16F65D1A458929000BC4AB /* settings-tab-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A16F65B1A458929000BC4AB /* settings-tab-icon@3x.png */; };
 		1A1BE6111B06869C00B813CD /* NSString+URLEncodeValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1BE6101B06869C00B813CD /* NSString+URLEncodeValue.m */; };
 		1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D6E441A1099C00090C598 /* SettingsViewController.m */; };
+		1A21F2461B0A9852004BBE55 /* addMessageNavIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A21F2431B0A9852004BBE55 /* addMessageNavIcon.png */; };
+		1A21F2471B0A9852004BBE55 /* addMessageNavIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A21F2441B0A9852004BBE55 /* addMessageNavIcon@2x.png */; };
+		1A21F2481B0A9852004BBE55 /* addMessageNavIcon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A21F2451B0A9852004BBE55 /* addMessageNavIcon@3x.png */; };
 		1A36E3131A9D4C1C004B0DBC /* ConnectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36E3121A9D4C1C004B0DBC /* ConnectView.m */; };
 		1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227B1A113069005B31E4 /* DetailsMediaViewController.m */; };
 		1A3C227F1A114027005B31E4 /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */; };
@@ -135,6 +138,9 @@
 		1A1BE6101B06869C00B813CD /* NSString+URLEncodeValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncodeValue.m"; sourceTree = "<group>"; };
 		1A1D6E431A1099C00090C598 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		1A1D6E441A1099C00090C598 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		1A21F2431B0A9852004BBE55 /* addMessageNavIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = addMessageNavIcon.png; sourceTree = "<group>"; };
+		1A21F2441B0A9852004BBE55 /* addMessageNavIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "addMessageNavIcon@2x.png"; sourceTree = "<group>"; };
+		1A21F2451B0A9852004BBE55 /* addMessageNavIcon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "addMessageNavIcon@3x.png"; sourceTree = "<group>"; };
 		1A36E3111A9D4C1C004B0DBC /* ConnectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectView.h; sourceTree = "<group>"; };
 		1A36E3121A9D4C1C004B0DBC /* ConnectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectView.m; sourceTree = "<group>"; };
 		1A3C227A1A113069005B31E4 /* DetailsMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMediaViewController.h; sourceTree = "<group>"; };
@@ -335,6 +341,9 @@
 		1A076DDD1A102B0B00CD725A /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				1A21F2431B0A9852004BBE55 /* addMessageNavIcon.png */,
+				1A21F2441B0A9852004BBE55 /* addMessageNavIcon@2x.png */,
+				1A21F2451B0A9852004BBE55 /* addMessageNavIcon@3x.png */,
 				1A1515F01B07FEFA0083CCAD /* listMessagesNavIcon.png */,
 				1A1515F11B07FEFA0083CCAD /* listMessagesNavIcon@2x.png */,
 				1A1515F21B07FEFA0083CCAD /* listMessagesNavIcon@3x.png */,
@@ -619,6 +628,7 @@
 				1AFE13761A32EEAB006F2366 /* meetingFavoriteUnselected@3x.png in Resources */,
 				1A1515F51B07FEFA0083CCAD /* listMessagesNavIcon@3x.png in Resources */,
 				1A95471A1A29E7DD002AC281 /* favorite-icon-message-alt@2x.png in Resources */,
+				1A21F2481B0A9852004BBE55 /* addMessageNavIcon@3x.png in Resources */,
 				1A9547191A29E7DD002AC281 /* favorite-icon-message-alt.png in Resources */,
 				1AF42CBA1ADB2463008622E6 /* locationMeetingIcon@3x.png in Resources */,
 				1AF42CBD1ADB2463008622E6 /* randomMeetingIcon@3x.png in Resources */,
@@ -630,11 +640,13 @@
 				1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */,
 				1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */,
 				1AF42CBB1ADB2463008622E6 /* randomMeetingIcon.png in Resources */,
+				1A21F2471B0A9852004BBE55 /* addMessageNavIcon@2x.png in Resources */,
 				1AEB2BC01A4B2580000D7C7B /* FacebookSDKOverrides.bundle in Resources */,
 				1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */,
 				1AFE13741A32EEAB006F2366 /* cart-icon@3x.png in Resources */,
 				1AFE13731A32EEAB006F2366 /* cart-icon@2x.png in Resources */,
 				1A95470F1A29E3A0002AC281 /* lens-icon-message@3x.png in Resources */,
+				1A21F2461B0A9852004BBE55 /* addMessageNavIcon.png in Resources */,
 				1A1251CC1ADDBEC500EA0506 /* refreshBarItem.png in Resources */,
 				1AF42CB81ADB2463008622E6 /* locationMeetingIcon.png in Resources */,
 				1AF474581A4DCBB0003ED4AF /* trailer-icon@2x.png in Resources */,
