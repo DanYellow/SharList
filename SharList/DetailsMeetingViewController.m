@@ -354,7 +354,7 @@
 
     [self displayUserFollowersForNumber: datas[@"followersCount"]];
     
-    if (![datas[@"isAnontmous"] boolValue]) {
+    if ([datas[@"isAnonymous"] boolValue] == NO) {
         return;
     }
     int intWidthScreen = screenWidth;
@@ -436,13 +436,17 @@
     float widthViews = 99.0f;
     for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
         CALayer *rightBorder = [CALayer layer];
-        rightBorder.frame = CGRectMake(widthViews - 16.0, 0.0f, 1.0, 65.0f);
+        rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 75.0f);
         rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
         
         NSString *title = [NSLocalizedString([[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
-        CGRect statContainerFrame = CGRectMake(16 + (95 * i),
-                                               metUserFBView.frame.size.height - 65,
-                                               widthViews, 60);
+        
+        
+        CGRect statContainerFrame = CGRectMake(0 + (95 * i),
+                                               metUserFBView.frame.size.height - 75,
+                                               widthViews, 70);
+        
+        
         UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
         statContainer.backgroundColor = [UIColor clearColor];
         statContainer.tag = i + 1; // We add one because the first section of a tableview is the header
@@ -455,7 +459,7 @@
             [statContainer.layer addSublayer:rightBorder];
         }
         
-        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, -5, widthViews, 30)];
+        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(12, -5, widthViews, 30)];
         statTitle.textColor = [UIColor whiteColor];
         statTitle.backgroundColor = [UIColor clearColor];
         statTitle.text = title;
@@ -468,10 +472,9 @@
         
         
         
-        UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(0, statContainer.frame.size.height - 34, widthViews, 35.0)];
+        UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(12, statContainer.frame.size.height - 34, widthViews, 35.0)];
         statCount.textColor = [UIColor whiteColor];
         statCount.backgroundColor = [UIColor clearColor];
-        statCount.text = title;
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
 //        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
 //        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
