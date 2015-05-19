@@ -87,7 +87,7 @@
     
     
     
-    UIBarButtonItem *addEditCommentBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addMessageNavIcon"] style:UIBarButtonItemStylePlain target:self action:@selector(addEditComment:)];
+    UIBarButtonItem *addEditCommentBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addMessageNavIcon"] style:UIBarButtonItemStylePlain target:self action:@selector(postNewComment:)];
     self.navigationItem.rightBarButtonItem = addEditCommentBarBtn;
     
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comments"];
@@ -224,17 +224,17 @@
     [emptyTableView addSubview:authorLabel];
     
     
-    UIImage *newCommentsBtnImage = [[UIImage imageNamed:@"newMessageBtn"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *newCommentBtnImage = [[UIImage imageNamed:@"newMessageBtn"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     UIButton *newCommentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     newCommentBtn.frame = CGRectMake(0, authorLabel.frame.size.height + authorLabel.frame.origin.y + 28, 113, 113);
     newCommentBtn.tintColor = [UIColor colorWithRed:(223.0/255) green:(223.0/255) blue:(223.0/255) alpha:1.0];
     
-    [newCommentBtn setImage:newCommentsBtnImage forState:UIControlStateNormal];
+    [newCommentBtn setImage:newCommentBtnImage forState:UIControlStateNormal];
     newCommentBtn.contentMode = UIViewContentModeScaleToFill;
     newCommentBtn.center = CGPointMake(self.view.center.x, newCommentBtn.center.y);
     newCommentBtn.backgroundColor = [UIColor clearColor];
-    [newCommentBtn addTarget:self action:@selector(postNewMessage) forControlEvents:UIControlEventTouchUpInside];
+    [newCommentBtn addTarget:self action:@selector(postNewComment:) forControlEvents:UIControlEventTouchUpInside];
  
     [emptyTableView addSubview:newCommentBtn];
     
@@ -412,9 +412,12 @@
     
 }
 
-- (void) postNewMessage
+- (void) postNewComment:(id)sender
 {
     NSLog(@"%s", __FUNCTION__);
+    PostCommentViewController *postCommentViewController = [PostCommentViewController new];
+    
+    [self.navigationController pushViewController:postCommentViewController animated:YES];
 }
 
 #pragma mark - UITableView functions

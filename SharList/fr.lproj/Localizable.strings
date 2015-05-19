@@ -145,6 +145,11 @@
 "datasOrigins" = "Les données des films et séries proviennent de l'API de themoviedb. Les films et séries présents dans le moteur de recherche de l'application appartiennent à leur ayant droit.";
 "Credits" = "Crédits";
 
+
+//PostCommentViewController
+"post comment" = "Commenter";
+"update comment" = "Éditer";
+
 //Facebook
 "errorConnect" = "Facebook a rencontré une problème";
 

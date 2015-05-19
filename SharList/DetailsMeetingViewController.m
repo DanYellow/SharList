@@ -318,29 +318,6 @@
     } else {
         followersTitle.text = [NSLocalizedString(@"follower", nil) uppercaseString];
     }
-    
-    
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/followers"];
-    
-    NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
-    
-    
-    
-//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-//    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
-//    
-//    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
-//        [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-//        NSNumber *followersNumber = [NSNumber numberWithInteger:[responseObject[@"response"] count]];
-//        
-//        statCount.text = [followersNumber stringValue];
-//        
-//        
-//        
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        //        NSLog(@"Error: %@", error);
-//    }];
 }
 
 - (BOOL) connected
@@ -354,7 +331,7 @@
 
     [self displayUserFollowersForNumber: datas[@"followersCount"]];
     
-    if ([datas[@"isAnonymous"] boolValue] == NO) {
+    if ([datas[@"isAnonymous"] boolValue] == YES) {
         return;
     }
     int intWidthScreen = screenWidth;

@@ -132,6 +132,9 @@
 "datasOrigins" = "Movies and TV series datas, and posters art are provided by themoviedb's API.";
 "Credits" = "Credits";
 
+//PostCommentViewController
+"post comment" = "Comment";
+"update comment" = "Update";
 
 //Facebook
 "errorConnect" = "Facebook has an issue";

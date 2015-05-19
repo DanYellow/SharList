@@ -1518,7 +1518,6 @@
     [request setHTTPMethod:@"GET"];
     [request setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
     [request setValue:fbAccessToken forHTTPHeaderField:@"X-fbtoken"];
-
     
     [loadingIndicator startAnimating];
     
@@ -1536,6 +1535,7 @@
                         if ([jsonData objectForKey:@"error"]) {
                             sender.enabled = YES;
                             [loadingIndicator stopAnimating];
+                            NSLog(@"jsonData: %@", [jsonData objectForKey:@"error"]);
                         } else {
                             NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
                             [userDatasFromServer setValue:[NSNull null] forKey:@"book"];
@@ -1558,6 +1558,13 @@
                                     
                                     [sender setTitle:NSLocalizedString(@"list synchronized", nil) forState:UIControlStateDisabled];
                                     
+                                    UIAlertView *endSynchronize = [[UIAlertView alloc] initWithTitle:@""
+                                                                                             message:NSLocalizedString(@"list synchronized", nil)
+                                                                                            delegate:nil
+                                                                                   cancelButtonTitle:@"OK"
+                                                                                   otherButtonTitles: nil];
+                                    [endSynchronize show];
+                                    
                                     // We want to call the following function only once
                                     // so we check if the uitableview's header exists (it will exists after)
                                     UIView *currentUserFBView = (UIView*)[self.view viewWithTag:10];
@@ -1568,6 +1575,9 @@
                             } else {
                                 sender.enabled = YES;
                                 [loadingIndicator stopAnimating];
+                                
+                                UIAlertView *endSynchronize = [[UIAlertView alloc] initWithTitle:@"" message:@"Rien à synchroniser" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                                [endSynchronize show];
                             }
                         }
                     } else {
