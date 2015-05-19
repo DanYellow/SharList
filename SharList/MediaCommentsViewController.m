@@ -249,12 +249,23 @@
 {
     UITableView *commentsTableView = (UITableView*)[self.view viewWithTag:1];
     
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 140)];
+    headerView.backgroundColor = [UIColor clearColor];
+    
     UIScrollView *highlightMessagesSV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 140)];
     highlightMessagesSV.backgroundColor = [UIColor colorWithRed:(244.0/255.0) green:(244.0/255.0) blue:(244.0/255.0) alpha:.3];
     highlightMessagesSV.center = CGPointMake(self.view.center.x, highlightMessagesSV.center.y);
     highlightMessagesSV.pagingEnabled = YES;
     highlightMessagesSV.contentSize = CGSizeMake(screenWidth*2, 140);
     highlightMessagesSV.showsHorizontalScrollIndicator = NO;
+    
+    [headerView addSubview:highlightMessagesSV];
+    
+    UIPageControl *highlightMessagesPC = [[UIPageControl alloc] initWithFrame:CGRectMake(0, highlightMessagesSV.frame.size.height - 22, screenWidth, 20)];
+    highlightMessagesPC.numberOfPages = 2;
+    highlightMessagesPC.currentPage = 0;
+    highlightMessagesPC.backgroundColor = [UIColor clearColor];
+    [headerView addSubview:highlightMessagesPC];
     
     CALayer *highlightMessagesSVBottomBorder = [CALayer layer];
     highlightMessagesSVBottomBorder.frame = CGRectMake(-(highlightMessagesSV.frame.size.width / 2), highlightMessagesSV.frame.size.height - 1, screenWidth*3, 1.0f);
@@ -267,7 +278,7 @@
     [highlightMessagesSV.layer addSublayer:highlightMessagesSVTopBorder];
     
     
-    commentsTableView.tableHeaderView = highlightMessagesSV;
+    commentsTableView.tableHeaderView = headerView;
     
     NSString *userId = @"fb456742";
     

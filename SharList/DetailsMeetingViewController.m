@@ -210,7 +210,8 @@
 //    NSInteger hours = [conversionInfo hour];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
+    [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     
     // Display the percent match between current user and the user met
     [self displayMatchRateList];
@@ -223,18 +224,22 @@
 //            [self displayMetUserfbImgProfile];
 //    }
     
-    NSString *urlAPI = [[settingsDict valueForKey:@"apiPathBeta"] stringByAppendingString:@"user/user/list"];
-    NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue]};
+    NSString *urlAPI = [[settingsDict valueForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user"];
+    NSDictionary *apiParams = @{@"fbiduser" : @"fb456742"};
     // NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue], @"isspecificuser" : @"yes"};
     
     [manager GET:urlAPI
        parameters:apiParams
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              
+              if (!responseObject[@"error"]) {
+                  [self displayMetUserfbImgProfileForDatas:responseObject[@"response"]];
+              }
               // The user met accepts to be public (default behaviour)
               // Or met user is among current user facebook friends' list
 //              if (![responseObject[@"isAnonymous"] boolValue] || [[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]] ) {
-              NSLog(@"doo : %@", responseObject[@"response"]);
-//              [self displayMetUserfbImgProfileForDatas:responseObject[@"response"]];
+//              NSLog(@"doo : %@", responseObject);
+//
 //              }
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               NSLog(@"Error: %@", error);
@@ -277,19 +282,19 @@
                                           animated:YES];
 }
 
-- (void) displayUserFollowers
+- (void) displayUserFollowersForNumber:(NSNumber*)numberOfFollowers
 {
     float widthViews = 99.0f;
-    UIView *currentUserFBView = (UIView*)[self.view viewWithTag:10];
+    UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
     
-    UIButton *followersLabelContainerBtn = [[UIButton alloc] initWithFrame:CGRectMake(currentUserFBView.frame.size.width - widthViews,
-                                                                                      currentUserFBView.frame.size.height - 75,
+    UIButton *followersLabelContainerBtn = [[UIButton alloc] initWithFrame:CGRectMake(metUserFBView.frame.size.width - widthViews,
+                                                                                      metUserFBView.frame.size.height - 75,
                                                                                       widthViews, 70)];
     
     UILabel *followersTitle = [[UILabel alloc] initWithFrame:CGRectMake(-12, -5, widthViews, 30)];
     followersTitle.textColor = [UIColor whiteColor];
     followersTitle.backgroundColor = [UIColor clearColor];
-    followersTitle.text = [@"Abonnés" uppercaseString];
+    followersTitle.text = [NSLocalizedString(@"followers", nil) uppercaseString];
     
     followersTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
     followersTitle.textAlignment = NSTextAlignmentRight;
@@ -300,36 +305,42 @@
     statCount.textColor = [UIColor whiteColor];
     statCount.backgroundColor = [UIColor clearColor];
     statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
-    statCount.text = 0;
+    statCount.text = [NSString stringWithFormat:@"%@", numberOfFollowers];
     statCount.backgroundColor = [UIColor clearColor];
     statCount.textAlignment = NSTextAlignmentRight;
     [followersLabelContainerBtn addSubview:statCount];
     
-    [currentUserFBView addSubview:followersLabelContainerBtn];
+    [metUserFBView addSubview:followersLabelContainerBtn];
+    
+    
+    if ([numberOfFollowers integerValue] > 1) {
+        followersTitle.text = [NSLocalizedString(@"followers", nil) uppercaseString];
+    } else {
+        followersTitle.text = [NSLocalizedString(@"follower", nil) uppercaseString];
+    }
+    
     
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/followers"];
     
     NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
     
-    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
-        [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-        NSNumber *followersNumber = [NSNumber numberWithInteger:[responseObject[@"response"] count]];
-        
-        statCount.text = [followersNumber stringValue];
-        
-        if ([responseObject[@"response"] count] > 1) {
-            followersTitle.text = [NSLocalizedString(@"followers", nil) uppercaseString];
-        } else {
-            followersTitle.text = [NSLocalizedString(@"follower", nil) uppercaseString];
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        //        NSLog(@"Error: %@", error);
-    }];
+    
+//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+//    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+//    
+//    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
+//        [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+//        NSNumber *followersNumber = [NSNumber numberWithInteger:[responseObject[@"response"] count]];
+//        
+//        statCount.text = [followersNumber stringValue];
+//        
+//        
+//        
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        //        NSLog(@"Error: %@", error);
+//    }];
 }
 
 - (BOOL) connected
@@ -341,6 +352,11 @@
 {
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
 
+    [self displayUserFollowersForNumber: datas[@"followersCount"]];
+    
+    if (![datas[@"isAnontmous"] boolValue]) {
+        return;
+    }
     int intWidthScreen = screenWidth;
     int heightImg = ceilf(intWidthScreen / GOLDENRATIO);
     
@@ -887,7 +903,7 @@
     aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : aCell.detailTextLabel.text;
     
     if ([aDate timeIntervalSinceNow] > 0 || [[NSCalendar currentCalendar] isDateInToday:aDate] || [[NSCalendar currentCalendar] isDateInTomorrow:aDate]) {
-        aCell.detailTextLabel.text = [aCell.detailTextLabel.text stringByAppendingString:[NSString stringWithFormat:@" - %@", aEpisodeString]];
+        aCell.detailTextLabel.text = [aCell.detailTextLabel.text stringByAppendingString:[NSString stringWithFormat:@" • %@", aEpisodeString]];
     }
     
     

@@ -370,7 +370,7 @@
     
     [currentUserFBView addSubview:followersLabelContainerBtn];
     // apiPath | apiPathBeta
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathBeta"] stringByAppendingString:@"user.php/user/followers"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/followers"];
     
     NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
     
@@ -1098,7 +1098,7 @@
     aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : aCell.detailTextLabel.text;
     
     if ([aDate timeIntervalSinceNow] > 0 || [[NSCalendar currentCalendar] isDateInToday:aDate] || [[NSCalendar currentCalendar] isDateInTomorrow:aDate]) {
-        aCell.detailTextLabel.text = [aCell.detailTextLabel.text stringByAppendingString:[NSString stringWithFormat:@" - %@", aEpisodeString]];
+        aCell.detailTextLabel.text = [aCell.detailTextLabel.text stringByAppendingString:[NSString stringWithFormat:@" • %@", aEpisodeString]];
     }
 
     

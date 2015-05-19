@@ -742,7 +742,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.delegate = self;
     mediaDescription.showsHorizontalScrollIndicator = NO;
     mediaDescription.showsVerticalScrollIndicator = NO;
-    mediaDescription.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    mediaDescription.contentInset = UIEdgeInsetsMake(-10, 0, 0, 0);
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
@@ -837,7 +837,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : lastEpisodeDateLabel.text;
     
     if ([aDate timeIntervalSinceNow] > 0 || [[NSCalendar currentCalendar] isDateInToday:aDate] || [[NSCalendar currentCalendar] isDateInTomorrow:aDate]) {
-        lastEpisodeDateLabel.text = [lastEpisodeDateLabel.text stringByAppendingString:[NSString stringWithFormat:@" - %@", aEpisodeString]];
+        lastEpisodeDateLabel.text = [lastEpisodeDateLabel.text stringByAppendingString:[NSString stringWithFormat:@" • %@", aEpisodeString]];
     }
 
     lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
