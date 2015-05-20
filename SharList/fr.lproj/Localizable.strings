@@ -15,6 +15,10 @@
 "serie" = "séries";
 "movie" = "films";
 "book" = "livres";
+
+"serie singular" = "Série";
+"movie singular" = "Film";
+
 "buy" = "acheter";
 "buy %@" = "acheter %@";
 
@@ -121,10 +125,16 @@
 "ended serie" = "Série terminée";
 "release today" = "Aujourd'hui !";
 "release tomorrow" = "Demain !";
-"Present in %@ discoveries" = "Présent dans %@ découvertes";
+
+"%@ Present in %@ discoveries" = "%@ présent dans %@ découvertes";
+"%@ Presente in %@ discoveries" = "%@ présente dans %@ découvertes";
 "p %@ discoveries" = "%@ découvertes";
-"Present in %@ discovery" = "Présent dans 1 découverte";
-"Present in no discovery" = "Présent dans aucune découverte";
+
+"%@ Present in %@ discovery" = "%@ présent dans %@ découverte";
+"%@ Presente in %@ discovery" = "%@ présente dans %@ découverte";
+
+"%@ Present in no discovery" = "présent dans aucune découverte";
+"%@ Presente in no discovery" = "présente dans aucune découverte";
 
 // MediaMessageViewController
 "yyyy/MM/dd at HH:mm" = "dd/MM/yyyy à HH:mm";

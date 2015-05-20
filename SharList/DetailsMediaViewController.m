@@ -437,20 +437,25 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, screenHeight - 83, screenWidth, 20);
     numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
     
+    NSString *localizeTypeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"movie singular" : @"serie singular";
+    
     if (numberOfApparitionAmongDiscoveries == 1) {
-        numberOfIterationAmongDiscoveriesLabel.text = NSLocalizedString(@"Present in %@ discovery", nil);
+        NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in %@ discovery" : @"%@ Presente in %@ discovery";
+        
+        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(localizeKey, nil), NSLocalizedString(localizeTypeKey, nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]];
     }
     else if (numberOfApparitionAmongDiscoveries > 1) {
-        NSMutableAttributedString *WSQuoteAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"Present in %@ discoveries", nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]] attributes:nil];
-        NSRange hellStringRange = [[WSQuoteAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]]];
-        [WSQuoteAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
+        NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in %@ discoveries" : @"%@ Presente in %@ discoveries";
         
+        NSMutableAttributedString *NbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(localizeKey, nil), NSLocalizedString(localizeTypeKey, nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]] attributes:nil];
+        NSRange hellStringRange = [[NbrDiscoveriesAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]]];
+        [NbrDiscoveriesAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
         
-//        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Present in %@ discoveries", nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]];
-        numberOfIterationAmongDiscoveriesLabel.attributedText = WSQuoteAttrString;
-        //"p %@ discoveries"
+        numberOfIterationAmongDiscoveriesLabel.attributedText = NbrDiscoveriesAttrString;
     } else {
-        numberOfIterationAmongDiscoveriesLabel.text = NSLocalizedString(@"Present in no discovery", nil);
+        NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in no discovery" : @"%@ Presente in no discovery";
+        
+        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(localizeKey, nil), NSLocalizedString(localizeTypeKey, nil)];
     }
     
     numberOfIterationAmongDiscoveriesLabel.textColor = [UIColor whiteColor];
@@ -777,7 +782,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionWidthPercentage = 82.0;
     CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
-    CGFloat mediaDescriptionHeight = (screenHeight * 47.53521127) / 100; //(280 * 100) / 568
+    CGFloat mediaDescriptionHeight = (screenHeight * 47.00) / 100; //(280 * 100) / 568
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
     if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
@@ -792,7 +797,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.delegate = self;
     mediaDescription.showsHorizontalScrollIndicator = NO;
     mediaDescription.showsVerticalScrollIndicator = NO;
-    mediaDescription.contentInset = UIEdgeInsetsMake(-10, 0, 0, 0);
+    mediaDescription.contentInset = UIEdgeInsetsMake(-10, 0, -10, 0);
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;

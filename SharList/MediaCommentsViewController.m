@@ -411,6 +411,7 @@
 - (void) postNewComment:(id)sender
 {
     PostCommentViewController *postCommentViewController = [PostCommentViewController new];
+    postCommentViewController.view.backgroundColor = [UIColor blackColor];
     [self.navigationController pushViewController:postCommentViewController animated:YES];
 }
 

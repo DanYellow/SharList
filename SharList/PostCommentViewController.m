@@ -18,7 +18,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.35];
     self.title = [NSLocalizedString(@"update comment", nil) uppercaseString];
 }
 
