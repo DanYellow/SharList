@@ -121,6 +121,10 @@
 "ended serie" = "Série terminée";
 "release today" = "Aujourd'hui !";
 "release tomorrow" = "Demain !";
+"Present in %@ discoveries" = "Présent dans %@ découvertes";
+"p %@ discoveries" = "%@ découvertes";
+"Present in %@ discovery" = "Présent dans 1 découverte";
+"Present in no discovery" = "Présent dans aucune découverte";
 
 // MediaMessageViewController
 "yyyy/MM/dd at HH:mm" = "dd/MM/yyyy à HH:mm";

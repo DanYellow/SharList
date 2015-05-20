@@ -406,17 +406,11 @@
             }
         }
     }
-    
-
-    
-    
 }
 
 - (void) postNewComment:(id)sender
 {
-    NSLog(@"%s", __FUNCTION__);
     PostCommentViewController *postCommentViewController = [PostCommentViewController new];
-    
     [self.navigationController pushViewController:postCommentViewController animated:YES];
 }
 
@@ -456,7 +450,13 @@
     messageLabel.tag = 60;
     messageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
     messageLabel.textColor = [UIColor whiteColor];
-    messageLabel.alpha = .01;
+   
+    NSString *discoveryId = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"fbId"];
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:discoveryId]) {
+         messageLabel.alpha = 1;
+    } else {
+         messageLabel.alpha = .01;
+    }
     messageLabel.showsVerticalScrollIndicator = NO;
     messageLabel.scrollEnabled = NO;
     messageLabel.contentInset = UIEdgeInsetsMake(-10, 0, 0, 0);

@@ -96,6 +96,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     
+    
     // Init vars
     self.PhysicsAdded = NO;
     self.itunesIDString = @"";
@@ -196,7 +197,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //                                                                      action:@selector(displayMessageForMediaWithId:)];
     
 
-//    self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
+    if (![self connected]) {
+        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
+    }
+    
 
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
@@ -384,9 +388,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         if (BSUserToken != nil || [BSUserToken isKindOfClass:[NSNull class]]) {
             [self connectWithBSAccount:BSUserToken];
         }
-        
     }
     
+    [self displayNumberOfIterationAmongDiscoveriesForView:infoMediaView];
+   
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
@@ -407,6 +412,51 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UISwipeGestureRecognizer *rightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showMediaDetails:)];
     rightGesture.direction = UISwipeGestureRecognizerDirectionRight;
     [self.view addGestureRecognizer:rightGesture];
+}
+
+- (void) displayNumberOfIterationAmongDiscoveriesForView:(UIView*) aContainerView
+{
+    
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid != %@",
+                                          [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:facebookFriendsFilter];
+    
+    NSInteger numberOfApparitionAmongDiscoveries = 0;
+    for (UserTaste *user in meetings) {
+        NSDictionary *userTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[user taste]] mutableCopy];
+        id userTasteForType = [userTaste objectForKey:[self.mediaDatas valueForKey:@"type"]];
+        if (![[userTasteForType valueForKey:@"imdbID"] isEqual:[NSNull null]]) {
+            if ([[userTasteForType valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
+                numberOfApparitionAmongDiscoveries++;
+            }
+        }
+    }
+    
+    // This label shows the number of iteration of the card currently shown among user's discoverties
+    UILabel *numberOfIterationAmongDiscoveriesLabel = [UILabel new];
+    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, screenHeight - 83, screenWidth, 20);
+    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
+    
+    if (numberOfApparitionAmongDiscoveries == 1) {
+        numberOfIterationAmongDiscoveriesLabel.text = NSLocalizedString(@"Present in %@ discovery", nil);
+    }
+    else if (numberOfApparitionAmongDiscoveries > 1) {
+        NSMutableAttributedString *WSQuoteAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"Present in %@ discoveries", nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]] attributes:nil];
+        NSRange hellStringRange = [[WSQuoteAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]]];
+        [WSQuoteAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
+        
+        
+//        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Present in %@ discoveries", nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]];
+        numberOfIterationAmongDiscoveriesLabel.attributedText = WSQuoteAttrString;
+        //"p %@ discoveries"
+    } else {
+        numberOfIterationAmongDiscoveriesLabel.text = NSLocalizedString(@"Present in no discovery", nil);
+    }
+    
+    numberOfIterationAmongDiscoveriesLabel.textColor = [UIColor whiteColor];
+    numberOfIterationAmongDiscoveriesLabel.textAlignment = NSTextAlignmentCenter;
+    
+    [aContainerView addSubview:numberOfIterationAmongDiscoveriesLabel];
 }
 
 - (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
@@ -1180,6 +1230,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     MediaCommentsViewController *mediaCommentsViewController = [MediaCommentsViewController new];
     mediaCommentsViewController.mediaId = self.mediaDatas[@"imdbID"];
+
     
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];
     bluredImageView.alpha = 0.99f;
@@ -1194,6 +1245,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [bluredImageView addSubview:visualEffectView];
     [mediaCommentsViewController.view addSubview:bluredImageView];
+    
+    mediaCommentsViewController.bgImgView = bluredImageView;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mediaCommentsViewController];
     navigationController.modalPresentationStyle = UIModalPresentationOverCurrentContext;

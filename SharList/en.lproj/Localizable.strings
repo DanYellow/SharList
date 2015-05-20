@@ -110,6 +110,11 @@
 "next episode %@" = "Next episode: %@";
 "release tomorrow" = "Tomorrow!";
 
+"Present in %@ discoveries" = "Present in %@ discoveries";
+"p %@ discoveries" = "%@ discoveries";
+"Present in %@ discovery" = "Present in 1 discovery";
+"Present in no discovery" = "Present in no discovery";
+
 // MediaMessageViewController
 "yyyy/MM/dd at HH:mm" = "yyyy/MM/dd at HH:mm";
 "WSQuote" = "Hell is empty And \n the devils are here";

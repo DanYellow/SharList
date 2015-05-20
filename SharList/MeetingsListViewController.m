@@ -632,9 +632,6 @@
     int i = 0;
     int fetchLimit = 42; // We display only the 42 last results
     
-//    NSMutableArray *uniqueDateTimes = [[NSMutableArray alloc] initWithCapacity:fetchLimit];
-//    uniqueDateTimes = [meetings valueForKeyPath:@"@distinctUnionOfObjects.lastMeeting.dateWithoutTime"];
-//    NSLog(@"uniqueDateTimes : %@", uniqueDateTimes);
     
     for (UserTaste *userTaste in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
