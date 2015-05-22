@@ -421,7 +421,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                           [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:facebookFriendsFilter];
     
-    NSInteger numberOfApparitionAmongDiscoveries = 0;
+    NSUInteger numberOfApparitionAmongDiscoveries = 0;
     for (UserTaste *user in meetings) {
         NSDictionary *userTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[user taste]] mutableCopy];
         id userTasteForType = [userTaste objectForKey:[self.mediaDatas valueForKey:@"type"]];
@@ -439,23 +439,33 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     NSString *localizeTypeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"movie singular" : @"serie singular";
     
-    if (numberOfApparitionAmongDiscoveries == 1) {
-        NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in %@ discovery" : @"%@ Presente in %@ discovery";
-        
-        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(localizeKey, nil), NSLocalizedString(localizeTypeKey, nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]];
+//    "percent %@ discoveries" = "%@ des découvertes";
+    
+    CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
+    
+    if (isnan(iterationAmongDiscoveriesPercent) || isinf(iterationAmongDiscoveriesPercent)) {
+        iterationAmongDiscoveriesPercent = 0.0f;
     }
-    else if (numberOfApparitionAmongDiscoveries > 1) {
-        NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in %@ discoveries" : @"%@ Presente in %@ discoveries";
+    
+    
+    
+    
+    if (iterationAmongDiscoveriesPercent == 0) {
+        NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in no discovery" : @"%@ Presente in no discovery";
+        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(localizeKey, nil), NSLocalizedString(localizeTypeKey, nil)];
+    } else {
+        NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
+        [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
         
-        NSMutableAttributedString *NbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(localizeKey, nil), NSLocalizedString(localizeTypeKey, nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]] attributes:nil];
-        NSRange hellStringRange = [[NbrDiscoveriesAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), [NSNumber numberWithInteger:numberOfApparitionAmongDiscoveries]]];
+        NSString *percentApparition = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:iterationAmongDiscoveriesPercent]];
+        
+        NSMutableAttributedString *NbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"Present of %@ discoveries", nil), percentApparition] attributes:nil];
+        
+        NSRange hellStringRange = [[NbrDiscoveriesAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), percentApparition]];
+        
         [NbrDiscoveriesAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
         
         numberOfIterationAmongDiscoveriesLabel.attributedText = NbrDiscoveriesAttrString;
-    } else {
-        NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in no discovery" : @"%@ Presente in no discovery";
-        
-        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(localizeKey, nil), NSLocalizedString(localizeTypeKey, nil)];
     }
     
     numberOfIterationAmongDiscoveriesLabel.textColor = [UIColor whiteColor];

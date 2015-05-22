@@ -274,9 +274,10 @@
 - (void) scrollToSectionWithNumber:(UIButton*)sender {
     
     NSInteger aSectionNumber = sender.tag;
-    
+
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
+
     [userSelectionTableView scrollToRowAtIndexPath:indexPath
                                   atScrollPosition:UITableViewScrollPositionTop
                                           animated:YES];
@@ -587,7 +588,7 @@
     
     CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
     
-    if (isnan(commonTasteCountPercent)) {
+    if (isnan(commonTasteCountPercent) || isinf(commonTasteCountPercent)) {
         commonTasteCountPercent = 0.0f;
     }
     
@@ -696,7 +697,7 @@
         return 0;
     }
     emptyUserTasteLabel.hidden = YES;
-    
+//    NSLog(@"foo : %@", [self.metUserTasteDict filterKeysForNullObj]);
     return [self.metUserTasteDict count];
 }
 

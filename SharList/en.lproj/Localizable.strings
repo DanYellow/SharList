@@ -113,12 +113,16 @@
 "next episode %@" = "Next episode: %@";
 "release tomorrow" = "Tomorrow!";
 
-"%@ Presente in %@ discoveries" = "%@ Present in %@ discoveries";
-"%@ Present in %@ discoveries" = "%@ Present in %@ discoveries";
-"p %@ discoveries" = "%@ discoveries";
+//"%@ Presente in %@ discoveries" = "%@ Present in %@ discoveries";
+//"%@ Present in %@ discoveries" = "%@ Present in %@ discoveries";
+//"p %@ discoveries" = "%@ discoveries";
+//
+//"%@ Present in %@ discovery" = "%@ present in 1 discovery";
+//"%@ Presente in %@ discovery" = "%@ present in 1 discovery";
 
-"%@ Present in %@ discovery" = "%@ present in 1 discovery";
-"%@ Presente in %@ discovery" = "%@ present in 1 discovery";
+"Present of %@ discoveries" = "Present in %@ of your discoveries";
+//"Presente of %@ discoveries" = "Présente dans %@ des découvertes";
+"p %@ discoveries" = "%@ of your discoveries";
 
 "%@ Present in no discovery" = "%@ present in no discovery";
 "%@ Presente in no discovery" = "%@ present in no discovery";

@@ -1504,7 +1504,7 @@
 
 - (void) getUserLikesForSender:(UIButton*)sender
 {    
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathBeta"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
     NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
 //    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];
