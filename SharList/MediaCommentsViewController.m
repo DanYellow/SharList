@@ -41,7 +41,7 @@
         }
     }
     
-    self.title = [@"Commentaires" uppercaseString];
+    self.title = [NSLocalizedString(@"comments", nil) uppercaseString];
 }
 
 - (void) viewDidLoad
@@ -49,7 +49,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-//    self.view.backgroundColor = [UIColor colorWithWhite:1 alpha:.1];
     self.view.backgroundColor = [UIColor blackColor];
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissModal)];
@@ -79,7 +78,7 @@
     messagesLoadingIndicator.hidesWhenStopped = YES;
     messagesLoadingIndicator.tag = 4;
     messagesLoadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
-    messagesLoadingIndicator.backgroundColor = [UIColor redColor];
+    messagesLoadingIndicator.backgroundColor = [UIColor clearColor];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.view addSubview:messagesLoadingIndicator];
         [messagesLoadingIndicator startAnimating];
@@ -91,7 +90,7 @@
     self.navigationItem.rightBarButtonItem = addEditCommentBarBtn;
     
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comments"];
-    
+
     NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -165,7 +164,6 @@
 
 - (void) displayComments
 {
-
     // Table view
     UITableView *commentsTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
                                                                                    80,
@@ -179,8 +177,6 @@
     commentsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     commentsTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0);
     commentsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-//    commentsTableView.tableHeaderView = highlightMessagesSV;
-//    commentsTableView.tableHeaderView.hidden = YES;
     commentsTableView.allowsSelection = NO;
     [self.view insertSubview:commentsTableView atIndex:1];
     
@@ -410,10 +406,46 @@
 
 - (void) postNewComment:(id)sender
 {
+
     PostCommentViewController *postCommentViewController = [PostCommentViewController new];
-    postCommentViewController.view.backgroundColor = [UIColor blackColor];
+    postCommentViewController.view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.7];
+    postCommentViewController.mediaId = self.mediaId;
+
+    
+    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];
+    bluredImageView.alpha = 0.99f;
+    [bluredImageView setFrame:postCommentViewController.view.frame];
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = bluredImageView.bounds;
+    
+    [bluredImageView addSubview:visualEffectView];
+    [postCommentViewController.view addSubview:bluredImageView];
+    
+    UIBarButtonItem *newBackButton =
+    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", nil)
+                                     style:UIBarButtonItemStylePlain
+                                    target:nil
+                                    action:nil];
+    [[self navigationItem] setBackBarButtonItem:newBackButton];
+    
     [self.navigationController pushViewController:postCommentViewController animated:YES];
 }
+
+- (UIImage *) takeSnapshotOfView:(UIView *)view
+{
+    UIGraphicsBeginImageContext(CGSizeMake(view.frame.size.width, view.frame.size.height));
+    [view drawViewHierarchyInRect:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height) afterScreenUpdates:YES];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
 
 #pragma mark - UITableView functions
 

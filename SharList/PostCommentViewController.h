@@ -8,6 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PostCommentViewController : UIViewController
+//Vendors
+#import "AFNetworking.h"
+
+@interface PostCommentViewController : UIViewController <UITextViewDelegate, NSLayoutManagerDelegate>
+{
+    CGFloat screenWidth;
+    CGFloat screenHeight;
+    
+    NSDictionary *settingsDict;
+}
+
+
+@property (strong, nonatomic) NSString *mediaId;
 
 @end

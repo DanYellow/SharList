@@ -439,16 +439,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     NSString *localizeTypeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"movie singular" : @"serie singular";
     
-//    "percent %@ discoveries" = "%@ des découvertes";
-    
     CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
     
     if (isnan(iterationAmongDiscoveriesPercent) || isinf(iterationAmongDiscoveriesPercent)) {
         iterationAmongDiscoveriesPercent = 0.0f;
     }
-    
-    
-    
     
     if (iterationAmongDiscoveriesPercent == 0) {
         NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in no discovery" : @"%@ Presente in no discovery";
@@ -1261,7 +1256,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [bluredImageView addSubview:visualEffectView];
     [mediaCommentsViewController.view addSubview:bluredImageView];
     
-    mediaCommentsViewController.bgImgView = bluredImageView;
+    UIBarButtonItem *newBackButton =
+    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"close", nil)
+                                     style:UIBarButtonItemStylePlain
+                                    target:nil
+                                    action:nil];
+    [[self navigationItem] setBackBarButtonItem:newBackButton];
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mediaCommentsViewController];
     navigationController.modalPresentationStyle = UIModalPresentationOverCurrentContext;

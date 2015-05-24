@@ -126,18 +126,14 @@
 "release today" = "Aujourd'hui !";
 "release tomorrow" = "Demain !";
 
-//"%@ Present of %@ discoveries" = "%@ présent dans %@ des découvertes";
-//"%@ Presente of %@ discoveries" = "%@ présente dans %@ des découvertes";
-//"p %@ discoveries" = "%@ des découvertes";
-
 "Present of %@ discoveries" = "Présent dans %@ de vos découvertes";
 "Presente of %@ discoveries" = "Présente dans %@ de vos découvertes";
 "p %@ discoveries" = "%@ de vos découvertes";
 
-"%@ Present in no discovery" = "présent dans aucune découverte";
-"%@ Presente in no discovery" = "présente dans aucune découverte";
+"%@ Present in no discovery" = "Présent dans aucune découverte";
+"%@ Presente in no discovery" = "Présente dans aucune découverte";
 
-// MediaMessageViewController
+// MediaCommentsViewController
 "yyyy/MM/dd at HH:mm" = "dd/MM/yyyy à HH:mm";
 "WSQuote" = "L'enfer est vide,\n tous les démons sont ici";
 "hell" = "enfer";
@@ -149,7 +145,11 @@
 "no comment discover" = "Votre découverte n'a pas encore commenté";
 "no comment friend %@" = "%@ n'a pas encore commenté";
 "no comment user" = "Vous n'avez pas encore commenté";
+"close" = "Fermer";
 
+//PostCommentsViewController
+"comments" = "commentaires";
+"think about %@" = "Donner son avis sur %@";
 
 //AboutViewController
 "About" = "A propos";
@@ -164,6 +164,7 @@
 //PostCommentViewController
 "post comment" = "Commenter";
 "update comment" = "Éditer";
+"validate" = "Valider";
 
 //Facebook
 "errorConnect" = "Facebook a rencontré une problème";

@@ -24,7 +24,6 @@
 
 @property (strong, nonatomic) NSString *mediaId;
 @property (strong, nonatomic) NSString *userDiscoverId;
-@property (strong, nonatomic) UIImageView *bgImgView;
 
 
 @end

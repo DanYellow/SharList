@@ -113,21 +113,16 @@
 "next episode %@" = "Next episode: %@";
 "release tomorrow" = "Tomorrow!";
 
-//"%@ Presente in %@ discoveries" = "%@ Present in %@ discoveries";
-//"%@ Present in %@ discoveries" = "%@ Present in %@ discoveries";
-//"p %@ discoveries" = "%@ discoveries";
-//
-//"%@ Present in %@ discovery" = "%@ present in 1 discovery";
-//"%@ Presente in %@ discovery" = "%@ present in 1 discovery";
+
 
 "Present of %@ discoveries" = "Present in %@ of your discoveries";
 //"Presente of %@ discoveries" = "Présente dans %@ des découvertes";
 "p %@ discoveries" = "%@ of your discoveries";
 
-"%@ Present in no discovery" = "%@ present in no discovery";
-"%@ Presente in no discovery" = "%@ present in no discovery";
+"%@ Present in no discovery" = "Present in no discovery";
+"%@ Presente in no discovery" = "Present in no discovery";
 
-// MediaMessageViewController
+// MediaCommentsViewController
 "yyyy/MM/dd at HH:mm" = "yyyy/MM/dd at HH:mm";
 "WSQuote" = "Hell is empty And \n the devils are here";
 "hell" = "enfer";
@@ -139,7 +134,11 @@
 "no comment discover" = "Your discovery hasn't yet commented";
 "no comment friend %@" = "%@ hasn't yet commented";
 "no comment user" = "You haven't yet comment";
+"close" = "Close";
 
+//PostCommentsViewController
+"comments" = "comments";
+"think about %@" = "What you think about %@";
 
 //AboutViewController
 "About" = "About";
@@ -152,6 +151,7 @@
 //PostCommentViewController
 "post comment" = "Comment";
 "update comment" = "Update";
+"validate" = "Validate";
 
 //Facebook
 "errorConnect" = "Facebook has an issue";
