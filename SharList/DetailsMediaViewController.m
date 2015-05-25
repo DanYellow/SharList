@@ -267,7 +267,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat mediaTitleLabelY = [self computeRatio:236 forDimension:imgMediaHeight];
     
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth - 30, 55)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth - 22, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;

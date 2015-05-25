@@ -11,6 +11,8 @@
 //Vendors
 #import "AFNetworking.h"
 
+#import "MediaCommentsViewController.h"
+
 @interface PostCommentViewController : UIViewController <UITextViewDelegate, NSLayoutManagerDelegate>
 {
     CGFloat screenWidth;

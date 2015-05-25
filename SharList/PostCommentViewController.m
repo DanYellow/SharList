@@ -39,9 +39,6 @@
     } else {
         self.title = [NSLocalizedString(@"post comment", nil) uppercaseString];
     }
-    
-    
-   
 }
 
 - (void)viewDidLoad {
@@ -126,7 +123,8 @@
     UIActivityIndicatorView *messageLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
     
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/usercomment"];
-    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
+    NSString *userId = @"fb456742";
+    NSDictionary *parameters = @{@"fbiduser": userId, @"imdbId": self.mediaId};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
@@ -192,6 +190,8 @@
         return;
     }
     
+    MediaCommentsViewController *mediaCommentsViewController = self.navigationController.viewControllers[0];
+    
     if (self.ishavingComment) {
         NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comment"];
         
@@ -203,6 +203,8 @@
         [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
             sender.enabled = YES;
             [self faceStatusForMessage:NSLocalizedString(@"updated comment", nil)];
+            
+            [mediaCommentsViewController loadComments];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"error : %@", error);
         }];
@@ -217,6 +219,8 @@
         [manager POST:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
             sender.enabled = YES;
             [self faceStatusForMessage:NSLocalizedString(@"sent comment", nil)];
+            
+            [mediaCommentsViewController loadComments];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"error : %@", error);
         }];

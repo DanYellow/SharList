@@ -14,7 +14,7 @@
 
 #import "PostCommentViewController.h"
 
-@interface MediaCommentsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface MediaCommentsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -24,6 +24,8 @@
 
 @property (strong, nonatomic) NSString *mediaId;
 @property (strong, nonatomic) NSString *userDiscoverId;
+
+-  (void) loadComments;
 
 
 @end

@@ -21,6 +21,7 @@
 // 2  : emptyTableView
 // 3  : highlightMessagesSV
 // 4  : searchLoadingIndicator
+// 5  : UIPageControl
 
 @implementation MediaCommentsViewController
 
@@ -92,23 +93,8 @@
     UIBarButtonItem *addEditCommentBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addMessageNavIcon"] style:UIBarButtonItemStylePlain target:self action:@selector(postNewComment:)];
     self.navigationItem.rightBarButtonItem = addEditCommentBarBtn;
     
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comments"];
 
-    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
-    
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
-    
-    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (responseObject[@"response"]) {
-            self.comments = responseObject[@"response"];
-            [self displayComments];
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-        [messagesLoadingIndicator stopAnimating];
-    }];
-    
+    [self loadComments];
     
 //    [self easterEgg];
     
@@ -180,7 +166,11 @@
     commentsTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0);
     commentsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     commentsTableView.allowsSelection = NO;
-    [self.view insertSubview:commentsTableView atIndex:1];
+    
+    if (![commentsTableView isDescendantOfView:self.view]) {
+        [self.view insertSubview:commentsTableView atIndex:1];
+    }
+   
     
     if ([self.comments count] >= 1) {
         [self displayDiscoverAndUserCommentForDatas];
@@ -254,14 +244,14 @@
     highlightMessagesSV.backgroundColor = [UIColor colorWithRed:(244.0/255.0) green:(244.0/255.0) blue:(244.0/255.0) alpha:.3];
     highlightMessagesSV.center = CGPointMake(self.view.center.x, highlightMessagesSV.center.y);
     highlightMessagesSV.pagingEnabled = YES;
+    highlightMessagesSV.delegate = self;
     highlightMessagesSV.showsHorizontalScrollIndicator = NO;
     
-    [headerView addSubview:highlightMessagesSV];
-    
+    if (![highlightMessagesSV isDescendantOfView:headerView]) {
+        [headerView addSubview:highlightMessagesSV];
+    }
     
 
-    
-    
     CALayer *highlightMessagesSVBottomBorder = [CALayer layer];
     highlightMessagesSVBottomBorder.frame = CGRectMake(-(highlightMessagesSV.frame.size.width / 2), highlightMessagesSV.frame.size.height - 1, screenWidth*3, 1.0f);
     highlightMessagesSVBottomBorder.backgroundColor = [UIColor whiteColor].CGColor;
@@ -294,9 +284,12 @@
     UIPageControl *highlightMessagesPC = [[UIPageControl alloc] initWithFrame:CGRectMake(0, highlightMessagesSV.frame.size.height - 22, screenWidth, 20)];
     highlightMessagesPC.numberOfPages = loopIteration;
     highlightMessagesPC.currentPage = 0;
+    highlightMessagesPC.tag = 5;
     highlightMessagesPC.hidesForSinglePage = YES;
     highlightMessagesPC.backgroundColor = [UIColor clearColor];
-    [headerView addSubview:highlightMessagesPC];
+    if (![highlightMessagesPC isDescendantOfView:headerView]) {
+        [headerView addSubview:highlightMessagesPC];
+    }
     
     
     // 10205919757172919
@@ -340,12 +333,17 @@
         UIView *discoverCommentView = [[UIView alloc] initWithFrame:discoverCommentViewFrame];
         discoverCommentView.opaque = YES;
         discoverCommentView.backgroundColor = [UIColor clearColor];
-        [highlightMessagesSV addSubview:discoverCommentView];
+        if (![discoverCommentView isDescendantOfView:highlightMessagesSV]) {
+            [highlightMessagesSV addSubview:discoverCommentView];
+        }
         
         UILabel *discoverCommentViewLabel = [[UILabel alloc] initWithFrame:CGRectMake(18, 18, screenWidth, 14)];
         discoverCommentViewLabel.textColor = [UIColor colorWithRed:(41.0/255.0) green:(41.0/255.0) blue:(41.0/255.0) alpha:1.0];
         discoverCommentViewLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:12.0];
-        [discoverCommentView addSubview:discoverCommentViewLabel];
+        
+        if (![discoverCommentViewLabel isDescendantOfView:discoverCommentView]) {
+            [discoverCommentView addSubview:discoverCommentViewLabel];
+        }
         
         int discoverCommentViewTextViewY = discoverCommentViewLabel.frame.size.height + discoverCommentViewLabel.frame.origin.y + 6;
         UITextView *discoverCommentViewTextView = [[UITextView alloc] initWithFrame:CGRectMake(18, discoverCommentViewTextViewY, floorf(((screenWidth * 85.53125) / 100)), 70)];
@@ -357,14 +355,18 @@
         discoverCommentViewTextView.contentInset = UIEdgeInsetsMake(-10, -5, 0, 0);
         discoverCommentViewTextView.scrollEnabled = NO;
         discoverCommentViewTextView.backgroundColor = [UIColor clearColor];
-        [discoverCommentView addSubview:discoverCommentViewTextView];
+        if (![discoverCommentViewTextView isDescendantOfView:discoverCommentView]) {
+            [discoverCommentView addSubview:discoverCommentViewTextView];
+        }
         
         UILabel *dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, discoverCommentView.frame.size.height - 20, discoverCommentView.frame.size.width - 21, 13)];
         dateMessageLabel.textAlignment = NSTextAlignmentRight;
         
         dateMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
         dateMessageLabel.textColor = [UIColor colorWithRed:(41.0/255.0) green:(41.0/255.0) blue:(41.0/255.0) alpha:1.0];
-        [discoverCommentView addSubview:dateMessageLabel];
+        if (![dateMessageLabel isDescendantOfView:discoverCommentView]) {
+            [discoverCommentView addSubview:dateMessageLabel];
+        }
         
         
         if (datas) {
@@ -421,6 +423,44 @@
         }
     }
 }
+
+-  (void) loadComments
+{
+    UIActivityIndicatorView *messagesLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
+    
+    UITableView *commentsTableView = (UITableView*)[self.view viewWithTag:1];
+//    [commentsTableView removeFromSuperview];
+    
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comments"];
+    
+    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
+    
+    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (responseObject[@"response"]) {
+            self.comments = responseObject[@"response"];
+            
+            if ([commentsTableView isDescendantOfView:self.view]) {
+                if ([self.comments count] >= 1) {
+                    [self displayDiscoverAndUserCommentForDatas];
+                }
+                [commentsTableView reloadData];
+            } else {
+                [self displayComments];
+            }
+            
+            
+            
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+        [messagesLoadingIndicator stopAnimating];
+    }];
+}
+
+
 
 - (void) postNewComment:(id)sender
 {
@@ -496,7 +536,7 @@
     
     message = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"];
     
-    UITextView *messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 10, floorf(((screenWidth * 85.53125) / 100)), 76)];
+    UITextView *messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 14, floorf(((screenWidth * 85.53125) / 100)), 76)];
     messageLabel.text = message;
     messageLabel.editable = NO;
     messageLabel.tag = 60;
@@ -563,6 +603,7 @@
         UIActivityIndicatorView *messagesLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
         [messagesLoadingIndicator stopAnimating];
     } else {
+        emptyTableView.hidden = YES;
         // We show the header if there are messages
         tableView.tableHeaderView.hidden = NO;
     }
@@ -596,16 +637,20 @@
     messageLabel.alpha = 1;
 }
 
-- (void) addEditComment:(UIBarButtonItem*)sender
-{
-    
-}
-
 - (void) dismissModal
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
+#pragma mark - delegate function
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)sender
+{
+    uint page = sender.contentOffset.x / sender.frame.size.width;
+    
+    UIPageControl *highlightMessagesPC = (UIPageControl*)[self.view viewWithTag:5];
+    [highlightMessagesPC setCurrentPage:page];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
