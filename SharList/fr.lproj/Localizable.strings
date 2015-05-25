@@ -165,6 +165,8 @@
 "post comment" = "Commenter";
 "update comment" = "Éditer";
 "validate" = "Valider";
+"sent comment" = "Commentaire envoyé";
+"updated comment" = "Commentaire mis à jour";
 
 //Facebook
 "errorConnect" = "Facebook a rencontré une problème";

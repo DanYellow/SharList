@@ -152,6 +152,8 @@
 "post comment" = "Comment";
 "update comment" = "Update";
 "validate" = "Validate";
+"sent comment" = "Comment updated";
+"updated comment" = "Comment send";
 
 //Facebook
 "errorConnect" = "Facebook has an issue";

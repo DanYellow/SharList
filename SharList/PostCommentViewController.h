@@ -17,9 +17,11 @@
     CGFloat screenHeight;
     
     NSDictionary *settingsDict;
+    NSString *commentId;
 }
 
 
 @property (strong, nonatomic) NSString *mediaId;
+@property (nonatomic, assign, getter=ishavingComment) BOOL havingComment;
 
 @end

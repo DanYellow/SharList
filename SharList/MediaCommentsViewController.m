@@ -11,6 +11,7 @@
 @interface MediaCommentsViewController ()
 
 @property(strong, nonatomic) NSMutableArray *comments;
+@property (nonatomic, assign, getter=ishavingComment) BOOL havingComment;
 
 @end
 
@@ -61,6 +62,8 @@
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
+    self.havingComment = NO;
+    
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
     // Build the array from the plist
     settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
@@ -100,7 +103,6 @@
         if (responseObject[@"response"]) {
             self.comments = responseObject[@"response"];
             [self displayComments];
-//            NSLog(@"messages : %@", self.messages);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
@@ -180,7 +182,7 @@
     commentsTableView.allowsSelection = NO;
     [self.view insertSubview:commentsTableView atIndex:1];
     
-    if ([self.comments count] > 1) {
+    if ([self.comments count] >= 1) {
         [self displayDiscoverAndUserCommentForDatas];
     }
     
@@ -353,9 +355,11 @@
         
         
         if (datas) {
+            // User has comment
             if ([userId isEqualToString:[datas valueForKeyPath:@"fbId"]]) {
                 discoverCommentViewLabel.text = NSLocalizedString(@"comment user", nil);
                 discoverCommentViewTextView.alpha = 1;
+                self.havingComment = YES;
             } else {
                 // It's an user's facebook friend
                 if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[datas valueForKeyPath:@"fbId"]]) {
@@ -410,6 +414,7 @@
     PostCommentViewController *postCommentViewController = [PostCommentViewController new];
     postCommentViewController.view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.7];
     postCommentViewController.mediaId = self.mediaId;
+    postCommentViewController.havingComment = self.havingComment;
 
     
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];
@@ -484,12 +489,6 @@
     messageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
     messageLabel.textColor = [UIColor whiteColor];
    
-    NSString *discoveryId = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"fbId"];
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:discoveryId]) {
-         messageLabel.alpha = 1;
-    } else {
-         messageLabel.alpha = .01;
-    }
     messageLabel.showsVerticalScrollIndicator = NO;
     messageLabel.scrollEnabled = NO;
     messageLabel.contentInset = UIEdgeInsetsMake(-10, 0, 0, 0);
@@ -509,13 +508,26 @@
     
     UILabel *dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 15, messageContainer.frame.size.width, 13)];
     dateMessageLabel.textAlignment = NSTextAlignmentRight;
-    dateMessageLabel.text =  [dateFormatter stringFromDate:dateMessage];
+    dateMessageLabel.text = [dateFormatter stringFromDate:dateMessage];
     dateMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
     dateMessageLabel.textColor = [UIColor colorWithRed:(124.0/255.0) green:(124.0/255.0) blue:(124.0/255.0) alpha:1.0];
     dateMessageLabel.layer.shadowColor = [UIColor blackColor].CGColor;
     dateMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
     dateMessageLabel.layer.shadowOpacity = .95f;
     [messageContainer addSubview:dateMessageLabel];
+    
+    
+    NSString *discoveryId = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"fbId"];
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:discoveryId]) {
+        messageLabel.alpha = 1;
+        
+        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", discoveryId]];
+        NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] stringByAppendingString:@" • "];
+        dateMessageLabel.text = [firstNameFirstLetter stringByAppendingString:dateMessageLabel.text];
+    } else {
+        messageLabel.alpha = .005;
+    }
+    
     
     [cell.contentView addSubview:messageContainer];
     
