@@ -904,6 +904,7 @@
     
     DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
     detailsMediaViewController.mediaDatas = selectedCell.model;
+    detailsMediaViewController.userDiscoverId = self.metUserId;
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 

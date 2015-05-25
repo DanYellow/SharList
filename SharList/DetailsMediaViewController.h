@@ -76,6 +76,7 @@
 @property (nonatomic, strong) NSString *numberLikesString;
 @property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;
 @property (nonatomic, assign) NSMutableDictionary *mediaDatasDict;
+@property (strong, nonatomic) NSString *userDiscoverId;
 
 
 - (UIImage *) takeSnapshotOfView:(UIView *)view;

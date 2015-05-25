@@ -135,6 +135,7 @@
 
         if ([responseObject valueForKeyPath:@"response.text"] != (id)[NSNull null]) {
             postField.text = [responseObject valueForKeyPath:@"response.text"];
+            self.oldComment = postField.text;
             commentId = [responseObject valueForKeyPath:@"response.commentId"];
         }
 
@@ -143,7 +144,7 @@
         [postField becomeFirstResponder];
         [messageLoadingIndicator stopAnimating];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
+//        NSLog(@"Error: %@", error);
         [messageLoadingIndicator stopAnimating];
     }];
 }
@@ -185,7 +186,7 @@
     UITextView *postField = (UITextView*)[self.view viewWithTag:2];
     sender.enabled = NO;
     
-    if (postField.text.length <= 0) {
+    if (postField.text.length <= 0 || [self.oldComment isEqualToString:postField.text]) {
         // TODO : error for empty message
         sender.enabled = YES;
         return;

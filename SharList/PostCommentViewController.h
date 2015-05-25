@@ -22,6 +22,7 @@
 
 
 @property (strong, nonatomic) NSString *mediaId;
+@property (strong, nonatomic) NSString *oldComment;
 @property (nonatomic, assign, getter=ishavingComment) BOOL havingComment;
 
 @end

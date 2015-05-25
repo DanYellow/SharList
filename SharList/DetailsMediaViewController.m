@@ -1240,7 +1240,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     MediaCommentsViewController *mediaCommentsViewController = [MediaCommentsViewController new];
     mediaCommentsViewController.mediaId = self.mediaDatas[@"imdbID"];
-
+    mediaCommentsViewController.userDiscoverId = self.userDiscoverId;
     
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];
     bluredImageView.alpha = 0.99f;
@@ -1346,7 +1346,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // 7 secondes after update user list we update the database with new datas
         // Like this we are "sure" that user really wants to add this media to his list
         
-        [self performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:0.5]; // 7.0
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(synchronizeUserListWithServer) object:nil];
+        [self performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.0]; // 7.0
         // [pfPushManager notifyUpdateList];
         
         [self cancelLocalNotificationWithValueForKey:@"updateList"];

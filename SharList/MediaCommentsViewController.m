@@ -254,16 +254,13 @@
     highlightMessagesSV.backgroundColor = [UIColor colorWithRed:(244.0/255.0) green:(244.0/255.0) blue:(244.0/255.0) alpha:.3];
     highlightMessagesSV.center = CGPointMake(self.view.center.x, highlightMessagesSV.center.y);
     highlightMessagesSV.pagingEnabled = YES;
-    highlightMessagesSV.contentSize = CGSizeMake(screenWidth*2, 140);
     highlightMessagesSV.showsHorizontalScrollIndicator = NO;
     
     [headerView addSubview:highlightMessagesSV];
     
-    UIPageControl *highlightMessagesPC = [[UIPageControl alloc] initWithFrame:CGRectMake(0, highlightMessagesSV.frame.size.height - 22, screenWidth, 20)];
-    highlightMessagesPC.numberOfPages = 2;
-    highlightMessagesPC.currentPage = 0;
-    highlightMessagesPC.backgroundColor = [UIColor clearColor];
-    [headerView addSubview:highlightMessagesPC];
+    
+
+    
     
     CALayer *highlightMessagesSVBottomBorder = [CALayer layer];
     highlightMessagesSVBottomBorder.frame = CGRectMake(-(highlightMessagesSV.frame.size.width / 2), highlightMessagesSV.frame.size.height - 1, screenWidth*3, 1.0f);
@@ -281,11 +278,25 @@
     NSString *userId = @"fb456742";
     
     NSString *discoveryId = nil;
+    
+    // Manage the case which the user reach the page without a discover
+    int loopIteration = 0;
+    
     if (self.userDiscoverId) {
-        
+        loopIteration = 2;
     } else {
-        discoveryId = @"fb456745"; //10205919757172919 | fb456745
+//        discoveryId = @"fb456745"; //10205919757172919 | fb456745
+        loopIteration = 1;
     }
+    
+    highlightMessagesSV.contentSize = CGSizeMake(screenWidth*loopIteration, 140);
+    
+    UIPageControl *highlightMessagesPC = [[UIPageControl alloc] initWithFrame:CGRectMake(0, highlightMessagesSV.frame.size.height - 22, screenWidth, 20)];
+    highlightMessagesPC.numberOfPages = loopIteration;
+    highlightMessagesPC.currentPage = 0;
+    highlightMessagesPC.hidesForSinglePage = YES;
+    highlightMessagesPC.backgroundColor = [UIColor clearColor];
+    [headerView addSubview:highlightMessagesPC];
     
     
     // 10205919757172919
@@ -297,25 +308,27 @@
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] initWithArray:[filteredDiscover arrayByAddingObjectsFromArray:filteredUser]];
 
-    // Manage the case which the user reach the page without a discover
-    int loopIteration = 2;
     
-    // We add a null object at index 0 if the user discover
-    // doesn't made a meeting
-    if ([filteredDatas count] == 1) {
-        [filteredDatas insertObject:[NSNull null] atIndex:0];
+    if (self.userDiscoverId) {
+        // We add a null object at index 0 if the user discover
+        // doesn't made a meeting
+        if ([filteredDatas count] == 1) {
+            [filteredDatas insertObject:[NSNull null] atIndex:0];
+        }
+        
+        // There no data for current user and the user discovered
+        if ([filteredDatas count] == 0) {
+            [filteredDatas insertObject:[NSNull null] atIndex:0];
+            [filteredDatas insertObject:[NSNull null] atIndex:1];
+        }
+    } else {
+        
     }
-    
-    // There no data for current user and the user discovered
-    if ([filteredDatas count] == 0) {
-        [filteredDatas insertObject:[NSNull null] atIndex:0];
-        [filteredDatas insertObject:[NSNull null] atIndex:1];
-    }
+
     
     for (int i = 0; i < loopIteration; i++) {
         NSMutableDictionary *datas;
-
-        if (![filteredDatas[i] isEqual:[NSNull null] ]) {
+        if ( [filteredDatas count] > 0 && ![filteredDatas[i] isEqual:[NSNull null] ]) {
             datas = [[NSMutableDictionary alloc] initWithDictionary:filteredDatas[i]];
         }
         
@@ -390,7 +403,8 @@
             
             dateMessageLabel.text =  [dateFormatter stringFromDate:dateMessage];
         } else {
-            if (i == 1) {
+            // if self.userDiscoverId is nil so uer access the view directly from search engine
+            if (i == 1 || self.userDiscoverId == nil) {
                 discoverCommentViewLabel.text = NSLocalizedString(@"no comment user", nil);
             } else {
                 if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:discoveryId]) {
