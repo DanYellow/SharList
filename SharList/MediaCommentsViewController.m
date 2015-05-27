@@ -22,6 +22,7 @@
 // 3  : highlightMessagesSV
 // 4  : searchLoadingIndicator
 // 5  : UIPageControl
+// 5678  : warningMessageView
 
 @implementation MediaCommentsViewController
 
@@ -86,6 +87,8 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.view addSubview:messagesLoadingIndicator];
         [messagesLoadingIndicator startAnimating];
+        
+        [self showWarningMessage];
     });
     
     
@@ -98,7 +101,7 @@
     
 //    [self easterEgg];
     
-
+    
 }
 
 - (void) easterEgg
@@ -399,7 +402,7 @@
             
             // Exemple date : 2015-05-10 17:28:12
             NSDateFormatter *dateFormatter = [NSDateFormatter new];
-            dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+            dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.ssssss";
             NSDate *dateMessage = [dateFormatter dateFromString:[datas valueForKeyPath:@"comment.date.date"]];
             dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd at HH:mm" , nil);
             
@@ -424,6 +427,80 @@
     }
 }
 
+- (void) showWarningMessage
+{
+    UIView *warningMessageView = [[UIView alloc] initWithFrame:self.view.frame];
+    warningMessageView.tag = 5678;
+    warningMessageView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.85];
+    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];
+    bluredImageView.alpha = 1.0f;
+    [bluredImageView setFrame:warningMessageView.frame];
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = bluredImageView.bounds;
+    
+    [bluredImageView addSubview:visualEffectView];
+    [warningMessageView addSubview:bluredImageView];
+    
+    [[[UIApplication sharedApplication] keyWindow] addSubview:warningMessageView];
+    
+    float percentHeight = (150*100)/screenHeight;
+    UIView *warningMessageViewContainer = [[UIView alloc] initWithFrame:CGRectMake(0, (percentHeight*screenHeight)/100, screenWidth, screenHeight-(percentHeight*screenHeight)/100)];
+    warningMessageViewContainer.backgroundColor = [UIColor clearColor];
+    
+    UIImageView *warningPictoContainer = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
+    warningPictoContainer.image = [[UIImage imageNamed:@"warning-picto"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    warningPictoContainer.center = CGPointMake(self.view.center.x, 0.0);
+    warningPictoContainer.tintColor = [UIColor whiteColor];
+    warningPictoContainer.backgroundColor = [UIColor clearColor];
+    warningPictoContainer.contentMode = UIViewContentModeScaleAspectFill;
+    [warningMessageViewContainer addSubview:warningPictoContainer];
+    
+    
+    NSUInteger warningMessageY = warningPictoContainer.frame.size.height - 30;
+    
+    UITextView *warningMessage = [[UITextView alloc] initWithFrame:CGRectMake(0, warningMessageY, 225, 110)];
+    warningMessage.text = [NSLocalizedString(@"warning message", nil) uppercaseString];
+    warningMessage.textColor = [UIColor whiteColor];
+    warningMessage.center = CGPointMake(self.view.center.x, warningMessage.center.y);
+    warningMessage.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+    warningMessage.textAlignment = NSTextAlignmentCenter;
+//    [warningMessage sizeToFit];
+    warningMessage.backgroundColor = [UIColor clearColor];
+    [warningMessageViewContainer addSubview:warningMessage];
+    
+    UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
+    [endTutorial addTarget:self action:@selector(hideTutorial) forControlEvents:UIControlEventTouchUpInside];
+    [endTutorial setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
+    endTutorial.frame = CGRectMake(0, warningMessageViewContainer.frame.size.height - 150, screenWidth, 49);
+    endTutorial.tintColor = [UIColor whiteColor];
+    [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+    [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
+    
+    [warningMessageViewContainer addSubview:endTutorial];
+    
+    [warningMessageView addSubview:warningMessageViewContainer];
+}
+
+- (void) hideTutorial
+{
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    UIView *tutorialView = (UIView*)[[[UIApplication sharedApplication] keyWindow] viewWithTag:5678];
+    [UIView animateWithDuration:0.25 delay:0.1
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         tutorialView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [tutorialView removeFromSuperview];
+                     }];
+}
+
 -  (void) loadComments
 {
     UIActivityIndicatorView *messagesLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
@@ -431,7 +508,7 @@
     UITableView *commentsTableView = (UITableView*)[self.view viewWithTag:1];
 //    [commentsTableView removeFromSuperview];
     
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comments"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comments"];
     
     NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
     
@@ -439,7 +516,7 @@
     [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
     
     [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (responseObject[@"response"]) {
+        if (responseObject[@"response"] != nil) {
             self.comments = responseObject[@"response"];
             
             if ([commentsTableView isDescendantOfView:self.view]) {
@@ -450,9 +527,6 @@
             } else {
                 [self displayComments];
             }
-            
-            
-            
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
@@ -554,11 +628,13 @@
     
     // Exemple date : 2015-05-10 17:28:12
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.ssssss";
     
     NSDate *dateMessage = [dateFormatter dateFromString:dateMessageString];
     
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd at HH:mm" , nil);
+    
+    NSLog(@"dateMessageString : %@ | %@", dateMessageString, [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.date"]);
     
     UILabel *dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 15, messageContainer.frame.size.width, 13)];
     dateMessageLabel.textAlignment = NSTextAlignmentRight;
@@ -569,7 +645,7 @@
     dateMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
     dateMessageLabel.layer.shadowOpacity = .95f;
     [messageContainer addSubview:dateMessageLabel];
-    
+
     
     NSString *discoveryId = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"fbId"];
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:discoveryId]) {
@@ -577,6 +653,7 @@
         
         NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", discoveryId]];
         NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] stringByAppendingString:@" • "];
+        
         dateMessageLabel.text = [firstNameFirstLetter stringByAppendingString:dateMessageLabel.text];
     } else {
         messageLabel.alpha = .005;

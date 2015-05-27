@@ -146,6 +146,7 @@
 "no comment friend %@" = "%@ n'a pas encore commenté";
 "no comment user" = "Vous n'avez pas encore commenté";
 "close" = "Fermer";
+"warning message" = "Certains commentaires peuvent SPOILER \n \n APPUyez longuement pour les afficher";
 
 //PostCommentsViewController
 "comments" = "commentaires";

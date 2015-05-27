@@ -290,7 +290,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     // This NSDict will be used to set id to local media
     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media"];
     
     NSDictionary *parameters = @{@"imdbId": self.mediaDatas[@"imdbID"]};
 
@@ -1372,7 +1372,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) synchronizeUserListWithServer
 {
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/list"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
     
     NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"list": [self updateTasteForServer]};
 

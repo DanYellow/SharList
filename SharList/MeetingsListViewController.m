@@ -184,7 +184,10 @@
     
     //    [userMeetingsListTableView scrollToRowAtIndexPath:0 atScrollPosition:UITableViewScrollPositionTop animated:NO];
     
-    [self.view addSubview:userMeetingsListTableView];
+    if (![userMeetingsListTableView isDescendantOfView:self.view]) {
+        [self.view addSubview:userMeetingsListTableView];
+    }
+    
     
     // Message for empty list meetings
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  in a meeting to add it among your favorites", nil)];

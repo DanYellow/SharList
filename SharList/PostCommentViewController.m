@@ -122,7 +122,7 @@
     UITextView *postField = (UITextView*)[self.view viewWithTag:2];
     UIActivityIndicatorView *messageLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
     
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/usercomment"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/usercomment"];
     NSString *userId = @"fb456742";
     NSDictionary *parameters = @{@"fbiduser": userId, @"imdbId": self.mediaId};
     
@@ -193,7 +193,7 @@
     MediaCommentsViewController *mediaCommentsViewController = self.navigationController.viewControllers[0];
     
     if (self.ishavingComment) {
-        NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comment"];
+        NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comment"];
         
         NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId, @"text": postField.text, @"commentId": commentId};
         
@@ -203,13 +203,13 @@
         [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
             sender.enabled = YES;
             [self faceStatusForMessage:NSLocalizedString(@"updated comment", nil)];
-            
+            [self.view endEditing:YES];
             [mediaCommentsViewController loadComments];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"error : %@", error);
         }];
     } else {
-        NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/comment"];
+        NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comment"];
         
         NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId, @"text": postField.text};
         
@@ -219,7 +219,7 @@
         [manager POST:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
             sender.enabled = YES;
             [self faceStatusForMessage:NSLocalizedString(@"sent comment", nil)];
-            
+            [self.view endEditing:YES];
             [mediaCommentsViewController loadComments];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"error : %@", error);

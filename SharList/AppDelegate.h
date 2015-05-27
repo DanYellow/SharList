@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
+// http://192.168.1.79/ShoundAPI/web/
+// http://api2.shound.fr/
+
 #import <FacebookSDK/FacebookSDK.h>
 
 #import "ViewController.h"

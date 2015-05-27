@@ -135,6 +135,7 @@
 "no comment friend %@" = "%@ hasn't yet commented";
 "no comment user" = "You haven't yet comment";
 "close" = "Close";
+"warning message" = "Some comments can spoil \n \n Press and hold to display them";
 
 //PostCommentsViewController
 "comments" = "comments";
