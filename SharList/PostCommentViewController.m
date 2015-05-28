@@ -123,7 +123,7 @@
     UIActivityIndicatorView *messageLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
     
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/usercomment"];
-    NSString *userId = @"fb456742";
+    NSString *userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
     NSDictionary *parameters = @{@"fbiduser": userId, @"imdbId": self.mediaId};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -195,7 +195,7 @@
     if (self.ishavingComment) {
         NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comment"];
         
-        NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId, @"text": postField.text, @"commentId": commentId};
+        NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId, @"text": postField.text, @"commentId": commentId};
         
         AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
         [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
@@ -211,7 +211,7 @@
     } else {
         NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comment"];
         
-        NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId, @"text": postField.text};
+        NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId, @"text": postField.text};
         
         AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
         [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];

@@ -268,9 +268,9 @@
     
     commentsTableView.tableHeaderView = headerView;
     
-    NSString *userId = @"fb456742";
-    
-    NSString *discoveryId = nil;
+    NSString *userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
+
+    NSString *discoveryId = self.userDiscoverId;
     
     // Manage the case which the user reach the page without a discover
     int loopIteration = 0;
@@ -294,7 +294,7 @@
         [headerView addSubview:highlightMessagesPC];
     }
     
-    
+    NSLog(@"self.comments : %@", self.comments);
     // 10205919757172919
     NSPredicate *predicateDiscover = [NSPredicate predicateWithFormat:@"fbId == %@", discoveryId];
     NSArray *filteredDiscover = [[NSArray alloc] initWithArray:[self.comments filteredArrayUsingPredicate:predicateDiscover]];
@@ -506,11 +506,11 @@
     UIActivityIndicatorView *messagesLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
     
     UITableView *commentsTableView = (UITableView*)[self.view viewWithTag:1];
-//    [commentsTableView removeFromSuperview];
     
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comments"];
     
-    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"imdbId": self.mediaId};
+
+    NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];

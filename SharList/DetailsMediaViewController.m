@@ -208,7 +208,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     NSDictionary *queryParams;
     NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
     __block NSString *trailerID = @"";
-    
+
     // Tricky part
     // We used now themoviedb
     // But database still have ids from imdb and only movie in themoviedb uses them

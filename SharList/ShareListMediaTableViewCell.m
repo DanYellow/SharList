@@ -31,39 +31,10 @@
     return self;
 }
 
-//- (void)layoutSubviews
-//{
-//    [super layoutSubviews];
-//    
-//    CGRect textLabelFrame = self.textLabel.frame;
-//    textLabelFrame.size.width = ([[UIScreen mainScreen] bounds].size.width - 50);
-//    self.textLabel.frame = textLabelFrame;
-//}
 
 - (void) layoutSubviews
 {
     [super layoutSubviews];
-//    NSLog(@"self.imageView.frame : %@", NSStringFromCGRect(self.imageView.frame));
-//    self.imageView.frame = CGRectMake( 10, self.imageView.frame.origin.y, 22, 22 ); // your positioning here
-    
-//    self sty
-//    CGRect textLabelFrame = self.textLabel.frame;
-//    textLabelFrame.origin.x = 22;
-//    self.textLabel.frame = textLabelFrame;
-    
-
-//
-//    UIImageView *meetingFavoriteSelectedImgView = [[UIImageView alloc] initWithFrame:CGRectMake(15, (self.frame.size.height / 2) - 11, 22, 22)];
-//    if (_favorite) {
-//        CGRect textLabelFrame = self.textLabel.frame;
-//        textLabelFrame.origin.x = 22;
-//        self.textLabel.frame = textLabelFrame;
-//        self.imageView.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-////        [self.contentView insertSubview:meetingFavoriteSelectedImgView belowSubview:self.textLabel];
-//    } else {
-//        self.imageView.image = nil;
-////        [meetingFavoriteSelectedImgView removeFromSuperview];
-//    }
 }
 
 - (void) setModel:(id)s

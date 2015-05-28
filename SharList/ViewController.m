@@ -370,9 +370,9 @@
     
     [currentUserFBView addSubview:followersLabelContainerBtn];
     // apiPath | apiPathBeta
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/followers"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/followers"];
     
-    NSDictionary *parameters = @{@"fbiduser": @"fb456742"};
+    NSDictionary *parameters = @{@"fbiduser": [userPreferences objectForKey:@"currentUserfbID"]};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
@@ -598,8 +598,8 @@
     }
 
    
-    NSString *linkAPI = [settingsDict valueForKey:@"apiPath"];
-    linkAPI = [linkAPI stringByAppendingString:@"search.php"];
+    NSString *linkAPI = [settingsDict valueForKey:@"apiPathV2"];
+    linkAPI = [linkAPI stringByAppendingString:@"media.php/media/search"];
    // Loading indicator of the app
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
     loadingIndicator.center = self.view.center;
@@ -609,11 +609,12 @@
     
     [self.view insertSubview:loadingIndicator aboveSubview:self.searchController.searchBar];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    [manager POST:linkAPI parameters:@{ @"query" : query } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager.requestSerializer setValue:@"search engine" forHTTPHeaderField:@"X-Shound"];
+    [manager GET:linkAPI parameters:@{ @"name" : query } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (completion)
-            completion(responseObject);
+            completion(responseObject[@"response"]);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+
 //        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:@"Oups" message:@"Il semblerait qu'on ait du mal à afficher cette fiche. \n Réessayez plus tard." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
 //        [errConnectionAlertView show];
 //        [loadingIndicator stopAnimating];
@@ -933,8 +934,15 @@
             cell.detailTextLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
             cell.detailTextLabel.layer.shadowOpacity = .95f;
         }
+//        NSLog(@"[rowsOfSection objectAtIndex:indexPath.row] : %@", [rowsOfSection objectAtIndex:indexPath.row]);
         
-        cell.model = [rowsOfSection objectAtIndex:indexPath.row];
+        NSDictionary *cellModelDict = @{
+                                        @"name": [rowsOfSection objectAtIndex:indexPath.row][@"name"],
+                                        @"type": [rowsOfSection objectAtIndex:indexPath.row][@"type"],
+                                        @"imdbID": [rowsOfSection objectAtIndex:indexPath.row][@"imdbId"]
+                                        };
+        
+        cell.model = cellModelDict;
 
 
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
@@ -1504,11 +1512,11 @@
 
 - (void) getUserLikesForSender:(UIButton*)sender
 {    
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
     NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
-//    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];
-    NSString *queryParams = @"?fbiduser=fb456742";
+    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];
+//    NSString *queryParams = @"?fbiduser=fb456742";
     
 
     shoundAPIPath = [shoundAPIPath stringByAppendingString:queryParams];
@@ -1591,10 +1599,10 @@
 - (void) synchronizeUserListWithServer
 {
     UIButton *getUserFacebookLikesBtn = (UIButton*)[self.view viewWithTag:11];
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/list"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
 
     
-    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"list": userTasteDict};
+    NSDictionary *parameters = @{@"fbiduser": [userPreferences objectForKey:@"currentUserfbID"], @"list": userTasteDict};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
