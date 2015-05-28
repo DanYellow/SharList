@@ -24,6 +24,11 @@
 
 @protocol UpdateMeetingsListDelegate;
 
+typedef NS_ENUM(NSInteger, FollowingStatus) {
+    Unfollow = 0,
+    Follow = 1
+};
+
 @interface DetailsMeetingViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate>
 {
     CGFloat screenWidth;

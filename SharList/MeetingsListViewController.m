@@ -1121,8 +1121,8 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, @"NO"];
+    NSString *currentUserfbID = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", currentUserfbID];
     
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
@@ -1156,11 +1156,12 @@
 - (void) startFetchingRandomUser
 {
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == NO) {
-        NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-        NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@", (long)currentUserfbID, @"NO"];
+        NSString *currentUserfbID = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
+        NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", currentUserfbID];
         
         [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             if (error) {
+                NSLog(@"error : %@", error);
                 [loadingIndicator stopAnimating];
                 [self noInternetAlert];
             } else {
@@ -1191,7 +1192,7 @@
 }
 
 
-- (NSMutableURLRequest*) fetchUsersDatasQueryWithUrlWithParams:(NSString*)anURL
+- (NSMutableURLRequest*) fetchUsersDatasQueryWithUrlWithParams:(NSString*)params
 {
     self.navigationItem.rightBarButtonItem.enabled = NO;
     
@@ -1200,15 +1201,18 @@
     // Build the array from the plist
     NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"]];
+    NSString *urlString = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/met?"];
+    urlString = [urlString stringByAppendingString:params];
+    
+    NSURL *aUrl = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:15.0];
-    [request setHTTPMethod:@"POST"];
+                                                       timeoutInterval:9.0];
+    [request setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    [request setHTTPMethod:@"GET"];
     
 
-    [request setHTTPBody:[anURL dataUsingEncoding:NSUTF8StringEncoding]];
-    
+//    [request setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
     return request;
 }
 
@@ -1219,7 +1223,7 @@
     [self.locationManager stopUpdatingLocation];
 
     NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&geolocenabled=%@&latitude=%f&longitude=%f", (long)currentUserfbID, @"YES", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&isGeolocEnabled=%@&latitude=%f&longitude=%f", (long)currentUserfbID, @"true", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
     
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
@@ -1237,9 +1241,12 @@
     NSString *responseString = [[NSString alloc] initWithData:datas encoding:NSUTF8StringEncoding];
     NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
     
+    NSDictionary *response = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    
+    
     // datas from random user "met"
-    NSMutableDictionary *randomUserDatas = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-
+    NSMutableDictionary *randomUserDatas = [[NSMutableDictionary alloc] initWithDictionary:[response valueForKey:@"response"]];
+    
     // No datas retrieve from server
     // Maybe for geoloc
     if (randomUserDatas == nil) {
@@ -1273,15 +1280,19 @@
     
     NSNumberFormatter *formatNumber = [[NSNumberFormatter alloc] init];
     [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
-    NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbiduser"]];
+    NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbId"]];
     
     
     // this var contains string raw of user taste. It should be converted to a NSDictionnary
-    NSData *stringData = [[randomUserDatas objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *stringData = [[NSString stringWithFormat:@"%@", [randomUserDatas objectForKey:@"list"]] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
     
+//    NSLog(@"%@", [NSString stringWithCString:contentString encoding:NSUTF8StringEncoding]);
+//    NSLog(@"%@ | %@", [NSString stringWithFormat:@"%@", [randomUserDatas objectForKey:@"list"]], randomUserTaste);
+    
+    return;
     // The server send bad json
-    if([NSJSONSerialization JSONObjectWithData:stringData options:kNilOptions error:nil] == nil) {
+    if([randomUserDatas objectForKey:@"list"] == nil) {
         // We try to get new meeting from server with good json
         if (numberOfJSONErrors > 2) {
             UIAlertView *numberOfJSONErrorsMaxReachedAlert = [[UIAlertView alloc] initWithTitle:@"Oops" message:NSLocalizedString(@"numberOfJSONErrorsMaxReached", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -1296,7 +1307,7 @@
     }
     
     // The user's data is transform to nsdata to be putable in a CoreData model
-    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
+    NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[randomUserDatas objectForKey:@"list"]];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
     UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
@@ -1327,11 +1338,11 @@
         oldUserTaste.lastMeeting = [NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
         
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
+        if ([[response valueForKey:@"isGeolocated"] boolValue] == YES)
             oldUserTaste.isRandomDiscover = NO;
     } else {
         // It's a new user
-        // So we create a entity in CD for him
+        // So we create a entity in CoreData for him
         UserTaste *userTaste = [UserTaste MR_createEntity];
         userTaste.taste = arrayData;
         userTaste.fbid = randomUserfbID;
@@ -1339,7 +1350,7 @@
         userTaste.isFavorite = NO;
         userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
         
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
+        if ([[response valueForKey:@"isGeolocated"] boolValue] == YES)
             userTaste.isRandomDiscover = NO;
     }
 

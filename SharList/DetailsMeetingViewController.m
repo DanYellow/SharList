@@ -23,6 +23,7 @@
 // 5 : metUserFBImgView
 // 6 : refreshBtn
 // 7 : UIRefreshControl
+// 8 : statCount
 
 @implementation DetailsMeetingViewController
 
@@ -299,19 +300,22 @@
     
     followersTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
     followersTitle.textAlignment = NSTextAlignmentRight;
-    [followersLabelContainerBtn addSubview:followersTitle];
-    
+    if (![followersTitle isDescendantOfView:followersLabelContainerBtn]) {
+        [followersLabelContainerBtn addSubview:followersTitle];
+    }
     
     UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(-22, followersLabelContainerBtn.frame.size.height - 34, widthViews + 10, 35.0)];
     statCount.textColor = [UIColor whiteColor];
     statCount.backgroundColor = [UIColor clearColor];
     statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
     statCount.text = [NSString stringWithFormat:@"%@", numberOfFollowers];
+    statCount.tag = 8;
     statCount.backgroundColor = [UIColor clearColor];
     statCount.textAlignment = NSTextAlignmentRight;
     [followersLabelContainerBtn addSubview:statCount];
-    
-    [metUserFBView addSubview:followersLabelContainerBtn];
+    if (![followersLabelContainerBtn isDescendantOfView:metUserFBView]) {
+        [metUserFBView addSubview:followersLabelContainerBtn];
+    }
     
     
     if ([numberOfFollowers integerValue] > 1) {
@@ -933,6 +937,8 @@
         
         [rightBarButtonItemsArray addObject:refreshBtn];
         
+        [self updateFollowingStatusWithUserForState:Follow];
+        
         // If the user add this discover among his favorites.
         // He listen to his channel on Parse
 //        if (![[currentInstallation objectForKey:@"channels"] containsObject:currentUserPFChannelName]) {
@@ -946,6 +952,7 @@
         UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];
         [rightBarButtonItemsArray removeObject:refreshBtn];
         
+        [self updateFollowingStatusWithUserForState:Unfollow];
         // If the user withdraw this discover among his favorites.
         // He doesn't listen to his channel on Parse anymore
 //        if ([[currentInstallation objectForKey:@"channels"] containsObject:currentUserPFChannelName]) {
@@ -960,6 +967,32 @@
     
     // We update the rightBarButtonItems
     self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
+}
+
+- (void) updateFollowingStatusWithUserForState:(FollowingStatus)aStatus
+{
+    UILabel *statCount = (UILabel*)[self.view viewWithTag:8];
+    
+    AFHTTPRequestOperationManager *HTTPManager = [AFHTTPRequestOperationManager manager];
+    [HTTPManager.requestSerializer setValue:@"install" forHTTPHeaderField:@"X-Shound"];
+    NSDictionary *params = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
+                             @"fbiduserfollowing": self.metUserId};
+    
+     NSString *urlLinkString = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/follow"];
+    
+    if (aStatus == Unfollow) {
+        [HTTPManager DELETE:urlLinkString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            statCount.text = [[NSNumber numberWithInt:([statCount.text intValue]-1)] stringValue];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+        }];
+    } else {
+        [HTTPManager POST:urlLinkString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            statCount.text = [[NSNumber numberWithInt:([statCount.text intValue]+1)] stringValue];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+        }];
+    }
 }
 
 #pragma mark - tutorial's methods

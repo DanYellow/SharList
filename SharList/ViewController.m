@@ -383,7 +383,7 @@
         NSNumber *followersNumber = [NSNumber numberWithInteger:[responseObject[@"response"] count]];
         
         statCount.text = [followersNumber stringValue];
-        
+
         if ([responseObject[@"response"] count] > 1) {
             followersTitle.text = [NSLocalizedString(@"followers", nil) uppercaseString];
         } else {
