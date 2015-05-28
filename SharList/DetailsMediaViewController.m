@@ -1346,9 +1346,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // 7 secondes after update user list we update the database with new datas
         // Like this we are "sure" that user really wants to add this media to his list
         
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(synchronizeUserListWithServer) object:nil];
-        [self performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.0]; // 7.0
+//        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(synchronizeUserListWithServer) object:nil];
+//        [self performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.0]; // 7.0
         // [pfPushManager notifyUpdateList];
+        
+        [self synchronizeUserListWithServer];
         
         [self cancelLocalNotificationWithValueForKey:@"updateList"];
 //        UILocalNotification *localNotification = [UILocalNotification new];
@@ -1374,16 +1376,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
     
-    NSDictionary *parameters = @{@"fbiduser": @"fb456742", @"list": [self updateTasteForServer]};
+    NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"list": [self updateTasteForServer]};
 
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
     [manager.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     
     [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//         NSLog(@"responseObject: %@", responseObject);
+         NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                NSLog(@"Error: %@", error);
+                NSLog(@"Error: %@", error);
     }];
 }
 

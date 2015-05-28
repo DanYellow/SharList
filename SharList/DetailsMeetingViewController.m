@@ -224,8 +224,8 @@
 //            [self displayMetUserfbImgProfile];
 //    }
     
-    NSString *urlAPI = [[settingsDict valueForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user"];
-    NSDictionary *apiParams = @{@"fbiduser" : @"fb456742"};
+    NSString *urlAPI = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
+    NSDictionary *apiParams = @{@"fbiduser" : [self.metUserId stringValue]};
     // NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue], @"isspecificuser" : @"yes"};
     
     [manager GET:urlAPI

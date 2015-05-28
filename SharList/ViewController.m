@@ -934,7 +934,6 @@
             cell.detailTextLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
             cell.detailTextLabel.layer.shadowOpacity = .95f;
         }
-//        NSLog(@"[rowsOfSection objectAtIndex:indexPath.row] : %@", [rowsOfSection objectAtIndex:indexPath.row]);
         
         NSDictionary *cellModelDict = @{
                                         @"name": [rowsOfSection objectAtIndex:indexPath.row][@"name"],
@@ -1543,7 +1542,6 @@
                         if ([jsonData objectForKey:@"error"]) {
                             sender.enabled = YES;
                             [loadingIndicator stopAnimating];
-                            NSLog(@"jsonData: %@", [jsonData objectForKey:@"error"]);
                         } else {
                             NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
                             [userDatasFromServer setValue:[NSNull null] forKey:@"book"];
@@ -1551,7 +1549,7 @@
                             if (![userTasteDict isEqualToDictionary:userDatasFromServer]) {
                                 userTasteDict = [jsonData[@"response"] mutableCopy];
                                 [userTasteDict setValue:[NSNull null] forKey:@"book"];
-                                
+//                                NSLog(@"userTasteDict : %@", userTasteDict);
                                 [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
                                     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
                                     UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
@@ -1591,6 +1589,7 @@
                     } else {
                         sender.enabled = YES;
                         [loadingIndicator stopAnimating];
+                        NSLog(@"error : %@", error);
                     }
                     
                 }] resume];
@@ -1601,6 +1600,7 @@
     UIButton *getUserFacebookLikesBtn = (UIButton*)[self.view viewWithTag:11];
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
 
+    NSLog(@"synchronizeUserListWithServer");
     
     NSDictionary *parameters = @{@"fbiduser": [userPreferences objectForKey:@"currentUserfbID"], @"list": userTasteDict};
     
@@ -1611,7 +1611,7 @@
         getUserFacebookLikesBtn.enabled = YES;
         [loadingIndicator stopAnimating];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        NSLog(@"Error: %@", error);
+        NSLog(@"Error: %@", error);
     }];
 }
 
