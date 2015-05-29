@@ -321,10 +321,12 @@
 - (void) updateCurrentUserStats
 {
     int index = 0, tagRange = 10000;
-    for (id key in userTasteDict) {
-        if ([userTasteDict objectForKey:key] != [NSNull null]) {
+    for (int i = 0; i < [[userTasteDict filterKeysForNullObj] count]; i++) {
+        if ([[userTasteDict filterKeysForNullObj] objectAtIndex:i] != [NSNull null]) {
             UILabel *statCount = (UILabel*)[self.view viewWithTag:tagRange + index];
-            NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:key] count]] stringValue];
+        
+            NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i]] count]] stringValue];
+            
             statCount.text = statCountNumber;
             
             index++;
@@ -465,6 +467,7 @@
 //        statCount.layer.shadowOpacity = 0.75;
         
         NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i]] count]] stringValue];
+        
         statCount.text = statCountNumber;
         
         [statContainer insertSubview:statCount atIndex:10];
@@ -1418,19 +1421,24 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
 {
-    NSURL *aUrl = [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"connexion.php"]];
+    NSString *urlString = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
+    urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"?fbiduser=%@", userfbID]];
+    
+    NSURL *aUrl = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
-    [request setHTTPMethod:@"POST"];
-
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", userfbID];
+    [request addValue:@"Hello connect" forHTTPHeaderField:@"X-Shound"];
+    [request setHTTPMethod:@"GET"];
     
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    //    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", userfbID];
+    //
+    //    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
     [conn start];
 }
+
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
@@ -1451,7 +1459,8 @@
         
         // There is some datas from the server
         if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
-            userTasteDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            userTasteDict = [[[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"] objectForKey:@"list"];
+            
             
             // We order the NSDictionary key
             for (NSString* key in [userTasteDict allKeys])
@@ -1545,7 +1554,7 @@
                         } else {
                             NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
                             [userDatasFromServer setValue:[NSNull null] forKey:@"book"];
-
+                            NSLog(@"userDatasFromServer : %@", userDatasFromServer);
                             if (![userTasteDict isEqualToDictionary:userDatasFromServer]) {
                                 userTasteDict = [jsonData[@"response"] mutableCopy];
                                 [userTasteDict setValue:[NSNull null] forKey:@"book"];
