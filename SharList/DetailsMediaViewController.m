@@ -437,8 +437,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, screenHeight - 83, screenWidth, 20);
     numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
     
-    NSString *localizeTypeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"movie singular" : @"serie singular";
-    
     CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
     
     if (isnan(iterationAmongDiscoveriesPercent) || isinf(iterationAmongDiscoveriesPercent)) {
@@ -446,8 +444,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
     
     if (iterationAmongDiscoveriesPercent == 0) {
-        NSString *localizeKey = ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) ? @"%@ Present in no discovery" : @"%@ Presente in no discovery";
-        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(localizeKey, nil), NSLocalizedString(localizeTypeKey, nil)];
+        NSString *localizeKey = @"Present in no discovery";
+        numberOfIterationAmongDiscoveriesLabel.text = NSLocalizedString(localizeKey, nil);
     } else {
         NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
         [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
@@ -787,7 +785,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionWidthPercentage = 82.0;
     CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
-    CGFloat mediaDescriptionHeight = (screenHeight * 47.00) / 100; //(280 * 100) / 568
+    CGFloat mediaDescriptionHeight = (screenHeight * 45.00) / 100; //(280 * 100) / 568
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
     if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
