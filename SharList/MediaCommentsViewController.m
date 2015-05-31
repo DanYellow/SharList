@@ -268,8 +268,8 @@
     
     commentsTableView.tableHeaderView = headerView;
     
-    NSString *userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
-
+    NSString *userId = [[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] stringValue];
+    
     NSString *discoveryId = self.userDiscoverId;
     
     // Manage the case which the user reach the page without a discover
@@ -294,7 +294,7 @@
         [headerView addSubview:highlightMessagesPC];
     }
     
-    NSLog(@"self.comments : %@", self.comments);
+    
     // 10205919757172919
     NSPredicate *predicateDiscover = [NSPredicate predicateWithFormat:@"fbId == %@", discoveryId];
     NSArray *filteredDiscover = [[NSArray alloc] initWithArray:[self.comments filteredArrayUsingPredicate:predicateDiscover]];
@@ -304,6 +304,11 @@
     
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] initWithArray:[filteredDiscover arrayByAddingObjectsFromArray:filteredUser]];
 
+    
+    
+//    if ([filteredUser count] == 0) {
+//        <#statements#>
+//    }
     
     if (self.userDiscoverId) {
         // We add a null object at index 0 if the user discover
@@ -469,6 +474,7 @@
     warningMessage.center = CGPointMake(self.view.center.x, warningMessage.center.y);
     warningMessage.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
     warningMessage.textAlignment = NSTextAlignmentCenter;
+    warningMessage.editable = NO;
 //    [warningMessage sizeToFit];
     warningMessage.backgroundColor = [UIColor clearColor];
     [warningMessageViewContainer addSubview:warningMessage];
@@ -538,7 +544,6 @@
 
 - (void) postNewComment:(id)sender
 {
-
     PostCommentViewController *postCommentViewController = [PostCommentViewController new];
     postCommentViewController.view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.7];
     postCommentViewController.mediaId = self.mediaId;
@@ -634,8 +639,7 @@
     
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd at HH:mm" , nil);
     
-    NSLog(@"dateMessageString : %@ | %@", dateMessageString, [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.date"]);
-    
+
     UILabel *dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 15, messageContainer.frame.size.width, 13)];
     dateMessageLabel.textAlignment = NSTextAlignmentRight;
     dateMessageLabel.text = [dateFormatter stringFromDate:dateMessage];
