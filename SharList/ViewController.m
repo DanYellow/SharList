@@ -326,7 +326,6 @@
             UILabel *statCount = (UILabel*)[self.view viewWithTag:tagRange + index];
         
             NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i]] count]] stringValue];
-            
             statCount.text = statCountNumber;
             
             index++;
@@ -1431,10 +1430,6 @@
     [request addValue:@"Hello connect" forHTTPHeaderField:@"X-Shound"];
     [request setHTTPMethod:@"GET"];
     
-    //    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", userfbID];
-    //
-    //    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-    
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
     [conn start];
 }
@@ -1460,7 +1455,6 @@
         // There is some datas from the server
         if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
             userTasteDict = [[[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"] objectForKey:@"list"];
-            
             
             // We order the NSDictionary key
             for (NSString* key in [userTasteDict allKeys])
@@ -1524,8 +1518,6 @@
 
     NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
     NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];
-//    NSString *queryParams = @"?fbiduser=fb456742";
-    
 
     shoundAPIPath = [shoundAPIPath stringByAppendingString:queryParams];
     
@@ -1553,12 +1545,13 @@
                             [loadingIndicator stopAnimating];
                         } else {
                             NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
+
                             [userDatasFromServer setValue:[NSNull null] forKey:@"book"];
-                            NSLog(@"userDatasFromServer : %@", userDatasFromServer);
+                    
                             if (![userTasteDict isEqualToDictionary:userDatasFromServer]) {
                                 userTasteDict = [jsonData[@"response"] mutableCopy];
                                 [userTasteDict setValue:[NSNull null] forKey:@"book"];
-//                                NSLog(@"userTasteDict : %@", userTasteDict);
+                                
                                 [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
                                     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
                                     UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
@@ -1566,7 +1559,8 @@
                                     userTaste.taste = arrayData;
                                     
                                 } completion:^(BOOL success, NSError *error) {
-                                    [self synchronizeUserListWithServer];
+                                    // To put again a beautiful day
+//                                    [self synchronizeUserListWithServer];
         
                                     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
                                     [userTasteListTableView reloadData];
@@ -1598,7 +1592,6 @@
                     } else {
                         sender.enabled = YES;
                         [loadingIndicator stopAnimating];
-                        NSLog(@"error : %@", error);
                     }
                     
                 }] resume];
@@ -1608,14 +1601,13 @@
 {
     UIButton *getUserFacebookLikesBtn = (UIButton*)[self.view viewWithTag:11];
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
-
-    NSLog(@"synchronizeUserListWithServer");
     
-    NSDictionary *parameters = @{@"fbiduser": [userPreferences objectForKey:@"currentUserfbID"], @"list": userTasteDict};
+    NSDictionary *parameters = @{@"fbiduser": [userPreferences objectForKey:@"currentUserfbID"], @"list": [self updateTasteForServer]};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
     
+
     [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         getUserFacebookLikesBtn.enabled = YES;
         [loadingIndicator stopAnimating];
