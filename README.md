@@ -36,15 +36,20 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 ### v 1.2.0
 
 - New API !
-- Gestion des likes Facebook
+
+- Gestion des likes Facebook (Possibilité remplir sa liste en fonction de ses likes Facebook)
+- Ajout d'un système de pourcentage vis-à-vis d'un film/série découvert (plus il est présent plus )
+- Possibilité de voir le nombre de followers (utilisateurs qui vous ont mis en parmi leurs découvertes favorites)
+- Possibilité de poster un commentaire sur un film/série
 
 
 
 ## Améliorations potentielles
 - Gérer le système de géoloc lors de l'actualisation par bouton (ça garde l'ancienne position) - **done !!!!**
-- Système de succès (voir liste)
+- Système de succès (voir liste) 
 - Indiquer les comptes premium
 - Voir la liste de followers
+- Afficher le nombre de followers - **done !!!!**
 - Ajouter la clé "last_air_date": "2015-06-04", pour les séries -> savoir la date de diffusion du dernier épisode - done
 
 ## API
@@ -110,9 +115,16 @@ WIP : Build of a REAL API under sf 2.6
 - Nombre de films / séries aimées
 _ Nombre de films / séries retirées
 - Nombre de personnes suivies
+- Nombre de personnes qui suivent l'utilisateur
 - Nombre de rencontres basées sur la géoloc
 - Nombre de rencontres avec des goûts en commun
 - Distance parcourue au scroll
+- Like qu'une fiche avec un taux de présence supérieur ou égal à 75% parmi ses découvertes
+- Post d'un premier commentaire
+- Post de 5 commentaires
+- Post de 15 commentaires
+- Post de X commentaires...
+- Update d'un commentaire
 
 ## Pods dependancies
 
@@ -122,6 +134,6 @@ _ Nombre de films / séries retirées
 - SWTableViewCell
 - TDBadgedCell (plus utilisé)
 - CRGradientNavigationBar
-- JLTMDbClient
+- JLTMDbClient 
 - Parse
 - XCDYouTubeKit
