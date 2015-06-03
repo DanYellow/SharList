@@ -1573,7 +1573,7 @@
                                                                                    cancelButtonTitle:@"OK"
                                                                                    otherButtonTitles: nil];
                                     [endSynchronize show];
-                                    
+                                    sender.enabled = YES;
                                     // We want to call the following function only once
                                     // so we check if the uitableview's header exists (it will exists after)
                                     UIView *currentUserFBView = (UIView*)[self.view viewWithTag:10];
