@@ -52,11 +52,6 @@
     }
     
     [self navigationItemRightButtonEnablingManagement];
-    
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorial"] && FBSession.activeSession.isOpen) {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
-        [self showTutorial];
-    }
 }
 
 - (void) viewWillDisappear:(BOOL)animated
@@ -147,7 +142,6 @@
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
         [self showTutorial];
     }
-    [self showTutorial];
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
     segmentedControlView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
@@ -437,7 +431,7 @@
     [tutorialView addSubview:notaBene];
     
     CALayer *rightBorder = [CALayer layer];
-    rightBorder.frame = CGRectMake(0, 0.0f, notaBene.frame.size.width, 1.0f);
+    rightBorder.frame = CGRectMake(0, -5.0f, notaBene.frame.size.width, 1.0f);
     rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
     [notaBene.layer addSublayer:rightBorder];
     
@@ -1219,13 +1213,35 @@
     return request;
 }
 
+//- (NSMutableURLRequest*) fetchUsersDatasQueryWithUrlWithParams:(NSString*)anURL
+//{
+//    self.navigationItem.rightBarButtonItem.enabled = NO;
+//    
+//    // Contains globals datas of the project
+//    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+//    // Build the array from the plist
+//    NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+//    
+//    NSURL *aUrl = [NSURL URLWithString:[[settingsDict objectForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"]];
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+//                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+//                                                       timeoutInterval:15.0];
+//    [request setHTTPMethod:@"POST"];
+//    
+//    
+//    [request setHTTPBody:[anURL dataUsingEncoding:NSUTF8StringEncoding]];
+//    
+//    return request;
+//}
+
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     CLLocation *currentLocation = [locations lastObject];
     [self.locationManager stopUpdatingLocation];
 
     NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&isGeolocEnabled&lastPosition_lat=%f&lastPosition_lng=%f", (long)currentUserfbID, currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&lastPosition_lat=%f&lastPosition_lng=%f&isGeolocEnabled", (long)currentUserfbID, currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
     
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
@@ -1239,31 +1255,20 @@
 }
 
 - (void) saveRandomUserDatas:(NSData *)datas
-{
-    NSString *responseString = [[NSString alloc] initWithData:datas encoding:NSUTF8StringEncoding];
-    NSData *data = [responseString dataUsingEncoding:NSNonLossyASCIIStringEncoding];
-    
-    // datas from random user "met"
-    NSMutableDictionary *randomUserDatas = [[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"];
+{    
+    // name = "Bienvenue \U00c3\U00a0 Gattaca";
+    // datas from random user "met" Naruto : Shipp\u00fbden Naruto : Shipp\U00fbden
+    NSMutableDictionary *randomUserDatas = [[NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"];
 
-    UITextView *foo = [[UITextView alloc] initWithFrame:CGRectMake(0, 200, screenWidth, 50)];
-    foo.text = randomUserDatas[@"list"];
-
-    NSLog(@"foo : %@ | %@", @"rt", responseString);
-    
-
-
-    return;
-    
     // No datas retrieve from server
     // Maybe for geoloc
-    if (randomUserDatas == nil) {
+    if (randomUserDatas == nil || [randomUserDatas isEqual:(id)[NSNull null]]) {
         NSInteger numberOfNoResults = [[NSUserDefaults standardUserDefaults] integerForKey:@"noresultsgeoloc"];
         
         // User have fetch 5 times empty json (no data so)
         // A Notification is displayed to indicate user to talk about the app
         // Thx Carlos
-        if (numberOfNoResults >= 5) {
+        if (numberOfNoResults >= 2) {
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
             numberOfNoResults = 0;
             
@@ -1277,9 +1282,9 @@
             numberOfNoResults += 1;
             [[NSUserDefaults standardUserDefaults] setInteger:numberOfNoResults forKey:@"noresultsgeoloc"];
             
-           if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
-               UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-               [noNewDatasAlert show];
+            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                [noNewDatasAlert show];
             }
         }
         [loadingIndicator stopAnimating];
@@ -1289,62 +1294,33 @@
     NSNumberFormatter *formatNumber = [[NSNumberFormatter alloc] init];
     [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbId"]];
+
+
     
-    
-    
-    
-//    NSData *myData = [NSKeyedArchiver archivedDataWithRootObject:[randomUserDatas objectForKey:@"list"]];
-//    NSDictionary *myDictionary = (NSDictionary*) [NSKeyedUnarchiver unarchiveObjectWithData:myData];
-    
-//    NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
-    
-//    NSLog(@"%@", [NSString stringWithCString:contentString encoding:NSUTF8StringEncoding]);
-//    NSLog(@"%@ | %@", [NSString stringWithFormat:@"%@", [randomUserDatas objectForKey:@"list"]], myDictionary);
-    
-//    NSData *stringData = [[randomUserDatas objectForKey:@"list"] dataUsingEncoding:NSUTF8StringEncoding];
-//    NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
-    
-//    return;
-    // The server send bad json
-//    if([randomUserDatas objectForKey:@"list"] == nil) {
-//        // We try to get new meeting from server with good json
-//        if (numberOfJSONErrors > 2) {
-//            UIAlertView *numberOfJSONErrorsMaxReachedAlert = [[UIAlertView alloc] initWithTitle:@"Oops" message:NSLocalizedString(@"numberOfJSONErrorsMaxReached", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-//            [numberOfJSONErrorsMaxReachedAlert show];
-//            numberOfJSONErrors = 0;
-//            [loadingIndicator stopAnimating];
-//            return;
-//        }
-//       [self fetchUsersDatas];
-//        numberOfJSONErrors++;
-//        return;
-//    }
-    
-    // The user's data is transform to nsdata to be putable in a CoreData model
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[randomUserDatas objectForKey:@"list"]];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
     UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
     NSNumber *oldUserCount = [UserTaste MR_numberOfEntitiesWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
-
+    
     // If user exists we just update his value like streetpass in 3ds
     if (oldUserCount != 0 && randomUserfbID != nil && oldUserTaste != nil) {
-
+        
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
         NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
         
-//        NSInteger days = [conversionInfo day];
+        //        NSInteger days = [conversionInfo day];
         NSInteger hours = [conversionInfo hour];
-//        NSInteger minutes = [conversionInfo minute];
+        //        NSInteger minutes = [conversionInfo minute];
         
         
         // If the meeting have been made less than one hour ago we do nothing
         if ((long)hours < 1) {
-//            NSLog(@"already met");
-//            [loadingIndicator stopAnimating];
-//            [self fetchUsersDatasBtnAction];
-//            return;
+            //            NSLog(@"already met");
+            //            [loadingIndicator stopAnimating];
+            //            [self fetchUsersDatasBtnAction];
+            //            return;
         }
         
         oldUserTaste.taste = arrayData;
@@ -1352,11 +1328,11 @@
         oldUserTaste.lastMeeting = [NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
         
-        if ([[randomUserDatas valueForKey:@"isGeolocated"] boolValue] == YES)
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
             oldUserTaste.isRandomDiscover = NO;
     } else {
         // It's a new user
-        // So we create a entity in CoreData for him
+        // So we create a entity in CD for him
         UserTaste *userTaste = [UserTaste MR_createEntity];
         userTaste.taste = arrayData;
         userTaste.fbid = randomUserfbID;
@@ -1364,12 +1340,12 @@
         userTaste.isFavorite = NO;
         userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
         
-        if ([[randomUserDatas valueForKey:@"isGeolocated"] boolValue] == YES)
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
             userTaste.isRandomDiscover = NO;
     }
-
+    
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
-
+    
     // We set to 0 the count of no results fetch location
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
     
