@@ -67,12 +67,13 @@
 "localNotificationAlertBodyRefresh" = "Il y a toujours de nouvelles choses à découvrir";
 "authorize fb friends" = "J'aimerais voir mes amis";
 // Tutorial part \\
-"refreshmeetingType" = "Le bouton rafraîchir permet de faire des découvertes, elles peuvent être de trois types : ";
+"refreshmeetingType" = "Le bouton rafraîchir permet de faire des découvertes, elles peuvent être de deux types : ";
 "geolocated" = "Géolocalisées";
 "geolocatedMeetingExplained" = "Géolocalisées\nIdéales quand on est à l'étranger";
 "random" = "Aléatoires";
 "randomMeetingExplained" = "Aléatoires\nPour ceux qui n'ont pas peur de l'inconnu";
-"notefacebook" = "Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !";
+"notefacebook" = "Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !\n Note 2 : Vous ne pouvez faire une découverte que toutes les heures.";
+
 
 //Settings view controller
 "Settings" = "Réglages";
@@ -127,11 +128,8 @@
 "release tomorrow" = "Demain !";
 
 "Present of %@ discoveries" = "Présent dans %@ de vos découvertes";
-"Presente of %@ discoveries" = "Présente dans %@ de vos découvertes";
 "p %@ discoveries" = "%@ de vos découvertes";
-
-"%@ Present in no discovery" = "Présent dans aucune découverte";
-"%@ Presente in no discovery" = "Présente dans aucune découverte";
+"Present in no discovery" = "Présent dans aucune découverte";
 
 // MediaCommentsViewController
 "yyyy/MM/dd at HH:mm" = "dd/MM/yyyy à HH:mm";
