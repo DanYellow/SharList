@@ -89,7 +89,7 @@
     postField.contentInset = UIEdgeInsetsMake(-10, -5, 0, 0);
     
 
-    UILabel *placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(5.0, 2.0, postField.frame.size.width - 10.0, 40.0)];
+    UILabel *placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(7.0, 2.0, postField.frame.size.width - 10.0, 40.0)];
     placeholderLabel.textColor = [UIColor colorWithRed:(176.0f/255.0f) green:(176.0f/255.0f) blue:(176.0f/255.0f) alpha:0.90f];
     placeholderLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
     placeholderLabel.tag = 1;
