@@ -147,6 +147,7 @@
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
         [self showTutorial];
     }
+    [self showTutorial];
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
     segmentedControlView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
@@ -429,7 +430,9 @@
     notaBene.backgroundColor = [UIColor clearColor];
     notaBene.textAlignment = NSTextAlignmentCenter;
     notaBene.numberOfLines = 0;
-    notaBene.center = CGPointMake(self.view.center.x, typeMeetingY + 20 + ((meetingTypesArr.count * 20) + (meetingTypesArr.count * imgIndicatorWidth)));
+    [notaBene heightToFit];
+//    [notaBene sizeToFit];
+    notaBene.center = CGPointMake(self.view.center.x, typeMeetingY + 30 + ((meetingTypesArr.count * 20) + (meetingTypesArr.count * imgIndicatorWidth)));
     notaBene.textColor = [UIColor whiteColor];
     [tutorialView addSubview:notaBene];
     
@@ -1201,21 +1204,20 @@
     // Build the array from the plist
     NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
-    NSString *urlString = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/met?"];
+    NSString *urlString = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/discover?"];
     urlString = [urlString stringByAppendingString:params];
+    
+    NSLog(@"urlString : %@", urlString);
     
     NSURL *aUrl = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                        timeoutInterval:9.0];
-    [request setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    [request setValue:@"discover" forHTTPHeaderField:@"X-Shound"];
     [request setHTTPMethod:@"GET"];
     
-
-//    [request setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
     return request;
 }
-
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
@@ -1223,7 +1225,7 @@
     [self.locationManager stopUpdatingLocation];
 
     NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&isGeolocEnabled=%@&latitude=%f&longitude=%f", (long)currentUserfbID, @"true", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&isGeolocEnabled&lastPosition_lat=%f&lastPosition_lng=%f", (long)currentUserfbID, currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
     
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
@@ -1239,13 +1241,19 @@
 - (void) saveRandomUserDatas:(NSData *)datas
 {
     NSString *responseString = [[NSString alloc] initWithData:datas encoding:NSUTF8StringEncoding];
-    NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
-    
-    NSDictionary *response = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    
+    NSData *data = [responseString dataUsingEncoding:NSNonLossyASCIIStringEncoding];
     
     // datas from random user "met"
-    NSMutableDictionary *randomUserDatas = [[NSMutableDictionary alloc] initWithDictionary:[response valueForKey:@"response"]];
+    NSMutableDictionary *randomUserDatas = [[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"];
+
+    UITextView *foo = [[UITextView alloc] initWithFrame:CGRectMake(0, 200, screenWidth, 50)];
+    foo.text = randomUserDatas[@"list"];
+
+    NSLog(@"foo : %@ | %@", @"rt", responseString);
+    
+
+
+    return;
     
     // No datas retrieve from server
     // Maybe for geoloc
@@ -1283,28 +1291,34 @@
     NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbId"]];
     
     
-    // this var contains string raw of user taste. It should be converted to a NSDictionnary
-    NSData *stringData = [[NSString stringWithFormat:@"%@", [randomUserDatas objectForKey:@"list"]] dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
+    
+    
+//    NSData *myData = [NSKeyedArchiver archivedDataWithRootObject:[randomUserDatas objectForKey:@"list"]];
+//    NSDictionary *myDictionary = (NSDictionary*) [NSKeyedUnarchiver unarchiveObjectWithData:myData];
+    
+//    NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
     
 //    NSLog(@"%@", [NSString stringWithCString:contentString encoding:NSUTF8StringEncoding]);
-//    NSLog(@"%@ | %@", [NSString stringWithFormat:@"%@", [randomUserDatas objectForKey:@"list"]], randomUserTaste);
+//    NSLog(@"%@ | %@", [NSString stringWithFormat:@"%@", [randomUserDatas objectForKey:@"list"]], myDictionary);
     
-    return;
+//    NSData *stringData = [[randomUserDatas objectForKey:@"list"] dataUsingEncoding:NSUTF8StringEncoding];
+//    NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
+    
+//    return;
     // The server send bad json
-    if([randomUserDatas objectForKey:@"list"] == nil) {
-        // We try to get new meeting from server with good json
-        if (numberOfJSONErrors > 2) {
-            UIAlertView *numberOfJSONErrorsMaxReachedAlert = [[UIAlertView alloc] initWithTitle:@"Oops" message:NSLocalizedString(@"numberOfJSONErrorsMaxReached", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-            [numberOfJSONErrorsMaxReachedAlert show];
-            numberOfJSONErrors = 0;
-            [loadingIndicator stopAnimating];
-            return;
-        }
-       [self fetchUsersDatas];
-        numberOfJSONErrors++;
-        return;
-    }
+//    if([randomUserDatas objectForKey:@"list"] == nil) {
+//        // We try to get new meeting from server with good json
+//        if (numberOfJSONErrors > 2) {
+//            UIAlertView *numberOfJSONErrorsMaxReachedAlert = [[UIAlertView alloc] initWithTitle:@"Oops" message:NSLocalizedString(@"numberOfJSONErrorsMaxReached", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//            [numberOfJSONErrorsMaxReachedAlert show];
+//            numberOfJSONErrors = 0;
+//            [loadingIndicator stopAnimating];
+//            return;
+//        }
+//       [self fetchUsersDatas];
+//        numberOfJSONErrors++;
+//        return;
+//    }
     
     // The user's data is transform to nsdata to be putable in a CoreData model
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[randomUserDatas objectForKey:@"list"]];
@@ -1338,7 +1352,7 @@
         oldUserTaste.lastMeeting = [NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
         
-        if ([[response valueForKey:@"isGeolocated"] boolValue] == YES)
+        if ([[randomUserDatas valueForKey:@"isGeolocated"] boolValue] == YES)
             oldUserTaste.isRandomDiscover = NO;
     } else {
         // It's a new user
@@ -1350,7 +1364,7 @@
         userTaste.isFavorite = NO;
         userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
         
-        if ([[response valueForKey:@"isGeolocated"] boolValue] == YES)
+        if ([[randomUserDatas valueForKey:@"isGeolocated"] boolValue] == YES)
             userTaste.isRandomDiscover = NO;
     }
 
