@@ -428,23 +428,25 @@
     [[NSUserDefaults standardUserDefaults] setBool:anonModeEnabled forKey:@"anonModeEnabled"];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
-//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-//    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     
-    NSString *urlAPI = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserStatus.php"];
-    
-//    NSString *isAnonymousBoolString = (anonModeEnabled) ? @"True" : @"False";
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/anonymous"];
     
     NSDictionary *apiParams = @{@"isAnonymous" : [NSNumber numberWithBool:anonModeEnabled],
                                 @"fbiduser" : [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]};
 
-    [manager POST:urlAPI
-       parameters:apiParams
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              enableAnonSwitch.enabled = YES;
-          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//              NSLog(@"Error: %@", error);
-          }];
+    [manager PATCH:shoundAPIPath
+        parameters:apiParams
+           success:^(AFHTTPRequestOperation *operation, id responseObject) {
+               enableAnonSwitch.enabled = YES;
+               if (responseObject[@"error"]) {
+//                   NSLog(@"an error occured");
+               }
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+               enableAnonSwitch.enabled = YES;
+//               NSLog(@"Error: %@", error);
+           }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
@@ -457,18 +459,23 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     CLLocation *location = [locations lastObject];
+    [self.locationManager stopUpdatingLocation];
     
-    AFHTTPRequestOperationManager *HTTPManager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *HTTPManager = [AFHTTPRequestOperationManager new];
+    [HTTPManager.requestSerializer setValue:@"location" forHTTPHeaderField:@"X-Shound"];
+    [HTTPManager.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
     NSDictionary *params = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
-                             @"latitude": [NSNumber numberWithDouble:location.coordinate.latitude],
-                             @"longitude": [NSNumber numberWithDouble:location.coordinate.longitude]};
+                             @"lastPosition_lat": [NSNumber numberWithDouble:location.coordinate.latitude],
+                             @"lastPosition_lng": [NSNumber numberWithDouble:location.coordinate.longitude]};
     
-    NSString *updateUserLocationURL = [[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"updateUserLocation.php"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/location"];
     
-    [HTTPManager POST:updateUserLocationURL parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self.locationManager stopUpdatingLocation];
+    
+    [HTTPManager PATCH:shoundAPIPath parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
+//        NSLog(@"Error: %@", error);
     }];
 }
 
