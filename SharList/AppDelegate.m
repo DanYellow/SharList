@@ -33,29 +33,6 @@
     if (![[currentInstallation objectForKey:@"channels"] containsObject:@"appInfos"]) {
         [PFPush subscribeToChannelInBackground:@"appInfos"];
     }
-
-    
-//    if (FBSession.activeSession.isOpen) {
-//        // This statement is here for old users
-//        // People with Shound < 1.1.0 don't have remote notification but maybe some favorite
-//        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hookToNotifications"]) {
-//            NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-//            NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-//            
-//            NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
-//            
-//            NSArray *meetings = [UserTaste MR_findAllWithPredicate:filterPredicates];
-//            
-//            NSString *currentUserPFChannelName = @"";
-//            for (int i = 0; i < meetings.count; i++) {
-//                currentUserPFChannelName = @"sh_channel_";
-//                currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[[meetings objectAtIndex:i] fbid] stringValue]];
-//                [PFPush subscribeToChannelInBackground:currentUserPFChannelName];
-//            }
-//            
-//            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hookToNotifications"];
-//        }
-//    }
     
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)])
     {
@@ -150,6 +127,10 @@
     // Ask for remote notification
     [self registerForRemoteNotification];
     
+    
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                    didFinishLaunchingWithOptions:launchOptions];
+    
     return YES;
 }
 
@@ -158,7 +139,7 @@
     // If user is not connected to facebook, no bg task for him
     // and said to iOS's algorithm to "push" back manage
     
-    if (!FBSession.activeSession.isOpen) {
+    if (![FBSDKAccessToken currentAccessToken]) {
         completionHandler(UIBackgroundFetchResultNoData);
         return;
     }
@@ -205,7 +186,7 @@
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
     } else {
-        NSLog(@"didReceiveRemoteNotification active");
+//        NSLog(@"didReceiveRemoteNotification active");
     }
 }
 
@@ -255,27 +236,27 @@
     }
     
 
-    if (FBSession.activeSession && [AFNetworkReachabilityManager sharedManager].isReachable) {
-        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
-        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-                                                      NSDictionary* result,
-                                                      NSError *error) {
-            if (!error) {
-                NSArray* friends;
-                
-                if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
-                    friends = @[];
-                } else {
-                    friends = [result objectForKey:@"data"];
-                }
-                
-                [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
-            } else {
-                if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
-                    [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
-                }
-            }
-        }];
+    if ([FBSDKAccessToken currentAccessToken] && [AFNetworkReachabilityManager sharedManager].isReachable) {
+//        FBSDKGraphRequest* friendsRequest = [FBSDKGraphRequest requestForMyFriends];
+//        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+//                                                      NSDictionary* result,
+//                                                      NSError *error) {
+//            if (!error) {
+//                NSArray* friends;
+//                
+//                if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
+//                    friends = @[];
+//                } else {
+//                    friends = [result objectForKey:@"data"];
+//                }
+//                
+//                [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
+//            } else {
+//                if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
+//                    [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
+//                }
+//            }
+//        }];
     } else {
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
             [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
@@ -290,6 +271,8 @@
     currentInstallation.badge = 0;
     application.applicationIconBadgeNumber = 0;
     [currentInstallation saveEventually];
+    
+    [FBSDKAppEvents activateApp];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -300,29 +283,32 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     
     // Call FBAppCall's handleOpenURL:sourceApplication to handle Facebook app responses
-    BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+//    BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
     
     // You can add your app-specific url handling code here if needed
     
-    return wasHandled;
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                          openURL:url
+                                                sourceApplication:sourceApplication
+                                                       annotation:annotation];
 }
 
-
-- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension
-{
-    CGFloat ratio = 0;
-    ratio = ((aNumber * 100)/aDimension);
-    ratio = ((ratio*aDimension)/100);
-    
-    if ([UIScreen mainScreen].scale > 2.1) {
-        
-        ratio = ratio/3; // Because we are in retina HD
-        
-    } else {
-        ratio = ratio/2; // Because we are in retina
-    }
-    
-    return roundf(ratio);
-}
+//
+//- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension
+//{
+//    CGFloat ratio = 0;
+//    ratio = ((aNumber * 100)/aDimension);
+//    ratio = ((ratio*aDimension)/100);
+//    
+//    if ([UIScreen mainScreen].scale > 2.1) {
+//        
+//        ratio = ratio/3; // Because we are in retina HD
+//        
+//    } else {
+//        ratio = ratio/2; // Because we are in retina
+//    }
+//    
+//    return roundf(ratio);
+//}
 
 @end

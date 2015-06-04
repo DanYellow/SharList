@@ -22,8 +22,7 @@
 - (id) initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-        self.hidden = YES;
-        
+        self.hidden = NO;
 #pragma mark - init view properties
         [self setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
         
@@ -81,10 +80,11 @@
         fbLoginButton.readPermissions = @[@"user_friends"];
         fbLoginButton.delegate = self;
         fbLoginButton.frame = CGRectMake((self.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
+        fbLoginButton.center = CGPointMake(self.center.x, fbLoginButton.center.y);
         fbLoginButton.tag = 1;
         [self addSubview:fbLoginButton];
-        
     }
+    
     return self;
 }
 
@@ -97,20 +97,45 @@ didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
 {
     self.hidden = YES;
     
+    if (error) {
+        NSLog(@"error facebook : %@", error);
+        return;
+    }
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
+        if ([FBSDKAccessToken currentAccessToken]) {
+            // We save the user's friends using application (and accepts this feature) for later
+            if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
+                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=friends" parameters:nil]
+                 startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                     if (!error) {
+                         NSArray* friends;
+                         
+                         if ([[result valueForKeyPath:@"friends.data"] isEqual:[NSNull null]]) {
+                             friends = @[];
+                         } else {
+                             friends = [result valueForKeyPath:@"friends.data"];
+                         }
+
+                         [[NSUserDefaults standardUserDefaults] setObject:[result objectForKey:@"id"] forKey:@"currentUserfbID"];
+                     }
+                 }];
+            } else {
+                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:nil]
+                 startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                     if (!error) {
+                         [[NSUserDefaults standardUserDefaults] setObject:[result valueForKeyPath:@"id"] forKey:@"currentUserfbID"];
+                     }
+                 }];
+            }
+            NSLog(@"foo : %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]);
+        }
 //        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
 //        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
 //                                                      NSDictionary* result,
 //                                                      NSError *error) {
 //            if (!error) {
-//                NSArray* friends;
-//                
-//                if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
-//                    friends = @[];
-//                } else {
-//                    friends = [result objectForKey:@"data"];
-//                }
-//                
+
+//
 //                [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
 //            } else {
 //                if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
@@ -138,15 +163,15 @@ didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
 }
 
 
-- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
-{
-    // 364885553677637
-    NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
-    [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
-//    NSLog(@"user : %@", user);
-    [[NSUserDefaults standardUserDefaults] setObject:fbIDNumber forKey:@"currentUserfbID"];
-}
+//- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
+//{
+//    // 364885553677637
+//    NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
+//    [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+//    NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
+////    NSLog(@"user : %@", user);
+//    [[NSUserDefaults standardUserDefaults] setObject:fbIDNumber forKey:@"currentUserfbID"];
+//}
 
 
 

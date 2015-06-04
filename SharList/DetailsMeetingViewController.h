@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <Parse/Parse.h>
 
 #import "AFNetworking.h"
@@ -24,12 +24,12 @@
 
 @protocol UpdateMeetingsListDelegate;
 
-typedef NS_ENUM(NSInteger, FollowingStatus) {
+typedef NS_ENUM (NSInteger, FollowingStatus) {
     Unfollow = 0,
     Follow = 1
 };
 
-@interface DetailsMeetingViewController : UIViewController <FBLoginViewDelegate, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate>
+@interface DetailsMeetingViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -52,7 +52,7 @@ typedef NS_ENUM(NSInteger, FollowingStatus) {
 
 - (void) showTutorial;
 - (void) addAsFavorite:(UIBarButtonItem*)sender;
-- (void) displayMetUserfbImgProfile;
+- (void) displayMetUserfbImgProfileForDatas:(NSDictionary*)datas;
 - (void) displayMetUserStats;
 - (void) updateCurrentUser;
 - (void) scrollToSectionWithNumber:(UIButton*)sender;

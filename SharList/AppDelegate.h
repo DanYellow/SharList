@@ -9,10 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
-// http://192.168.1.79/ShoundAPI/web/
-// http://api2.shound.fr/
-
-#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 #import "ViewController.h"
 #import "SettingsViewController.h"
@@ -32,7 +29,7 @@
 @property (nonatomic,strong) NSManagedObjectContext* managedObjectContext;
 @property (nonatomic) NSTimer* locationUpdateTimer;
 
-- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
+//- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension;
 
 @end
 

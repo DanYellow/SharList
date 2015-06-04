@@ -43,10 +43,9 @@
     
     [[self navigationController] tabBarItem].badgeValue = nil;
     
-    if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
+    if (![FBSDKAccessToken currentAccessToken] || ![userPreferences objectForKey:@"currentUserfbID"]) {
         ConnectView *connectView = [[ConnectView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         connectView.viewController = self;
-        
         UIWindow* window = [[UIApplication sharedApplication] keyWindow];
         [window addSubview:connectView];
     }
@@ -119,6 +118,10 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(invalidateTimer) name:UIApplicationDidEnterBackgroundNotification object:nil];
     
 //    [self maskTest];
+    
+    if ([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"]) {
+        [self initializer];
+    }
 }
 
 // Because of the facebook login we can't load the ui directly
@@ -138,7 +141,7 @@
         [userPreferences setBool:YES forKey:@"seenAlertForBGF"];
     }
     
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorial"] && FBSession.activeSession.isOpen) {
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorial"] && [FBSDKAccessToken currentAccessToken]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
         [self showTutorial];
     }
@@ -235,14 +238,20 @@
     
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [shareShoundBtn setFrame:CGRectMake(0, 55, emptyFacebookFriendsLabelView.frame.size.width, 44)];
-    if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
-        shareShoundBtn.frame = CGRectMake(0.0, 0.0, screenWidth - 24, 50);
+    [shareShoundBtn setFrame:CGRectMake(0, 55, emptyFacebookFriendsLabelView.frame.size.width, 54)];
+    
+    if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
+        shareShoundBtn.frame = CGRectMake(0.0, 0.0, screenWidth - 24, 54);
     }
+    
 
     [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateHighlighted];
+    
+    [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
+    
+    
     [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
     shareShoundBtn.backgroundColor = [UIColor clearColor];
     shareShoundBtn.layer.borderColor = [UIColor whiteColor].CGColor;
@@ -1201,8 +1210,6 @@
     NSString *urlString = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/discover?"];
     urlString = [urlString stringByAppendingString:params];
     
-    NSLog(@"urlString : %@", urlString);
-    
     NSURL *aUrl = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
@@ -1255,10 +1262,18 @@
 }
 
 - (void) saveRandomUserDatas:(NSData *)datas
-{    
+{
     // name = "Bienvenue \U00c3\U00a0 Gattaca";
     // datas from random user "met" Naruto : Shipp\u00fbden Naruto : Shipp\U00fbden
-    NSMutableDictionary *randomUserDatas = [[NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"];
+    
+    NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingMutableContainers error:nil];
+    
+    if (serverResponse[@"error"]) {
+        [loadingIndicator stopAnimating];
+        return;
+    }
+    
+    NSMutableDictionary *randomUserDatas = [serverResponse objectForKey:@"response"];
 
     // No datas retrieve from server
     // Maybe for geoloc
@@ -1287,11 +1302,12 @@
                 [noNewDatasAlert show];
             }
         }
+        
         [loadingIndicator stopAnimating];
         return;
     }
     
-    NSNumberFormatter *formatNumber = [[NSNumberFormatter alloc] init];
+    NSNumberFormatter *formatNumber = [NSNumberFormatter new];
     [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbId"]];
 
@@ -1350,11 +1366,6 @@
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
     
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] && [CLLocationManager authorizationStatus] ==kCLAuthorizationStatusAuthorizedAlways
-        ) {
-        [self.locationManager stopUpdatingLocation];
-    }
-    
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self performSelectorOnMainThread:@selector(reloadTableview) withObject:nil waitUntilDone:YES];
     } else {
@@ -1404,51 +1415,46 @@
 
 - (void) allowFacebookFriendsPermission
 {
-    [FBSession.activeSession requestNewPublishPermissions:@[@"user_friends"]
-                                          defaultAudience:FBSessionDefaultAudienceNone
-                                        completionHandler:^(FBSession *session, NSError *error){
-                                            UIButton *allowFriendsBtn = (UIButton*)[self.view viewWithTag:7];
-                                            allowFriendsBtn.hidden = YES;
-                                            
-//                                            UILabel *emptyFacebookFriendsLabel = (UILabel*)[self.view viewWithTag:8];
-//                                            emptyFacebookFriendsLabel.hidden = NO;
-                                        }];
+    FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+    [loginManager logInWithPublishPermissions:@[@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+        //TODO: process error or result.
+    }];
 }
 
 - (void) shareFb
 {
-    FBLinkShareParams *params = [FBLinkShareParams new];
-    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
-    params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
-    params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
-    params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
-
-    // If the Facebook app is installed and we can present the share dialog
-    if ([FBDialogs canPresentShareDialogWithParams:params]) {
-        [FBDialogs presentShareDialogWithLink:params.link
-                                         name:params.name
-                                      caption:nil
-                                  description:NSLocalizedString(@"FBLinkShareParams_caption", nil)
-                                      picture:params.picture
-                                  clientState:nil
-                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
-                                          if(error) {
-                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
-                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
-                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
-                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
-                                                                         delegate:nil
-                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-                                          }
-                                      }];
-    } else {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
-                                   delegate:nil
-                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-    }
+//    FBLinkShareParams *params = [FBLinkShareParams new];
+//    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
+//    params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
+//    params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
+//    params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+//
+//    // If the Facebook app is installed and we can present the share dialog
+//    if ([FBDialogs canPresentShareDialogWithParams:params]) {
+//        [FBDialogs presentShareDialogWithLink:params.link
+//                                         name:params.name
+//                                      caption:nil
+//                                  description:NSLocalizedString(@"FBLinkShareParams_caption", nil)
+//                                      picture:params.picture
+//                                  clientState:nil
+//                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
+//                                          if(error) {
+//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+//                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+//                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+//                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
+//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
+//                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
+//                                                                         delegate:nil
+//                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+//                                          }
+//                                      }];
+//    } else {
+//        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+//                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
+//                                   delegate:nil
+//                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+//    }
 }
 
 //- (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
@@ -1467,7 +1473,8 @@
 {
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
-    if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
+    
+    if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
         CGRect shareShoundBtnFrame = CGRectMake(0, 55, screenWidth - 24, 44);
         
         UIButton *allowFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -1495,7 +1502,7 @@
 //    [emptyFacebookFriendsLabel sizeToFit];
     
     // If the user refuse the user_friends permission we don't show this part
-    if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
+    if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
         emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
     } else {
         emptyFacebookFriendsLabel.text = NSLocalizedString(@"has facebook friends", nil);

@@ -107,7 +107,7 @@
     bgLayer.opacity = .7f;
     bgLayer.name = @"TrianglesBG";
     bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"TrianglesBG"]].CGColor;
-    if (!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) {
+    if (![FBSDKAccessToken currentAccessToken] || ![userPreferences objectForKey:@"currentUserfbID"]) {
         [self.view.layer insertSublayer:bgLayer atIndex:1];
     }
     
@@ -513,23 +513,23 @@
     
     NSString *metUserFBImgURL = nil;
     if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
-        NSString *fbMetUserString = [[userPreferences objectForKey:@"currentUserfbID"] stringValue];
+        NSString *fbMetUserString = [userPreferences objectForKey:@"currentUserfbID"];
         metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
     }
     
     UIImageView *currentUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
-    
-    // We save the raw data of current user facebook image profil
-    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
-        [currentUserFBImgView addObserver:self
-                               forKeyPath:@"image"
-                                  options:(NSKeyValueObservingOptionNew |
-                                           NSKeyValueObservingOptionOld)
-                                  context:NULL];
-        [currentUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
-    } else {
-        currentUserFBImgView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]];
-    }
+    [currentUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
+//    // We save the raw data of current user facebook image profil
+//    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
+//        [currentUserFBImgView addObserver:self
+//                               forKeyPath:@"image"
+//                                  options:(NSKeyValueObservingOptionNew |
+//                                           NSKeyValueObservingOptionOld)
+//                                  context:NULL];
+//        [currentUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
+//    } else {
+//        currentUserFBImgView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]];
+//    }
     
     currentUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
     currentUserFBImgView.backgroundColor = [UIColor clearColor];
@@ -732,7 +732,7 @@
         }
     }
     
-    if (FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"]) {
+    if ([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"]) {
         [[self navigationController] setNavigationBarHidden:NO animated:YES];
         self.tabBarController.tabBar.hidden = NO;
         [userSelectionTableView reloadData];
@@ -874,7 +874,7 @@
             }
         }
         
-        if (IsTableViewEmpty == YES && (FBSession.activeSession.isOpen || [userPreferences objectForKey:@"currentUserfbID"])) {
+        if (IsTableViewEmpty == YES && ([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"])) {
             userTasteListTableViewEmptyView.hidden = NO;
             [loadingIndicator stopAnimating];
             
@@ -1148,11 +1148,12 @@
     } else {
         apiLink = kJLTMDbFind;
     }
-
+    
     NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
+
         if(!error){
             if ([model[@"type"] isEqualToString:@"serie"] &&
                 [[responseObject valueForKeyPath:@"tv_results.poster_path"] count] != 0) {
@@ -1164,7 +1165,7 @@
             }
             
             imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396%@", imgURL];
-        
+            
             [imgBackground setImageWithURL:
              [NSURL URLWithString:imgDistURL]
                           placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
@@ -1378,7 +1379,7 @@
         return;
     }
     
-    if ((!FBSession.activeSession.isOpen || ![userPreferences objectForKey:@"currentUserfbID"]) && [self connected] == NO) {
+    if ((![FBSDKAccessToken currentAccessToken] || ![userPreferences objectForKey:@"currentUserfbID"]) && [self connected] == NO) {
         return;
     }
     
@@ -1499,14 +1500,14 @@
 
 - (void) getUserFacebookLikes:(UIButton*)sender {
     sender.enabled = NO;
-    if (![[FBSession.activeSession permissions] containsObject:@"user_likes"]) {
-        [FBSession.activeSession requestNewPublishPermissions:@[@"user_likes"]
-                                              defaultAudience:FBSessionDefaultAudienceNone
-                                            completionHandler:^(FBSession *session, NSError *error){
-                                                [self getUserLikesForSender:sender];
-                                            }];
-    } else {
+    
+    if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_likes"]) {
         [self getUserLikesForSender:sender];
+    } else {
+        FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+        [loginManager logInWithPublishPermissions:@[@"user_likes"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+            [self getUserLikesForSender:sender];
+        }];
     }
 }
 
@@ -1516,7 +1517,8 @@
 {    
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
-    NSString *fbAccessToken = [[[FBSession activeSession] accessTokenData] accessToken];
+    NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
+    
     NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];
 
     shoundAPIPath = [shoundAPIPath stringByAppendingString:queryParams];

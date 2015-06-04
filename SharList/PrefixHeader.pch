@@ -28,7 +28,7 @@
 #define GOLDENRATIO 1.618033988
 
 #define MR_ENABLE_ACTIVE_RECORD_LOGGING 1
-#import "CoreData+MagicalRecord.h"
+#import "MagicalRecord.h"
 
 
 

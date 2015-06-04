@@ -358,6 +358,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               
               
               NSNumber *numberMessages = [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.commentsCount"] integerValue]];
+              self.numberOfComments = numberMessages;
               
               UIButton *messagesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
               [messagesBtn addTarget:self action:@selector(displayMessageForMediaWithId:) forControlEvents:UIControlEventTouchUpInside];
@@ -435,7 +436,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // This label shows the number of iteration of the card currently shown among user's discoverties
     UILabel *numberOfIterationAmongDiscoveriesLabel = [UILabel new];
     numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, screenHeight - 83, screenWidth, 20);
-    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
+    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
     
     CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
     
@@ -794,6 +795,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } else {
         mediaDescription.text = [data[@"overview"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
+    mediaDescription.translatesAutoresizingMaskIntoConstraints = NO;
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
@@ -827,6 +829,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     genresString = [genresString stringByAppendingString:[genresArray componentsJoinedByString:@", "]];
     
     UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaDescriptionY - 34, screenWidth - 30, 25)];
+    mediaGenresLabel.translatesAutoresizingMaskIntoConstraints = NO;
     mediaGenresLabel.text = genresString; // Space + comma
     mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
     mediaGenresLabel.textAlignment = NSTextAlignmentLeft;
@@ -1238,6 +1241,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     MediaCommentsViewController *mediaCommentsViewController = [MediaCommentsViewController new];
     mediaCommentsViewController.mediaId = self.mediaDatas[@"imdbID"];
+    mediaCommentsViewController.numberOfComments = self.numberOfComments;
     mediaCommentsViewController.userDiscoverId = self.userDiscoverId;
     
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];

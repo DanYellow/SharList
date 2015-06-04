@@ -487,14 +487,19 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID
 {
-    NSURL *aUrl= [NSURL URLWithString:[[settingsDict valueForKey:@"apiPath"] stringByAppendingString:@"getusertaste.php"]];
+    NSString *aURLString = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
+    aURLString = [aURLString stringByAppendingString:[NSString stringWithFormat:@"?fbiduser=%@", userfbID]];
+    
+    NSURL *aUrl = [NSURL URLWithString:aURLString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
-    [request setHTTPMethod:@"POST"];
     
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&isspecificuser=%@", userfbID, @"true"];
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
+    [request addValue:@"foo hello" forHTTPHeaderField:@"X-Shound"];
+    [request setHTTPMethod:@"GET"];
+    
+//    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&isspecificuser=%@", userfbID, @"true"];
+//    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
     [conn start];
@@ -509,21 +514,18 @@
     // Server sends back some datas
     if (self.responseData != nil) {
         NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
-        
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         
+
         // There is some datas from the server
         if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
-            NSDictionary *allDatasFromServerDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-            NSData *stringData = [[allDatasFromServerDict objectForKey:@"user_favs"] dataUsingEncoding:NSUTF8StringEncoding];
-            NSDictionary *randomUserTaste = [NSJSONSerialization JSONObjectWithData:stringData options:NSJSONReadingMutableContainers error:nil];
-            
+            NSDictionary *allDatasFromServerDict = [[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"];
             
             // This user has really updated is data we udpdate locals datas
-            if (![self.metUserTasteDict isEqualToDictionary: [randomUserTaste mutableCopy] ]) {
+            if (![self.metUserTasteDict isEqualToDictionary:[[allDatasFromServerDict objectForKey:@"list"] mutableCopy] ]) {
                 // We update the current data from the server
-                self.metUserTasteDict = [randomUserTaste mutableCopy];
-                NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:randomUserTaste];
+                self.metUserTasteDict = [[allDatasFromServerDict objectForKey:@"list"] mutableCopy];
+                NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[allDatasFromServerDict objectForKey:@"list"]];
                 
                 NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", self.metUserId];
                 UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
@@ -695,7 +697,7 @@
         }
     }
     
-    if (IsTableViewEmpty == YES && FBSession.activeSession.isOpen) {
+    if (IsTableViewEmpty == YES && [FBSDKAccessToken currentAccessToken]) {
         emptyUserTasteLabel.hidden = NO;
         
         return 0;
@@ -755,7 +757,9 @@
     NSArray *rowsOfSection = [self.metUserTasteDict objectForKey:sectionTitle];
     CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
 
+    
     title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
+    
     imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
     
     if (cell == nil) {
@@ -798,7 +802,6 @@
     [cell setSelectedBackgroundView:bgColorView];
     
     cell.textLabel.text = title;
-    
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 //    cell.detailTextLabel.text = @"year";
@@ -972,7 +975,7 @@
 - (void) updateFollowingStatusWithUserForState:(FollowingStatus)aStatus
 {
     UILabel *statCount = (UILabel*)[self.view viewWithTag:8];
-    
+    self.navigationController.navigationItem.rightBarButtonItem.enabled = NO;
     AFHTTPRequestOperationManager *HTTPManager = [AFHTTPRequestOperationManager manager];
     [HTTPManager.requestSerializer setValue:@"install" forHTTPHeaderField:@"X-Shound"];
     NSDictionary *params = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
@@ -982,15 +985,20 @@
     
     if (aStatus == Unfollow) {
         [HTTPManager DELETE:urlLinkString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            statCount.text = [[NSNumber numberWithInt:([statCount.text intValue]-1)] stringValue];
+            NSInteger nbFollowers = (([statCount.text intValue]-1) > 0) ? ([statCount.text intValue]-1) : 0;
+            statCount.text = [[NSNumber numberWithInteger:nbFollowers] stringValue];
+            self.navigationController.navigationItem.rightBarButtonItem.enabled = YES;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
+            self.navigationController.navigationItem.rightBarButtonItem.enabled = YES;
         }];
     } else {
         [HTTPManager POST:urlLinkString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
             statCount.text = [[NSNumber numberWithInt:([statCount.text intValue]+1)] stringValue];
+            self.navigationController.navigationItem.rightBarButtonItem.enabled = YES;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
+            self.navigationController.navigationItem.rightBarButtonItem.enabled = YES;
         }];
     }
 }
@@ -1045,40 +1053,43 @@
 
 - (void) shareFb
 {
-    FBLinkShareParams *params = [FBLinkShareParams new];
-    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
-    params.name = NSLocalizedString(@"FBLinkShareParams_metfriend_name", nil);
-    params.caption = [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.navigationController.title];
-    params.picture = [NSURL URLWithString:@"http://www.shound.fr/shound_logo_fb.jpg"];
-    
-    // [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.title]
-    
-    // If the Facebook app is installed and we can present the share dialog
-    if ([FBDialogs canPresentShareDialogWithParams:params]) {
-        [FBDialogs presentShareDialogWithLink:params.link
-                                         name:params.name
-                                      caption:nil
-                                  description:NSLocalizedString(@"FBLinkShareParams_metfriend_desc_alt", nil)
-                                      picture:params.picture
-                                  clientState:nil
-                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
-                                          if(error) {
-                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
-                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
-                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
-                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
-                                                                         delegate:nil
-                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-                                          }
-                                      }];
-    } else {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
-                                   delegate:nil
-                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-    }
+//    FBLinkShareParams *params = [FBLinkShareParams new];
+//    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
+//    params.name = NSLocalizedString(@"FBLinkShareParams_metfriend_name", nil);
+//    params.caption = [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.navigationController.title];
+//    params.picture = [NSURL URLWithString:@"http://www.shound.fr/shound_logo_fb.jpg"];
+//    
+//    FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
+//    content.contentURL = [NSURL URLWithString:@"https://developers.facebook.com"];
+//    
+//    // [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.title]
+//    
+//    // If the Facebook app is installed and we can present the share dialog
+//    if ([FBDialogs canPresentShareDialogWithParams:params]) {
+//        [FBDialogs presentShareDialogWithLink:params.link
+//                                         name:params.name
+//                                      caption:nil
+//                                  description:NSLocalizedString(@"FBLinkShareParams_metfriend_desc_alt", nil)
+//                                      picture:params.picture
+//                                  clientState:nil
+//                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
+//                                          if(error) {
+//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+//                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+//                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+//                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
+//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
+//                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
+//                                                                         delegate:nil
+//                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+//                                          }
+//                                      }];
+//    } else {
+//        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+//                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
+//                                   delegate:nil
+//                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+//    }
 }
 
 

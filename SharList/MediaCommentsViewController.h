@@ -24,6 +24,7 @@
 
 @property (strong, nonatomic) NSString *mediaId;
 @property (strong, nonatomic) NSString *userDiscoverId;
+@property (strong, nonatomic) NSNumber *numberOfComments;
 
 -  (void) loadComments;
 

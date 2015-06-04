@@ -72,9 +72,9 @@
     
 
     // http://stackoverflow.com/questions/26907352/how-to-draw-radial-gradients-in-a-calayer
-//    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
 //        [self easterEgg];
-//    });
+    });
     
     
     UIActivityIndicatorView *messagesLoadingIndicator = [UIActivityIndicatorView new];
@@ -88,7 +88,10 @@
         [self.view addSubview:messagesLoadingIndicator];
         [messagesLoadingIndicator startAnimating];
         
-        [self showWarningMessage];
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"CommentsWarning"]) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"CommentsWarning"];
+            [self showWarningMessage];
+        }
     });
     
     
@@ -129,11 +132,11 @@
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     NSArray *colors = @[
                        (id)[[UIColor colorWithWhite:0 alpha:1] CGColor],
-                       (id)[[UIColor colorWithWhite:0 alpha:0] CGColor],
+                       (id)[[UIColor colorWithWhite:1 alpha:0] CGColor],
                        (id)[[UIColor colorWithWhite:0 alpha:1] CGColor]
                        ];
     [gradientLayer setColors:colors];
-    gradientLayer.locations = @[[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:.5], [NSNumber numberWithFloat:1.]];
+    gradientLayer.locations = @[[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:.5], [NSNumber numberWithFloat:1.0]];
     
 //    [NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0],
 //     [NSNumber numberWithFloat:20 / view.frame.size.height],
@@ -142,16 +145,38 @@
     [gradientLayer setStartPoint:CGPointMake(0.5f, 0.5f)];
     [gradientLayer setEndPoint:CGPointMake(0.5f, 0.5f)];
     gradientLayer.frame = self.view.bounds;
-//    gradientLayer.layer.mask = gradientLayer;
+//    gradientLayer.mask = maskWithHole;
+    
+    NSArray *colors2 = [NSArray arrayWithObjects:(__bridge id)[[UIColor colorWithWhite:0 alpha:0] CGColor], (__bridge id)[[UIColor colorWithWhite:0 alpha:1] CGColor], nil];
+    
+//    NSArray *colors2 = [NSArray arrayWithObjects:(__bridge id)[[UIColor redColor] CGColor], (__bridge id)[[UIColor purpleColor] CGColor], nil];
+    
+    CAGradientLayer *gradientLayer2 = [CAGradientLayer layer];
+    [gradientLayer2 setFrame:[self.view bounds]];
+    [gradientLayer2 setColors:colors2];
+    [gradientLayer2 setStartPoint:CGPointMake(0.0f, 0.0f)];
+//    [gradientLayer2 setEndPoint:CGPointMake(0.0f, 0.5f)];
+    
+    
+    CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"endPoint"];
+    pathAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+    pathAnimation.duration = 50.5;
+    pathAnimation.fromValue = [NSValue valueWithCGPoint:CGPointMake(0.0f, 0.5f)];
+    pathAnimation.toValue = [NSValue valueWithCGPoint:CGPointMake(0.0f, 4.5f)];
+    
+    [gradientLayer2 addAnimation:pathAnimation forKey:@"endPoint"];
+    [gradientLayer2 setEndPoint:CGPointMake(0.0f, 4.5f)];
 
     
     UIView *hellView = [[UIView alloc] initWithFrame:self.view.bounds];
+//    hellView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.75];
     hellView.backgroundColor = [UIColor redColor];
     hellView.alpha = 1;
-    hellView.layer.mask = gradientLayer;
-//    [hellView.layer insertSublayer:gradient atIndex:0];
+    hellView.layer.mask = gradientLayer2;
+//    [hellView.layer insertSublayer:gradientLayer atIndex:0];
     [self.view insertSubview:hellView atIndex:50];
 }
+
 
 - (void) displayComments
 {
@@ -518,26 +543,26 @@
 
     NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId};
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
-    
-    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (responseObject[@"response"] != nil) {
-            self.comments = responseObject[@"response"];
-            
-            if ([commentsTableView isDescendantOfView:self.view]) {
-                if ([self.comments count] >= 1) {
-                    [self displayDiscoverAndUserCommentForDatas];
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
+        
+        [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            if (responseObject[@"response"] != nil) {
+                self.comments = responseObject[@"response"];
+                
+                if ([commentsTableView isDescendantOfView:self.view]) {
+                    if ([self.comments count] >= 1) {
+                        [self displayDiscoverAndUserCommentForDatas];
+                    }
+                    [commentsTableView reloadData];
+                } else {
+                    [self displayComments];
                 }
-                [commentsTableView reloadData];
-            } else {
-                [self displayComments];
             }
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-        [messagesLoadingIndicator stopAnimating];
-    }];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            [messagesLoadingIndicator stopAnimating];
+        }];
+    
 }
 
 
