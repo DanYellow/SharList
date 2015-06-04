@@ -77,7 +77,8 @@
         appMottoLabel.textAlignment = NSTextAlignmentLeft;
         [appnameView addSubview:appMottoLabel];
         
-        FBLoginView *fbLoginButton = [[FBLoginView alloc] initWithReadPermissions:@[@"user_friends"]];
+        FBSDKLoginButton *fbLoginButton = [[FBSDKLoginButton alloc] init];
+        fbLoginButton.readPermissions = @[@"user_friends"];
         fbLoginButton.delegate = self;
         fbLoginButton.frame = CGRectMake((self.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
         fbLoginButton.tag = 1;
@@ -90,31 +91,33 @@
 
 #pragma mark - facebook
 // User is logged
-- (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
+- (void)  loginButton:(FBSDKLoginButton *)loginButton
+didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
+                error:(NSError *)error
 {
     self.hidden = YES;
     
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
-        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
-        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-                                                      NSDictionary* result,
-                                                      NSError *error) {
-            if (!error) {
-                NSArray* friends;
-                
-                if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
-                    friends = @[];
-                } else {
-                    friends = [result objectForKey:@"data"];
-                }
-                
-                [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
-            } else {
-                if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
-                    [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
-                }
-            }
-        }];
+//        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
+//        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+//                                                      NSDictionary* result,
+//                                                      NSError *error) {
+//            if (!error) {
+//                NSArray* friends;
+//                
+//                if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
+//                    friends = @[];
+//                } else {
+//                    friends = [result objectForKey:@"data"];
+//                }
+//                
+//                [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
+//            } else {
+//                if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
+//                    [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
+//                }
+//            }
+//        }];
     } else {
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
             [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
@@ -126,7 +129,7 @@
 }
 
 // User quits the app
-- (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView
+- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
 {
     self.hidden = NO;
     [self.viewController.tabBarController setSelectedIndex:0];
@@ -143,52 +146,6 @@
     NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
 //    NSLog(@"user : %@", user);
     [[NSUserDefaults standardUserDefaults] setObject:fbIDNumber forKey:@"currentUserfbID"];
-}
-
-// Manage error for connection
-- (void) loginView:(FBLoginView *)loginView handleError:(NSError *)error
-{
-    if ([AFNetworkReachabilityManager sharedManager].isReachable) {
-        NSString *alertMessage, *alertTitle;
-        
-        // If the user should perform an action outside of you app to recover,
-        // the SDK will provide a message for the user, you just need to surface it.
-        // This conveniently handles cases like Facebook password change or unverified Facebook accounts.
-        if ([FBErrorUtility shouldNotifyUserForError:error]) {
-            alertTitle = @"Facebook error";
-            alertMessage = [FBErrorUtility userMessageForError:error];
-            
-            // This code will handle session closures that happen outside of the app
-            // You can take a look at our error handling guide to know more about it
-            // https://developers.facebook.com/docs/ios/errors
-        } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession) {
-            alertTitle = @"Session Error";
-            alertMessage = @"Your current session is no longer valid. Please log in again.";
-            
-            // If the user has cancelled a login, we will do nothing.
-            // You can also choose to show the user a message if cancelling login will result in
-            // the user not being able to complete a task they had initiated in your app
-            // (like accessing FB-stored information or posting to Facebook)
-        } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
-            NSLog(@"user cancelled login");
-            
-            // For simplicity, this sample handles other errors with a generic message
-            // You can checkout our error handling guide for more detailed information
-            // https://developers.facebook.com/docs/ios/errors
-        } else {
-            alertTitle  = nil;
-            alertMessage = NSLocalizedString(@"errorConnect", nil);// @"Please try again later.";
-                                                                   //        NSLog(@"Unexpected error:%@", error);
-        }
-        
-        if (alertMessage) {
-            [[[UIAlertView alloc] initWithTitle:alertTitle
-                                        message:alertMessage
-                                       delegate:nil
-                              cancelButtonTitle:@"OK"
-                              otherButtonTitles:nil] show];
-        }
-    }
 }
 
 

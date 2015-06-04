@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 #import "AFNetworking.h"
 
 
-@interface ConnectView : UIView <FBLoginViewDelegate>
+@interface ConnectView : UIView <FBSDKLoginButtonDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
