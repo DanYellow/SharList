@@ -91,8 +91,7 @@
 
 #pragma mark - facebook
 // User is logged
-- (void)  loginButton:(FBSDKLoginButton *)loginButton
-didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
+- (void)  loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
                 error:(NSError *)error
 {
     self.hidden = YES;
@@ -105,74 +104,41 @@ didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
         if ([FBSDKAccessToken currentAccessToken]) {
             // We save the user's friends using application (and accepts this feature) for later
             if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
-                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=friends" parameters:nil]
+                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?fields=first_name,last_name" parameters:nil]
                  startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                      if (!error) {
                          NSArray* friends;
                          
-                         if ([[result valueForKeyPath:@"friends.data"] isEqual:[NSNull null]]) {
+                         if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
                              friends = @[];
                          } else {
-                             friends = [result valueForKeyPath:@"friends.data"];
+                             friends = [result valueForKeyPath:@"data"];
                          }
-
-                         [[NSUserDefaults standardUserDefaults] setObject:[result objectForKey:@"id"] forKey:@"currentUserfbID"];
+                         
+                         NSLog(@"friends : %@", result);
+                         [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
+                         [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
+                         
+                        [self readyToStart];
                      }
                  }];
             } else {
-                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:nil]
-                 startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-                     if (!error) {
-                         [[NSUserDefaults standardUserDefaults] setObject:[result valueForKeyPath:@"id"] forKey:@"currentUserfbID"];
-                     }
-                 }];
+                [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
+                [self readyToStart];
             }
-            NSLog(@"foo : %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]);
         }
-//        FBRequest* friendsRequest = [FBRequest requestForMyFriends];
-//        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-//                                                      NSDictionary* result,
-//                                                      NSError *error) {
-//            if (!error) {
-
-//
-//                [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
-//            } else {
-//                if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
-//                    [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
-//                }
-//            }
-//        }];
     } else {
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
             [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
         }
     }
+}
 
+- (void) readyToStart
+{
     [[NSNotificationCenter defaultCenter] postNotificationName:@"mainViewIsReady" object:nil userInfo:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userConnectedToFacebook" object:nil userInfo:nil];
 }
-
-// User quits the app
-- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
-{
-    self.hidden = NO;
-    [self.viewController.tabBarController setSelectedIndex:0];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbImageData"];
-}
-
-
-//- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
-//{
-//    // 364885553677637
-//    NSNumberFormatter *fbIDFormatter = [NSNumberFormatter new];
-//    [fbIDFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-//    NSNumber *fbIDNumber = [fbIDFormatter numberFromString:user.objectID];
-////    NSLog(@"user : %@", user);
-//    [[NSUserDefaults standardUserDefaults] setObject:fbIDNumber forKey:@"currentUserfbID"];
-//}
-
 
 
 #pragma mark - Custom methods
