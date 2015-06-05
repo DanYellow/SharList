@@ -25,7 +25,7 @@
                 // (aka every user who had added his list among favorites)
                 // he update his list
                 NSString *currentUserPFChannelName = @"sh_channel_";
-                currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] stringValue]];
+                currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
                 
                 
                 NSTimeInterval interval = 60*60*24*7; // 1 week

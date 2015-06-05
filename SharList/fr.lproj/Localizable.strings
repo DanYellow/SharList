@@ -52,7 +52,7 @@
 "Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une découverte pour l'ajouter aux favoris";
 "Met at %@" = "Découvert à %@";
 "updated" = "mis à jour !";
-"nomeetings" = "Il semblerait qu'il n'y ait personne autour de vous pour découvrir de nouvelles choses. Parlez leur de Shound.";
+"nomeetingsalert" = "Il semblerait qu'il n'y ait personne autour de vous pour découvrir de nouvelles choses.\n Parlez leur de Shound.";
 "%@ meetings" = "%@ découvertes";
 "disabledBGF" = "L'actualisation en arrière-plan est désactivée dans les Réglages. Activez la pour faire découvrir au monde ce que vous aimez sans même ouvrir l'application.";
 "restrictedBGF" = "Il semblerait que votre appareil ne soit pas autorisé à actualiser le contenu en arrière-plan.";

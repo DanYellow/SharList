@@ -87,7 +87,8 @@
     
     FBSDKLoginButton *fbLoginButton = [FBSDKLoginButton new];
     fbLoginButton.tag = 2;
-    fbLoginButton.frame = CGRectMake(51, 0, 218, 46); // screenHeight + 150
+    fbLoginButton.delegate = self;
+    fbLoginButton.frame = CGRectMake(51, -150, 218, 46); //
     [self.view addSubview:fbLoginButton];
     
     UIView *shareShoundBtnContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 60)];
@@ -120,6 +121,16 @@
     settingsTableview.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:settingsTableview];
 }
+
+// User quits the app
+- (void) loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
+{
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbImageData"];
+    
+    [self.tabBarController setSelectedIndex:0];
+}
+
 
 - (void) showBetaSeriesConnect
 {
@@ -484,7 +495,7 @@
     
     
     [HTTPManager PATCH:shoundAPIPath parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"responseObject: %@", responseObject);
+        NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //        NSLog(@"Error: %@", error);
     }];

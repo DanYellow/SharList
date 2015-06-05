@@ -1059,9 +1059,7 @@
 //    params.caption = [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.navigationController.title];
 //    params.picture = [NSURL URLWithString:@"http://www.shound.fr/shound_logo_fb.jpg"];
 //    
-//    FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
-//    content.contentURL = [NSURL URLWithString:@"https://developers.facebook.com"];
-//    
+////
 //    // [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.title]
 //    
 //    // If the Facebook app is installed and we can present the share dialog

@@ -53,7 +53,7 @@
 "Favorites" = "Favorites";
 "Met at %@" = "Discovered at %@";
 "updated" = "updated!";
-"nomeetings" = "So it looks like there is none around you to get new discoveries. Talk to them about Shound";
+"nomeetingsalert" = "So it looks like there is none around you to get new discoveries.\n Talk to them about Shound";
 "%@ meetings" = "%@ discoveries";
 "disabledBGF" = "The background fetch feature is disabled in your Settings. Enabled it to introduce the world what you love without open the app.";
 "restrictedBGF" = "It looks like you device is not allowed to use the background fetch feature of your device.";

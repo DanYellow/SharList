@@ -1481,7 +1481,11 @@
             
             NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
             userTaste.taste = arrayData;
-            userTaste.fbid = [userPreferences objectForKey:@"currentUserfbID"];
+            
+            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+            f.numberStyle = NSNumberFormatterDecimalStyle;
+            NSNumber *currentFbIduser = [f numberFromString:[userPreferences objectForKey:@"currentUserfbID"]];
+            userTaste.fbid = currentFbIduser;
             userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }
@@ -1519,7 +1523,7 @@
 
     NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
     
-    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[[userPreferences objectForKey:@"currentUserfbID"] stringValue]];
+    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[userPreferences objectForKey:@"currentUserfbID"]];
 
     shoundAPIPath = [shoundAPIPath stringByAppendingString:queryParams];
     

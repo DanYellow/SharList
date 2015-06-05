@@ -119,6 +119,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(invalidateTimer) name:UIApplicationDidEnterBackgroundNotification object:nil];
     
 //    [self maskTest];
+
     
     if ([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"]) {
         [self initializer];
@@ -128,8 +129,6 @@
 // Because of the facebook login we can't load the ui directly
 - (void) initializer
 {
-    
-    
     // Design on the view
     UIAlertView *alertBGF;
     alertBGF.delegate = self;
@@ -714,6 +713,7 @@
     // Vous avez pas d'amis facebook sur Shound
     UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
     emptyFacebookFriendsLabelView.hidden = YES;
+    // installgentoo
     
     
 //    UILabel *emptyFacebookFriendsLabel = (UILabel*)[emptyFacebookFriendsLabelView viewWithTag:8];
@@ -859,7 +859,7 @@
         
     }
     
-    return j;
+    return j; //j
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -1131,7 +1131,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastManualUpdate"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    NSString *currentUserfbID = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
+    NSString *currentUserfbID = [FBSDKAccessToken currentAccessToken].userID;
     NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", currentUserfbID];
     
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
@@ -1171,7 +1171,6 @@
         
         [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             if (error) {
-                NSLog(@"error : %@", error);
                 [loadingIndicator stopAnimating];
                 [self noInternetAlert];
             } else {
@@ -1213,7 +1212,7 @@
     
     NSString *urlString = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/discover?"];
     urlString = [urlString stringByAppendingString:params];
-    
+
     NSURL *aUrl = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
@@ -1251,8 +1250,8 @@
     CLLocation *currentLocation = [locations lastObject];
     [self.locationManager stopUpdatingLocation];
 
-    NSInteger currentUserfbID = [[NSUserDefaults standardUserDefaults] integerForKey:@"currentUserfbID"];
-    NSString *postString = [NSString stringWithFormat:@"fbiduser=%li&lastPosition_lat=%f&lastPosition_lng=%f&isGeolocEnabled", (long)currentUserfbID, currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
+    NSString *currentUserfbID = [FBSDKAccessToken currentAccessToken].userID;
+    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&lastPosition_lat=%f&lastPosition_lng=%f&isGeolocEnabled", currentUserfbID, currentLocation.coordinate.latitude, currentLocation.coordinate.longitude];
     
     [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         if (error) {
@@ -1271,7 +1270,7 @@
     // datas from random user "met" Naruto : Shipp\u00fbden Naruto : Shipp\U00fbden
     
     NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingMutableContainers error:nil];
-    
+//    NSLog(@"serverResponse : %@", serverResponse);
     if (serverResponse[@"error"]) {
         [loadingIndicator stopAnimating];
         return;
@@ -1291,39 +1290,44 @@
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
             numberOfNoResults = 0;
             
-            UILocalNotification *localNotif = [UILocalNotification new];
-            localNotif.fireDate = [[NSDate date] dateByAddingTimeInterval: 300];
-            localNotif.timeZone = [NSTimeZone defaultTimeZone];
-            localNotif.alertBody = NSLocalizedString(@"nomeetings", nil);
-            localNotif.soundName = nil;
-            [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"nomeetingsalert", nil) message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                
+                [noNewDatasAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+            } else {
+                UILocalNotification *localNotif = [UILocalNotification new];
+                localNotif.fireDate = [[NSDate date] dateByAddingTimeInterval:180]; // 180
+                localNotif.timeZone = [NSTimeZone defaultTimeZone];
+                localNotif.alertBody = NSLocalizedString(@"nomeetingsalert", nil);
+                localNotif.soundName = nil;
+                [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+            }
         } else {
             numberOfNoResults += 1;
             [[NSUserDefaults standardUserDefaults] setInteger:numberOfNoResults forKey:@"noresultsgeoloc"];
             
             if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
                 UIAlertView *noNewDatasAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No results", nil) message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                [noNewDatasAlert show];
+                
+                [noNewDatasAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
             }
         }
         
-        [loadingIndicator stopAnimating];
+        [loadingIndicator performSelectorOnMainThread:@selector(stopAnimating) withObject:nil waitUntilDone:YES];
         return;
     }
     
     NSNumberFormatter *formatNumber = [NSNumberFormatter new];
     [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbId"]];
-
-
     
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[randomUserDatas objectForKey:@"list"]];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
-    UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
-    NSNumber *oldUserCount = [UserTaste MR_numberOfEntitiesWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
+    UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_rootSavingContext]];
+    NSNumber *oldUserCount = [UserTaste MR_numberOfEntitiesWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_rootSavingContext]];
     
-    // If user exists we just update his value like streetpass in 3ds
+    // If user exists we just update his value like streetpass on 3ds
     if (oldUserCount != 0 && randomUserfbID != nil && oldUserTaste != nil) {
         
         NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -1343,28 +1347,46 @@
             //            return;
         }
         
-        oldUserTaste.taste = arrayData;
-        oldUserTaste.fbid = randomUserfbID;
-        oldUserTaste.lastMeeting = [NSDate date];
-        oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
-        
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
-            oldUserTaste.isRandomDiscover = NO;
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            oldUserTaste.taste = arrayData;
+            oldUserTaste.fbid = randomUserfbID;
+            oldUserTaste.lastMeeting = [NSDate date];
+            oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
+            
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
+                oldUserTaste.isRandomDiscover = NO;
+            
+        } completion:^(BOOL success, NSError *error) {
+            [self endSavingNewEntry];
+        }];
     } else {
         // It's a new user
-        // So we create a entity in CD for him
-        UserTaste *userTaste = [UserTaste MR_createEntity];
-        userTaste.taste = arrayData;
-        userTaste.fbid = randomUserfbID;
-        userTaste.lastMeeting = [NSDate date];
-        userTaste.isFavorite = NO;
-        userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
-        
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
-            userTaste.isRandomDiscover = NO;
+        // So we create a entity in CoreData for him
+
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            UserTaste *userTaste = [UserTaste MR_createEntityInContext:localContext];
+            userTaste.taste = arrayData;
+            userTaste.fbid = randomUserfbID;
+            userTaste.lastMeeting = [NSDate date];
+            userTaste.isFavorite = NO;
+            userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
+            
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
+                userTaste.isRandomDiscover = NO;
+            
+        } completion:^(BOOL success, NSError *error) {
+            [self endSavingNewEntry];
+        }];
     }
     
-    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+//    [[NSManagedObjectContext MR_rootSavingContext] MR_saveToPersistentStoreAndWait];
+//    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+    
+
+}
+
+- (void) endSavingNewEntry
+{
     
     // We set to 0 the count of no results fetch location
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
@@ -1375,7 +1397,6 @@
     } else {
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     }
-    
     
     // Each time the user press the button refresh
     // To discover new things he creates a postpone
@@ -1427,6 +1448,15 @@
 
 - (void) shareFb
 {
+    FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
+    content.contentURL = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
+    content.contentTitle = NSLocalizedString(@"FBLinkShareParams_name", nil);
+    content.imageURL = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+    
+    [FBSDKShareDialog showFromViewController:self
+                                 withContent:content
+                                    delegate:self];
+    
 //    FBLinkShareParams *params = [FBLinkShareParams new];
 //    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
 //    params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
@@ -1443,14 +1473,7 @@
 //                                  clientState:nil
 //                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
 //                                          if(error) {
-//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-//                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
-//                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
 //                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
-//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
-//                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
-//                                                                         delegate:nil
-//                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
 //                                          }
 //                                      }];
 //    } else {
@@ -1461,16 +1484,24 @@
 //    }
 }
 
-//- (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView
-//{
-//    NSLog(@"foof");
-//    [self manageDisplayOfFacebookFriendsButton];
-//}
-//
-//- (void) loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user
-//{
-//    NSLog(@"%s", __FUNCTION__);
-//}
+- (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results
+{
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
+                                message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
+                               delegate:nil
+                      cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+}
+
+- (void)sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error {
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+                               delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+
+}
+
+- (void)sharerDidCancel:(id<FBSDKSharing>)sharer {
+    
+}
 
 
 - (void) manageDisplayOfFacebookFriendsButton
@@ -1494,7 +1525,7 @@
         [allowFriendsBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
         [emptyFacebookFriendsLabelView addSubview:allowFriendsBtn];
     }
-    
+
     UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, screenWidth - 24, 50)];
     emptyFacebookFriendsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];

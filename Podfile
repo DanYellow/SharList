@@ -7,6 +7,7 @@ target "SharList" do
 	# pod 'Facebook-iOS-SDK', '~> 3.13'
 	pod 'FBSDKCoreKit', '~> 4.2'
 	pod 'FBSDKLoginKit', '~> 4.2'
+	pod 'FBSDKShareKit', '~> 4.2'
 	pod 'SWTableViewCell', '~> 0.3.6'
 	# pod 'TDBadgedCell', '~> 2.6'
 	pod 'CRGradientNavigationBar'

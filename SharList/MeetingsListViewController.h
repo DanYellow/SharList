@@ -12,6 +12,7 @@
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 
 
 
@@ -31,7 +32,7 @@
 // Views
 #import "ConnectView.h"
 
-@interface MeetingsListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate, CLLocationManagerDelegate>
+@interface MeetingsListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate, CLLocationManagerDelegate, FBSDKSharingDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

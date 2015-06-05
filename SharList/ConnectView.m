@@ -97,9 +97,26 @@
     self.hidden = YES;
     
     if (error) {
-        NSLog(@"error facebook : %@", error);
         return;
     }
+    
+    
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    NSDictionary *settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
+    NSDictionary *parameters = @{@"fbiduser": [FBSDKAccessToken currentAccessToken].userID};
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
+    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [manager POST:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"responseObject: %@", responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        NSLog(@"Error: %@", error);
+    }];
+    
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
         if ([FBSDKAccessToken currentAccessToken]) {
             // We save the user's friends using application (and accepts this feature) for later
@@ -114,8 +131,7 @@
                          } else {
                              friends = [result valueForKeyPath:@"data"];
                          }
-                         
-                         NSLog(@"friends : %@", result);
+
                          [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
                          [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
                          

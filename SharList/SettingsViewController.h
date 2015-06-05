@@ -29,7 +29,7 @@ enum SettingsMenuItem : NSUInteger {
     UnlinkBS = 3
 };
 
-@interface SettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
+@interface SettingsViewController : UIViewController <UITableViewDelegate, FBSDKLoginButtonDelegate, UITableViewDataSource,
 UISearchControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UIAlertViewDelegate, UIActionSheetDelegate>
 {
     CGFloat screenWidth;

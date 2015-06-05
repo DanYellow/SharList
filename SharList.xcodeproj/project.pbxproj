@@ -202,6 +202,7 @@
 		1AEB2BBF1A4B2580000D7C7B /* FacebookSDKOverrides.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FacebookSDKOverrides.bundle; sourceTree = "<group>"; };
 		1AEB8BEA1A3636FA004A94C1 /* UILabel+HeightToFit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+HeightToFit.h"; sourceTree = "<group>"; };
 		1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+HeightToFit.m"; sourceTree = "<group>"; };
+		1AF250701B210E1800330285 /* ShoundModelsV1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ShoundModelsV1.xcdatamodel; sourceTree = "<group>"; };
 		1AF42CB21ADB2463008622E6 /* locationMeetingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = locationMeetingIcon.png; sourceTree = "<group>"; };
 		1AF42CB31ADB2463008622E6 /* locationMeetingIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "locationMeetingIcon@2x.png"; sourceTree = "<group>"; };
 		1AF42CB41ADB2463008622E6 /* locationMeetingIcon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "locationMeetingIcon@3x.png"; sourceTree = "<group>"; };
@@ -995,6 +996,7 @@
 		1A3C227D1A114027005B31E4 /* UserTaste.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1AF250701B210E1800330285 /* ShoundModelsV1.xcdatamodel */,
 				1A3C227E1A114027005B31E4 /* UserTaste.xcdatamodel */,
 			);
 			currentVersion = 1A3C227E1A114027005B31E4 /* UserTaste.xcdatamodel */;
