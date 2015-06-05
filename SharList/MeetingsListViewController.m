@@ -43,7 +43,7 @@
     
     [[self navigationController] tabBarItem].badgeValue = nil;
     
-    if (![FBSDKAccessToken currentAccessToken] || ![userPreferences objectForKey:@"currentUserfbID"]) {
+    if (![FBSDKAccessToken currentAccessToken] && ![userPreferences objectForKey:@"currentUserfbID"]) {
         ConnectView *connectView = [[ConnectView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         connectView.viewController = self;
         UIWindow* window = [[UIApplication sharedApplication] keyWindow];
@@ -85,6 +85,7 @@
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
+    self.TableViewAdded = NO;
     
     //Main screen display
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
@@ -127,6 +128,8 @@
 // Because of the facebook login we can't load the ui directly
 - (void) initializer
 {
+    
+    
     // Design on the view
     UIAlertView *alertBGF;
     alertBGF.delegate = self;
@@ -181,9 +184,10 @@
     userMeetingsListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
     
     //    [userMeetingsListTableView scrollToRowAtIndexPath:0 atScrollPosition:UITableViewScrollPositionTop animated:NO];
-    
-    if (![userMeetingsListTableView isDescendantOfView:self.view]) {
+
+    if (!self.isTableViewAdded) {
         [self.view addSubview:userMeetingsListTableView];
+        self.TableViewAdded = YES;
     }
     
     

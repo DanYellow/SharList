@@ -52,6 +52,7 @@
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) NSTimer *timerRefreshBtn;
+@property (nonatomic, assign, getter=isTableViewAdded) BOOL tableViewAdded;
 
 
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
