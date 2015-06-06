@@ -42,7 +42,8 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Possibilité de voir le nombre de followers (utilisateurs qui vous ont mis en parmi leurs découvertes favorites)
 - Possibilité de poster un commentaire sur un film/série
 
-
+# TODO
+- Voir les messages vides pour facebook no friends / access no granted
 
 ## Améliorations potentielles
 - Gérer le système de géoloc lors de l'actualisation par bouton (ça garde l'ancienne position) - **done !!!!**
@@ -130,9 +131,10 @@ _ Nombre de films / séries retirées
 
 - AFNetworking
 - MagicalRecord
-- Facebook-iOS-SDK
+- FBSDKCoreKit
+- FBSDKLoginKit
+- FBSDKShareKit
 - SWTableViewCell
-- TDBadgedCell (plus utilisé)
 - CRGradientNavigationBar
 - JLTMDbClient 
 - Parse
