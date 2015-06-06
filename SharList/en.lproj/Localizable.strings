@@ -75,8 +75,8 @@
 "pull to refresh fav" = "This discovery is now among your favs.\nYou can \"pull-to-refresh\" to see if this has been updated.";
 "nothing common" = "Discover! Nothing in common.";
 "things common" = "Things in common, but also to discover";
-"in common" = "taste in common";
-"%@ in common" = "%@ taste in common";
+"in common" = "likes in common";
+"%@ in common" = "%@ likes in common";
 "Talk about this discover" = "Talk about this discover";
 
 
@@ -140,7 +140,7 @@
 
 //AboutViewController
 "About" = "About";
-"whatIsApp" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your tastes.";
+"whatIsApp" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your likes.";
 "Privacy" = "Privacy";
 "PrivacyContent" = "Your lastname and your firstname on facebook are not save by the app or the third services used by the app.";
 "datasOrigins" = "Movies and TV series datas, and posters art are provided by themoviedb's API.";
@@ -164,6 +164,5 @@
 "FBLinkShareParams_posterror" = "Facebook has encountered a problem";
 "FBLinkShareParams_postsuccess" = "Thanks you. You help Shound to be more popular";
 "FBLinkShareParams_postsuccess_title" = "Great!";
-"FBLinkShareParams_metfriend_name" = "I've met a friend on Shound";
-"FBLinkShareParams_metfriend_desc %@" = "I discovered the taste of %@.\n Do the same";
-"FBLinkShareParams_metfriend_desc_alt" = "Do the same!";
+"FBLinkShareParams_metfriend_name %@" = "I discovered the likes of %@ on Shound";
+"FBLinkShareParams_metfriend_desc" = "Do the same!";

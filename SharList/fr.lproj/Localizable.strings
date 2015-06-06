@@ -178,7 +178,6 @@
 "FBLinkShareParams_posterror" = "Facebook a rencontré un problème";
 "FBLinkShareParams_postsuccess" = "Merci. Vous aidez Shound à être plus populaire !";
 "FBLinkShareParams_postsuccess_title" = "Super !";
-"FBLinkShareParams_metfriend_name" = "J'ai découvert un ami sur Shound";
-"FBLinkShareParams_metfriend_desc %@" = "J'ai découvert les goûts de %@.\n Faites de même";
-"FBLinkShareParams_metfriend_desc_alt" = "Faites de même !";
+"FBLinkShareParams_metfriend_name %@" = "J'ai découvert les goûts de %@ sur Shound";
+"FBLinkShareParams_metfriend_desc" = "Faites de même !";
 
