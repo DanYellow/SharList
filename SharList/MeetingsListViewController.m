@@ -113,7 +113,7 @@
     // Called when user see a fav discover
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableview) name:@"seenFavUpdated" object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector: @selector(manageDisplayOfFacebookFriendsButton) name: @"userConnectedToFacebook" object: nil];
     
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(invalidateTimer) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -123,6 +123,7 @@
     
     if ([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"]) {
         [self initializer];
+        [self manageDisplayOfFacebookFriendsButton];
     }
 }
 
@@ -239,35 +240,6 @@
     emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
     [userMeetingsListTableView addSubview:emptyFacebookFriendsLabelView];
     
-    
-    UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [shareShoundBtn setFrame:CGRectMake(0, 55, emptyFacebookFriendsLabelView.frame.size.width, 54)];
-    
-    if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
-        shareShoundBtn.frame = CGRectMake(0.0, 0.0, screenWidth - 24, 54);
-    }
-    
-
-    [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
-    [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    
-    [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
-    [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
-    
-    
-    [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-    shareShoundBtn.backgroundColor = [UIColor clearColor];
-    shareShoundBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-    shareShoundBtn.layer.borderWidth = 2.0f;
-    [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
-    [emptyFacebookFriendsLabelView addSubview:shareShoundBtn];
-    
-    
-    UIView *emptyFacebookFriendsLabelLastView = [emptyFacebookFriendsLabelView.subviews lastObject];
-    CGRect frameRect = emptyFacebookFriendsLabelView.frame;
-    frameRect.size.height = emptyFacebookFriendsLabelLastView.frame.size.height + emptyFacebookFriendsLabelLastView.frame.origin.y;
-    emptyFacebookFriendsLabelView.frame = frameRect;
-    //    emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     
     
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
@@ -1456,32 +1428,6 @@
     [FBSDKShareDialog showFromViewController:self
                                  withContent:content
                                     delegate:self];
-    
-//    FBLinkShareParams *params = [FBLinkShareParams new];
-//    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
-//    params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
-//    params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
-//    params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
-//
-//    // If the Facebook app is installed and we can present the share dialog
-//    if ([FBDialogs canPresentShareDialogWithParams:params]) {
-//        [FBDialogs presentShareDialogWithLink:params.link
-//                                         name:params.name
-//                                      caption:nil
-//                                  description:NSLocalizedString(@"FBLinkShareParams_caption", nil)
-//                                      picture:params.picture
-//                                  clientState:nil
-//                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
-//                                          if(error) {
-//                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
-//                                          }
-//                                      }];
-//    } else {
-//        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-//                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
-//                                   delegate:nil
-//                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-//    }
 }
 
 - (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results
@@ -1499,9 +1445,7 @@
 
 }
 
-- (void)sharerDidCancel:(id<FBSDKSharing>)sharer {
-    
-}
+- (void)sharerDidCancel:(id<FBSDKSharing>)sharer {}
 
 
 - (void) manageDisplayOfFacebookFriendsButton
@@ -1509,23 +1453,6 @@
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
     
-    if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
-        CGRect shareShoundBtnFrame = CGRectMake(0, 55, screenWidth - 24, 44);
-        
-        UIButton *allowFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [allowFriendsBtn setFrame:CGRectMake(0, shareShoundBtnFrame.origin.y + shareShoundBtnFrame.size.height + 25, shareShoundBtnFrame.size.width, 44)];
-        [allowFriendsBtn setTitle:NSLocalizedString(@"authorize fb friends", nil) forState:UIControlStateNormal];
-        [allowFriendsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [allowFriendsBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateHighlighted];
-        [allowFriendsBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-        allowFriendsBtn.tag = 7;
-        allowFriendsBtn.backgroundColor = [UIColor clearColor];
-        allowFriendsBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-        allowFriendsBtn.layer.borderWidth = 2.0f;
-        [allowFriendsBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
-        [emptyFacebookFriendsLabelView addSubview:allowFriendsBtn];
-    }
-
     UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, screenWidth - 24, 50)];
     emptyFacebookFriendsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];
@@ -1544,6 +1471,60 @@
     }
     
     [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
+    
+    
+    if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
+        CGRect shareShoundBtnFrame = CGRectMake(0, emptyFacebookFriendsLabel.frame.origin.y + emptyFacebookFriendsLabel.frame.size.height, screenWidth - 24, 44);
+        
+        UIButton *allowFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [allowFriendsBtn setFrame:CGRectMake(0, shareShoundBtnFrame.origin.y + shareShoundBtnFrame.size.height + 25, shareShoundBtnFrame.size.width, 44)];
+        [allowFriendsBtn setTitle:NSLocalizedString(@"authorize fb friends", nil) forState:UIControlStateNormal];
+        [allowFriendsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [allowFriendsBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateHighlighted];
+        [allowFriendsBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+        allowFriendsBtn.tag = 7;
+        allowFriendsBtn.backgroundColor = [UIColor clearColor];
+        allowFriendsBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+        allowFriendsBtn.layer.borderWidth = 2.0f;
+        [allowFriendsBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
+        [emptyFacebookFriendsLabelView addSubview:allowFriendsBtn];
+    } else {
+        
+        // No friends
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] count] > 0) {
+        
+        } else {
+            UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+            shareShoundBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
+            [shareShoundBtn setFrame:CGRectMake(0, emptyFacebookFriendsLabel.frame.size.height + emptyFacebookFriendsLabel.frame.origin.y + 15.0f, emptyFacebookFriendsLabelView.frame.size.width, 54)];
+            
+            [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
+            [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            
+            [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+            [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
+            
+            
+            [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+            shareShoundBtn.backgroundColor = [UIColor clearColor];
+            shareShoundBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+            shareShoundBtn.layer.borderWidth = 2.0f;
+            [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
+            [emptyFacebookFriendsLabelView addSubview:shareShoundBtn];
+        }
+        
+
+    }
+    
+    
+
+    
+    
+//    UIView *emptyFacebookFriendsLabelLastView = [emptyFacebookFriendsLabelView.subviews lastObject];
+//    CGRect frameRect = emptyFacebookFriendsLabelView.frame;
+//    frameRect.size.height = emptyFacebookFriendsLabelLastView.frame.size.height + emptyFacebookFriendsLabelLastView.frame.origin.y;
+//    emptyFacebookFriendsLabelView.frame = frameRect;
+    //    emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
 }
 
 #pragma mark - misc
