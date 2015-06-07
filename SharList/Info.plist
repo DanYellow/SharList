@@ -35,7 +35,7 @@
 	<key>FacebookAppID</key>
 	<string>1557139914519856</string>
 	<key>FacebookBundleName</key>
-	<string>FacebookSDKOverrides</string>
+	<string>FacebookSDKStrings</string>
 	<key>FacebookDisplayName</key>
 	<string>Shound</string>
 	<key>LSRequiresIPhoneOS</key>

@@ -486,13 +486,12 @@
     [getUserFacebookLikesBtn setTitle:NSLocalizedString(@"add my likes", nil) forState:UIControlStateNormal];
     [getUserFacebookLikesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [getUserFacebookLikesBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
-    
+    getUserFacebookLikesBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
     
     [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
     [getUserFacebookLikesBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
     
     [getUserFacebookLikesBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-    [getUserFacebookLikesBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
     getUserFacebookLikesBtn.tag = 11;
     getUserFacebookLikesBtn.backgroundColor = [UIColor clearColor];
     getUserFacebookLikesBtn.layer.borderColor = [UIColor whiteColor].CGColor;
@@ -1509,7 +1508,7 @@
         [self getUserLikesForSender:sender];
     } else {
         FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
-        [loginManager logInWithPublishPermissions:@[@"user_likes"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+        [loginManager logInWithReadPermissions:@[@"user_likes"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
             [self getUserLikesForSender:sender];
         }];
     }

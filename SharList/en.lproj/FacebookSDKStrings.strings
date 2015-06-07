@@ -1,0 +1,37 @@
+/*
+ * Copyright 2010 Facebook
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* FBLoginView (aka FBLV) */
+"FBLV:LogOutButton" = "Log out";
+"FBLV:LogInButton" = "Log in with Facebook";
+"FBLV:LoggedInAs" = "Logged in as: %@";
+"FBLV:LoggedInUsingFacebook" = "Logged in using Facebook";
+"FBLV:LogOutAction" = "Log out";
+"FBLV:CancelAction" = "Cancel";
+
+/* FBPlacePickerViewController (FBPPVC) */
+"FBPPVC:NumWereHere" = "%@ were here";
+
+/* FBError (aka FBE) */
+"FBE:ReconnectApplication" = "Please log into this app again to reconnect your Facebook account.";
+"FBE:PasswordChangedDevice" = "Your Facebook password has changed. To confirm your password, open Settings > Facebook and tap your name.";
+"FBE:PasswordChanged" = "Your Facebook password has changed. Please log into this app again to reconnect your Facebook account.";
+"FBE:WebLogIn" = "Your Facebook account is locked. Please log into www.facebook.com to continue.";
+"FBE:AppNotInstalled" = "Please log into this app again to reconnect your Facebook account.";
+"FBE:GrantPermission" = "This app doesn't have permission to do this. To change permissions, try logging into this app again.";
+"FBE:Unconfirmed" = "Your Facebook account is locked. Please log into www.facebook.com to continue.";
+"FBE:OAuthDevice" = "To use your Facebook account with this app, open Settings > Facebook and make sure this app is turned on.";
+"FBE:DeviceError"= "Something went wrong. Please make sure you're connected to the internet and try again.";

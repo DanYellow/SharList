@@ -48,6 +48,8 @@
 		1A61F5101AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */; };
 		1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6744B01AAB4BB000FA610F /* PFPushManager.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
+		1A91FDFE1B2341F600E8B5D7 /* FacebookSDKStrings.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE001B2341F600E8B5D7 /* FacebookSDKStrings.strings */; };
+		1A91FE071B2358A400E8B5D7 /* FacebookSDKStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE061B2358A400E8B5D7 /* FacebookSDKStrings.bundle */; };
 		1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470A1A29E3A0002AC281 /* lens-icon-message.png */; };
 		1A95470E1A29E3A0002AC281 /* lens-icon-message@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470B1A29E3A0002AC281 /* lens-icon-message@2x.png */; };
 		1A95470F1A29E3A0002AC281 /* lens-icon-message@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470C1A29E3A0002AC281 /* lens-icon-message@3x.png */; };
@@ -74,7 +76,6 @@
 		1AE9E7A71A2683700072EF91 /* DetailsMeetingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */; };
 		1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */; };
 		1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE9E7AA1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png */; };
-		1AEB2BC01A4B2580000D7C7B /* FacebookSDKOverrides.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1AEB2BBF1A4B2580000D7C7B /* FacebookSDKOverrides.bundle */; };
 		1AEB8BEC1A3636FA004A94C1 /* UILabel+HeightToFit.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */; };
 		1AF42CB81ADB2463008622E6 /* locationMeetingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF42CB21ADB2463008622E6 /* locationMeetingIcon.png */; };
 		1AF42CB91ADB2463008622E6 /* locationMeetingIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AF42CB31ADB2463008622E6 /* locationMeetingIcon@2x.png */; };
@@ -168,6 +169,9 @@
 		1A6744B01AAB4BB000FA610F /* PFPushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFPushManager.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
+		1A91FDFF1B2341F600E8B5D7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FacebookSDKStrings.strings; sourceTree = "<group>"; };
+		1A91FE011B2341FB00E8B5D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/FacebookSDKStrings.strings; sourceTree = "<group>"; };
+		1A91FE061B2358A400E8B5D7 /* FacebookSDKStrings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FacebookSDKStrings.bundle; sourceTree = "<group>"; };
 		1A95470A1A29E3A0002AC281 /* lens-icon-message.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lens-icon-message.png"; sourceTree = "<group>"; };
 		1A95470B1A29E3A0002AC281 /* lens-icon-message@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lens-icon-message@2x.png"; sourceTree = "<group>"; };
 		1A95470C1A29E3A0002AC281 /* lens-icon-message@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lens-icon-message@3x.png"; sourceTree = "<group>"; };
@@ -199,7 +203,6 @@
 		1AE9E7A61A2683700072EF91 /* DetailsMeetingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsMeetingViewController.m; sourceTree = "<group>"; };
 		1AE9E7A91A26884D0072EF91 /* meetingFavoriteSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetingFavoriteSelected@2x.png"; sourceTree = "<group>"; };
 		1AE9E7AA1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "meetingFavoriteUnselected@2x.png"; sourceTree = "<group>"; };
-		1AEB2BBF1A4B2580000D7C7B /* FacebookSDKOverrides.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FacebookSDKOverrides.bundle; sourceTree = "<group>"; };
 		1AEB8BEA1A3636FA004A94C1 /* UILabel+HeightToFit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+HeightToFit.h"; sourceTree = "<group>"; };
 		1AEB8BEB1A3636FA004A94C1 /* UILabel+HeightToFit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+HeightToFit.m"; sourceTree = "<group>"; };
 		1AF250701B210E1800330285 /* ShoundModelsV1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ShoundModelsV1.xcdatamodel; sourceTree = "<group>"; };
@@ -314,7 +317,7 @@
 				1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */,
 				1A076DC01A0FE20900CD725A /* Main.storyboard */,
 				1A076DC31A0FE20900CD725A /* Images.xcassets */,
-				1AEB2BBF1A4B2580000D7C7B /* FacebookSDKOverrides.bundle */,
+				1A91FE061B2358A400E8B5D7 /* FacebookSDKStrings.bundle */,
 				1A076DB61A0FE20900CD725A /* Supporting Files */,
 			);
 			path = SharList;
@@ -328,6 +331,7 @@
 				1A076DB81A0FE20900CD725A /* main.m */,
 				1ACDC9031A23D3AA0032B857 /* Settings.plist */,
 				1AB9775D1A2BC69200F41313 /* Localizable.strings */,
+				1A91FE001B2341F600E8B5D7 /* FacebookSDKStrings.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -643,7 +647,9 @@
 				1ACDC9041A23D3AA0032B857 /* Settings.plist in Resources */,
 				1A16F65D1A458929000BC4AB /* settings-tab-icon@3x.png in Resources */,
 				1A1515E91B07D1FE0083CCAD /* newMessageBtn@3x.png in Resources */,
+				1A91FE071B2358A400E8B5D7 /* FacebookSDKStrings.bundle in Resources */,
 				1A1515E71B07D1FE0083CCAD /* newMessageBtn.png in Resources */,
+				1A91FDFE1B2341F600E8B5D7 /* FacebookSDKStrings.strings in Resources */,
 				1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */,
 				1AFE13751A32EEAB006F2366 /* meetingFavoriteSelected@3x.png in Resources */,
 				1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */,
@@ -667,7 +673,6 @@
 				1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */,
 				1AF42CBB1ADB2463008622E6 /* randomMeetingIcon.png in Resources */,
 				1A21F2471B0A9852004BBE55 /* addMessageNavIcon@2x.png in Resources */,
-				1AEB2BC01A4B2580000D7C7B /* FacebookSDKOverrides.bundle in Resources */,
 				1AE9E7AB1A26884D0072EF91 /* meetingFavoriteSelected@2x.png in Resources */,
 				1AFE13741A32EEAB006F2366 /* cart-icon@3x.png in Resources */,
 				1AFE13731A32EEAB006F2366 /* cart-icon@2x.png in Resources */,
@@ -794,6 +799,15 @@
 				1A1675521A3F93E800AE7A9D /* fr */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		1A91FE001B2341F600E8B5D7 /* FacebookSDKStrings.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A91FDFF1B2341F600E8B5D7 /* fr */,
+				1A91FE011B2341FB00E8B5D7 /* en */,
+			);
+			name = FacebookSDKStrings.strings;
 			sourceTree = "<group>";
 		};
 		1AB9775D1A2BC69200F41313 /* Localizable.strings */ = {
@@ -999,7 +1013,7 @@
 				1AF250701B210E1800330285 /* ShoundModelsV1.xcdatamodel */,
 				1A3C227E1A114027005B31E4 /* UserTaste.xcdatamodel */,
 			);
-			currentVersion = 1A3C227E1A114027005B31E4 /* UserTaste.xcdatamodel */;
+			currentVersion = 1AF250701B210E1800330285 /* ShoundModelsV1.xcdatamodel */;
 			path = UserTaste.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

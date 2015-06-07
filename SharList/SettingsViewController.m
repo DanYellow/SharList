@@ -104,6 +104,7 @@
     shareShoundBtn.backgroundColor = [UIColor clearColor];
     shareShoundBtn.layer.borderColor = [UIColor whiteColor].CGColor;
     shareShoundBtn.layer.borderWidth = 2.0f;
+    shareShoundBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
     
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
 

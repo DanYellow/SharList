@@ -293,7 +293,7 @@
     
     commentsTableView.tableHeaderView = headerView;
     
-    NSString *userId = [[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] stringValue];
+    NSString *userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
     
     NSString *discoveryId = self.userDiscoverId;
     

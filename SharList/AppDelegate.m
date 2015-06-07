@@ -24,6 +24,7 @@
     // Override point for customization after application launch.
     
     [MagicalRecord setupAutoMigratingCoreDataStack];
+//    [MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:####];
     
     // APNS + Parse part
     [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"

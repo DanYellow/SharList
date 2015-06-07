@@ -117,7 +117,6 @@
     
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
         if ([FBSDKAccessToken currentAccessToken]) {
-            NSLog(@"access granted");
             [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
             [self readyToStart];
         }

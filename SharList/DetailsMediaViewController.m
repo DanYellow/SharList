@@ -1348,21 +1348,22 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // 7 secondes after update user list we update the database with new datas
         // Like this we are "sure" that user really wants to add this media to his list
         
-//        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(synchronizeUserListWithServer) object:nil];
-//        [self performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.0]; // 7.0
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(synchronizeUserListWithServer) object:nil];
+        [self performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.5]; // 7.0
         // [pfPushManager notifyUpdateList];
         
-        [self synchronizeUserListWithServer];
+//        [self synchronizeUserListWithServer];
+        
         
         [self cancelLocalNotificationWithValueForKey:@"updateList"];
-//        UILocalNotification *localNotification = [UILocalNotification new];
-//        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:NSCalendarUnitMonth]; //One month later
-//        localNotification.soundName = UILocalNotificationDefaultSoundName;
-//        localNotification.applicationIconBadgeNumber = 0;
-//        localNotification.alertAction = nil;
-//        localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyNotUpdateList", nil);
-//        localNotification.userInfo = @{@"locatificationName" : @"updateList"};
-//        [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+        UILocalNotification *localNotification = [UILocalNotification new];
+        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:NSCalendarUnitMonth]; //One month later
+        localNotification.soundName = UILocalNotificationDefaultSoundName;
+        localNotification.applicationIconBadgeNumber = 0;
+        localNotification.alertAction = nil;
+        localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyNotUpdateList", nil);
+        localNotification.userInfo = @{@"locatificationName" : @"updateList"};
+        [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     }];
 }
 

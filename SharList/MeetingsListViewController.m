@@ -122,6 +122,7 @@
 
     
     if ([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"]) {
+        [self fetchUserFacebookFriendsReloadAfter:NO];
         [self initializer];
         [self manageDisplayOfFacebookFriendsButton];
     }
@@ -144,8 +145,8 @@
         [userPreferences setBool:YES forKey:@"seenAlertForBGF"];
     }
     
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorial"] && [FBSDKAccessToken currentAccessToken]) {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorial"];
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorialNew"] && [FBSDKAccessToken currentAccessToken]) {
+//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorialNew"];
         [self showTutorial];
     }
     
@@ -1296,8 +1297,8 @@
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[randomUserDatas objectForKey:@"list"]];
     
     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
-    UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_rootSavingContext]];
-    NSNumber *oldUserCount = [UserTaste MR_numberOfEntitiesWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_rootSavingContext]];
+    UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_defaultContext]];
+    NSNumber *oldUserCount = oldUserTaste.numberOfMeetings;
     
     // If user exists we just update his value like streetpass on 3ds
     if (oldUserCount != 0 && randomUserfbID != nil && oldUserTaste != nil) {
@@ -1320,21 +1321,23 @@
         }
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-            oldUserTaste.taste = arrayData;
-            oldUserTaste.fbid = randomUserfbID;
-            oldUserTaste.lastMeeting = [NSDate date];
-            oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
-            
-            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
-                oldUserTaste.isRandomDiscover = NO;
             
         } completion:^(BOOL success, NSError *error) {
-            [self endSavingNewEntry];
+            
         }];
+        
+        oldUserTaste.taste = arrayData;
+        oldUserTaste.fbid = randomUserfbID;
+        oldUserTaste.lastMeeting = [NSDate date];
+        oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
+        
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
+            oldUserTaste.isRandomDiscover = NO;
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        [self endSavingNewEntry];
     } else {
         // It's a new user
         // So we create a entity in CoreData for him
-
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             UserTaste *userTaste = [UserTaste MR_createEntityInContext:localContext];
             userTaste.taste = arrayData;
@@ -1413,9 +1416,38 @@
 - (void) allowFacebookFriendsPermission
 {
     FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
-    [loginManager logInWithPublishPermissions:@[@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+    [loginManager logInWithReadPermissions:@[@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
         //TODO: process error or result.
+        if (!error) {
+            [self fetchUserFacebookFriendsReloadAfter:YES];
+        }
     }];
+}
+
+- (void) fetchUserFacebookFriendsReloadAfter:(BOOL)haveToReloadViewAfter
+{
+    // We save the user's friends using application (and accepts this feature) for later
+    if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
+        [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?fields=first_name,last_name" parameters:nil]
+         startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+             if (!error) {
+                 NSArray* friends;
+                 
+                 if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
+                     friends = @[];
+                 } else {
+                     friends = [result valueForKeyPath:@"data"];
+                 }
+//                 friends = @[];
+                 
+                 [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
+                 
+                 if (haveToReloadViewAfter) {
+                     [self performSelectorOnMainThread:@selector(reloadTableview) withObject:nil waitUntilDone:YES];
+                 }
+             }
+         }];
+    }
 }
 
 - (void) shareFb
@@ -1461,70 +1493,41 @@
     emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
     emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emptyFacebookFriendsLabel.backgroundColor = [UIColor clearColor];
-//    [emptyFacebookFriendsLabel sizeToFit];
-    
-    // If the user refuse the user_friends permission we don't show this part
-    if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
-        emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
-    } else {
-        emptyFacebookFriendsLabel.text = NSLocalizedString(@"has facebook friends", nil);
-    }
-    
     [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
     
     
+    UIButton *fbSegCtrlBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    fbSegCtrlBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
+    [fbSegCtrlBtn setFrame:CGRectMake(0, emptyFacebookFriendsLabel.frame.size.height + emptyFacebookFriendsLabel.frame.origin.y + 15.0f, emptyFacebookFriendsLabelView.frame.size.width, 54)];
+    [fbSegCtrlBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    
+    [fbSegCtrlBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [fbSegCtrlBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
+    
+    [fbSegCtrlBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    fbSegCtrlBtn.backgroundColor = [UIColor clearColor];
+    fbSegCtrlBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    fbSegCtrlBtn.layer.borderWidth = 2.0f;
+    [emptyFacebookFriendsLabelView addSubview:fbSegCtrlBtn];
+    
+    
+    // User doesn't authorize shound to access his facebook friends who using the app
     if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
-        CGRect shareShoundBtnFrame = CGRectMake(0, emptyFacebookFriendsLabel.frame.origin.y + emptyFacebookFriendsLabel.frame.size.height, screenWidth - 24, 44);
+        emptyFacebookFriendsLabel.text = NSLocalizedString(@"facebook shound not granted", nil);
         
-        UIButton *allowFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [allowFriendsBtn setFrame:CGRectMake(0, shareShoundBtnFrame.origin.y + shareShoundBtnFrame.size.height + 25, shareShoundBtnFrame.size.width, 44)];
-        [allowFriendsBtn setTitle:NSLocalizedString(@"authorize fb friends", nil) forState:UIControlStateNormal];
-        [allowFriendsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [allowFriendsBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateHighlighted];
-        [allowFriendsBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-        allowFriendsBtn.tag = 7;
-        allowFriendsBtn.backgroundColor = [UIColor clearColor];
-        allowFriendsBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-        allowFriendsBtn.layer.borderWidth = 2.0f;
-        [allowFriendsBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
-        [emptyFacebookFriendsLabelView addSubview:allowFriendsBtn];
+        [fbSegCtrlBtn setTitle:NSLocalizedString(@"authorize fb friends", nil) forState:UIControlStateNormal];
+        [fbSegCtrlBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
     } else {
-        
         // No friends
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] count] > 0) {
-        
+            emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
         } else {
-            UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-            shareShoundBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
-            [shareShoundBtn setFrame:CGRectMake(0, emptyFacebookFriendsLabel.frame.size.height + emptyFacebookFriendsLabel.frame.origin.y + 15.0f, emptyFacebookFriendsLabelView.frame.size.width, 54)];
-            
-            [shareShoundBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
-            [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            
-            [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
-            [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
-            
-            
-            [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-            shareShoundBtn.backgroundColor = [UIColor clearColor];
-            shareShoundBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-            shareShoundBtn.layer.borderWidth = 2.0f;
-            [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
-            [emptyFacebookFriendsLabelView addSubview:shareShoundBtn];
+            emptyFacebookFriendsLabel.text = NSLocalizedString(@"has facebook friends", nil);
         }
         
-
+        [fbSegCtrlBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
+        [fbSegCtrlBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     }
-    
-    
-
-    
-    
-//    UIView *emptyFacebookFriendsLabelLastView = [emptyFacebookFriendsLabelView.subviews lastObject];
-//    CGRect frameRect = emptyFacebookFriendsLabelView.frame;
-//    frameRect.size.height = emptyFacebookFriendsLabelLastView.frame.size.height + emptyFacebookFriendsLabelLastView.frame.origin.y;
-//    emptyFacebookFriendsLabelView.frame = frameRect;
-    //    emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
 }
 
 #pragma mark - misc
