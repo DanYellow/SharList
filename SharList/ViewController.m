@@ -121,9 +121,6 @@
     [self.view insertSubview:loadingIndicator atIndex:1000];
     
 
-    
-
-    
     // Uitableview of user selection (what user likes)
     UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
     userTasteListTableView.dataSource = self;
@@ -181,7 +178,7 @@
     UIView *userTasteListTableViewEmptyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
     userTasteListTableViewEmptyView.backgroundColor = [UIColor clearColor];
     userTasteListTableViewEmptyView.tag = 8;
-    userTasteListTableViewEmptyView.hidden = YES;
+    userTasteListTableViewEmptyView.hidden = NO;
     userTasteListTableViewEmptyView.opaque = YES;
     [userTasteListTableView addSubview:userTasteListTableViewEmptyView];
     
@@ -420,7 +417,6 @@
     currentUserFBView.tag = 10;
     
     
-    
     for (int i = 0; i < [[userTasteDict filterKeysForNullObj] count]; i++) {
         NSString *title = [NSLocalizedString([[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
         
@@ -449,10 +445,6 @@
         statTitle.backgroundColor = [UIColor clearColor];
         statTitle.text = title;
         statTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
-//        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
-//        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-//        statTitle.layer.shadowRadius = 2.5;
-//        statTitle.layer.shadowOpacity = 0.75;
         [statContainer addSubview:statTitle];
         
         UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(12, statContainer.frame.size.height - 34, widthViews, 35.0)];
@@ -460,10 +452,6 @@
         statCount.backgroundColor = [UIColor clearColor];
         statCount.tag = tagRange + i;
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
-//        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
-//        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-//        statCount.layer.shadowRadius = 2.5;
-//        statCount.layer.shadowOpacity = 0.75;
         
         NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i]] count]] stringValue];
         
@@ -615,7 +603,7 @@
         if (completion)
             completion(responseObject[@"response"]);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-
+        NSLog(@"error : %@", error);
 //        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:@"Oups" message:@"Il semblerait qu'on ait du mal à afficher cette fiche. \n Réessayez plus tard." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
 //        [errConnectionAlertView show];
 //        [loadingIndicator stopAnimating];
@@ -872,8 +860,8 @@
                 }
             }
         }
-        
-        if (IsTableViewEmpty == YES && ([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"])) {
+
+        if (IsTableViewEmpty == YES) {
             userTasteListTableViewEmptyView.hidden = NO;
             [loadingIndicator stopAnimating];
             
@@ -1420,14 +1408,14 @@
 // This methods allows to retrieve and send (?) user datas from the server
 - (void) getServerDatasForFbID:(NSNumber*)userfbID isUpdate:(BOOL)isUpdate
 {
-    NSString *urlString = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
+    NSString *urlString = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
     urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"?fbiduser=%@", userfbID]];
     
     NSURL *aUrl = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
-    [request addValue:@"Hello connect" forHTTPHeaderField:@"X-Shound"];
+    [request addValue:@"Hello fetching list" forHTTPHeaderField:@"X-Shound"];
     [request setHTTPMethod:@"GET"];
     
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
@@ -1452,25 +1440,27 @@
         
         NSData *data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
         
+        NSDictionary *listUser = [[[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"] objectForKey:@"list"];
+        
         // There is some datas from the server
-        if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
-            userTasteDict = [[[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"] objectForKey:@"list"];
-            
-            // We order the NSDictionary key
-            for (NSString* key in [userTasteDict allKeys])
-            {
-                if ([userTasteDict objectForKey:key] != [NSNull null]) {
-                    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-                    NSArray *sortedCategory = [[userTasteDict objectForKey:key] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
-                    [userTasteDict removeObjectForKey:key];
-                    [userTasteDict setObject:sortedCategory forKey:key];
+        if (listUser.count > 0) {
+
+            userTasteDict = [listUser mutableCopy];
+                // We order the NSDictionary key
+                for (NSString* key in [userTasteDict allKeys])
+                {
+                    if ([userTasteDict objectForKey:key] != [NSNull null]) {
+                        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+                        NSArray *sortedCategory = [[userTasteDict objectForKey:key] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:descriptor, nil]];
+                        [userTasteDict removeObjectForKey:key];
+                        [userTasteDict setObject:sortedCategory forKey:key];
+                    }
                 }
-            }
             [self displayUserTasteList];
         } else {
 //            NSLog(@"no user datas");
         }
-        
+
         UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                         withValue:[userPreferences objectForKey:@"currentUserfbID"]];
     
@@ -1487,6 +1477,7 @@
             userTaste.fbid = currentFbIduser;
             userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+            [self displayUserTasteList];
         }
     }
 }
@@ -1523,9 +1514,9 @@
     NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
     
     NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[userPreferences objectForKey:@"currentUserfbID"]];
-
-    shoundAPIPath = [shoundAPIPath stringByAppendingString:queryParams];
     
+    shoundAPIPath = [shoundAPIPath stringByAppendingString:queryParams];
+
     NSURL *URL = [NSURL URLWithString:shoundAPIPath];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     [request setHTTPMethod:@"GET"];
@@ -1548,6 +1539,16 @@
                         if ([jsonData objectForKey:@"error"]) {
                             sender.enabled = YES;
                             [loadingIndicator stopAnimating];
+                            
+                        } else if ([jsonData objectForKey:@"warning"]) {
+                            UIAlertView *endSynchronize = [[UIAlertView alloc] initWithTitle:@""
+                                                                                     message:NSLocalizedString([jsonData objectForKey:@"warning"], "user hasn't any like")
+                                                                                    delegate:nil
+                                                                           cancelButtonTitle:@"OK"
+                                                                           otherButtonTitles: nil];
+                            [endSynchronize performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+                            
+                            [loadingIndicator stopAnimating];
                         } else {
                             NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
 
@@ -1557,16 +1558,15 @@
                                 userTasteDict = [jsonData[@"response"] mutableCopy];
                                 [userTasteDict setValue:[NSNull null] forKey:@"book"];
                                 
-                                [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+                                [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
                                     NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
                                     UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
                                     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
                                     userTaste.taste = arrayData;
-                                    
                                 } completion:^(BOOL success, NSError *error) {
-                                    // To put again a beautiful day
+//                                    To put again a beautiful day
 //                                    [self synchronizeUserListWithServer];
-        
+                                    
                                     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
                                     [userTasteListTableView reloadData];
                                     
@@ -1577,15 +1577,18 @@
                                                                                             delegate:nil
                                                                                    cancelButtonTitle:@"OK"
                                                                                    otherButtonTitles: nil];
-                                    [endSynchronize show];
+                                    [endSynchronize performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
                                     sender.enabled = YES;
                                     // We want to call the following function only once
                                     // so we check if the uitableview's header exists (it will exists after)
                                     UIView *currentUserFBView = (UIView*)[self.view viewWithTag:10];
                                     if (!currentUserFBView) {
                                         [self displayCurrentUserStats];
+                                    } else {
+                                        [self updateCurrentUserStats];
                                     }
                                 }];
+                                
                             } else {
                                 sender.enabled = YES;
                                 [loadingIndicator stopAnimating];
@@ -1629,7 +1632,7 @@
     [searchLoadingIndicator startAnimating];
 
     //We wait X seconds before query the server for performances and "limit" the bandwidth
-    [self performSelector:@selector(getDatasFromServerForSearchController:) withObject:searchController afterDelay:1.7];
+    [self performSelector:@selector(getDatasFromServerForSearchController:) withObject:searchController afterDelay:1.9];
 }
 
 - (void) getDatasFromServerForSearchController:(UISearchController *) searchController {
