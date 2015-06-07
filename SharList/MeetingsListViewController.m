@@ -145,8 +145,8 @@
         [userPreferences setBool:YES forKey:@"seenAlertForBGF"];
     }
     
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorialNew"] && [FBSDKAccessToken currentAccessToken]) {
-//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorialNew"];
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MeetingsListTutorialV2"] && [FBSDKAccessToken currentAccessToken]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorialV2"];
         [self showTutorial];
     }
     
@@ -1431,16 +1431,15 @@
         [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?fields=first_name,last_name" parameters:nil]
          startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
              if (!error) {
-                 NSArray* friends;
-                 
+                 NSArray* facebookFriends;
+
                  if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
-                     friends = @[];
+                     facebookFriends = @[];
                  } else {
-                     friends = [result valueForKeyPath:@"data"];
+                     facebookFriends = [result valueForKeyPath:@"data"];
                  }
-//                 friends = @[];
                  
-                 [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
+                 [[NSUserDefaults standardUserDefaults] setObject:facebookFriends forKey:@"facebookFriendsList"];
                  
                  if (haveToReloadViewAfter) {
                      [self performSelectorOnMainThread:@selector(reloadTableview) withObject:nil waitUntilDone:YES];
@@ -1520,9 +1519,9 @@
     } else {
         // No friends
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] count] > 0) {
-            emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
-        } else {
             emptyFacebookFriendsLabel.text = NSLocalizedString(@"has facebook friends", nil);
+        } else {
+            emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
         }
         
         [fbSegCtrlBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];

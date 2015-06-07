@@ -82,6 +82,7 @@
     // We get the datas of current user to compare it to the current list
     UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                       withValue:[userPreferences objectForKey:@"currentUserfbID"]];
+    // Xcode can throw a NSLog if [currentUser taste] is nil
     currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
     
     self.metUserTasteDict = [NSMutableDictionary new];
