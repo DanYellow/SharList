@@ -144,13 +144,20 @@
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [userMet numberOfMeetings]]];
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [shareShoundBtn setFrame:CGRectMake(0, 60, screenWidth, 44)];
+    [shareShoundBtn setFrame:CGRectMake(0, tableFooter.frame.size.height + tableFooter.frame.origin.y + 12, screenWidth - 24, 54)];
+    [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
+    [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    shareShoundBtn.backgroundColor = [UIColor clearColor];
+    shareShoundBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    shareShoundBtn.layer.borderWidth = 2.0f;
+    shareShoundBtn.center = CGPointMake(self.view.center.x, shareShoundBtn.center.y);
     [shareShoundBtn setTitle:NSLocalizedString(@"Talk about this discover", nil) forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     
-    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 60)];
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 100)];
     tableFooter.opaque = YES;
     tableFooter.backgroundColor = [UIColor clearColor];
     
@@ -163,7 +170,7 @@
     [tableFooterView addSubview:tableFooter];
     
     UIView *tableFooterViewLastView = [tableFooterView.subviews objectAtIndex:0];
-    CGFloat tableFooterViewLastViewPos =  tableFooterViewLastView.frame.size.height + tableFooterViewLastView.frame.origin.y + 15.0f;
+    CGFloat tableFooterViewLastViewPos =  tableFooterViewLastView.frame.size.height + tableFooterViewLastView.frame.origin.y + 25.0f;
     
     CGRect tableFooterViewFrame = tableFooterView.frame;
     tableFooterViewFrame.size.height = tableFooterViewLastViewPos;
@@ -1049,62 +1056,45 @@
                      }];
 }
 
-#pragma mark - facebook
+#pragma mark - facebook sharing
 
 - (void) shareFb
 {
-//    FBLinkShareParams *params = [FBLinkShareParams new];
-//    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
-//    params.name = NSLocalizedString(@"FBLinkShareParams_metfriend_name", nil);
-//    params.caption = [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.navigationController.title];
-//    params.picture = [NSURL URLWithString:@"http://www.shound.fr/shound_logo_fb.jpg"];
-//    
-////
-//    // [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_desc %@", nil), self.title]
-//    
-//    // If the Facebook app is installed and we can present the share dialog
-//    if ([FBDialogs canPresentShareDialogWithParams:params]) {
-//        [FBDialogs presentShareDialogWithLink:params.link
-//                                         name:params.name
-//                                      caption:nil
-//                                  description:NSLocalizedString(@"FBLinkShareParams_metfriend_desc_alt", nil)
-//                                      picture:params.picture
-//                                  clientState:nil
-//                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
-//                                          if(error) {
-//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-//                                                                          message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
-//                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-//                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
-//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
-//                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
-//                                                                         delegate:nil
-//                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-//                                          }
-//                                      }];
-//    } else {
-//        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-//                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
-//                                   delegate:nil
-//                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-//    }
+    FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
+    content.contentURL = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
+    content.contentTitle = [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_name %@", nil), self.title];
+    content.contentDescription = NSLocalizedString(@"FBLinkShareParams_metfriend_desc", nil);
+    content.imageURL = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+    
+    [FBSDKShareDialog showFromViewController:self
+                                 withContent:content
+                                    delegate:self];
 }
+
+- (void) sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results
+{
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
+                                message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
+                               delegate:nil
+                      cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+}
+
+- (void) sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error
+{
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+                               delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+    
+}
+
+- (void)sharerDidCancel:(id<FBSDKSharing>)sharer {}
 
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
+
 #import <Parse/Parse.h>
 
 #import "AFNetworking.h"
@@ -29,7 +31,7 @@ typedef NS_ENUM (NSInteger, FollowingStatus) {
     Follow = 1
 };
 
-@interface DetailsMeetingViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate>
+@interface DetailsMeetingViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, FBSDKSharingDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

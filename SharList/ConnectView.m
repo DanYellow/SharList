@@ -113,35 +113,13 @@
     
     [manager POST:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        NSLog(@"responseObject: %@", responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        NSLog(@"Error: %@", error);
-    }];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {}];
     
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
         if ([FBSDKAccessToken currentAccessToken]) {
-            // We save the user's friends using application (and accepts this feature) for later
-            if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
-                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?fields=first_name,last_name" parameters:nil]
-                 startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-                     if (!error) {
-                         NSArray* friends;
-                         
-                         if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
-                             friends = @[];
-                         } else {
-                             friends = [result valueForKeyPath:@"data"];
-                         }
-
-                         [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
-                         [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
-                         
-                        [self readyToStart];
-                     }
-                 }];
-            } else {
-                [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
-                [self readyToStart];
-            }
+            NSLog(@"access granted");
+            [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
+            [self readyToStart];
         }
     } else {
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
@@ -155,6 +133,8 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"mainViewIsReady" object:nil userInfo:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userConnectedToFacebook" object:nil userInfo:nil];
 }
+
+- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton {}
 
 
 #pragma mark - Custom methods
