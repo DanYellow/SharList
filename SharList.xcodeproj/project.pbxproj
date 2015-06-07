@@ -161,6 +161,7 @@
 		1A4953D21A1EBB9500A0C232 /* ShopButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopButton.h; sourceTree = "<group>"; };
 		1A4953D31A1EBB9500A0C232 /* ShopButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopButton.m; sourceTree = "<group>"; };
 		1A549EF61B24A02400B9305B /* UserTaste.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UserTaste.xcdatamodel; sourceTree = "<group>"; };
+		1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ShoundEntitiesV1.xcdatamodel; sourceTree = "<group>"; };
 		1A5682A61AE19809007D6D93 /* UIImage+ColorImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ColorImage.h"; sourceTree = "<group>"; };
 		1A5682A71AE19809007D6D93 /* UIImage+ColorImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ColorImage.m"; sourceTree = "<group>"; };
 		1A61F50E1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+FilterKeysForNullObj.h"; sourceTree = "<group>"; };
@@ -1009,6 +1010,7 @@
 		1A549EF51B24A02400B9305B /* UserTaste.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */,
 				1A549EF61B24A02400B9305B /* UserTaste.xcdatamodel */,
 			);
 			currentVersion = 1A549EF61B24A02400B9305B /* UserTaste.xcdatamodel */;
