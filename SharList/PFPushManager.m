@@ -25,7 +25,7 @@
                 // (aka every user who had added his list among favorites)
                 // he update his list
                 NSString *currentUserPFChannelName = @"sh_channel_";
-                currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+                currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[FBSDKAccessToken currentAccessToken].userID];
                 
                 
                 NSTimeInterval interval = 60*60*24*7; // 1 week
@@ -35,7 +35,7 @@
                                                },
                                        @"badge" : @"Increment",
                                        @"content-available": @0,
-                                       @"userfbid" : [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],                                       @"sounds" : @""};
+                                       @"userfbid" : [FBSDKAccessToken currentAccessToken].userID,                                       @"sounds" : @""};
                 self.push = [PFPush new];
                 [self.push setChannels:@[ currentUserPFChannelName ]];
                 [self.push expireAfterTimeInterval:interval];

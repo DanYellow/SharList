@@ -53,6 +53,79 @@
     [self navigationItemRightButtonEnablingManagement];
 }
 
+- (void) showWarningMessage
+{
+    UIView *warningMessageView = [[UIView alloc] initWithFrame:self.view.frame];
+    warningMessageView.tag = 5678;
+    warningMessageView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.85];
+
+    
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = self.view.bounds;
+    
+    [warningMessageView addSubview:visualEffectView];
+    
+    [[[UIApplication sharedApplication] keyWindow] addSubview:warningMessageView];
+    
+    float percentHeight = (150*100)/screenHeight;
+    UIView *warningMessageViewContainer = [[UIView alloc] initWithFrame:CGRectMake(0, (percentHeight*screenHeight)/100, screenWidth, screenHeight-(percentHeight*screenHeight)/100)];
+    warningMessageViewContainer.backgroundColor = [UIColor clearColor];
+    
+    UIImageView *warningPictoContainer = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
+    warningPictoContainer.image = [[UIImage imageNamed:@"warning-picto"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    warningPictoContainer.center = CGPointMake(self.view.center.x, 0.0);
+    warningPictoContainer.tintColor = [UIColor whiteColor];
+    warningPictoContainer.backgroundColor = [UIColor clearColor];
+    warningPictoContainer.contentMode = UIViewContentModeScaleAspectFill;
+    [warningMessageViewContainer addSubview:warningPictoContainer];
+    
+    
+    NSUInteger warningMessageY = warningPictoContainer.frame.size.height - 30;
+    
+    UITextView *warningMessage = [[UITextView alloc] initWithFrame:CGRectMake(0, warningMessageY, 225, 110)];
+    warningMessage.text = [NSLocalizedString(@"warning message for update login issue", nil) uppercaseString];
+    warningMessage.textColor = [UIColor whiteColor];
+    warningMessage.center = CGPointMake(self.view.center.x, warningMessage.center.y);
+    warningMessage.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+    warningMessage.textAlignment = NSTextAlignmentCenter;
+    warningMessage.editable = NO;
+    [warningMessage sizeToFit];
+    warningMessage.backgroundColor = [UIColor clearColor];
+    [warningMessageViewContainer addSubview:warningMessage];
+    
+    UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
+    [endTutorial addTarget:self action:@selector(hideWarning) forControlEvents:UIControlEventTouchUpInside];
+    [endTutorial setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
+    endTutorial.frame = CGRectMake(0, warningMessageViewContainer.frame.size.height - 150, screenWidth, 49);
+    endTutorial.tintColor = [UIColor whiteColor];
+    [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+    [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
+    
+    [warningMessageViewContainer addSubview:endTutorial];
+    
+    [warningMessageView addSubview:warningMessageViewContainer];
+}
+
+- (void) hideWarning
+{
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    UIView *tutorialView = (UIView*)[[[UIApplication sharedApplication] keyWindow] viewWithTag:5678];
+    [UIView animateWithDuration:0.25 delay:0.1
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         tutorialView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [tutorialView removeFromSuperview];
+                     }];
+}
+
 - (void) viewWillDisappear:(BOOL)animated
 {
     // Reset the badge notification number
@@ -80,6 +153,14 @@
     
     if ([userPreferences objectForKey:@"noresultsgeoloc"] == nil) {
         [userPreferences setInteger:0 forKey:@"noresultsgeoloc"];
+    }
+    
+    
+    if (([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"]) && [userPreferences objectForKey:@"installationDate"]) {
+        if (![userPreferences objectForKey:@"warningDisconnectMessageHaveBeenDisplayV1"]) {
+            [self showWarningMessage];
+            [userPreferences setObject:@1 forKey:@"warningDisconnectMessageHaveBeenDisplayV1"];
+        }
     }
     
     // TODO : REMOVE BEFORE SOUMISSION
@@ -570,6 +651,7 @@
         }
     } else {
         self.navigationItem.rightBarButtonItem.enabled = YES;
+        refreshBtnBar.enabled = YES;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.timerRefreshBtn invalidate];
             self.timerRefreshBtn = nil;

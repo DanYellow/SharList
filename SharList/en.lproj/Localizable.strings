@@ -72,6 +72,8 @@
 "randomMeetingExplained" = "Random\nThe unknown does not scare you";
 "notefacebook" = "Note: If an icon is replaced by initials, you discovered a facebook friend!\n Note 2: You can make a discovery only every hours.";
 
+"warning message for update login issue" = "If you just update the app, please log out into the settings and reconnect";
+
 // DetailsMeetingsViewController
 "met %@ times" = "discovered %@ time(s)";
 "pull to refresh fav" = "This discovery is now among your favs.\nYou can \"pull-to-refresh\" to see if this has been updated.";
@@ -165,3 +167,5 @@
 "FBLinkShareParams_postsuccess_title" = "Great!";
 "FBLinkShareParams_metfriend_name %@" = "I discovered the likes of %@ on Shound";
 "FBLinkShareParams_metfriend_desc" = "Do the same!";
+
+"Facebook account issue" = "It looks like there is an issue with your facebook account.\n Please log out in the Settings then log in";

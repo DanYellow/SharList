@@ -616,40 +616,36 @@
 
 - (void) shareFb
 {
-//    FBLinkShareParams *params = [FBLinkShareParams new];
-//    params.link = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
-//    params.name = NSLocalizedString(@"FBLinkShareParams_name", nil);
-//    params.caption = NSLocalizedString(@"FBLinkShareParams_caption", nil);
-//    params.picture = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
-  
-    // If the Facebook app is installed and we can present the share dialog
-//    if ([FBDialogs canPresentShareDialogWithParams:params]) {
-//        [FBDialogs presentShareDialogWithLink:params.link
-//                                         name:params.name
-//                                      caption:nil
-//                                  description:NSLocalizedString(@"FBLinkShareParams_caption", nil)
-//                                      picture:params.picture
-//                                  clientState:nil
-//                                      handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
-//                                          if(error) {
-//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-//                                                                    message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
-//                                                                         delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-//                                          } else if (![results[@"completionGesture"] isEqualToString:@"cancel"]) {
-//                                              [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
-//                                                                          message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
-//                                                                         delegate:nil
-//                                                                cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-//                                          }
-//                                      }];
-//    } else {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
-                                    message:NSLocalizedString(@"FBLinkShareParams_noapp", nil)
-                                   delegate:nil
-                          cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
-//    }
+    FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
+    content.contentURL = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
+    content.contentTitle = NSLocalizedString(@"FBLinkShareParams_name", nil);
+    content.imageURL = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+    
+    [FBSDKShareDialog showFromViewController:self
+                                 withContent:content
+                                    delegate:self];
 }
 
+- (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results
+{
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
+                                message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
+                               delegate:nil
+                      cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+}
+
+- (void)sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error {
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+                               delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+}
+
+- (void)sharerDidCancel:(id<FBSDKSharing>)sharer {}
+
+
+- (void) loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
+               error:(NSError *)error
+{}
 
 
 //- (void)updateSwitchAtIndexPath:(NSIndexPath *)indexPath

@@ -27,4 +27,6 @@
 @property (strong, nonatomic) NSString *oldComment;
 @property (nonatomic, assign, getter=ishavingComment) BOOL havingComment;
 
+- (void) updateMessageSendedStatus:(NSString*)message forColor:(UIColor*)aColor;
+
 @end

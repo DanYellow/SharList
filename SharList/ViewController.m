@@ -295,9 +295,10 @@
     
     // Keep the date of installation of app
     if (![userPreferences objectForKey:@"installationDate"]) {
+        NSLog(@"gregr");
         [userPreferences setObject:[NSDate date] forKey:@"installationDate"];
     }
-    
+        
     // Test if it's the first use
     if (![userPreferences boolForKey:@"firstTime"]) {
         // Display and extra button for
@@ -500,7 +501,7 @@
     
     NSString *metUserFBImgURL = nil;
     if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
-        NSString *fbMetUserString = [userPreferences objectForKey:@"currentUserfbID"];
+        NSString *fbMetUserString = [FBSDKAccessToken currentAccessToken].userID;
         metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
     }
     
@@ -1473,8 +1474,16 @@
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
     NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
+    NSString *userFbId = [FBSDKAccessToken currentAccessToken].userID;
     
-    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:[userPreferences objectForKey:@"currentUserfbID"]];
+    if (!userFbId) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"Facebook account issue", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        sender.enabled = YES;
+        return;
+    }
+
+    NSString *queryParams = [@"?fbiduser=" stringByAppendingString:userFbId];
     
     shoundAPIPath = [shoundAPIPath stringByAppendingString:queryParams];
 

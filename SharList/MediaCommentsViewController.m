@@ -494,7 +494,7 @@
     NSUInteger warningMessageY = warningPictoContainer.frame.size.height - 30;
     
     UITextView *warningMessage = [[UITextView alloc] initWithFrame:CGRectMake(0, warningMessageY, 225, 110)];
-    warningMessage.text = [NSLocalizedString(@"warning message", nil) uppercaseString];
+    warningMessage.text = [NSLocalizedString(@"warning message for comments", nil) uppercaseString];
     warningMessage.textColor = [UIColor whiteColor];
     warningMessage.center = CGPointMake(self.view.center.x, warningMessage.center.y);
     warningMessage.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];

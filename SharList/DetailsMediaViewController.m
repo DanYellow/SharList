@@ -108,7 +108,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
-    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
+//    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
     
     
     // Contains globals datas of the project

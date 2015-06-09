@@ -29,5 +29,6 @@
 // Hack to change tab
 - (void) setViewController:(UIViewController*)anViewController;
 - (UIViewController*)viewController;
+- (void) disconnectUser;
 
 @end

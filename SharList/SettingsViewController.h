@@ -21,6 +21,7 @@
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 
 enum SettingsMenuItem : NSUInteger {
     EnabledAnonymous = 0,
@@ -30,7 +31,7 @@ enum SettingsMenuItem : NSUInteger {
 };
 
 @interface SettingsViewController : UIViewController <UITableViewDelegate, FBSDKLoginButtonDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UIAlertViewDelegate, UIActionSheetDelegate>
+UISearchControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UIAlertViewDelegate, UIActionSheetDelegate, FBSDKSharingDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

@@ -14,6 +14,7 @@
 // 1 : Facebook button for connect
 // 2 : appnameLabel (UILabel)
 // 3 : appMottoLabel (UILabel)
+// 4 :
 
 @implementation ConnectView
 
@@ -81,17 +82,22 @@
         fbLoginButton.delegate = self;
         fbLoginButton.frame = CGRectMake((self.center.x - (fbLoginButton.frame.size.width / 2)), screenHeight - 150, 218, 46);
         fbLoginButton.center = CGPointMake(self.center.x, fbLoginButton.center.y);
-        fbLoginButton.tag = 1;
+        fbLoginButton.tag = 4;
         [self addSubview:fbLoginButton];
     }
     
     return self;
 }
 
+- (void) disconnectUser
+{
+    FBSDKLoginButton *fbLoginButton = (FBSDKLoginButton*)[self viewWithTag:4];
+    [fbLoginButton sendActionsForControlEvents: UIControlEventTouchUpInside];
+}
 
 #pragma mark - facebook
 // User is logged
-- (void)  loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
+- (void) loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
                 error:(NSError *)error
 {
     self.hidden = YES;
@@ -100,6 +106,8 @@
         return;
     }
     
+    // Is useful to not display the warning message for newcomers
+    [userPreferences setObject:@1 forKey:@"warningDisconnectMessageHaveBeenDisplayV1"];
     
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
     // Build the array from the plist
@@ -117,7 +125,6 @@
     
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
         if ([FBSDKAccessToken currentAccessToken]) {
-            NSLog(@"[FBSDKAccessToken currentAccessToken].userID : %@", [FBSDKAccessToken currentAccessToken].userID);
             [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
             [self readyToStart];
         }
@@ -134,7 +141,12 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userConnectedToFacebook" object:nil userInfo:nil];
 }
 
-- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton {}
+- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbImageData"];
+    
+    [self.viewController.tabBarController setSelectedIndex:0];
+}
 
 
 #pragma mark - Custom methods

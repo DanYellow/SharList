@@ -203,11 +203,11 @@
         
         [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
             sender.enabled = YES;
-            [self faceStatusForMessage:NSLocalizedString(@"updated comment", nil)];
+            [self updateMessageSendedStatus:NSLocalizedString(@"updated comment", nil) forColor:[UIColor colorWithRed:(0.0f/255.0f) green:(88.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
             [self.view endEditing:YES];
             [mediaCommentsViewController loadComments];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"error : %@", error);
+            [self updateMessageSendedStatus:NSLocalizedString(@"updated comment", nil) forColor:[UIColor colorWithRed:(186.0f/255.0f) green:(0.0f/255.0f) blue:(9.0f/255.0f) alpha:1.0f]];
         }];
     } else {
         NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comment"];
@@ -219,11 +219,11 @@
         
         [manager POST:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
             sender.enabled = YES;
-            [self faceStatusForMessage:NSLocalizedString(@"sent comment", nil)];
+            [self updateMessageSendedStatus:NSLocalizedString(@"sent comment", nil) forColor:[UIColor colorWithRed:(0.0f/255.0f) green:(88.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
             [self.view endEditing:YES];
             [mediaCommentsViewController loadComments];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"error : %@", error);
+            [self updateMessageSendedStatus:NSLocalizedString(@"sent comment", nil) forColor:[UIColor colorWithRed:(186.0f/255.0f) green:(0.0f/255.0f) blue:(9.0f/255.0f) alpha:1.0f]];
         }];
     }
 }
@@ -255,9 +255,10 @@
     }
 }
 
-- (void) faceStatusForMessage:(NSString*)message
+- (void) updateMessageSendedStatus:(NSString*)message forColor:(UIColor*)aColor
 {
     UILabel *commentSendFeedbackLabel = (UILabel*)[self.view viewWithTag:6];
+    commentSendFeedbackLabel.textColor = aColor;
     commentSendFeedbackLabel.alpha = 1.0f;
     commentSendFeedbackLabel.text = message;
     [UIView animateWithDuration:.8f delay:1.9f options:UIViewAnimationOptionCurveLinear animations:^{

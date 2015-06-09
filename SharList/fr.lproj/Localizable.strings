@@ -76,6 +76,8 @@
 "randomMeetingExplained" = "Aléatoires\nPour ceux qui n'ont pas peur de l'inconnu";
 "notefacebook" = "Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !\n Note 2 : Vous ne pouvez faire une découverte que toutes les heures.";
 
+"warning message for update login issue" = "Vous venez de mettre à jour l'application ? \n \n Veuillez vous déconnecter dans les paramètres puis vous reconnecter";
+
 
 //Settings view controller
 "Settings" = "Réglages";
@@ -146,7 +148,7 @@
 "no comment friend %@" = "%@ n'a pas encore commenté";
 "no comment user" = "Vous n'avez pas encore commenté";
 "close" = "Fermer";
-"warning message" = "Certains commentaires peuvent SPOILER \n \n APPUyez longuement pour les afficher";
+"warning message for comments" = "Certains commentaires peuvent SPOILER \n \n APPUyez longuement pour les afficher";
 
 //PostCommentsViewController
 "comments" = "commentaires";
@@ -180,3 +182,4 @@
 "FBLinkShareParams_metfriend_name %@" = "J'ai découvert les goûts de %@ sur Shound";
 "FBLinkShareParams_metfriend_desc" = "Faites de même !";
 
+"Facebook account issue" = "Il semblerait qu'il y ait un problème avec votre compte facebook.\n Déconnectez-vous dans les paramètres puis reconnectez-vous";
