@@ -89,11 +89,11 @@
     postField.contentInset = UIEdgeInsetsMake(-10, -5, 0, 0);
     
 
-    UILabel *placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(7.0, 2.0, postField.frame.size.width - 10.0, 40.0)];
+    UILabel *placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(7.0, 5.0, postField.frame.size.width - 10.0, 40.0)];
     placeholderLabel.textColor = [UIColor colorWithRed:(176.0f/255.0f) green:(176.0f/255.0f) blue:(176.0f/255.0f) alpha:0.90f];
     placeholderLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
     placeholderLabel.tag = 1;
-    placeholderLabel.lineBreakMode = NSLineBreakByCharWrapping;
+//    placeholderLabel.lineBreakMode = NSLineBreakByCharWrapping;
     placeholderLabel.numberOfLines = 0;
     [postField addSubview:placeholderLabel];
     
@@ -138,6 +138,7 @@
         }
 
         placeholderLabel.text = [NSString stringWithFormat:NSLocalizedString(@"think about %@", nil), [responseObject valueForKeyPath:@"response.name"]];
+        
         postField.editable = YES;
         [postField becomeFirstResponder];
         [messageLoadingIndicator stopAnimating];

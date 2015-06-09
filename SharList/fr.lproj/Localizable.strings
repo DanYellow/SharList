@@ -42,6 +42,7 @@
 "list synchronized" = "Liste synchronisée";
 "followers" = "abonnés";
 "follower" = "abonné";
+"no likes from api" = "Vous n'avez pas aimé de séries ou de films sur Facebook";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore découvert d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
@@ -151,14 +152,11 @@
 "comments" = "commentaires";
 "think about %@" = "Donner son avis sur %@";
 
+
 //AboutViewController
 "About" = "A propos";
-"Privacy" = "Confidentialité";
-"PrivacyContent" = "Votre nom et prénom sur le réseau social Facebook ne sont en aucun cas enregistrés par l'application ou par les services externes de l'application.";
-"whatIsApp" = "Shound vous permet de faire découvrir au monde ce que vous aimez. Les utilisateurs autour de vous peuvent savoir vos films et séries favoris.";
-//Show them your tastes.
-"datasOrigins" = "Les données des films et séries proviennent de l'API de themoviedb. Les films et séries présents dans le moteur de recherche de l'application appartiennent à leur ayant droit.";
-"Credits" = "Crédits";
+"About Shound - Highlight words" = "Crédits|Confidentialité|Commentaires";
+"About Shound" = "Shound vous permet de faire découvrir au monde ce que vous aimez. Les utilisateurs autour de vous peuvent savoir vos films et séries favoris.\n\n\nCrédits\nLes données des films et séries proviennent de l'API de themoviedb. Les films et séries présents dans le moteur de recherche de l'application appartiennent à leur ayant droit.\n\n\nConfidentialité\nVotre nom et prénom sur le réseau social Facebook ne sont en aucun cas enregistrés par l'application ou par les services externes de l'application.\n\n\nCommentaires\nTout commentaire injurieux, discriminant, raciste, insultant, incitant à la haine envers une ethnie ou religion sera supprimé sans préavis";
 
 
 //PostCommentViewController

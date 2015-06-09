@@ -117,6 +117,7 @@
     
     if ([AFNetworkReachabilityManager sharedManager].isReachable) {
         if ([FBSDKAccessToken currentAccessToken]) {
+            NSLog(@"[FBSDKAccessToken currentAccessToken].userID : %@", [FBSDKAccessToken currentAccessToken].userID);
             [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
             [self readyToStart];
         }

@@ -51,7 +51,6 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 @property (strong, nonatomic) UITableViewController *searchResultsController;
 @property (strong, nonatomic) UserTaste *userTaste;
 @property (retain, nonatomic) NSMutableData *responseData;
-@property (nonatomic, assign, getter=isFirstFBLoginDone) BOOL FirstFBLoginDone;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 
 
@@ -61,7 +60,6 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 // Manage user
 - (void) userConnectionForFbID:(NSNumber*)userfbID;
 //- (void) userLoggedOutOffb:(id)uselessObj;
-- (void) userLoggedOutOffb:(id)uselessObj completion:(void (^)(BOOL success))completionBlock;
 - (void) updateUserLocation:(NSNumber*)userfbID;
 
 - (NSString*) updateTasteForServer;

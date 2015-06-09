@@ -754,53 +754,6 @@
                      }];
 }
 
-- (void) userLoggedOutOffb:(id)uselessObj completion:(void (^)(BOOL success))completionBlock
-{
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:4];
-    
-    [userTasteDict removeAllObjects];
-    
-    UILabel *appnameView = (UILabel*)[self.view viewWithTag:2];
-    appnameView.hidden = NO;
-    
-    UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
-    
-    for (CALayer *layer in [self.view.layer sublayers]) {
-        
-        if ([[layer name] isEqualToString:@"TrianglesBG"]) {
-            layer.opacity = 1;
-        }
-    }
-
-    
-    [UIView animateWithDuration:0.5 delay:0.0
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         userSelectionTableView.alpha = 0;
-                     }
-                     completion:^(BOOL finished){
-                         [UIView animateWithDuration:0.5 delay:0.2
-                                             options: UIViewAnimationOptionCurveEaseOut
-                                          animations:^{
-                                              appnameView.alpha = 1;
-                                          }
-                                          completion:nil];
-                         
-                         [[self navigationController] setNavigationBarHidden:YES animated:YES];
-                         self.tabBarController.tabBar.hidden = YES;
-                         
-                         [self.searchController.searchBar removeFromSuperview];
-                         emptyUserTasteLabel.hidden = YES;
-                         userSelectionTableView.hidden = YES;
-                     }];
-    
-    // user logged out so we remove his key into the NSUserdefault
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
-    
-    self.FirstFBLoginDone = YES;
-    
-    if (completionBlock != nil) completionBlock(YES);
-}
 
 
 #pragma mark - Tableview configuration
@@ -913,34 +866,41 @@
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
+//            cell.backgroundColor = [UIColor colorWithWhite:1 alpha:.005];
+            cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.30];
             
-            cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-            cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-            cell.textLabel.layer.shadowOpacity = .95f;
-            
-            
-            cell.detailTextLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-            cell.detailTextLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-            cell.detailTextLabel.layer.shadowOpacity = .95f;
+//            cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+//            cell.textLabel.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
+//            cell.textLabel.layer.shadowOpacity = .95f;
+//            
+//            
+//            cell.detailTextLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+//            cell.detailTextLabel.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
+//            cell.detailTextLabel.layer.shadowOpacity = .95f;
         }
+        
+//        NSLog(@"name : %@", [rowsOfSection objectAtIndex:indexPath.row][@"name"]);
+//        NSLog(@"type : %@", [rowsOfSection objectAtIndex:indexPath.row][@"type"]);
+//        NSLog(@"imdbID : %@", [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"]);
         
         NSDictionary *cellModelDict = @{
                                         @"name": [rowsOfSection objectAtIndex:indexPath.row][@"name"],
                                         @"type": [rowsOfSection objectAtIndex:indexPath.row][@"type"],
                                         @"imdbID": [rowsOfSection objectAtIndex:indexPath.row][@"imdbId"]
                                         };
+
         
         cell.model = cellModelDict;
-
 
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
         year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
         cell.textLabel.text = title;
-        cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.60];
+        
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.detailTextLabel.text = year;
         cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
-        cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
+//        cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
+        cell.detailTextLabel.textColor = [UIColor colorWithRed:(59.0/255.0) green:(59.0/255.0) blue:(59.0/255.0) alpha:1];
         
 //        cell.alpha = .7f;
         
@@ -1262,6 +1222,7 @@
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         headerView.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
         label.textColor = [UIColor blackColor];
+        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.7];
     } else {
         headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
         label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];

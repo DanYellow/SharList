@@ -28,14 +28,14 @@
 
     
     // APNS + Parse part
-    [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
-                  clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
-    
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    if (![[currentInstallation objectForKey:@"channels"] containsObject:@"appInfos"]) {
-        [PFPush subscribeToChannelInBackground:@"appInfos"];
-    }
-    
+//    [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
+//                  clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
+//    
+//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//    if (![[currentInstallation objectForKey:@"channels"] containsObject:@"appInfos"]) {
+//        [PFPush subscribeToChannelInBackground:@"appInfos"];
+//    }
+//    
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)])
     {
         UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
@@ -168,15 +168,15 @@
 #pragma mark - Parse + APNS
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     // Store the deviceToken in the current installation and save it to Parse.
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    [currentInstallation setDeviceTokenFromData:deviceToken];
-    [currentInstallation saveInBackground];
+//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//    [currentInstallation setDeviceTokenFromData:deviceToken];
+//    [currentInstallation saveInBackground];
 //    [PFPush subscribeToChannelInBackground:@"foo"];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     if (application.applicationState != UIApplicationStateActive) {
-        [PFPush handlePush:userInfo];
+//        [PFPush handlePush:userInfo];
 //        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 
         
@@ -193,16 +193,19 @@
 }
 
 - (void) application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
-    if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"discoverNew"]) {
-        // User doesn't discover thing for a longtime
-        [[self.tabBarController.tabBar.items objectAtIndex:0] setBadgeValue:nil];
-        self.tabBarController.selectedIndex = 0;
-        
-        MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
-        [meetingsListViewController fetchUsersDatas];
-    } else if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"updateList"]) {
-        // User doesn't change his list for a longtime
-        self.tabBarController.selectedIndex = 1;
+    if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
+        if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"discoverNew"]) {
+            // User doesn't discover thing for a longtime
+            [[self.tabBarController.tabBar.items objectAtIndex:0] setBadgeValue:nil];
+            self.tabBarController.selectedIndex = 0;
+            
+            MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
+            [meetingsListViewController fetchUsersDatas];
+        } else if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"updateList"]) {
+            // User doesn't change his list for a longtime
+            self.tabBarController.selectedIndex = 1;
+        }
+
     }
     
 }
@@ -269,10 +272,10 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    currentInstallation.badge = 0;
-    application.applicationIconBadgeNumber = 0;
-    [currentInstallation saveEventually];
+//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//    currentInstallation.badge = 0;
+//    application.applicationIconBadgeNumber = 0;
+//    [currentInstallation saveEventually];
     
     [FBSDKAppEvents activateApp];
 }

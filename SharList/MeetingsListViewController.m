@@ -81,6 +81,9 @@
     if ([userPreferences objectForKey:@"noresultsgeoloc"] == nil) {
         [userPreferences setInteger:0 forKey:@"noresultsgeoloc"];
     }
+    
+    // TODO : REMOVE BEFORE SOUMISSION
+//    [UserTaste MR_truncateAll];
 
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
@@ -253,9 +256,17 @@
     [self.view addSubview:loadingIndicator];
     
     
+    [self getCurrentUserLikes];
+}
+
+- (void) getCurrentUserLikes
+{
     UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                       withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-    currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
+    if (![[currentUser taste] isKindOfClass:[NSNull class]]) {
+        currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
+        
+    }
 }
 
 //- (void) maskTest {
@@ -462,25 +473,39 @@
 }
 
 
+
 // This function manage the enable state of refresh button
 - (void) navigationItemRightButtonEnablingManagement
 {
+    UIButton *refreshBtnBarDisabledBG = [UIButton buttonWithType:UIButtonTypeCustom];
+    refreshBtnBarDisabledBG.frame = CGRectMake(0, 0, 24, 24);
+    refreshBtnBarDisabledBG.enabled = NO;
+    refreshBtnBarDisabledBG.tintColor = [UIColor blackColor];
+    
     UIButton *refreshBtnBar = [UIButton buttonWithType:UIButtonTypeCustom];
     refreshBtnBar.frame = CGRectMake(0, 0, 24, 24);
     [refreshBtnBar addTarget:self action:@selector(fetchUsersDatas) forControlEvents:UIControlEventTouchUpInside];
     refreshBtnBar.showsTouchWhenHighlighted = NO;
     refreshBtnBar.alpha = 1.0;
     refreshBtnBar.enabled = NO;
+    refreshBtnBar.tag = 10;
+    refreshBtnBar.tintColor = [UIColor whiteColor];
     
     UIImage *backButtonImage = [[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     [refreshBtnBar setImage:backButtonImage forState:UIControlStateNormal];
+    [refreshBtnBarDisabledBG setImage:backButtonImage forState:UIControlStateNormal];
+    
+    UIView *btnsRefreshView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
+    btnsRefreshView.backgroundColor = [UIColor clearColor];
+    [btnsRefreshView addSubview:refreshBtnBarDisabledBG];
+    [btnsRefreshView addSubview:refreshBtnBar];
     
     CGFloat startAngle = 0.0;
     CGPoint center = CGPointMake(12, 12);
     CGFloat radius = 24.0;
     
-    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithCustomView:refreshBtnBar];
-    refreshBtn.tintColor = [UIColor whiteColor];
+    UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithCustomView:btnsRefreshView];
+    
     
     self.navigationItem.rightBarButtonItem = refreshBtn;
     
@@ -498,6 +523,7 @@
     
         if (delayLastMeetingUser > BGFETCHDELAY) { //BGFETCHDELAY
             self.navigationItem.rightBarButtonItem.enabled = YES;
+            refreshBtnBar.enabled = YES;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.timerRefreshBtn invalidate];
                 self.timerRefreshBtn = nil;
@@ -534,7 +560,7 @@
 // "Watcher" for the btn refresh. The timer is invalidate if the user reach the limit
 - (void) updateRefreshBtnMask {
     UIBarButtonItem *item = (UIBarButtonItem *)[self.navigationItem.rightBarButtonItems objectAtIndex:0];
-    UIButton *refreshBtnBar = (UIButton *)item.customView;
+    UIButton *refreshBtnBar = (UIButton *)[item.customView viewWithTag:10];
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
@@ -559,6 +585,7 @@
     refreshBtnBar.layer.mask = maskWithHole;
     
     if (delayLastMeetingUser > BGFETCHDELAY) {
+        refreshBtnBar.enabled = YES;
         self.navigationItem.rightBarButtonItem.enabled = YES;
         
         [self invalidateTimer];
@@ -877,7 +904,7 @@
         }
     }
 
-
+    [self getCurrentUserLikes];
     // Calc of the stats
     UserTaste *currentUserMet = [UserTaste MR_findFirstByAttribute:@"lastMeeting"
                                                          withValue:[[meetingsOfDay reversedArray] objectAtIndex:indexPath.row]];
@@ -1128,6 +1155,10 @@
         return;
     }
     
+    UIBarButtonItem *item = (UIBarButtonItem *)[self.navigationItem.rightBarButtonItems objectAtIndex:0];
+    UIButton *refreshBtnBar = (UIButton *)[item.customView viewWithTag:10];
+    refreshBtnBar.enabled = NO;
+    
     [loadingIndicator startAnimating];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
@@ -1319,13 +1350,7 @@
             //            [self fetchUsersDatasBtnAction];
             //            return;
         }
-        
-        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-            
-        } completion:^(BOOL success, NSError *error) {
-            
-        }];
-        
+                
         oldUserTaste.taste = arrayData;
         oldUserTaste.fbid = randomUserfbID;
         oldUserTaste.lastMeeting = [NSDate date];

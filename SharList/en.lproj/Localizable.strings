@@ -43,6 +43,7 @@
 "list synchronized" = "List synchronized";
 "followers" = "followers";
 "follower" = "follower";
+"no likes from api" = "You haven't any like related to tv shows or movies on Facebook.";
 
 // Meetinglistviewcontroller
 "Tap on  in a meeting to add it among your favorites" = "Tap on  in a discovery to add it among your favorites";
@@ -141,11 +142,8 @@
 
 //AboutViewController
 "About" = "About";
-"whatIsApp" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your likes.";
-"Privacy" = "Privacy";
-"PrivacyContent" = "Your lastname and your firstname on facebook are not save by the app or the third services used by the app.";
-"datasOrigins" = "Movies and TV series datas, and posters art are provided by themoviedb's API.";
-"Credits" = "Credits";
+"About Shound - Highlight words" = "Credits|Privacy|Comments";
+"About Shound" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your likes.\n\n\Credits\nMovies and TV series datas, and posters art are provided by themoviedb's API.\n\n\Privacy\nYour lastname and your firstname on facebook are not save by the app or the third services used by the app.\n\n\Comments\nAny comments injuring, racist, insulting, inciting hatred against an ethnic group or religion will be deleted without notice";
 
 //PostCommentViewController
 "post comment" = "Comment";

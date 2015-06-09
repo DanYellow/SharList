@@ -538,7 +538,7 @@
                 NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", self.metUserId];
                 UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
                 oldUserTaste.taste = arrayData;
-                [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+                [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                 
                 [self displayMatchRateList];
                 

@@ -1354,10 +1354,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         
 //        [self synchronizeUserListWithServer];
         
-        
         [self cancelLocalNotificationWithValueForKey:@"updateList"];
         UILocalNotification *localNotification = [UILocalNotification new];
-        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:NSCalendarUnitMonth]; //One month later
+        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:20]; //One month later 2592000
         localNotification.soundName = UILocalNotificationDefaultSoundName;
         localNotification.applicationIconBadgeNumber = 0;
         localNotification.alertAction = nil;
@@ -1386,7 +1385,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [manager.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     
     [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-         NSLog(@"responseObject: %@", responseObject);
+//         NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 NSLog(@"Error: %@", error);
     }];
