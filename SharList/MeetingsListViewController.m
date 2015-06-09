@@ -91,14 +91,30 @@
     self.TableViewAdded = NO;
     
     //Main screen display
+//    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
+//    
+//    CAGradientLayer *gradientBGView = [CAGradientLayer layer];
+//    gradientBGView.frame = self.view.bounds;
+//    UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
+//    UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
+//    gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
+//    [self.view.layer insertSublayer:gradientBGView atIndex:0];
+    
     [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
     
     CAGradientLayer *gradientBGView = [CAGradientLayer layer];
-    gradientBGView.frame = self.view.bounds;
+    gradientBGView.frame = self.view.frame;
     UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
     UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
     gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
+    
+    CALayer *bgLayer = [CALayer layer];
+    bgLayer.frame = self.view.bounds;
+    bgLayer.opacity = .7f;
+    bgLayer.name = @"TrianglesBG";
+    bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"TrianglesBG"]].CGColor;
+    [self.view.layer insertSublayer:bgLayer atIndex:1];
     
     // Called when the user is connected to facebook
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initializer) name:@"mainViewIsReady" object:nil];
@@ -154,7 +170,8 @@
     }
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
-    segmentedControlView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
+//    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
+    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.29f];
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
     
@@ -164,7 +181,9 @@
     [segmentedControl addTarget:self action:@selector(diplayFavoritesMeetings:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tag = 5;
-    segmentedControl.tintColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f];
+//    segmentedControl.tintColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f];
+    segmentedControl.tintColor = [UIColor whiteColor];
+    
     [segmentedControlView addSubview:segmentedControl];
     
     UILabel *tableFooter = [[UILabel alloc] initWithFrame:CGRectMake(0, 15.0, screenWidth, 60)];
@@ -181,6 +200,7 @@
     userMeetingsListTableView.dataSource = self;
     userMeetingsListTableView.delegate = self;
     userMeetingsListTableView.backgroundColor = [UIColor clearColor];
+//    userMeetingsListTableView.backgroundColor = [UIColor colorWithWhite:1 alpha:.5];
     userMeetingsListTableView.tag = 1;
     userMeetingsListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -775,14 +795,17 @@
     CGFloat fontSize = 18.0f;
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
-    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
+//    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
+    headerView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.29f];
+
     
     NSString *title = [distinctDays objectAtIndex:section];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
     label.text = title;
-    label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
+//    label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
+    label.textColor = [UIColor whiteColor];
     
 
     [headerView addSubview:label];
@@ -947,8 +970,9 @@
     }
     
     if (commonTasteCount == 0) {
-        cell.detailTextLabel.textColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
-        cell.textLabel.textColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
+        UIColor *noLikeCommonColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
+        cell.detailTextLabel.textColor = noLikeCommonColor;
+        cell.textLabel.textColor = noLikeCommonColor;
         textLabelString = NSLocalizedString(@"nothing common", nil);
     } else {
         NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
@@ -968,8 +992,16 @@
   
     cell.textLabel.text = textLabelString;
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
-    cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
-
+//    cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
+//    cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.60];
+    cell.backgroundColor = [UIColor colorWithWhite:1 alpha:.06];
+    
+    UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    UIVisualEffectView * selectedBackgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    selectedBackgroundView.frame = cell.contentView.bounds;
+    
+    cell.selectedBackgroundView = selectedBackgroundView;
+    
     cell.model = [currentUserMet fbid];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.indentationLevel = 1;
@@ -1022,7 +1054,7 @@
 
     UIView *bgColorView = [UIView new];
     [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
-    [cell setSelectedBackgroundView:bgColorView];
+//    [cell setSelectedBackgroundView:bgColorView];
     
     
     return cell;
