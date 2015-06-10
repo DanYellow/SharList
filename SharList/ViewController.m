@@ -934,11 +934,12 @@
         cell.textLabel.frame = cellFrame;
         
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
-        cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-        cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-        cell.textLabel.layer.shadowOpacity = .75f;
+//        cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+//        cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+//        cell.textLabel.layer.shadowOpacity = .75f;
         cell.textLabel.textColor = [UIColor whiteColor];
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+//        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        
         
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
         
@@ -953,7 +954,7 @@
         }
         
         UIView *bgColorView = [UIView new];
-        [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.7f]];
+        [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
         [cell setSelectedBackgroundView:bgColorView];
 
         cell.textLabel.text = title;
