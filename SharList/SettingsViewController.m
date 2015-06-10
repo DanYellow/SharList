@@ -496,7 +496,7 @@
     
     
     [HTTPManager PATCH:shoundAPIPath parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"responseObject: %@", responseObject);
+//        NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //        NSLog(@"Error: %@", error);
     }];

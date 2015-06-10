@@ -806,7 +806,7 @@
     }
     
     UIView *bgColorView = [UIView new];
-    [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.7f]];
+    [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
     [cell setSelectedBackgroundView:bgColorView];
     
     cell.textLabel.text = title;

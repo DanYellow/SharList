@@ -294,8 +294,7 @@
     commentsTableView.tableHeaderView = headerView;
     
     NSString *userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
-    
-    NSString *discoveryId = self.userDiscoverId;
+    NSString *discoveryId = [NSString stringWithFormat:@"%@", self.userDiscoverId];
     
     // Manage the case which the user reach the page without a discover
     int loopIteration = 0;
@@ -327,6 +326,7 @@
     NSPredicate *predicateUser = [NSPredicate predicateWithFormat:@"fbId == %@", userId];
     NSArray *filteredUser = [[NSArray alloc] initWithArray:[self.comments filteredArrayUsingPredicate:predicateUser]];
     
+    
     NSMutableArray *filteredDatas = [[NSMutableArray alloc] initWithArray:[filteredDiscover arrayByAddingObjectsFromArray:filteredUser]];
 
     
@@ -336,7 +336,7 @@
 //    }
     
     if (self.userDiscoverId) {
-        // We add a null object at index 0 if the user discover
+        // We add a null object at index 0 if the user discovered
         // doesn't made a meeting
         if ([filteredDatas count] == 1) {
             [filteredDatas insertObject:[NSNull null] atIndex:0];
@@ -347,8 +347,6 @@
             [filteredDatas insertObject:[NSNull null] atIndex:0];
             [filteredDatas insertObject:[NSNull null] atIndex:1];
         }
-    } else {
-        
     }
 
     
@@ -676,14 +674,18 @@
     [messageContainer addSubview:dateMessageLabel];
 
     
-    NSString *discoveryId = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"fbId"];
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:discoveryId]) {
+    NSString *commentUserId = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"fbId"];
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:commentUserId]) {
         messageLabel.alpha = 1;
         
-        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", discoveryId]];
+        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", commentUserId]];
         NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] stringByAppendingString:@" • "];
         
         dateMessageLabel.text = [firstNameFirstLetter stringByAppendingString:dateMessageLabel.text];
+    } else if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] isEqualToString:commentUserId] ) {
+        messageLabel.alpha = 1;
+    
+        dateMessageLabel.text = [NSLocalizedString(@"your comment", nil) stringByAppendingString:dateMessageLabel.text];
     } else {
         messageLabel.alpha = .005;
     }

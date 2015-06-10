@@ -252,7 +252,7 @@
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
 //    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
-    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.29f];
+    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
     
@@ -878,7 +878,7 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
 //    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
-    headerView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.29f];
+    headerView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
 
     
     NSString *title = [distinctDays objectAtIndex:section];
@@ -1103,7 +1103,7 @@
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
     }
     
-    // If the user is a facebook friend so we display his facebook profile image
+    // If the user is a facebook friend so we display his facebook profile image GENTOO
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[currentUserMet fbid] stringValue]]) {
         [self getImageCellForData:[[currentUserMet fbid] stringValue] aCell:cell];
         

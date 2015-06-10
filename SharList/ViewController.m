@@ -867,17 +867,8 @@
         if (cell == nil) {
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
-//            cell.backgroundColor = [UIColor colorWithWhite:1 alpha:.005];
+
             cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.30];
-            
-//            cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-//            cell.textLabel.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-//            cell.textLabel.layer.shadowOpacity = .95f;
-//            
-//            
-//            cell.detailTextLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-//            cell.detailTextLabel.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-//            cell.detailTextLabel.layer.shadowOpacity = .95f;
         }
         
 //        NSLog(@"name : %@", [rowsOfSection objectAtIndex:indexPath.row][@"name"]);
@@ -900,10 +891,7 @@
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.detailTextLabel.text = year;
         cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
-//        cell.detailTextLabel.textColor = [UIColor colorWithRed:(137.0/255.0) green:(137.0/255.0) blue:(137.0/255.0) alpha:1];
         cell.detailTextLabel.textColor = [UIColor colorWithRed:(59.0/255.0) green:(59.0/255.0) blue:(59.0/255.0) alpha:1];
-        
-//        cell.alpha = .7f;
         
         if (![userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
             if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
@@ -934,13 +922,8 @@
         cell.textLabel.frame = cellFrame;
         
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
-//        cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-//        cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-//        cell.textLabel.layer.shadowOpacity = .75f;
         cell.textLabel.textColor = [UIColor whiteColor];
-//        cell.selectionStyle = UITableViewCellSelectionStyleGray;
-        
-        
+
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
         
         if ([[rowsOfSection objectAtIndex:indexPath.row][@"type"] isEqualToString:@"serie"]) {
@@ -1564,7 +1547,7 @@
                                 sender.enabled = YES;
                                 [loadingIndicator stopAnimating];
                                 
-                                UIAlertView *endSynchronize = [[UIAlertView alloc] initWithTitle:@"" message:@"Rien à synchroniser" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                                UIAlertView *endSynchronize = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"nothing to update", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
                                 [endSynchronize show];
                             }
                         }

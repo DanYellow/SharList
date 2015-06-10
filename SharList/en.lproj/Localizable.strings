@@ -44,6 +44,7 @@
 "followers" = "followers";
 "follower" = "follower";
 "no likes from api" = "You haven't any like related to tv shows or movies on Facebook.";
+"nothing to update" = "Nothing to synchronize";
 
 // Meetinglistviewcontroller
 "Tap on  in a meeting to add it among your favorites" = "Tap on  in a discovery to add it among your favorites";
@@ -137,6 +138,7 @@
 "no comment user" = "You haven't yet comment";
 "close" = "Close";
 "warning message" = "Some comments can spoil \n \n Press and hold to display them";
+"your comment" = "Your comment • ";
 
 //PostCommentsViewController
 "comments" = "comments";

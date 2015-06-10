@@ -343,7 +343,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
               
               // There is no link to itunes
-              if ([self.itunesIDString length] != 0) {
+              if (![self.itunesIDString isKindOfClass:[NSNull class]] && [self.itunesIDString length] != 0) {
                   [infoMediaView insertSubview:buyButton atIndex:42];
                   
                   [UIView animateWithDuration:0.4 delay:0.0
@@ -490,6 +490,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                           @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
     
     NSString *lastAirEpisode = (NSString*)[responseObject valueForKeyPath:@"last_air_date"];
+    
+    if ([lastAirEpisode isKindOfClass:[NSNull class]]) {
+        return;
+    }
+    
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = @"yyyy-MM-dd";
     NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];

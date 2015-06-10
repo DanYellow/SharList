@@ -43,6 +43,7 @@
 "followers" = "abonnés";
 "follower" = "abonné";
 "no likes from api" = "Vous n'avez pas aimé de séries ou de films sur Facebook";
+"nothing to update" = "Rien à synchroniser";
 
 // Meetingslistviewcontroller
 "You haven't met a person yet" = "Vous n'avez pas encore découvert d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
@@ -149,6 +150,7 @@
 "no comment user" = "Vous n'avez pas encore commenté";
 "close" = "Fermer";
 "warning message for comments" = "Certains commentaires peuvent SPOILER \n \n APPUyez longuement pour les afficher";
+"your comment" = "Votre commentaire • ";
 
 //PostCommentsViewController
 "comments" = "commentaires";
