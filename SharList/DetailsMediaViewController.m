@@ -39,6 +39,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 9 : errConnectionAlertView
 // 10 : connectWithBSBtn
 // 11 : mediaGenresLabel
+// 12 : mediaDescription
+// 13 : numberOfIterationAmongDiscoveriesLabel
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -130,11 +132,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
     
-    UIView *infoMediaView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
     infoMediaView.backgroundColor = [UIColor clearColor];
     infoMediaView.opaque = NO;
     infoMediaView.hidden = NO;
     infoMediaView.tag = 2;
+//    NSLog(@"%@", NSStringFromUIEdgeInsets(infoMediaView.contentInset));
+//    infoMediaView.showsVerticalScrollIndicator = NO;
     
     UILabel *addRemoveMediaLabel = [[UILabel alloc] initWithFrame:CGRectMake(-5, 60, screenWidth - 5, 20)];
     addRemoveMediaLabel.textColor = [UIColor whiteColor];
@@ -265,7 +269,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 //    }
     
-    CGFloat mediaTitleLabelY = [self computeRatio:236 forDimension:imgMediaHeight];
+    CGFloat mediaTitleLabelY = ((screenHeight * 13.20422535) / 100) - 30;
     
     UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth - 22, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
@@ -294,8 +298,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     NSDictionary *parameters = @{@"imdbId": self.mediaDatas[@"imdbID"]};
 
-    NSURL *baseURL = [NSURL URLWithString:@"https://api.themoviedb.org/3/"];
-    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.securityPolicy.allowInvalidCertificates = YES;
 //    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     [manager.requestSerializer setValue:@"mince" forHTTPHeaderField:@"X-Shound"];
@@ -303,7 +306,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [manager GET:shoundAPIPath parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               NSNumber *mediaLikeNumber = [responseObject valueForKeyPath:@"response.hits"];
-              
+//              NSLog(@"mediaLikeNumber : %@", mediaLikeNumber);
               NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
               [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
               
@@ -344,7 +347,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               
               // There is no link to itunes
               if (![self.itunesIDString isKindOfClass:[NSNull class]] && [self.itunesIDString length] != 0) {
-                  [infoMediaView insertSubview:buyButton atIndex:42];
+                  [self.view insertSubview:buyButton atIndex:42];
                   
                   [UIView animateWithDuration:0.4 delay:0.0
                                       options: UIViewAnimationOptionCurveEaseOut
@@ -383,15 +386,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     [self.view insertSubview:infoMediaView atIndex:1];
     
-    // We display the BS part only if the device's user iPhone is in French
-    if ([userLanguage isEqualToString:@"fr"] && [self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
-        NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
-        if (BSUserToken != nil || [BSUserToken isKindOfClass:[NSNull class]]) {
-            [self connectWithBSAccount:BSUserToken];
-        }
+    if (![self connected]) {
+        [self displayNumberOfIterationAmongDiscoveriesForView:infoMediaView];
     }
     
-    [self displayNumberOfIterationAmongDiscoveriesForView:infoMediaView];
    
     
     loadingIndicator = [[UIActivityIndicatorView alloc] init];
@@ -417,7 +415,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) displayNumberOfIterationAmongDiscoveriesForView:(UIView*) aContainerView
 {
-    
     NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid != %@",
                                           [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:facebookFriendsFilter];
@@ -435,7 +432,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     // This label shows the number of iteration of the card currently shown among user's discoverties
     UILabel *numberOfIterationAmongDiscoveriesLabel = [UILabel new];
-    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, screenHeight - 83, screenWidth, 20);
+    numberOfIterationAmongDiscoveriesLabel.tag = 13;
+    
+    UITextView *mediaDescription = (UITextView*)[aContainerView viewWithTag:12];
+    CGFloat mediaDescriptionHeight = mediaDescription.frame.size.height + 30 + mediaDescription.frame.origin.y;
+    
+    CGFloat numberOfIterationAmongDiscoveriesLabelY = ([self connected]) ? mediaDescriptionHeight : screenHeight - 83;
+    
+    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, numberOfIterationAmongDiscoveriesLabelY, screenWidth, 20);
     numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
     
     CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
@@ -465,7 +469,25 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     numberOfIterationAmongDiscoveriesLabel.textColor = [UIColor whiteColor];
     numberOfIterationAmongDiscoveriesLabel.textAlignment = NSTextAlignmentCenter;
     
+    CGFloat layerWidth = (90 * screenWidth) / 100;
+    CGFloat layerX = (self.view.frame.size.width - layerWidth) / 2;
+
+    CALayer *numberOfIterationAmongDiscoveriesLabelLayerT = [CALayer layer];
+    numberOfIterationAmongDiscoveriesLabelLayerT.frame = CGRectMake(layerX, -12.0f, layerWidth, 1.0);
+    numberOfIterationAmongDiscoveriesLabelLayerT.backgroundColor = [UIColor whiteColor].CGColor;
+    numberOfIterationAmongDiscoveriesLabelLayerT.anchorPoint = CGPointMake(0.5, 0.5);
+    [numberOfIterationAmongDiscoveriesLabel.layer addSublayer:numberOfIterationAmongDiscoveriesLabelLayerT];
+    
+    
     [aContainerView addSubview:numberOfIterationAmongDiscoveriesLabel];
+    
+    // We display the BS part only if the device's user iPhone is in French
+    if ([[[NSLocale preferredLanguages] objectAtIndex:0] isEqualToString:@"fr"] && [self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
+        NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
+        if (BSUserToken != nil || [BSUserToken isKindOfClass:[NSNull class]]) {
+            [self connectWithBSAccount:BSUserToken];
+        }
+    }
 }
 
 - (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
@@ -757,7 +779,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     themovieDBID = data[@"id"];
 
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
 
     UIImageView *imgMedia = [UIImageView new];
     NSURL *imgMediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396%@", data[@"poster_path"]]];
@@ -793,13 +815,26 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
     CGFloat mediaDescriptionHeight = (screenHeight * 45.00) / 100; //(280 * 100) / 568
 
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, mediaDescriptionHeight)];
+    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, 0)];
     if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
         // the movie db does not provide description for this media
         mediaDescription.text = NSLocalizedString(@"nodescription", nil);
     } else {
         mediaDescription.text = [data[@"overview"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
+    
+    mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
+    if (mediaDescription.contentSize.height > mediaDescription.frame.size.height) {
+        int fontIncrement = 1;
+        while (mediaDescription.contentSize.height > mediaDescription.frame.size.height) {
+            mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
+            fontIncrement++;
+        }
+    }
+    
+    mediaDescription.scrollEnabled = NO;
+    [mediaDescription sizeToFit];
+    [mediaDescription layoutIfNeeded];
     mediaDescription.translatesAutoresizingMaskIntoConstraints = NO;
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
@@ -811,9 +846,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
-    mediaDescription.font = [UIFont fontWithName:@"Helvetica" size:14.0];
+    mediaDescription.tag = 12;
+    
     [infoMediaView addSubview:mediaDescription];
     
+    [self displayNumberOfIterationAmongDiscoveriesForView:infoMediaView];
+    
+    UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    CGFloat lastViewCntHeight = infoMediaViewLastView.frame.size.height + infoMediaViewLastView.frame.origin.y + 30;
+    
+    infoMediaView.contentSize = CGSizeMake(screenWidth, lastViewCntHeight);
     
     [UIView animateWithDuration:0.3 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -871,7 +913,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         mediaLikeNumberLabel.backgroundColor = [UIColor clearColor];
         mediaLikeNumberLabel.layer.masksToBounds = NO;
         mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
-        [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:11];
+//        [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:11];
     }
     
     [loadingIndicator stopAnimating];
@@ -993,10 +1035,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) displayTrailerButtonForId:(NSString*)aTrailerID
 {
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
     
     UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 45, 80, 40, 40);
+    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 45, 15, 40, 40);
     seeTrailerMediaBtn.trailerID = aTrailerID;
     [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailerMedia:) forControlEvents:UIControlEventTouchUpInside];
     [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];
@@ -1028,25 +1070,40 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (UIButton*) displayBetaSeriesButtonForToken:(NSString*)BSUserToken
 {
-//    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
+    UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
     
+    UILabel *numberOfIterationAmongDiscoveriesLabel = (UILabel*)[infoMediaView viewWithTag:13];
+    
+    CGFloat connectWithBSBtnY = numberOfIterationAmongDiscoveriesLabel.frame.size.height + numberOfIterationAmongDiscoveriesLabel.frame.origin.y + 27;
     
     UIButton *connectWithBSBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     connectWithBSBtn.tag = 10;
-    
+    [connectWithBSBtn setFrame:CGRectMake(0, connectWithBSBtnY, screenWidth - 36, 54)];
+    [connectWithBSBtn setTitle:NSLocalizedString(@"get my likes", nil) forState:UIControlStateNormal];
     [connectWithBSBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [connectWithBSBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateDisabled];
-    [connectWithBSBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateHighlighted];
+    [connectWithBSBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    connectWithBSBtn.trailerID = BSUserToken;  // This is not a trailer but this extra property is useful
+    connectWithBSBtn.center = CGPointMake(self.view.center.x, connectWithBSBtn.center.y);
     
-    [connectWithBSBtn setHighlighted:YES];
+    [connectWithBSBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [connectWithBSBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
     
-    connectWithBSBtn.trailerID = BSUserToken; // This is not a trailer but this extra property is useful
-    connectWithBSBtn.frame = CGRectMake(screenWidth - 220, 81, 170, 40);
+    [connectWithBSBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [connectWithBSBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
     connectWithBSBtn.backgroundColor = [UIColor clearColor];
-    connectWithBSBtn.opaque = YES;
-    connectWithBSBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    connectWithBSBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
-    connectWithBSBtn.titleLabel.font = [UIFont systemFontOfSize:13.0f];
+    connectWithBSBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    connectWithBSBtn.layer.borderWidth = 2.0f;
+    
+
+
+    CGFloat layerWidth = (90 * screenWidth) / 100;
+    CGFloat layerX = ((self.view.frame.size.width - layerWidth) / 2) - 18.0;
+
+    CALayer *connectWithBSBtnLayerT = [CALayer layer];
+    connectWithBSBtnLayerT.frame = CGRectMake(layerX, -12.0f, layerWidth, 1.0);
+    connectWithBSBtnLayerT.backgroundColor = [UIColor whiteColor].CGColor;
+    connectWithBSBtnLayerT.anchorPoint = CGPointMake(0.5, 0.5);
+    [connectWithBSBtn.layer addSublayer:connectWithBSBtnLayerT];
 
     return connectWithBSBtn;
 }
@@ -1061,6 +1118,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    if (BSUserToken != nil || BSUserToken != (id)[NSNull null]) {
         [self checkForIfUserHasMediaInBS:BSUserToken];
 //    }
+    
+
 }
 
 - (void) checkForIfUserHasMediaInBS:(NSString*)BSUserToken
