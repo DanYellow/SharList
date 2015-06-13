@@ -112,7 +112,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
 //    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
     
-    
+
     // Contains globals datas of the project
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
     // Build the array from the plist
@@ -130,17 +130,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
 //    self.edgesForExtendedLayout = UIRectEdgeNone;
     
-    CGFloat imgMediaHeight = [self computeRatio:470 forDimension:screenHeight];
-    
-    UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 60, screenWidth, screenHeight - 60)];
     infoMediaView.backgroundColor = [UIColor clearColor];
     infoMediaView.opaque = NO;
     infoMediaView.hidden = NO;
     infoMediaView.tag = 2;
-//    NSLog(@"%@", NSStringFromUIEdgeInsets(infoMediaView.contentInset));
-//    infoMediaView.showsVerticalScrollIndicator = NO;
+    infoMediaView.showsVerticalScrollIndicator = YES;
+    infoMediaView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
     
-    UILabel *addRemoveMediaLabel = [[UILabel alloc] initWithFrame:CGRectMake(-5, 60, screenWidth - 5, 20)];
+
+
+    UILabel *addRemoveMediaLabel = [[UILabel alloc] initWithFrame:CGRectMake(-5, 0, screenWidth - 5, 20)];
     addRemoveMediaLabel.textColor = [UIColor whiteColor];
     addRemoveMediaLabel.textAlignment = NSTextAlignmentRight;
     
@@ -148,7 +148,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     addRemoveMediaLabel.hidden = YES;
     addRemoveMediaLabel.tag = 3;
     [infoMediaView insertSubview:addRemoveMediaLabel atIndex:10];
-    
+//    [self.view addSubview:addRemoveMediaLabel];
 
     
     self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
@@ -271,7 +271,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat mediaTitleLabelY = ((screenHeight * 13.20422535) / 100) - 30;
     
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaTitleLabelY, screenWidth - 22, 55)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, screenWidth - 22, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
@@ -440,7 +440,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat numberOfIterationAmongDiscoveriesLabelY = ([self connected]) ? mediaDescriptionHeight : screenHeight - 83;
     
     numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, numberOfIterationAmongDiscoveriesLabelY, screenWidth, 20);
-    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
     
     CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
     
@@ -473,7 +473,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat layerX = (self.view.frame.size.width - layerWidth) / 2;
 
     CALayer *numberOfIterationAmongDiscoveriesLabelLayerT = [CALayer layer];
-    numberOfIterationAmongDiscoveriesLabelLayerT.frame = CGRectMake(layerX, -12.0f, layerWidth, 1.0);
+    numberOfIterationAmongDiscoveriesLabelLayerT.frame = CGRectMake(layerX, -16.0f, layerWidth, 1.0);
     numberOfIterationAmongDiscoveriesLabelLayerT.backgroundColor = [UIColor whiteColor].CGColor;
     numberOfIterationAmongDiscoveriesLabelLayerT.anchorPoint = CGPointMake(0.5, 0.5);
     [numberOfIterationAmongDiscoveriesLabel.layer addSublayer:numberOfIterationAmongDiscoveriesLabelLayerT];
@@ -797,8 +797,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = imgMedia.frame;
     overlayLayer.name = @"overlayLayerImgMedia";
-    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.83].CGColor;
-    [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
+    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.63].CGColor;
+    [imgMedia.layer insertSublayer:overlayLayer atIndex:0]; // <- gentoo
     
     CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
     overlayAlphaAnim.fromValue = @0;
@@ -813,7 +813,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionWidthPercentage = 82.0;
     CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
-    CGFloat mediaDescriptionHeight = (screenHeight * 45.00) / 100; //(280 * 100) / 568
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, 0)];
     if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
@@ -1038,7 +1037,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
     
     UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 45, 15, 40, 40);
+    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 45, -40, 40, 40);
     seeTrailerMediaBtn.trailerID = aTrailerID;
     [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailerMedia:) forControlEvents:UIControlEventTouchUpInside];
     [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];
@@ -1074,16 +1073,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UILabel *numberOfIterationAmongDiscoveriesLabel = (UILabel*)[infoMediaView viewWithTag:13];
     
-    CGFloat connectWithBSBtnY = numberOfIterationAmongDiscoveriesLabel.frame.size.height + numberOfIterationAmongDiscoveriesLabel.frame.origin.y + 27;
+    CGFloat connectWithBSBtnY = numberOfIterationAmongDiscoveriesLabel.frame.size.height + numberOfIterationAmongDiscoveriesLabel.frame.origin.y + 30;
     
     UIButton *connectWithBSBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     connectWithBSBtn.tag = 10;
-    [connectWithBSBtn setFrame:CGRectMake(0, connectWithBSBtnY, screenWidth - 36, 54)];
-    [connectWithBSBtn setTitle:NSLocalizedString(@"get my likes", nil) forState:UIControlStateNormal];
+    [connectWithBSBtn setFrame:CGRectMake(0, connectWithBSBtnY, (screenWidth * 90) / 100, 54)];
     [connectWithBSBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [connectWithBSBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
     connectWithBSBtn.trailerID = BSUserToken;  // This is not a trailer but this extra property is useful
     connectWithBSBtn.center = CGPointMake(self.view.center.x, connectWithBSBtn.center.y);
+//    connectWithBSBtn.bounds = CGRectInset(connectWithBSBtn.frame, 0, 0.0);
     
     [connectWithBSBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
     [connectWithBSBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
@@ -1097,10 +1096,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
     CGFloat layerWidth = (90 * screenWidth) / 100;
-    CGFloat layerX = ((self.view.frame.size.width - layerWidth) / 2) - 18.0;
+    CGFloat layerX = ((self.view.frame.size.width - layerWidth) / 2) - CGRectGetMinX(connectWithBSBtn.frame);
 
     CALayer *connectWithBSBtnLayerT = [CALayer layer];
-    connectWithBSBtnLayerT.frame = CGRectMake(layerX, -12.0f, layerWidth, 1.0);
+    connectWithBSBtnLayerT.frame = CGRectMake(layerX, -15.0f, layerWidth, 1.0);
     connectWithBSBtnLayerT.backgroundColor = [UIColor whiteColor].CGColor;
     connectWithBSBtnLayerT.anchorPoint = CGPointMake(0.5, 0.5);
     [connectWithBSBtn.layer addSublayer:connectWithBSBtnLayerT];
@@ -1112,6 +1111,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 {
     UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
     UIButton *connectWithBSBtn = [self displayBetaSeriesButtonForToken:BSUserToken];
+    connectWithBSBtn.enabled = NO;
     [infoMediaView addSubview:connectWithBSBtn];
     
     // If user is not connected to bs we propose him to do it
@@ -1139,7 +1139,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         } else {
             [connectWithBSBtn setTitle:NSLocalizedString(@"BSRemove", nil) forState:UIControlStateNormal];
         }
-        
+        connectWithBSBtn.enabled = YES;
         self.AmongBSAccount = isAmongUserBSAccount;
         [connectWithBSBtn addTarget:self action:@selector(toggleAmongBSAccount:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -1181,7 +1181,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIActivityIndicatorView *BSActivityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     BSActivityIndicator.hidesWhenStopped = YES;
-    BSActivityIndicator.center = CGPointMake(0.0, connectWithBSBtn.bounds.size.height / 2);
+    BSActivityIndicator.center = CGPointMake(10.0, connectWithBSBtn.bounds.size.height / 2);
     [BSActivityIndicator startAnimating];
     [connectWithBSBtn addSubview:BSActivityIndicator];
     
@@ -1420,7 +1420,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         
         [self cancelLocalNotificationWithValueForKey:@"updateList"];
         UILocalNotification *localNotification = [UILocalNotification new];
-        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:20]; //One month later 2592000
+        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:2592000]; //One month later 2592000
         localNotification.soundName = UILocalNotificationDefaultSoundName;
         localNotification.applicationIconBadgeNumber = 0;
         localNotification.alertAction = nil;
