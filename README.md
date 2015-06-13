@@ -39,8 +39,10 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 
 - Gestion des likes Facebook (Possibilité remplir sa liste en fonction de ses likes Facebook)
 - Ajout d'un système de pourcentage vis-à-vis d'un film/série découvert (plus il est présent plus )
-- Possibilité de voir le nombre de followers (utilisateurs qui vous ont mis en parmi leurs découvertes favorites)
+- Possibilité de voir le nombre d'utilisateur qui suivent votre liste (ils ont mis votre liste parmi leur favoris)
 - Possibilité de poster un commentaire sur un film/série
+- Amélioration de l'ergonomie
+- Affichage du numéro du prochain épisode d'une série (c'est toujours mieux avec sa date)
 
 # TODO
 - Voir les messages vides pour facebook no friends / access no granted
