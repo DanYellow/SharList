@@ -869,6 +869,10 @@
             cell.delegate = self;
 
             cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.30];
+            
+            UIView *bgColorView = [UIView new];
+            [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
+            [cell setSelectedBackgroundView:bgColorView];
         }
         
 //        NSLog(@"name : %@", [rowsOfSection objectAtIndex:indexPath.row][@"name"]);
@@ -900,6 +904,7 @@
                 cell.imageView.image = nil;
             }
         }
+        
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
@@ -912,6 +917,10 @@
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
             cell.rightUtilityButtons = [self rightCellButtons];
+            
+            UIView *bgColorView = [UIView new];
+            [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
+            [cell setSelectedBackgroundView:bgColorView];
         }
         cell.delegate = self;
         // For "Classic mode" we want a cell's background more opaque
@@ -935,10 +944,7 @@
         if (imdbID != nil) {
             [self getImageCellForData:[rowsOfSection objectAtIndex:indexPath.row] aCell:cell];
         }
-        
-        UIView *bgColorView = [UIView new];
-        [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
-        [cell setSelectedBackgroundView:bgColorView];
+    
 
         cell.textLabel.text = title;
         cell.alpha = .3f;
