@@ -250,7 +250,7 @@
         [self showTutorial];
     }
     
-    self.discoveries = [NSMutableArray new];
+//    self.discoveries = [NSMutableArray new];
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
 //    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
@@ -589,6 +589,7 @@
     refreshBtnBarDisabledBG.frame = CGRectMake(0, 0, 24, 24);
     refreshBtnBarDisabledBG.enabled = NO;
     refreshBtnBarDisabledBG.tintColor = [UIColor blackColor];
+    refreshBtnBarDisabledBG.userInteractionEnabled = NO;
     
     UIButton *refreshBtnBar = [UIButton buttonWithType:UIButtonTypeCustom];
     refreshBtnBar.frame = CGRectMake(0, 0, 24, 24);
@@ -597,6 +598,7 @@
     refreshBtnBar.alpha = 1.0;
     refreshBtnBar.enabled = NO;
     refreshBtnBar.tag = 10;
+    refreshBtnBar.userInteractionEnabled = YES;
     refreshBtnBar.tintColor = [UIColor whiteColor];
     
     UIImage *backButtonImage = [[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
@@ -791,14 +793,25 @@
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-//    [userMeetingsListTableView reloadData];
+    [userMeetingsListTableView reloadData];
 
 
-    [userMeetingsListTableView beginUpdates];
-    [userMeetingsListTableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-    [userMeetingsListTableView endUpdates];
     [loadingIndicator stopAnimating];
+}
 
+- (void) reloadSections {
+    [loadingIndicator startAnimating];
+    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
+    
+    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+    
+    NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfSectionsInTableView:userMeetingsListTableView])];
+    [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationFade];
+    
+//    NSIndexPath *newIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+//    [userMeetingsListTableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+
+    [loadingIndicator stopAnimating];
 }
 
 
@@ -926,8 +939,6 @@
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-
-    
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
     NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
     
@@ -961,36 +972,22 @@
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
     
 //    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-//
-//    NSDate *currentDate = [NSDate new];
-//    currentDate = [dateFormatter dateFromString:[distinctDays objectAtIndex:section]];
+
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
     
-//    NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]]];
-    
-    
-    
-    [self.discoveries removeAllObjects];
     // We group discoveries by day
     NSInteger nbrRowsForCurrentSection = 0;
     for (int i = 0; i < [meetings count]; i++) {
         if ([[meetings objectAtIndex:i] lastMeeting] != nil) {
             
             if ([calendar isDate:[[meetings objectAtIndex:i] lastMeeting] inSameDayAsDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] ]) {
-                [self.discoveries addObject:[meetings objectAtIndex:i]];
                 nbrRowsForCurrentSection++;
             }
-//            NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
-//            
-//            if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
-//                nbrRowsForCurrentSection++;
-//            }
         }
     }
-
     
-    return [self.discoveries count];
+    return nbrRowsForCurrentSection;
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -1302,7 +1299,7 @@
     [loadingIndicator startAnimating];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-    [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+//    [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES]; @TODO
     
     [self startFetchingRandomUser];
 }
@@ -1500,7 +1497,6 @@
             oldUserTaste.isRandomDiscover = NO;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         
-        [self.discoveries addObject:oldUserTaste];
         [self endSavingNewEntry];
     } else {
         // It's a new user
@@ -1515,12 +1511,13 @@
             
             if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
                 userTaste.isRandomDiscover = NO;
-            [self.discoveries addObject:userTaste];
+
         } completion:^(BOOL success, NSError *error) {
             [self endSavingNewEntry];
         }];
     }
 }
+
 
 - (void) endSavingNewEntry
 {
@@ -1529,7 +1526,7 @@
     
     
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
-        [self performSelectorOnMainThread:@selector(reloadTableview) withObject:nil waitUntilDone:YES];
+        [self performSelectorOnMainThread:@selector(reloadSections) withObject:nil waitUntilDone:YES];
     } else {
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     }
