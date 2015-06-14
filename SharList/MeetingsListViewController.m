@@ -782,8 +782,13 @@
 {
     [loadingIndicator startAnimating];
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
+    
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-    [userMeetingsListTableView reloadData];
+    
+    [userMeetingsListTableView beginUpdates];
+    [userMeetingsListTableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]withRowAnimation:UITableViewRowAnimationAutomatic];
+    [userMeetingsListTableView endUpdates];
+    [loadingIndicator stopAnimating];
 }
 
 
@@ -1492,16 +1497,10 @@
             [self endSavingNewEntry];
         }];
     }
-    
-//    [[NSManagedObjectContext MR_rootSavingContext] MR_saveToPersistentStoreAndWait];
-//    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
-    
-
 }
 
 - (void) endSavingNewEntry
 {
-    
     // We set to 0 the count of no results fetch location
     [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"noresultsgeoloc"];
     
