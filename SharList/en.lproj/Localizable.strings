@@ -24,6 +24,7 @@
 
 "push remote notif update list" = "One of your favorite discoveries was updated!";
 
+"yyyy/MM/dd" = "yyyy/MM/dd";
 
 //tab bar controller
 "meetings" = "discoveries";

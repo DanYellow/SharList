@@ -22,6 +22,8 @@
 "buy" = "acheter";
 "buy %@" = "acheter %@";
 
+"yyyy/MM/dd" = "dd/MM/yyyy";
+
 "push remote notif update list" = "Une de vos découvertes favorites a été mise à jour !";
 
 //tab bar controller
