@@ -144,7 +144,7 @@
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
-    numberOfJSONErrors = 0;
+
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.FilterEnabled = NO;
@@ -249,6 +249,8 @@
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MeetingsListTutorialV2"];
         [self showTutorial];
     }
+    
+    self.discoveries = [NSMutableArray new];
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
 //    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
@@ -359,6 +361,11 @@
     
     [self getCurrentUserLikes];
 }
+
+/*
+ * Retrieve the current user's list / likes
+ *
+ */
 
 - (void) getCurrentUserLikes
 {
@@ -738,7 +745,7 @@
 //    [limitRequest setFetchLimit:2];
 //    NSArray *meetings = [UserTaste MR_executeFetchRequest:limitRequest];
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates]; // Order by date of meeting
-
+    
     NSMutableArray *listOfDistinctDays = [NSMutableArray new];
     NSMutableArray *foo = [NSMutableArray new];
     
@@ -784,11 +791,14 @@
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-    
+//    [userMeetingsListTableView reloadData];
+
+
     [userMeetingsListTableView beginUpdates];
-    [userMeetingsListTableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]]withRowAnimation:UITableViewRowAnimationAutomatic];
+    [userMeetingsListTableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
     [userMeetingsListTableView endUpdates];
     [loadingIndicator stopAnimating];
+
 }
 
 
@@ -948,28 +958,39 @@
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
 
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-
-    NSDate *currentDate = [NSDate new];
-    currentDate = [dateFormatter dateFromString:[distinctDays objectAtIndex:section]];
+    dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
+    
+//    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+//
+//    NSDate *currentDate = [NSDate new];
+//    currentDate = [dateFormatter dateFromString:[distinctDays objectAtIndex:section]];
 
     NSCalendar *calendar = [NSCalendar currentCalendar];
     
-    NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]]];
+//    NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]]];
     
-    int j = 0;
+    
+    
+    [self.discoveries removeAllObjects];
+    // We group discoveries by day
+    NSInteger nbrRowsForCurrentSection = 0;
     for (int i = 0; i < [meetings count]; i++) {
         if ([[meetings objectAtIndex:i] lastMeeting] != nil) {
-            NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
             
-            if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
-                j++;
+            if ([calendar isDate:[[meetings objectAtIndex:i] lastMeeting] inSameDayAsDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] ]) {
+                [self.discoveries addObject:[meetings objectAtIndex:i]];
+                nbrRowsForCurrentSection++;
             }
+//            NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[[meetings objectAtIndex:i] lastMeeting]];
+//            
+//            if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
+//                nbrRowsForCurrentSection++;
+//            }
         }
-        
     }
+
     
-    return j; //j
+    return [self.discoveries count];
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -1478,6 +1499,8 @@
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
             oldUserTaste.isRandomDiscover = NO;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        
+        [self.discoveries addObject:oldUserTaste];
         [self endSavingNewEntry];
     } else {
         // It's a new user
@@ -1492,7 +1515,7 @@
             
             if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
                 userTaste.isRandomDiscover = NO;
-            
+            [self.discoveries addObject:userTaste];
         } completion:^(BOOL success, NSError *error) {
             [self endSavingNewEntry];
         }];
