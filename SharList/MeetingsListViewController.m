@@ -309,8 +309,7 @@
     NSRange r = [[attributedString string] rangeOfString:NSLocalizedString(@"Tap on ", nil)];
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
-    CGFloat emptyUserTasteLabelPosY = 45; // [(AppDelegate *)[[UIApplication sharedApplication] delegate] computeRatio:343 forDimension:screenHeight];
-    
+    CGFloat emptyUserTasteLabelPosY = 45;
     UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 24, 90)];
     emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur l'étoile} pour ajouter aux favoris
@@ -529,7 +528,6 @@
     notaBene.textAlignment = NSTextAlignmentCenter;
     notaBene.numberOfLines = 0;
     [notaBene heightToFit];
-//    [notaBene sizeToFit];
     notaBene.center = CGPointMake(self.view.center.x, typeMeetingY + 30 + ((meetingTypesArr.count * 20) + (meetingTypesArr.count * imgIndicatorWidth)));
     notaBene.textColor = [UIColor whiteColor];
     [tutorialView addSubview:notaBene];
@@ -808,11 +806,19 @@
     
     NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 1)];
     
-    if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0) {
-        [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+    
+    if (segmentedControl.selectedSegmentIndex != 0 && ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0)) {
+        [userMeetingsListTableView reloadData];
     } else {
-        [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+        if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0) {
+            [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+        } else {
+            [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
     }
+    
+
     
     [loadingIndicator stopAnimating];
 }
@@ -1299,14 +1305,16 @@
 //    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
 //    [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES]; @TODO
     
-    [self startFetchingRandomUser];
+    [self startFetchingADiscovery];
 }
 
-- (void) startFetchingRandomUser
+- (void) startFetchingADiscovery
 {
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == NO) {
         NSString *currentUserfbID = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
-        NSString *postString = [NSString stringWithFormat:@"fbiduser=%@", currentUserfbID];
+        NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&lastuserid=%@", currentUserfbID, [[UserTaste MR_findFirstOrderedByAttribute:@"lastMeeting" ascending:NO] fbid]];
+        
+        NSLog(@"%@", [[UserTaste MR_findFirstOrderedByAttribute:@"lastMeeting" ascending:NO] fbid]);
         
         [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             if (error) {
@@ -1416,6 +1424,7 @@
     }
     
     NSMutableDictionary *randomUserDatas = [serverResponse objectForKey:@"response"];
+    
 
     // No datas retrieve from server
     // Maybe for geoloc
@@ -1640,8 +1649,9 @@
 {
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
+    emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
     
-    UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, screenWidth - 24, 50)];
+    UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(emptyFacebookFriendsLabelView.frame), 50)];
     emptyFacebookFriendsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];
     emptyFacebookFriendsLabel.numberOfLines = 0;
@@ -1649,7 +1659,6 @@
     emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
     emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emptyFacebookFriendsLabel.backgroundColor = [UIColor clearColor];
-    emptyFacebookFriendsLabel.center = CGPointMake(self.view.center.x, emptyFacebookFriendsLabel.center.y);
     [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
     
     
@@ -1696,7 +1705,8 @@
         [fbSegCtrlBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
         [fbSegCtrlBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     }
-    [emptyFacebookFriendsLabel sizeToFit];
+    [emptyFacebookFriendsLabel heightToFit];
+    
 }
 
 #pragma mark - misc

@@ -304,7 +304,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [manager GET:shoundAPIPath parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               NSNumber *mediaLikeNumber = [responseObject valueForKeyPath:@"response.hits"];
-//              NSLog(@"mediaLikeNumber : %@", mediaLikeNumber);
+              
               NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
               [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
               
@@ -319,7 +319,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   self.mediaDatas = tempDict;
               }
               
-//              NSDecimalNumber *amountNumber = [NSDecimalNumber decimalNumberWithString:[responseObject valueForKeyPath:@"response.hits"]];
+
               NSString *numberString = [numberFormatter stringFromNumber:mediaLikeNumber];
 
               if ([mediaLikeNumber integerValue] > 1) {
@@ -890,28 +890,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaGenresLabel.tag = 11;
     mediaGenresLabel.alpha = (genresArray.count == 0) ? 0 : 1;
     [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
-    
-    if ([self.numberLikesString integerValue] > 1) {
-        // Like by X people
-        NSString *mediaLikeNumberString = [NSString stringWithFormat:NSLocalizedString(@"Liked by %@ people", nil), self.numberLikesString];
-        
-        int mediaLikeNumberLabelY = mediaGenresLabel.frame.origin.y + mediaGenresLabel.frame.size.height - 6;
-        
-        UILabel *mediaLikeNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaLikeNumberLabelY, screenWidth, 25)];
-        mediaLikeNumberLabel.text = mediaLikeNumberString;
-        mediaLikeNumberLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
-        mediaLikeNumberLabel.textAlignment = NSTextAlignmentLeft;
-        mediaLikeNumberLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-        mediaLikeNumberLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-        mediaLikeNumberLabel.layer.shadowRadius = 2.5;
-        mediaLikeNumberLabel.layer.shadowOpacity = 0.75;
-        mediaLikeNumberLabel.clipsToBounds = NO;
-        mediaLikeNumberLabel.tag = 5;
-        mediaLikeNumberLabel.backgroundColor = [UIColor clearColor];
-        mediaLikeNumberLabel.layer.masksToBounds = NO;
-        mediaLikeNumberLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
-//        [infoMediaView insertSubview:mediaLikeNumberLabel atIndex:11];
-    }
     
     [loadingIndicator stopAnimating];
 }
