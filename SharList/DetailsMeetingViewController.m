@@ -312,19 +312,21 @@
         [followersLabelContainerBtn addSubview:followersTitle];
     }
     
-    UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(-22, followersLabelContainerBtn.frame.size.height - 34, widthViews + 10, 35.0)];
-    statCount.textColor = [UIColor whiteColor];
-    statCount.backgroundColor = [UIColor clearColor];
-    statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
-    statCount.text = [NSString stringWithFormat:@"%@", numberOfFollowers];
-    statCount.tag = 8;
-    statCount.backgroundColor = [UIColor clearColor];
-    statCount.textAlignment = NSTextAlignmentRight;
-    [followersLabelContainerBtn addSubview:statCount];
+    UILabel *numberFollowersLabel = [[UILabel alloc] initWithFrame:CGRectMake(-22, followersLabelContainerBtn.frame.size.height - 34, widthViews + 10, 35.0)];
+    numberFollowersLabel.textColor = [UIColor whiteColor];
+    numberFollowersLabel.backgroundColor = [UIColor redColor];
+    numberFollowersLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
+    numberFollowersLabel.text = [NSString stringWithFormat:@"%@", numberOfFollowers];
+    numberFollowersLabel.tag = 8;
+//    statCount.text = @"2";
+    numberFollowersLabel.backgroundColor = [UIColor clearColor];
+    numberFollowersLabel.textAlignment = NSTextAlignmentRight;
+    [followersLabelContainerBtn addSubview:numberFollowersLabel];
     if (![followersLabelContainerBtn isDescendantOfView:metUserFBView]) {
         [metUserFBView addSubview:followersLabelContainerBtn];
     }
     
+//    NSLog(@"statCount.text : %@", statCount.text);
     
     if ([numberOfFollowers integerValue] > 1) {
         followersTitle.text = [NSLocalizedString(@"followers", nil) uppercaseString];
@@ -439,7 +441,7 @@
         
         UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
         statContainer.backgroundColor = [UIColor clearColor];
-        statContainer.tag = i + 1; // We add one because the first section of a tableview is the header
+        statContainer.tag = i;
         
         [statContainer addTarget:self action:@selector(scrollToSectionWithNumber:) forControlEvents:UIControlEventTouchUpInside];
 
@@ -454,10 +456,7 @@
         statTitle.backgroundColor = [UIColor clearColor];
         statTitle.text = title;
         statTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
-//        statTitle.layer.shadowColor = [[UIColor blackColor] CGColor];
-//        statTitle.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-//        statTitle.layer.shadowRadius = 2.5;
-//        statTitle.layer.shadowOpacity = 0.75;
+
         [statContainer addSubview:statTitle];
         
         
@@ -466,11 +465,7 @@
         statCount.textColor = [UIColor whiteColor];
         statCount.backgroundColor = [UIColor clearColor];
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
-//        statCount.layer.shadowColor = [[UIColor blackColor] CGColor];
-//        statCount.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-//        statCount.layer.shadowRadius = 2.5;
-//        statCount.layer.shadowOpacity = 0.75;
-        
+
         NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[[self.metUserTasteDict filterKeysForNullObj]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]objectAtIndex:i]] count]] stringValue];
         statCount.text = statCountNumber;
         [statContainer insertSubview:statCount atIndex:10];
@@ -503,7 +498,7 @@
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10.0];
     
-    [request addValue:@"foo hello" forHTTPHeaderField:@"X-Shound"];
+    [request addValue:@"getServerDatasForFbID" forHTTPHeaderField:@"X-Shound"];
     [request setHTTPMethod:@"GET"];
     
 //    NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&isspecificuser=%@", userfbID, @"true"];
@@ -679,10 +674,10 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+    NSString *sectionTitle = [[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
     NSArray *sectionElements = [self.metUserTasteDict objectForKey:sectionTitle];
     
-//    NSLog(@"sectionElements : %@, %@, %@", sectionTitle, sectionElements, NSStringFromClass(sectionElements.class));
+//    NSLog(@"sectionElements : %@, %li", [[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)], section);
     // If the category is empty so the section not appears
     if ([sectionElements isKindOfClass:[NSNull class]]) {
         return 0;
@@ -711,8 +706,8 @@
         return 0;
     }
     emptyUserTasteLabel.hidden = YES;
-//    NSLog(@"foo : %@", [self.metUserTasteDict filterKeysForNullObj]);
-    return [self.metUserTasteDict count];
+    
+    return [[self.metUserTasteDict filterKeysForNullObj] count];
 }
 
 // Title of categories
@@ -722,7 +717,7 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
     headerView.opaque = YES;
     
-    NSString *sectionTitleRaw = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+    NSString *sectionTitleRaw = [[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
     NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
@@ -756,7 +751,7 @@
     static NSString *CellIdentifier = @"Cell";
     
     // Keys from NSDict is sorted alphabetically
-    NSString *sectionTitle = [[[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
+    NSString *sectionTitle = [[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
                                                                           objectAtIndex:indexPath.section];
     NSString *title, *imdbID; // year
     ShareListMediaTableViewCell *cell;
@@ -765,9 +760,7 @@
     NSArray *rowsOfSection = [self.metUserTasteDict objectForKey:sectionTitle];
     CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
 
-    
     title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
-    
     imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
     
     if (cell == nil) {

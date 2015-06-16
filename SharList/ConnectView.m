@@ -120,30 +120,51 @@
     [manager.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     
     [manager POST:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        Manage a welcome bck if the user is already connected ?
 //        NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {}];
     
-    if ([AFNetworkReachabilityManager sharedManager].isReachable) {
-        if ([FBSDKAccessToken currentAccessToken]) {
-            [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
-            [self readyToStart];
-        }
+    // We save the user's friends using application (and accepts this feature) for later
+    if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
+        [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?fields=first_name,last_name" parameters:nil]
+         startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+             if (!error) {
+                 NSArray* facebookFriends;
+                 
+                 if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
+                     facebookFriends = @[];
+                 } else {
+                     facebookFriends = [result valueForKeyPath:@"data"];
+                 }
+                 [[NSUserDefaults standardUserDefaults] setObject:facebookFriends forKey:@"facebookFriendsList"];
+                 [self readyToStart];
+             }
+         }];
     } else {
-        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
-            [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
-        }
+        [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
+        [self readyToStart];
     }
+    
+
 }
 
 - (void) readyToStart
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"mainViewIsReady" object:nil userInfo:nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"userConnectedToFacebook" object:nil userInfo:nil];
+    if ([AFNetworkReachabilityManager sharedManager].isReachable) {
+        if ([FBSDKAccessToken currentAccessToken]) {
+            [[NSUserDefaults standardUserDefaults] setObject:[FBSDKAccessToken currentAccessToken].userID forKey:@"currentUserfbID"];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"mainViewIsReady" object:nil userInfo:nil];
+        }
+    }
+    
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"userConnectedToFacebook" object:nil userInfo:nil];
 }
 
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbImageData"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"facebookFriendsList"];
     
     [self.viewController.tabBarController setSelectedIndex:0];
 }

@@ -43,14 +43,13 @@
     NSMutableArray *daysList;
     
     UIActivityIndicatorView *loadingIndicator;
-    
-    NSUInteger numberOfJSONErrors; //Contains the number of incorrect json user taste retrieve from the server
-    
+        
     NSDictionary *currentUserTaste;
 }
 
 @property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;
 @property (retain, nonatomic) NSMutableData *responseData;
+//@property (retain, nonatomic) NSMutableArray *discoveries;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) NSTimer *timerRefreshBtn;
 @property (nonatomic, assign, getter=isTableViewAdded) BOOL tableViewAdded;

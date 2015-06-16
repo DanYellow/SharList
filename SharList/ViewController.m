@@ -295,7 +295,6 @@
     
     // Keep the date of installation of app
     if (![userPreferences objectForKey:@"installationDate"]) {
-        NSLog(@"gregr");
         [userPreferences setObject:[NSDate date] forKey:@"installationDate"];
     }
         
@@ -1213,7 +1212,7 @@
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         headerView.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
         label.textColor = [UIColor blackColor];
-        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.7];
+        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.37];
     } else {
         headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
         label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];

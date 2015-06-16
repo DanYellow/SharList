@@ -268,9 +268,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    if (![self connected]) {
 //        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 //    }
-    
-    CGFloat mediaTitleLabelY = ((screenHeight * 13.20422535) / 100) - 30;
-    
+        
     UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, screenWidth - 22, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
@@ -692,8 +690,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [displayBuyView addSubview:titleBuyMedia];
     
     UIFont *buttonFont = [UIFont fontWithName:@"Helvetica" size:18.0f];
-    CGSize buttonSize = CGSizeMake([self computeRatio:574 forDimension:screenWidth], 41.0f);
-    CGPoint buttonPos = CGPointMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:190 forDimension:screenHeight]);
+    CGSize buttonSize = CGSizeMake((90 * screenWidth) / 100, 50.0f);
+    CGPoint buttonPos = CGPointMake( ((screenWidth - buttonSize.width) / 2), [self computeRatio:190 forDimension:screenHeight]);
     
     
     UIColor *amazonOrange = [UIColor colorWithRed:1 green:(124.0f/255.0f) blue:(2.0f/255.0f) alpha:1.0f];
@@ -798,7 +796,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     overlayLayer.frame = imgMedia.frame;
     overlayLayer.name = @"overlayLayerImgMedia";
     overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.63].CGColor;
-    [imgMedia.layer insertSublayer:overlayLayer atIndex:0]; // <- gentoo
+    [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
     
     CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
     overlayAlphaAnim.fromValue = @0;
@@ -1181,7 +1179,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIActivityIndicatorView *BSActivityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     BSActivityIndicator.hidesWhenStopped = YES;
-    BSActivityIndicator.center = CGPointMake(10.0, connectWithBSBtn.bounds.size.height / 2);
+    BSActivityIndicator.center = CGPointMake(25.0, connectWithBSBtn.bounds.size.height / 2);
     [BSActivityIndicator startAnimating];
     [connectWithBSBtn addSubview:BSActivityIndicator];
     

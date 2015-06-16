@@ -52,7 +52,8 @@
 "All" = "Toutes";
 "Favorites" = "Favoris";
 "no facebook friends" = "Aucun de vos amis Facebook n'est sur Shound";
-"has facebook friends" = "Des amis Facebook utilisent Shound mais vous ne les avez pas encore découvert";
+//"has facebook friends" = "Des amis Facebook utilisent Shound mais vous ne les avez pas encore découvert";
+"%@ has facebook friends" = "%@ et d'autres amis utilisent Shound mais vous ne les avez pas encore découvert";
 "facebook shound not granted" = "Shound n'est pas autorisé à voir vos amis Facebook utilisant l'application";
 "Tap on  in a meeting to add it among your favorites" = "Appuyez sur   dans une découverte pour l'ajouter aux favoris";
 "Met at %@" = "Découvert à %@";
@@ -79,7 +80,7 @@
 "randomMeetingExplained" = "Aléatoires\nPour ceux qui n'ont pas peur de l'inconnu";
 "notefacebook" = "Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !\n Note 2 : Vous ne pouvez faire une découverte que toutes les heures.";
 
-"warning message for update login issue" = "Vous venez de mettre à jour l'application ? \n \n Veuillez vous déconnecter dans les paramètres puis vous reconnecter";
+"warning message for update login issue" = "Vous venez de mettre à jour l'application ? Merci ! \n\n Mais pour profiter des nouveautés veuillez vous déconnecter dans les paramètres puis vous reconnecter";
 
 
 //Settings view controller

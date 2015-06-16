@@ -1013,7 +1013,7 @@
 				1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */,
 				1A549EF61B24A02400B9305B /* UserTaste.xcdatamodel */,
 			);
-			currentVersion = 1A549EF61B24A02400B9305B /* UserTaste.xcdatamodel */;
+			currentVersion = 1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */;
 			path = UserTaste.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

@@ -224,7 +224,6 @@
     if ([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"]) {
         [self fetchUserFacebookFriendsReloadAfter:NO];
         [self initializer];
-        [self manageDisplayOfFacebookFriendsButton];
     }
 }
 
@@ -347,6 +346,7 @@
     emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
     [userMeetingsListTableView addSubview:emptyFacebookFriendsLabelView];
     
+    [self manageDisplayOfFacebookFriendsButton];
     
     
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
@@ -799,18 +799,21 @@
     [loadingIndicator stopAnimating];
 }
 
-- (void) reloadSections {
+- (void) reloadSections
+{
     [loadingIndicator startAnimating];
     daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     
-    NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self numberOfSectionsInTableView:userMeetingsListTableView])];
-    [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationFade];
+    NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 1)];
     
-//    NSIndexPath *newIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-//    [userMeetingsListTableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-
+    if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0) {
+        [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    
     [loadingIndicator stopAnimating];
 }
 
@@ -874,11 +877,6 @@
             case 2:
             {
                 emptyFacebookFriendsLabelView.hidden = NO;
-//                if (![[FBSession.activeSession permissions] containsObject:@"user_friends"]) {
-////                    emptyFacebookFriendsLabel.hidden = YES;
-//                } else {
-//                    emptyFacebookFriendsLabel.hidden = NO;
-//                }
             }
                 break;
             default:
@@ -1298,7 +1296,7 @@
     
     [loadingIndicator startAnimating];
     
-    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+//    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
 //    [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES]; @TODO
     
     [self startFetchingRandomUser];
@@ -1515,6 +1513,7 @@
         } completion:^(BOOL success, NSError *error) {
             [self endSavingNewEntry];
         }];
+//        [self endSavingNewEntry];
     }
 }
 
@@ -1650,6 +1649,7 @@
     emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
     emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emptyFacebookFriendsLabel.backgroundColor = [UIColor clearColor];
+    emptyFacebookFriendsLabel.center = CGPointMake(self.view.center.x, emptyFacebookFriendsLabel.center.y);
     [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
     
     
@@ -1675,9 +1675,20 @@
         [fbSegCtrlBtn setTitle:NSLocalizedString(@"authorize fb friends", nil) forState:UIControlStateNormal];
         [fbSegCtrlBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
     } else {
-        // No friends
+        
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] count] > 0) {
-            emptyFacebookFriendsLabel.text = NSLocalizedString(@"has facebook friends", nil);
+            NSMutableArray *friendsUsingAppArray = [NSMutableArray new];
+            for (int i = 0; i < 3; i++) {
+                if (i >= [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] count]) {
+                    break;
+                }
+                
+                [friendsUsingAppArray addObject:[[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] objectAtIndex:i] valueForKey:@"first_name"]];
+            }
+            
+            NSString *friendsUsingApp = [friendsUsingAppArray componentsJoinedByString:@", "];
+            emptyFacebookFriendsLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ has facebook friends", nil), friendsUsingApp];
+        // No friends
         } else {
             emptyFacebookFriendsLabel.text = NSLocalizedString(@"no facebook friends", nil);
         }
@@ -1685,6 +1696,7 @@
         [fbSegCtrlBtn setTitle:NSLocalizedString(@"Talk about shound", nil) forState:UIControlStateNormal];
         [fbSegCtrlBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     }
+    [emptyFacebookFriendsLabel sizeToFit];
 }
 
 #pragma mark - misc
