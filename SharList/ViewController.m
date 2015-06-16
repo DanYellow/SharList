@@ -1574,7 +1574,6 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"foo" forHTTPHeaderField:@"X-Shound"];
     
-
     [manager PATCH:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         getUserFacebookLikesBtn.enabled = YES;
         [loadingIndicator stopAnimating];

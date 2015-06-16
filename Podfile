@@ -14,6 +14,7 @@ target "SharList" do
 	pod 'JLTMDbClient', '~> 0.2'
 	pod 'Parse', '~> 1.6'
 	pod 'XCDYouTubeKit', '~> 2.1'
+	# pod 'PromiseKit', '~> 2.0'
 end
 
 target "SharListTests" do

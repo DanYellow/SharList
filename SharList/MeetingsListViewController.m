@@ -370,7 +370,7 @@
 {
     UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
                                                       withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-    if (![[currentUser taste] isKindOfClass:[NSNull class]]) {
+    if ([currentUser taste]) {
         currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
         
     }
@@ -811,7 +811,11 @@
     if (segmentedControl.selectedSegmentIndex != 0 && ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0)) {
         [userMeetingsListTableView reloadData];
     } else {
-        if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0) {
+        // We insert new sections for 3 cases :
+        // • We pass to an another day
+        // • We fill for the first time the tableview
+        // • ?
+        if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0 || [userMeetingsListTableView numberOfSections] < [distinctDays count] ) {
             [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
         } else {
             [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -1512,6 +1516,14 @@
             UserTaste *userTaste = [UserTaste MR_createEntityInContext:localContext];
             userTaste.taste = arrayData;
             userTaste.fbid = randomUserfbID;
+            
+            NSCalendar *calendar = [NSCalendar currentCalendar];
+            NSDate *threeHoursFromNow;
+            threeHoursFromNow = [calendar dateByAddingUnit:NSCalendarUnitDay
+                                                     value:5
+                                                    toDate:[NSDate date]
+                                                   options:kNilOptions];
+            
             userTaste.lastMeeting = [NSDate date];
             userTaste.isFavorite = NO;
             userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
