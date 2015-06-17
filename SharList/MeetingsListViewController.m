@@ -155,7 +155,6 @@
         [userPreferences setInteger:0 forKey:@"noresultsgeoloc"];
     }
     
-    
     if (([FBSDKAccessToken currentAccessToken] || [userPreferences objectForKey:@"currentUserfbID"]) && [userPreferences objectForKey:@"installationDate"]) {
         if (![userPreferences objectForKey:@"warningDisconnectMessageHaveBeenDisplayV1"]) {
             [self showWarningMessage];
@@ -260,7 +259,7 @@
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"All", nil), NSLocalizedString(@"Favorites", nil), @"Facebook"]];
     
     segmentedControl.frame = CGRectMake(10, 5, screenWidth - 20, 30);
-    [segmentedControl addTarget:self action:@selector(diplayFavoritesMeetings:) forControlEvents: UIControlEventValueChanged];
+    [segmentedControl addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tag = 5;
 //    segmentedControl.tintColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f];
@@ -771,6 +770,11 @@
     
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
+    
+    [self.discoveries removeAllObjects];
+    for (int i = 0; i < distinctDays.count; i++) {
+        [self.discoveries setObject:@[] forKey:distinctDays[i]];
+    }
 
     return [[foo reverseObjectEnumerator] allObjects];
 }
@@ -780,7 +784,7 @@
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 }
 
-- (void) diplayFavoritesMeetings:(id)sender
+- (void) filterTableview:(id)sender
 {
     [self reloadTableview];
 }
@@ -804,22 +808,40 @@
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     
-    NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 1)];
-    
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
-    if (segmentedControl.selectedSegmentIndex != 0 && ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0)) {
+    // && ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0)
+    if (segmentedControl.selectedSegmentIndex != 0 ) {
         [userMeetingsListTableView reloadData];
     } else {
         // We insert new sections for 3 cases :
         // • We pass to an another day
         // • We fill for the first time the tableview
         // • ?
-        if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0 || [userMeetingsListTableView numberOfSections] < [distinctDays count] ) {
-            [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+        NSLog(@"[userMee : %li | %li", [userMeetingsListTableView numberOfSections],  [distinctDays count]);
+        if ([userMeetingsListTableView numberOfSections] < [distinctDays count]) {
+//            fetchDatas
+            NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 1)];
+            [userMeetingsListTableView insertSections:reloadSet
+                                     withRowAnimation:UITableViewRowAnimationAutomatic];
         } else {
-            [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+//            NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndex:0];
+            
+//            [userMeetingsListTableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+            
+            NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [userMeetingsListTableView numberOfSections])];
+            [userMeetingsListTableView reloadSections:reloadSet
+                                     withRowAnimation:UITableViewRowAnimationAutomatic];
+//            NSIndexPath *index = [NSIndexPath indexPathForRow:0 inSection:0];
+//            [userMeetingsListTableView insertRowsAtIndexPaths:@[index] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
+        
+//        if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0 || [userMeetingsListTableView numberOfSections] < [distinctDays count] ) {
+//            [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+//        } else {
+//            [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+//        }
     }
     
 
@@ -903,8 +925,8 @@
 //        }
         [loadingIndicator stopAnimating];
     }
-
-    return [distinctDays count];
+    NSLog(@"self. : %li | %li", [[self.discoveries allKeys] count], [distinctDays count]);
+    return [[self.discoveries allKeys] count]; // [distinctDays count];
 }
 
 // Title of categories
@@ -975,51 +997,21 @@
 
     // We don't want the taste of the current user
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
-
+    
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
     
-//    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-
-
-//    NSCalendar *calendar = [NSCalendar currentCalendar];
-    
-    // self.discoveries
-    
-//    if ([self.discoveries objectForKey:[distinctDays objectAtIndex:section]]) {
-//        return [[self.discoveries objectForKey:[distinctDays objectAtIndex:section]] count];
-//    } else {
-//        
-//    }
-//    
-
-    
-    
-    // We group discoveries by day
-//    NSInteger nbrRowsForCurrentSection = 0;
-//    for (int i = 0; i < [meetings count]; i++) {
-//        if ([[meetings objectAtIndex:i] lastMeeting] != nil) {
-//            
-//            if ([calendar isDate:[[meetings objectAtIndex:i] lastMeeting] inSameDayAsDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] ]) {
-//                nbrRowsForCurrentSection++;
-//            }
-//        }
-//    }
     
     NSDate *startDate = [[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] beginningOfDay];
     NSDate *endDate = [[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] endOfDay];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", startDate, endDate];
-//    [meetings filteredArrayUsingPredicate: predicate];
+    NSPredicate *datePredicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", startDate, endDate];
     
-//    NSLog(@"predit :  %li", [[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:predicate] count]);
     
-    [self.discoveries setObject:[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:predicate]
+    [self.discoveries setObject:[meetings filteredArrayUsingPredicate:datePredicate]
                          forKey:[distinctDays objectAtIndex:section]];
     
-    
     return [[self.discoveries objectForKey:[distinctDays objectAtIndex:section]] count];
-//    return nbrRowsForCurrentSection;
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -1342,7 +1334,7 @@
         NSString *currentUserfbID = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
         NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&lastuserid=%@", currentUserfbID, [[UserTaste MR_findFirstOrderedByAttribute:@"lastMeeting" ascending:NO] fbid]];
         
-        NSLog(@"%@", [[UserTaste MR_findFirstOrderedByAttribute:@"lastMeeting" ascending:NO] fbid]);
+        NSLog(@"postString : %@", postString);
         
         [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             if (error) {
@@ -1504,15 +1496,18 @@
     NSNumber *oldUserCount = oldUserTaste.numberOfMeetings;
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDate *threeHoursFromNow;
-    threeHoursFromNow = [calendar dateByAddingUnit:NSCalendarUnitDay
-                                             value:6
+    NSDate *discoveryDate;
+    discoveryDate = [calendar dateByAddingUnit:NSCalendarUnitDay
+                                             value:17
                                             toDate:[NSDate date]
                                            options:kNilOptions];
     
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter stringFromDate:[NSDate date]];
+    
     // If user exists we just update his value like streetpass on 3ds
     if (oldUserCount != 0 && randomUserfbID != nil && oldUserTaste != nil) {
-        
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
         NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
@@ -1529,10 +1524,58 @@
             //            [self fetchUsersDatasBtnAction];
             //            return;
         }
+        
+
+        // We retrieve the discoveries for the last discovery for the user recently met
+//        NSMutableArray *discoveriesForPastDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] mutableCopy];
+//       
+//        NSUInteger rowNumberFutureObjectDeleted = [discoveriesForPastDay indexOfObject:oldUserTaste];
+//        NSUInteger sectionNumberFutureObjectDeleted = [[self.discoveries allKeys] indexOfObject:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
+//
+//        // We remove the old discovery
+//        [discoveriesForPastDay removeObjectsInArray:[discoveriesForPastDay filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"fbid == %@", [oldUserTaste fbid]]]];
+//        
+//        [self.discoveries setObject:discoveriesForPastDay forKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
+//        
+//        
+//        NSMutableArray *discoveriesForCurrentDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[NSDate date]]] mutableCopy];
+//        [discoveriesForCurrentDay addObject:oldUserTaste];
+//        [self.discoveries setObject:discoveriesForCurrentDay forKey:[dateFormatter stringFromDate:[NSDate date]]];
+//        
+//        UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+//        [userMeetingsListTableView reloadData];
+        
+        UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+        
+//        if (segmentedControl.selectedSegmentIndex == 0 ) {
+//            [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
+//                                     withRowAnimation:UITableViewRowAnimationAutomatic];
+//        }
+//        
+//        NSIndexPath *deletedPath = [NSIndexPath indexPathForRow:rowNumberFutureObjectDeleted
+//                                                      inSection:sectionNumberFutureObjectDeleted];
+        
+        
+
+
+//        NSIndexPath *deletedPath = [NSIndexPath indexPathForRow:0
+//                                                      inSection:0];
+//        NSLog(@"row : %li | section : %li", deletedPath.row, deletedPath.section);
+
+//        [userMeetingsListTableView deleteRowsAtIndexPaths:@[deletedPath]
+//                                         withRowAnimation:UITableViewRowAnimationAutomatic];
+
+        
+        // We remove the whole bund of data for the old meeting
+//        [self.discoveries removeObjectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
+        // And put the new list of discoveries without the useless disovery
+
+        
+        
                 
         oldUserTaste.taste = arrayData;
         oldUserTaste.fbid = randomUserfbID;
-        oldUserTaste.lastMeeting = threeHoursFromNow; //[NSDate date];
+        oldUserTaste.lastMeeting = discoveryDate; //[NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
         
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
@@ -1550,7 +1593,7 @@
             
 
             
-            userTaste.lastMeeting = threeHoursFromNow;
+            userTaste.lastMeeting = discoveryDate;
             userTaste.isFavorite = NO;
             userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
             
@@ -1558,6 +1601,11 @@
                 userTaste.isRandomDiscover = NO;
 
         } completion:^(BOOL success, NSError *error) {
+            
+            NSMutableArray *discoveriesForCurrentDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[NSDate date]]] mutableCopy];
+            [discoveriesForCurrentDay addObject:[UserTaste MR_findFirstOrderedByAttribute:@"lastMeeting" ascending:NO]];
+            [self.discoveries setObject:discoveriesForCurrentDay forKey:[dateFormatter stringFromDate:[NSDate date]]];
+            
             [self endSavingNewEntry];
         }];
 //        [self endSavingNewEntry];
