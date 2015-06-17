@@ -1153,10 +1153,11 @@
                 BOOL lastItem = ([[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] count] == 0);
                 
                 if (lastItem) {
-                    [tableView reloadData];
+                    [tableView reloadSections:[NSIndexSet indexSetWithIndex:cellIndexPath.section]
+                             withRowAnimation:UITableViewRowAnimationAutomatic];
                 } else {
                     [tableView deleteRowsAtIndexPaths:@[cellIndexPath]
-                                     withRowAnimation:UITableViewRowAnimationFade];
+                                     withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
                 [self updateCurrentUserStats];
             }];
