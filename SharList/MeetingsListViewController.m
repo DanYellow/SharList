@@ -249,7 +249,7 @@
         [self showTutorial];
     }
     
-//    self.discoveries = [NSMutableArray new];
+    self.discoveries = [NSMutableDictionary new];
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
 //    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
@@ -982,20 +982,44 @@
 //    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
 
 
-    NSCalendar *calendar = [NSCalendar currentCalendar];
+//    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    // self.discoveries
+    
+//    if ([self.discoveries objectForKey:[distinctDays objectAtIndex:section]]) {
+//        return [[self.discoveries objectForKey:[distinctDays objectAtIndex:section]] count];
+//    } else {
+//        
+//    }
+//    
+
+    
     
     // We group discoveries by day
-    NSInteger nbrRowsForCurrentSection = 0;
-    for (int i = 0; i < [meetings count]; i++) {
-        if ([[meetings objectAtIndex:i] lastMeeting] != nil) {
-            
-            if ([calendar isDate:[[meetings objectAtIndex:i] lastMeeting] inSameDayAsDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] ]) {
-                nbrRowsForCurrentSection++;
-            }
-        }
-    }
+//    NSInteger nbrRowsForCurrentSection = 0;
+//    for (int i = 0; i < [meetings count]; i++) {
+//        if ([[meetings objectAtIndex:i] lastMeeting] != nil) {
+//            
+//            if ([calendar isDate:[[meetings objectAtIndex:i] lastMeeting] inSameDayAsDate:[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] ]) {
+//                nbrRowsForCurrentSection++;
+//            }
+//        }
+//    }
     
-    return nbrRowsForCurrentSection;
+    NSDate *startDate = [[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] beginningOfDay];
+    NSDate *endDate = [[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] endOfDay];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", startDate, endDate];
+//    [meetings filteredArrayUsingPredicate: predicate];
+    
+//    NSLog(@"predit :  %li", [[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:predicate] count]);
+    
+    [self.discoveries setObject:[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:predicate]
+                         forKey:[distinctDays objectAtIndex:section]];
+    
+    
+    return [[self.discoveries objectForKey:[distinctDays objectAtIndex:section]] count];
+//    return nbrRowsForCurrentSection;
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -1479,6 +1503,13 @@
     UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_defaultContext]];
     NSNumber *oldUserCount = oldUserTaste.numberOfMeetings;
     
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDate *threeHoursFromNow;
+    threeHoursFromNow = [calendar dateByAddingUnit:NSCalendarUnitDay
+                                             value:6
+                                            toDate:[NSDate date]
+                                           options:kNilOptions];
+    
     // If user exists we just update his value like streetpass on 3ds
     if (oldUserCount != 0 && randomUserfbID != nil && oldUserTaste != nil) {
         
@@ -1501,7 +1532,7 @@
                 
         oldUserTaste.taste = arrayData;
         oldUserTaste.fbid = randomUserfbID;
-        oldUserTaste.lastMeeting = [NSDate date];
+        oldUserTaste.lastMeeting = threeHoursFromNow; //[NSDate date];
         oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
         
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
@@ -1517,14 +1548,9 @@
             userTaste.taste = arrayData;
             userTaste.fbid = randomUserfbID;
             
-            NSCalendar *calendar = [NSCalendar currentCalendar];
-            NSDate *threeHoursFromNow;
-            threeHoursFromNow = [calendar dateByAddingUnit:NSCalendarUnitDay
-                                                     value:5
-                                                    toDate:[NSDate date]
-                                                   options:kNilOptions];
+
             
-            userTaste.lastMeeting = [NSDate date];
+            userTaste.lastMeeting = threeHoursFromNow;
             userTaste.isFavorite = NO;
             userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
             

@@ -45,7 +45,13 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Affichage du numéro du prochain épisode d'une série (c'est toujours mieux avec sa date)
 
 # TODO
-- Voir les messages vides pour facebook no friends / access no granted
+
+###### 1.2.0
+- Voir les messages vides pour facebook no friends / access no granted - Done
+- Afficher les amis facebook qui ont le media parmi leur liste Shound
+- Afficher le taux de présence d'une fiche parmi **toutes** les listes Shound
+- Utiliser la nouvelle API pour gérer les liens vers les stores
+- Ajouter un système de like pour les messages + tri par pertinence (1.2.1 ?)
 
 ## Améliorations potentielles
 - Gérer le système de géoloc lors de l'actualisation par bouton (ça garde l'ancienne position) - **done !!!!**
