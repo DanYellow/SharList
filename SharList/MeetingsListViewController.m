@@ -735,64 +735,7 @@
     [loadingIndicator startAnimating];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-    
-    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-    
-//    [userMeetingsListTableView reloadData];
-    [loadingIndicator stopAnimating];
-//    return;
-
-    // && ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0)
-    if (segmentedControl.selectedSegmentIndex != 0 ) {
-        [userMeetingsListTableView reloadData];
-    } else {
-        // We insert new sections for 3 cases :
-        // • We pass to an another day
-        // • We fill for the first time the tableview
-        // • ?
-        
-        if ([[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] count] >= 2) {
-            BOOL hasToReload = [[NSCalendar currentCalendar] isDate:[[[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] objectAtIndex:1] lastMeeting]
-                                                    inSameDayAsDate:[[[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] objectAtIndex:0] lastMeeting]];
-            
-            if (hasToReload) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSRange range = NSMakeRange(1, [userMeetingsListTableView numberOfSections]);
-                    NSIndexSet *sectionToReload = [NSIndexSet indexSetWithIndexesInRange:range];
-                    
-                    [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:0]
-                                             withRowAnimation:UITableViewRowAnimationAutomatic];
-                });
-            } else {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [userMeetingsListTableView insertSections:[NSIndexSet indexSetWithIndex:0]
-                                             withRowAnimation:UITableViewRowAnimationAutomatic];
-                });
-            }
-        } else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [userMeetingsListTableView insertSections:[NSIndexSet indexSetWithIndex:0]
-                                         withRowAnimation:UITableViewRowAnimationAutomatic];
-            });
-        }
-        
-
-        
-//        NSLog(@"[userMeetingsListTableView numberOfSections] : %li | %li", [userMeetingsListTableView numberOfSections], [self.discoveries allKeys].count);
-        
-
-        
-//        NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [userMeetingsListTableView numberOfSections])];
-//        NSLog(@"gh : %li", [userMeetingsListTableView numberOfSections]);
-//        if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0 || [userMeetingsListTableView numberOfSections] < [distinctDays count] ) {
-//            [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
-//             NSLog(@"g : %li", [userMeetingsListTableView numberOfSections]);
-//        } else {
-//            [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
-//        }
-    }
-    
-
+    [userMeetingsListTableView reloadData];
     
     [loadingIndicator stopAnimating];
 }
@@ -1474,7 +1417,7 @@
     NSDate *discoveryDate;
     // Gentoo
     discoveryDate = [calendar dateByAddingUnit:NSCalendarUnitDay
-                                             value:3
+                                             value:0
                                             toDate:[NSDate date]
                                            options:kNilOptions];
     
@@ -1500,29 +1443,6 @@
             //            [self fetchUsersDatasBtnAction];
             //            return;
         }
-        
-//        // We retrieve the discoveries for the last discovery for the user recently met
-        NSMutableArray *discoveriesForPastDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] mutableCopy];
-        
-        NSUInteger rowNumberFutureObjectDeleted = [discoveriesForPastDay indexOfObject:oldUserTaste];
-        NSUInteger sectionNumberFutureObjectDeleted = [self.listOfDistinctsDay indexOfObject:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
-        
-        
-        
-        // We remove the old discovery
-        [discoveriesForPastDay removeObjectsInArray:[discoveriesForPastDay filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"fbid == %@", [oldUserTaste fbid]]]];
-        
-//        NSLog(@"before : %li", [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] count] );
-        
-        [self.discoveries setObject:discoveriesForPastDay forKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
-//        NSLog(@"after : %li", [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] count] );
-        
-        NSMutableArray *discoveriesForCurrentDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:discoveryDate]] mutableCopy];
-        [discoveriesForCurrentDay addObject:oldUserTaste];
-        [self.discoveries setObject:discoveriesForCurrentDay forKey:[dateFormatter stringFromDate:discoveryDate]];
-
-//        NSLog(@"hello ; %li %@", sectionNumberFutureObjectDeleted, [dateFormatter stringFromDate:[oldUserTaste lastMeeting]]);
-        
 
         oldUserTaste.taste = arrayData;
         oldUserTaste.fbid = randomUserfbID;
@@ -1533,18 +1453,7 @@
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
             oldUserTaste.isRandomDiscover = NO;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        
-//        return;
-        dispatch_async(dispatch_get_main_queue(), ^{
 
-            UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-            NSLog(@"sectionNumberFutureObjectDeleted : %li", sectionNumberFutureObjectDeleted);
-            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-            if (segmentedControl.selectedSegmentIndex == 0 ) {
-                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
-                                         withRowAnimation:UITableViewRowAnimationAutomatic];
-            }
-        });
         
         [self endSavingNewEntry];
     } else {
