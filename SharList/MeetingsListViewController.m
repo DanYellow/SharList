@@ -255,6 +255,7 @@
     segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
+    segmentedControlView.hidden = YES;
     
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"All", nil), NSLocalizedString(@"Favorites", nil), @"Facebook"]];
     
@@ -318,7 +319,7 @@
     emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, -10.0f);
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
-    emptyFavoritesLabel.hidden = YES;
+    emptyFavoritesLabel.hidden = NO;
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
     // Message for no meetings /:
@@ -341,6 +342,7 @@
     emptyFacebookFriendsLabelView.tag = 6;
     emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyFacebookFriendsLabelView.userInteractionEnabled = YES;
+    emptyFacebookFriendsLabelView.hidden = YES;
     emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
     [userMeetingsListTableView addSubview:emptyFacebookFriendsLabelView];
     
@@ -755,6 +757,9 @@
             
             if (hasToReload) {
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    NSRange range = NSMakeRange(1, [userMeetingsListTableView numberOfSections]);
+                    NSIndexSet *sectionToReload = [NSIndexSet indexSetWithIndexesInRange:range];
+                    
                     [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:0]
                                              withRowAnimation:UITableViewRowAnimationAutomatic];
                 });
@@ -838,8 +843,6 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
-    segmentedControlView.hidden = NO;
     
 
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
@@ -862,6 +865,11 @@
                                                                ascending:NO];
     NSArray *descriptors = [NSArray arrayWithObject:descriptor];
     self.listOfDistinctsDay = [[listUniqueDays allObjects] sortedArrayUsingDescriptors:descriptors];
+    
+    if ([self.listOfDistinctsDay count] > 0) {
+        UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
+        segmentedControlView.hidden = NO;
+    }
     
     for (NSString *dateString in listUniqueDays) {
         [self.discoveries setObject:@[] forKey:dateString];
@@ -1493,13 +1501,13 @@
             //            return;
         }
         
-        // We retrieve the discoveries for the last discovery for the user recently met
+//        // We retrieve the discoveries for the last discovery for the user recently met
         NSMutableArray *discoveriesForPastDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] mutableCopy];
         
         NSUInteger rowNumberFutureObjectDeleted = [discoveriesForPastDay indexOfObject:oldUserTaste];
-        NSUInteger sectionNumberFutureObjectDeleted = [[self.discoveries allKeys] indexOfObject:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
+        NSUInteger sectionNumberFutureObjectDeleted = [self.listOfDistinctsDay indexOfObject:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
         
-        NSLog(@"hello ; %li %@", sectionNumberFutureObjectDeleted, [dateFormatter stringFromDate:[oldUserTaste lastMeeting]]);
+        
         
         // We remove the old discovery
         [discoveriesForPastDay removeObjectsInArray:[discoveriesForPastDay filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"fbid == %@", [oldUserTaste fbid]]]];
@@ -1509,10 +1517,11 @@
         [self.discoveries setObject:discoveriesForPastDay forKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
 //        NSLog(@"after : %li", [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] count] );
         
-        NSMutableArray *discoveriesForCurrentDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[NSDate date]]] mutableCopy];
+        NSMutableArray *discoveriesForCurrentDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:discoveryDate]] mutableCopy];
         [discoveriesForCurrentDay addObject:oldUserTaste];
-        [self.discoveries setObject:discoveriesForCurrentDay forKey:[dateFormatter stringFromDate:[NSDate date]]];
+        [self.discoveries setObject:discoveriesForCurrentDay forKey:[dateFormatter stringFromDate:discoveryDate]];
 
+//        NSLog(@"hello ; %li %@", sectionNumberFutureObjectDeleted, [dateFormatter stringFromDate:[oldUserTaste lastMeeting]]);
         
 
         oldUserTaste.taste = arrayData;
@@ -1525,17 +1534,17 @@
             oldUserTaste.isRandomDiscover = NO;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         
-        return;
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//
-//            UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-//            NSLog(@"sectionNumberFutureObjectDeleted : %li", sectionNumberFutureObjectDeleted);
-//            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-//            if (segmentedControl.selectedSegmentIndex == 0 ) {
-//                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
-//                                         withRowAnimation:UITableViewRowAnimationAutomatic];
-//            }
-//        });
+//        return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+            NSLog(@"sectionNumberFutureObjectDeleted : %li", sectionNumberFutureObjectDeleted);
+            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+            if (segmentedControl.selectedSegmentIndex == 0 ) {
+                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
+                                         withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
+        });
         
         [self endSavingNewEntry];
     } else {
