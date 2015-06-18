@@ -736,9 +736,9 @@
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
-    [userMeetingsListTableView reloadData];
+//    [userMeetingsListTableView reloadData];
     [loadingIndicator stopAnimating];
-    return;
+//    return;
 
     // && ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0)
     if (segmentedControl.selectedSegmentIndex != 0 ) {
@@ -748,11 +748,33 @@
         // • We pass to an another day
         // • We fill for the first time the tableview
         // • ?
-        NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [userMeetingsListTableView numberOfSections])];
-        NSLog(@"gh : %li", [userMeetingsListTableView numberOfSections]);
+        
+        
+        
+        BOOL hasToReload = [[NSCalendar currentCalendar] isDate:[[[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] objectAtIndex:1] lastMeeting]
+                                                inSameDayAsDate:[[[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] objectAtIndex:0] lastMeeting]];
+        
+        if (hasToReload) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:0]
+                                         withRowAnimation:UITableViewRowAnimationAutomatic];
+            });
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [userMeetingsListTableView insertSections:[NSIndexSet indexSetWithIndex:0]
+                                         withRowAnimation:UITableViewRowAnimationAutomatic];
+            });
+        }
+        
+//        NSLog(@"[userMeetingsListTableView numberOfSections] : %li | %li", [userMeetingsListTableView numberOfSections], [self.discoveries allKeys].count);
+        
+
+        
+//        NSIndexSet *reloadSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [userMeetingsListTableView numberOfSections])];
+//        NSLog(@"gh : %li", [userMeetingsListTableView numberOfSections]);
 //        if ([userMeetingsListTableView numberOfRowsInSection:0] == 0 || [userMeetingsListTableView numberOfSections] == 0 || [userMeetingsListTableView numberOfSections] < [distinctDays count] ) {
-            [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
-             NSLog(@"g : %li", [userMeetingsListTableView numberOfSections]);
+//            [userMeetingsListTableView insertSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
+//             NSLog(@"g : %li", [userMeetingsListTableView numberOfSections]);
 //        } else {
 //            [userMeetingsListTableView reloadSections:reloadSet withRowAnimation:UITableViewRowAnimationAutomatic];
 //        }
@@ -812,24 +834,13 @@
     UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
     segmentedControlView.hidden = NO;
     
-    // Vous n'avez pas rencontré de personnes
-    UILabel *emptyMeetingsLabel = (UILabel*)[tableView viewWithTag:4];
-    emptyMeetingsLabel.hidden = YES;
-    
-    // Vous n'avez pas de favoris user
-    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
-    emptyFavoritesLabel.hidden = YES;
-    
-    // Vous avez pas d'amis facebook sur Shound
-    UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
-    emptyFacebookFriendsLabelView.hidden = YES;
 
-    
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     
     // Count the number of distinct days
     NSArray *meetings = [[UserTaste MR_findAllSortedBy:@"lastMeeting"
                                              ascending:NO
-                                         withPredicate:[self predicateForSegmentTabSelected]] valueForKey:@"lastMeeting"];
+                                         withPredicate:meetingsFilter] valueForKey:@"lastMeeting"];
 
     NSMutableSet *listDistinctDays = [NSMutableSet new];
     for (NSDate *aDate in meetings) {
@@ -837,54 +848,6 @@
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
         
         [listDistinctDays addObject:[dateFormatter stringFromDate:aDate]];
-    }
-    
-    
-//    UILabel *emptyFacebookFriendsLabel = (UILabel*)[emptyFacebookFriendsLabelView viewWithTag:8];
-//    emptyFacebookFriendsLabel.hidden = YES;
-    
-    
-    
-    // User have made no meetings
-    if (listDistinctDays.count == 0) {
-        // We hide the segmented control on page load
-        // only if there is nothing among ALL meetings
-        // so user can have no favorites but he still has the segmentedControl
-        
-        UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-        switch (segmentedControl.selectedSegmentIndex) {
-            // Filter disabled
-            case 0:
-            {
-                emptyMeetingsLabel.hidden = NO;
-            }
-                break;
-            
-            // Favorites
-            case 1:
-            {
-                emptyFavoritesLabel.hidden = NO;
-            }
-                break;
-                
-            case 2:
-            {
-                emptyFacebookFriendsLabelView.hidden = NO;
-            }
-                break;
-            default:
-                break;
-        }
-        
-//        if (!self.FilterEnabled) {
-//            segmentedControlView.hidden = YES;
-//            emptyMeetingsLabel.hidden = NO;
-//        } else {
-//            emptyFavoritesLabel.hidden = NO;
-//            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-//            userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-//        }
-        [loadingIndicator stopAnimating];
     }
     
 
@@ -964,6 +927,49 @@
     // We don't want the taste of the current user
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
     
+    // Vous avez pas d'amis facebook sur Shound
+    UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
+    emptyFacebookFriendsLabelView.hidden = YES;
+    
+    // Vous n'avez pas de favoris user
+    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
+    emptyFavoritesLabel.hidden = YES;
+    
+    // Vous n'avez pas rencontré de personnes
+    UILabel *emptyMeetingsLabel = (UILabel*)[tableView viewWithTag:4];
+    emptyMeetingsLabel.hidden = YES;
+    
+    if ([meetings count] == 0) {
+        // We hide the segmented control on page load
+        // only if there is nothing among ALL meetings
+        // so user can have no favorites but he still has the segmentedControl
+        
+        UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+        switch (segmentedControl.selectedSegmentIndex) {
+            // Filter disabled
+            case 0:
+            {
+                emptyMeetingsLabel.hidden = NO;
+            }
+                break;
+                
+                // Favorites
+            case 1:
+            {
+                emptyFavoritesLabel.hidden = NO;
+            }
+                break;
+                
+            case 2:
+            {
+                emptyFacebookFriendsLabelView.hidden = NO;
+            }
+                break;
+            default:
+                break;
+        }
+    }
+    
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
@@ -978,7 +984,7 @@
     
     [self.discoveries setObject:[meetings filteredArrayUsingPredicate:datePredicate]
                          forKey:dateString];
-    
+        
     return [[self.discoveries objectForKey:[[self.discoveries allKeys] objectAtIndex:section]] count];
 }
 
@@ -1443,7 +1449,7 @@
     NSDate *discoveryDate;
     // Gentoo
     discoveryDate = [calendar dateByAddingUnit:NSCalendarUnitDay
-                                             value:0
+                                             value:2
                                             toDate:[NSDate date]
                                            options:kNilOptions];
     
@@ -1487,15 +1493,15 @@
         [self.discoveries setObject:discoveriesForCurrentDay forKey:[dateFormatter stringFromDate:[NSDate date]]];
 
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-            
-            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-            if (segmentedControl.selectedSegmentIndex == 0 ) {
-                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
-                                         withRowAnimation:UITableViewRowAnimationAutomatic];
-            }
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+//            
+//            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+//            if (segmentedControl.selectedSegmentIndex == 0 ) {
+//                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
+//                                         withRowAnimation:UITableViewRowAnimationAutomatic];
+//            }
+//        });
     
         
         oldUserTaste.taste = arrayData;
