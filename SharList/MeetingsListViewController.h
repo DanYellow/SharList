@@ -39,10 +39,7 @@
     CGFloat screenHeight;
     
     NSUserDefaults *userPreferences;
-    
-    NSArray *distinctDays;
-    NSMutableArray *daysList;
-    
+        
     UIActivityIndicatorView *loadingIndicator;
         
     NSDictionary *currentUserTaste;
@@ -50,7 +47,8 @@
 
 @property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;
 @property (retain, nonatomic) NSMutableData *responseData;
-@property (retain, nonatomic) NSMutableDictionary *discoveries;
+@property (retain, atomic) NSMutableDictionary *discoveries;
+@property (strong, nonatomic) NSArray *listOfDistinctsDay;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) NSTimer *timerRefreshBtn;
 @property (nonatomic, assign, getter=isTableViewAdded) BOOL tableViewAdded;
