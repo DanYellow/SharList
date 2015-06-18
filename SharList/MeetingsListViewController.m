@@ -347,8 +347,6 @@
     [self manageDisplayOfFacebookFriendsButton];
     
     
-//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
-    
     loadingIndicator = [UIActivityIndicatorView new];
     loadingIndicator.center = self.view.center;
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
@@ -709,71 +707,6 @@
     });
 }
 
-- (NSArray*) fetchDatas
-{
-    // Fetching datas
-    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@",
-                                   [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-    
-    NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] ];
-    
-    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-    
-    NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
-
-    switch (segmentedControl.selectedSegmentIndex) {
-        // Favorites
-        case 1:
-        {
-            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
-        }
-            break;
-        
-        // Facebook friends
-        case 2:
-        {
-            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, facebookFriendsFilter]];
-        }
-            break;
-        default:
-            break;
-    }
-    
-//    NSFetchRequest *limitRequest = [UserTaste MR_requestAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
-//    [limitRequest setFetchLimit:2];
-//    NSArray *meetings = [UserTaste MR_executeFetchRequest:limitRequest];
-    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates]; // Order by date of meeting
-    
-    NSMutableArray *listOfDistinctDays = [NSMutableArray new];
-    NSMutableArray *foo = [NSMutableArray new];
-    
-    //    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-    int i = 0;
-    int fetchLimit = 42; // We display only the 42 last results
-    
-    
-    for (UserTaste *userTaste in meetings) {
-        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-        [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-        
-        if ([userTaste lastMeeting] != nil) {
-            NSString *dateString = [[dateFormatter stringFromDate:[userTaste lastMeeting]] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            if (i < fetchLimit) {
-                [listOfDistinctDays addObject: dateString];
-                [foo addObject:[userTaste lastMeeting]];
-            }
-        }
-        
-        i++;
-    }
-    
-    [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
-    distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
-    
-    
-    return [[foo reverseObjectEnumerator] allObjects];
-}
 
 - (void) appEnteredBackground
 {
@@ -788,11 +721,9 @@
 - (void) reloadTableview
 {
     [loadingIndicator startAnimating];
-//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     [userMeetingsListTableView reloadData];
-
 
     [loadingIndicator stopAnimating];
 }
@@ -800,7 +731,6 @@
 - (void) reloadSections
 {
     [loadingIndicator startAnimating];
-//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     
@@ -879,8 +809,6 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
-    
     UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
     segmentedControlView.hidden = NO;
     
@@ -903,12 +831,12 @@
                                              ascending:NO
                                          withPredicate:[self predicateForSegmentTabSelected]] valueForKey:@"lastMeeting"];
 
-    NSMutableSet *distinctDayss = [NSMutableSet new];
+    NSMutableSet *listDistinctDays = [NSMutableSet new];
     for (NSDate *aDate in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
         
-        [distinctDayss addObject:[dateFormatter stringFromDate:aDate]];
+        [listDistinctDays addObject:[dateFormatter stringFromDate:aDate]];
     }
     
     
@@ -918,7 +846,7 @@
     
     
     // User have made no meetings
-    if (distinctDayss.count == 0) {
+    if (listDistinctDays.count == 0) {
         // We hide the segmented control on page load
         // only if there is nothing among ALL meetings
         // so user can have no favorites but he still has the segmentedControl
@@ -960,11 +888,11 @@
     }
     
 
-    for (NSString *dateString in distinctDayss) {
+    for (NSString *dateString in listDistinctDays) {
         [self.discoveries setObject:@[] forKey:dateString];
     }
     
-    return distinctDayss.count;
+    return listDistinctDays.count;
 }
 
 // Title of categories
@@ -1270,7 +1198,6 @@
     //        return;
     //    }
     
-//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     // We update the view behind the user like this when he comes back the view is updated
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     [userSelectionTableView reloadData];
@@ -1542,7 +1469,35 @@
             //            [self fetchUsersDatasBtnAction];
             //            return;
         }
+        
+        // We retrieve the discoveries for the last discovery for the user recently met
+        NSMutableArray *discoveriesForPastDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] mutableCopy];
+        
+        NSUInteger rowNumberFutureObjectDeleted = [discoveriesForPastDay indexOfObject:oldUserTaste];
+        NSUInteger sectionNumberFutureObjectDeleted = [[self.discoveries allKeys] indexOfObject:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
+        
+        // We remove the old discovery
+        [discoveriesForPastDay removeObjectsInArray:[discoveriesForPastDay filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"fbid == %@", [oldUserTaste fbid]]]];
+        
+        [self.discoveries setObject:discoveriesForPastDay forKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
+        
+        
+        NSMutableArray *discoveriesForCurrentDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[NSDate date]]] mutableCopy];
+        [discoveriesForCurrentDay addObject:oldUserTaste];
+        [self.discoveries setObject:discoveriesForCurrentDay forKey:[dateFormatter stringFromDate:[NSDate date]]];
 
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+            
+            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+            if (segmentedControl.selectedSegmentIndex == 0 ) {
+                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
+                                         withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
+        });
+    
+        
         oldUserTaste.taste = arrayData;
         oldUserTaste.fbid = randomUserfbID;
         oldUserTaste.lastMeeting = discoveryDate; //[NSDate date];
