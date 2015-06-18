@@ -347,7 +347,7 @@
     [self manageDisplayOfFacebookFriendsButton];
     
     
-    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
+//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     loadingIndicator = [UIActivityIndicatorView new];
     loadingIndicator.center = self.view.center;
@@ -771,10 +771,6 @@
     [listOfDistinctDays sortedArrayUsingSelector:@selector(compare:)]; // sortUsingDescriptors [NSArray arrayWithObject:sortDescriptor]
     distinctDays = [[NSArray alloc] initWithArray:[[NSOrderedSet orderedSetWithArray:listOfDistinctDays] array]];
     
-    [self.discoveries removeAllObjects];
-    for (int i = 0; i < distinctDays.count; i++) {
-        [self.discoveries setObject:@[] forKey:distinctDays[i]];
-    }
     
     return [[foo reverseObjectEnumerator] allObjects];
 }
@@ -792,7 +788,7 @@
 - (void) reloadTableview
 {
     [loadingIndicator startAnimating];
-    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
+//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     [userMeetingsListTableView reloadData];
@@ -804,7 +800,7 @@
 - (void) reloadSections
 {
     [loadingIndicator startAnimating];
-    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
+//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     
@@ -848,6 +844,37 @@
     }
 }
 
+- (NSPredicate*) predicateForSegmentTabSelected
+{
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
+    
+    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+    
+    NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
+    
+    switch (segmentedControl.selectedSegmentIndex) {
+            // Favorites
+        case 1:
+        {
+            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
+        }
+            break;
+            
+            // Facebook friends
+        case 2:
+        {
+            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, facebookFriendsFilter]];
+        }
+            break;
+        default:
+            break;
+    }
+    
+    return filterPredicates;
+}
+
 #pragma mark - Tableview configuration
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
@@ -871,11 +898,27 @@
 
     
     
+    // Count the number of distinct days
+    NSArray *meetings = [[UserTaste MR_findAllSortedBy:@"lastMeeting"
+                                             ascending:NO
+                                         withPredicate:[self predicateForSegmentTabSelected]] valueForKey:@"lastMeeting"];
+
+    NSMutableSet *distinctDayss = [NSMutableSet new];
+    for (NSDate *aDate in meetings) {
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+        
+        [distinctDayss addObject:[dateFormatter stringFromDate:aDate]];
+    }
+    
+    
 //    UILabel *emptyFacebookFriendsLabel = (UILabel*)[emptyFacebookFriendsLabelView viewWithTag:8];
 //    emptyFacebookFriendsLabel.hidden = YES;
     
+    
+    
     // User have made no meetings
-    if ([distinctDays count] == 0) {
+    if (distinctDayss.count == 0) {
         // We hide the segmented control on page load
         // only if there is nothing among ALL meetings
         // so user can have no favorites but he still has the segmentedControl
@@ -915,8 +958,13 @@
 //        }
         [loadingIndicator stopAnimating];
     }
-//    NSLog(@"self. : %li | %li", [[self.discoveries allKeys] count], [distinctDays count]);
-    return [[self.discoveries allKeys] count]; // [distinctDays count];
+    
+
+    for (NSString *dateString in distinctDayss) {
+        [self.discoveries setObject:@[] forKey:dateString];
+    }
+    
+    return distinctDayss.count;
 }
 
 // Title of categories
@@ -929,7 +977,7 @@
     headerView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
 
     
-    NSString *title = [distinctDays objectAtIndex:section];
+    NSString *title = [[self.discoveries allKeys] objectAtIndex:section];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
@@ -989,23 +1037,21 @@
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
     
     
-    
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
     
+    NSString *dateString = [[self.discoveries allKeys] objectAtIndex:section];
     
-    NSDate *startDate = [[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] beginningOfDay];
-    NSDate *endDate = [[dateFormatter dateFromString:[distinctDays objectAtIndex:section]] endOfDay];
+    
+    NSDate *startDate = [[dateFormatter dateFromString:dateString] beginningOfDay];
+    NSDate *endDate = [[dateFormatter dateFromString:dateString] endOfDay];
     
     NSPredicate *datePredicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", startDate, endDate];
-    // 10205919757172919 10205792663674205
-    NSLog(@"meetings : %@ | %li", [meetings filteredArrayUsingPredicate:datePredicate], [meetings filteredArrayUsingPredicate:datePredicate].count);
-    
     
     [self.discoveries setObject:[meetings filteredArrayUsingPredicate:datePredicate]
-                         forKey:[distinctDays objectAtIndex:section]];
+                         forKey:dateString];
     
-    return [[self.discoveries objectForKey:[distinctDays objectAtIndex:section]] count];
+    return [[self.discoveries objectForKey:[[self.discoveries allKeys] objectAtIndex:section]] count];
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -1030,28 +1076,6 @@
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
-//    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-//    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-//    
-//    NSDate *currentDate = [NSDate new];
-//    currentDate = [dateFormatter dateFromString:[distinctDays objectAtIndex:indexPath.section]];
-//    
-//    NSCalendar *calendar = [NSCalendar currentCalendar];
-//    
-//    NSDateComponents *componentsForFirstDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:currentDate];
-//    // Contains all meetings of the day
-//    NSMutableArray *meetingsOfDay = [NSMutableArray new];
-//    for (int i = 0; i < [daysList count]; i++) {
-//        
-//        NSDateComponents *componentsForSecondDate = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[daysList objectAtIndex:i] ];
-//        
-//        if (([componentsForFirstDate year] == [componentsForSecondDate year]) && ([componentsForFirstDate month] == [componentsForSecondDate month]) && ([componentsForFirstDate day] == [componentsForSecondDate day])) {
-//            [meetingsOfDay addObject:[daysList objectAtIndex:i]];
-//        }
-//    }
-    
-//    indexPath.section
-
     
     [self getCurrentUserLikes];
     // Calc of the stats
@@ -1118,8 +1142,6 @@
   
     cell.textLabel.text = textLabelString;
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
-//    cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.80];
-//    cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.60];
     cell.backgroundColor = [UIColor colorWithWhite:1 alpha:.06];
     
     UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
@@ -1248,7 +1270,7 @@
     //        return;
     //    }
     
-    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
+//    daysList = [[NSMutableArray alloc] initWithArray:[self fetchDatas]];
     // We update the view behind the user like this when he comes back the view is updated
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     [userSelectionTableView reloadData];
