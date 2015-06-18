@@ -749,22 +749,29 @@
         // • We fill for the first time the tableview
         // • ?
         
-        
-        
-        BOOL hasToReload = [[NSCalendar currentCalendar] isDate:[[[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] objectAtIndex:1] lastMeeting]
-                                                inSameDayAsDate:[[[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] objectAtIndex:0] lastMeeting]];
-        
-        if (hasToReload) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:0]
-                                         withRowAnimation:UITableViewRowAnimationAutomatic];
-            });
+        if ([[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] count] >= 2) {
+            BOOL hasToReload = [[NSCalendar currentCalendar] isDate:[[[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] objectAtIndex:1] lastMeeting]
+                                                    inSameDayAsDate:[[[UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO] objectAtIndex:0] lastMeeting]];
+            
+            if (hasToReload) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:0]
+                                             withRowAnimation:UITableViewRowAnimationAutomatic];
+                });
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [userMeetingsListTableView insertSections:[NSIndexSet indexSetWithIndex:0]
+                                             withRowAnimation:UITableViewRowAnimationAutomatic];
+                });
+            }
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [userMeetingsListTableView insertSections:[NSIndexSet indexSetWithIndex:0]
                                          withRowAnimation:UITableViewRowAnimationAutomatic];
             });
         }
+        
+
         
 //        NSLog(@"[userMeetingsListTableView numberOfSections] : %li | %li", [userMeetingsListTableView numberOfSections], [self.discoveries allKeys].count);
         
@@ -842,20 +849,25 @@
                                              ascending:NO
                                          withPredicate:meetingsFilter] valueForKey:@"lastMeeting"];
 
-    NSMutableSet *listDistinctDays = [NSMutableSet new];
+    NSMutableSet *listUniqueDays = [NSMutableSet new];
     for (NSDate *aDate in meetings) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-        
-        [listDistinctDays addObject:[dateFormatter stringFromDate:aDate]];
+
+        [listUniqueDays addObject:[dateFormatter stringFromDate:aDate]];
     }
     
-
-    for (NSString *dateString in listDistinctDays) {
+    
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"self"
+                                                               ascending:NO];
+    NSArray *descriptors = [NSArray arrayWithObject:descriptor];
+    self.listOfDistinctsDay = [[listUniqueDays allObjects] sortedArrayUsingDescriptors:descriptors];
+    
+    for (NSString *dateString in listUniqueDays) {
         [self.discoveries setObject:@[] forKey:dateString];
     }
     
-    return listDistinctDays.count;
+    return listUniqueDays.count;
 }
 
 // Title of categories
@@ -868,7 +880,7 @@
     headerView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
 
     
-    NSString *title = [[self.discoveries allKeys] objectAtIndex:section];
+    NSString *title = [self.listOfDistinctsDay objectAtIndex:section];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
@@ -923,7 +935,6 @@
             break;
     }
 
-
     // We don't want the taste of the current user
     NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
     
@@ -974,7 +985,7 @@
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
     
-    NSString *dateString = [[self.discoveries allKeys] objectAtIndex:section];
+    NSString *dateString = [self.listOfDistinctsDay objectAtIndex:section];
     
     
     NSDate *startDate = [[dateFormatter dateFromString:dateString] beginningOfDay];
@@ -984,8 +995,14 @@
     
     [self.discoveries setObject:[meetings filteredArrayUsingPredicate:datePredicate]
                          forKey:dateString];
-        
-    return [[self.discoveries objectForKey:[[self.discoveries allKeys] objectAtIndex:section]] count];
+    
+    if (section == 0) {
+//        NSLog(@"fi : %li", [[self.discoveries objectForKey:[[self.discoveries allKeys] objectAtIndex:section]] count]);
+    }
+    
+//    NSLog(@"foo : %@", self.view);
+    
+    return [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex:section]] count];
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
@@ -1013,12 +1030,10 @@
     
     [self getCurrentUserLikes];
     // Calc of the stats
-
-    UserTaste *currentUserMet = [[self.discoveries objectForKey:[[self.discoveries allKeys] objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
+    UserTaste *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
     
     NSDictionary *currentUserMetTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet taste]] mutableCopy];
     
-
     NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
     int commonTasteCount = 0;
     int currentUserNumberItems = 0;
@@ -1090,6 +1105,8 @@
     
     cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
     cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[currentUserMet lastMeeting]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+    
+    
     
     cell.detailTextLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
     cell.textLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
@@ -1449,7 +1466,7 @@
     NSDate *discoveryDate;
     // Gentoo
     discoveryDate = [calendar dateByAddingUnit:NSCalendarUnitDay
-                                             value:2
+                                             value:3
                                             toDate:[NSDate date]
                                            options:kNilOptions];
     
@@ -1482,28 +1499,22 @@
         NSUInteger rowNumberFutureObjectDeleted = [discoveriesForPastDay indexOfObject:oldUserTaste];
         NSUInteger sectionNumberFutureObjectDeleted = [[self.discoveries allKeys] indexOfObject:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
         
+        NSLog(@"hello ; %li %@", sectionNumberFutureObjectDeleted, [dateFormatter stringFromDate:[oldUserTaste lastMeeting]]);
+        
         // We remove the old discovery
         [discoveriesForPastDay removeObjectsInArray:[discoveriesForPastDay filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"fbid == %@", [oldUserTaste fbid]]]];
         
-        [self.discoveries setObject:discoveriesForPastDay forKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
+//        NSLog(@"before : %li", [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] count] );
         
+        [self.discoveries setObject:discoveriesForPastDay forKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]];
+//        NSLog(@"after : %li", [[self.discoveries objectForKey:[dateFormatter stringFromDate:[oldUserTaste lastMeeting]]] count] );
         
         NSMutableArray *discoveriesForCurrentDay = [[self.discoveries objectForKey:[dateFormatter stringFromDate:[NSDate date]]] mutableCopy];
         [discoveriesForCurrentDay addObject:oldUserTaste];
         [self.discoveries setObject:discoveriesForCurrentDay forKey:[dateFormatter stringFromDate:[NSDate date]]];
 
         
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-//            
-//            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-//            if (segmentedControl.selectedSegmentIndex == 0 ) {
-//                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
-//                                         withRowAnimation:UITableViewRowAnimationAutomatic];
-//            }
-//        });
-    
-        
+
         oldUserTaste.taste = arrayData;
         oldUserTaste.fbid = randomUserfbID;
         oldUserTaste.lastMeeting = discoveryDate; //[NSDate date];
@@ -1513,6 +1524,18 @@
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
             oldUserTaste.isRandomDiscover = NO;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        
+        return;
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//
+//            UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+//            NSLog(@"sectionNumberFutureObjectDeleted : %li", sectionNumberFutureObjectDeleted);
+//            UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+//            if (segmentedControl.selectedSegmentIndex == 0 ) {
+//                [userMeetingsListTableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumberFutureObjectDeleted]
+//                                         withRowAnimation:UITableViewRowAnimationAutomatic];
+//            }
+//        });
         
         [self endSavingNewEntry];
     } else {
