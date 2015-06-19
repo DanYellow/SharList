@@ -24,4 +24,7 @@
  */
 - (NSDate *)endOfDay;
 
+
+- (NSDate *) dateWithoutTime;
+
 @end

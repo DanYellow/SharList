@@ -151,6 +151,7 @@
 		1A21F2451B0A9852004BBE55 /* addMessageNavIcon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "addMessageNavIcon@3x.png"; sourceTree = "<group>"; };
 		1A36E3111A9D4C1C004B0DBC /* ConnectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectView.h; sourceTree = "<group>"; };
 		1A36E3121A9D4C1C004B0DBC /* ConnectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectView.m; sourceTree = "<group>"; };
+		1A3926F81B33903400F38B11 /* ShoundEntitiesV2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ShoundEntitiesV2.xcdatamodel; sourceTree = "<group>"; };
 		1A3BD0A71B1653860014A407 /* warning-picto.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-picto.png"; sourceTree = "<group>"; };
 		1A3BD0A81B1653860014A407 /* warning-picto@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-picto@2x.png"; sourceTree = "<group>"; };
 		1A3BD0A91B1653860014A407 /* warning-picto@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-picto@3x.png"; sourceTree = "<group>"; };
@@ -1017,6 +1018,7 @@
 			isa = XCVersionGroup;
 			children = (
 				1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */,
+				1A3926F81B33903400F38B11 /* ShoundEntitiesV2.xcdatamodel */,
 				1A549EF61B24A02400B9305B /* UserTaste.xcdatamodel */,
 			);
 			currentVersion = 1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */;

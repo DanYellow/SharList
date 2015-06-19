@@ -801,7 +801,6 @@
         
         return [categoryList count];
     } else {
-        
         // User have no list of taste
         UIView *userTasteListTableViewEmptyView = (UIView*)[self.view viewWithTag:8];
         BOOL IsTableViewEmpty = YES;

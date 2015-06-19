@@ -36,4 +36,11 @@
     return date;
 }
 
+- (NSDate *) dateWithoutTime
+{
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents *components = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit fromDate:self];
+    return [calendar dateFromComponents:components];
+}
+
 @end

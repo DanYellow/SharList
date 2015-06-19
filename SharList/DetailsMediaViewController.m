@@ -326,6 +326,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   self.numberLikesString = numberString;
               }
               
+              
+              
+              NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
+              NSArray *people = [[UserTaste MR_findAllWithPredicate:facebookFriendsFilter] valueForKey:@"fbid"];
+              NSLog(@"people : %@ | %@", people, [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]);
+              
               self.itunesIDString = [responseObject valueForKeyPath:@"response.itunesId"];
               
               UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
