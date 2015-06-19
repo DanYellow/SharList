@@ -41,7 +41,7 @@ typedef NS_ENUM (NSInteger, FollowingStatus) {
     
     NSUserDefaults *userPreferences;
     NSDictionary *currentUserTaste;
-    UserTaste *userMet;
+    Discovery *userMet;
 }
 
 

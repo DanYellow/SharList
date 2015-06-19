@@ -11,7 +11,7 @@
 
 @interface DetailsMediaViewController ()
 
-@property (strong, nonatomic) UserTaste *userTaste;
+@property (strong, nonatomic) Discovery *userTaste;
 
 @end
 
@@ -151,7 +151,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    [self.view addSubview:addRemoveMediaLabel];
 
     
-    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+    self.userTaste = [Discovery MR_findFirstByAttribute:@"fbId"
                                               withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                      [NSNull null], @"book",
@@ -163,8 +163,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // This statement is hre for prevent empty user list
     // Because it corrupt the NSMutableDictionary
     // And you're not able to update it
-    if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] != nil) {
-        userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+    if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste likes]] != nil) {
+        userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste likes]] mutableCopy];
     }
     
     //Navigationbarcontroller
@@ -326,12 +326,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   self.numberLikesString = numberString;
               }
               
-              
-              
-              NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
-              NSArray *people = [[UserTaste MR_findAllWithPredicate:facebookFriendsFilter] valueForKey:@"fbid"];
-              NSLog(@"people : %@ | %@", people, [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]);
-              
               self.itunesIDString = [responseObject valueForKeyPath:@"response.itunesId"];
               
               UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -391,7 +385,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view insertSubview:infoMediaView atIndex:1];
     
     if (![self connected]) {
-        [self displayNumberOfIterationAmongDiscoveriesForView:infoMediaView];
+        [self displayNumberOfIterationsAmongDiscoveriesForView:infoMediaView];
     }
     
    
@@ -417,15 +411,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view addGestureRecognizer:rightGesture];
 }
 
-- (void) displayNumberOfIterationAmongDiscoveriesForView:(UIView*) aContainerView
+- (void) displayNumberOfIterationsAmongDiscoveriesForView:(UIView*) aContainerView
 {
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid != %@",
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId != %@",
                                           [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:facebookFriendsFilter];
+    NSArray *meetings = [Discovery MR_findAllSortedBy:@"lastDiscovery" ascending:NO withPredicate:facebookFriendsFilter];
     
     NSUInteger numberOfApparitionAmongDiscoveries = 0;
-    for (UserTaste *user in meetings) {
-        NSDictionary *userTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[user taste]] mutableCopy];
+    for (Discovery *discovery in meetings) {
+        NSDictionary *userTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[discovery likes]] mutableCopy];
         id userTasteForType = [userTaste objectForKey:[self.mediaDatas valueForKey:@"type"]];
         if (![[userTasteForType valueForKey:@"imdbID"] isEqual:[NSNull null]]) {
             if ([[userTasteForType valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
@@ -492,6 +486,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [self connectWithBSAccount:BSUserToken];
         }
     }
+}
+
+- (void) displayFacebookFriendsThumbnailsForView:(UIView*)aContainerView {
+    // GENTOO
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
+    NSPredicate *facebookFrienddbIdFilter = [NSPredicate predicateWithFormat:@"dbId != 0"];
+    NSArray *people = [[[Discovery MR_findAllWithPredicate:facebookFriendsFilter] filteredArrayUsingPredicate:facebookFrienddbIdFilter] valueForKey:@"fbId"];
+    NSLog(@"people : %@ | %@", people, [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]);
 }
 
 - (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
@@ -853,7 +855,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [infoMediaView addSubview:mediaDescription];
     
-    [self displayNumberOfIterationAmongDiscoveriesForView:infoMediaView];
+    [self displayFacebookFriendsThumbnailsForView:infoMediaView];
+    [self displayNumberOfIterationsAmongDiscoveriesForView:infoMediaView];
     
     UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
     CGFloat lastViewCntHeight = infoMediaViewLastView.frame.size.height + infoMediaViewLastView.frame.origin.y + 30;
@@ -1380,11 +1383,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) saveMediaUpdateForAdding:(BOOL)isAdding
 {
-    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbId == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-        UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+        Discovery *userTaste = [Discovery MR_findFirstWithPredicate:userPredicate inContext:localContext];
         NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-        userTaste.taste = arrayData;
+        userTaste.likes = arrayData;
     } completion:^(BOOL success, NSError *error) {
         if ([self.delegate respondsToSelector:@selector(userListHaveBeenUpdate:)]) {
             [self.delegate userListHaveBeenUpdate:userTasteDict];

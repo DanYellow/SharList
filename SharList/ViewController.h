@@ -21,7 +21,7 @@
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"
 
-#import "UserTaste.h"
+#import "Discovery.h"
 
 #import "NSDictionary+FilterKeysForNullObj.h"
 #import "NSString+URLEncodeValue.m"
@@ -49,7 +49,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) UITableViewController *searchResultsController;
-@property (strong, nonatomic) UserTaste *userTaste;
+@property (strong, nonatomic) Discovery *userTaste;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 

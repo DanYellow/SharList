@@ -674,7 +674,7 @@
 - (void) userConnectionForFbID:(NSNumber*)userfbID
 {
     // We retrieve user taste if it exists in local
-    self.userTaste = [UserTaste MR_findFirstByAttribute:@"fbid"
+    self.userTaste = [Discovery MR_findFirstByAttribute:@"fbId"
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                        [NSNull null], @"book",
@@ -686,8 +686,8 @@
     [loadingIndicator startAnimating];
     if (self.userTaste) {
         // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
-        if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] != nil) {
-            userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste taste]] mutableCopy];
+        if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste likes]] != nil) {
+            userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste likes]] mutableCopy];
         }
         [self displayUserTasteList];
 //        NSLog(@"fetch local datas");
@@ -1143,11 +1143,11 @@
             [userTasteDict removeObjectForKey:[cell.model valueForKey:@"type"]];
             [userTasteDict setObject:updatedUserTaste forKey:[cell.model valueForKey:@"type"]];
             
-            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [userPreferences objectForKey:@"currentUserfbID"]];
+            NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbId == %@", [userPreferences objectForKey:@"currentUserfbID"]];
             [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-                UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+                Discovery *userTaste = [Discovery MR_findFirstWithPredicate:userPredicate inContext:localContext];
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-                userTaste.taste = arrayData;
+                userTaste.likes = arrayData;
             } completion:^(BOOL success, NSError *error) {
                 BOOL lastItem = ([[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] count] == 0);
                 
@@ -1412,21 +1412,21 @@
 //            NSLog(@"no user datas");
         }
 
-        UserTaste *isNewUser = [UserTaste MR_findFirstByAttribute:@"fbid"
+        Discovery *isNewUser = [Discovery MR_findFirstByAttribute:@"fbId"
                                                         withValue:[userPreferences objectForKey:@"currentUserfbID"]];
     
         // This is the first time for user
         if (isNewUser == nil) {
-            UserTaste *userTaste = [UserTaste MR_createEntity];
+            Discovery *userTaste = [Discovery MR_createEntity];
             
             NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-            userTaste.taste = arrayData;
+            userTaste.likes = arrayData;
             
-            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-            f.numberStyle = NSNumberFormatterDecimalStyle;
-            NSNumber *currentFbIduser = [f numberFromString:[userPreferences objectForKey:@"currentUserfbID"]];
-            userTaste.fbid = currentFbIduser;
-            userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
+//            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+//            f.numberStyle = NSNumberFormatterDecimalStyle;
+//            NSNumber *currentFbIduser = [f numberFromString:[userPreferences objectForKey:@"currentUserfbID"]];
+            userTaste.fbId = [[userPreferences objectForKey:@"currentUserfbID"] stringValue];
+            userTaste.isFavorite = @0; //User cannot favorite himself (by the way it's impossible technically)
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
             [self displayUserTasteList];
         }
@@ -1518,10 +1518,10 @@
                                 [userTasteDict setValue:[NSNull null] forKey:@"book"];
                                 
                                 [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-                                    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-                                    UserTaste *userTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:localContext];
+                                    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbId == %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+                                    Discovery *userTaste = [Discovery MR_findFirstWithPredicate:userPredicate inContext:localContext];
                                     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-                                    userTaste.taste = arrayData;
+                                    userTaste.likes = arrayData;
                                 } completion:^(BOOL success, NSError *error) {
 //                                    To put again a beautiful day
 //                                    [self synchronizeUserListWithServer];

@@ -274,7 +274,7 @@
     tableFooter.opaque = YES;
     tableFooter.font = [UIFont boldSystemFontOfSize:15];
     
-    NSNumber *countMeetings = [NSNumber numberWithInt:[[UserTaste MR_numberOfEntities] intValue] - 1]; // We remove current user
+    NSNumber *countMeetings = [NSNumber numberWithInt:[[Discovery MR_numberOfEntities] intValue] - 1]; // We remove current user
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"%@ meetings", nil), countMeetings]];
     
     // Uitableview of user selection (what user likes)
@@ -367,10 +367,10 @@
 
 - (void) getCurrentUserLikes
 {
-    UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
+    Discovery *currentUser = [Discovery MR_findFirstByAttribute:@"fbId"
                                                       withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-    if ([currentUser taste]) {
-        currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
+    if ([currentUser likes]) {
+        currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser likes]] mutableCopy];
         
     }
 }
@@ -753,9 +753,9 @@
 
 - (NSPredicate*) predicateForSegmentTabSelected
 {
-    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbId != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
@@ -788,12 +788,12 @@
 {
     
 
-    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbId != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     
     // Count the number of distinct days
-    NSArray *meetings = [[UserTaste MR_findAllSortedBy:@"lastMeeting"
+    NSArray *meetings = [[Discovery MR_findAllSortedBy:@"lastDiscovery"
                                              ascending:NO
-                                         withPredicate:meetingsFilter] valueForKey:@"lastMeeting"];
+                                         withPredicate:meetingsFilter] valueForKey:@"lastDiscovery"];
 
     NSMutableSet *listUniqueDays = [NSMutableSet new];
     for (NSDate *aDate in meetings) {
@@ -860,9 +860,9 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbid != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbId != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbid IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
+    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
     
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
     
@@ -887,7 +887,7 @@
     }
 
     // We don't want the taste of the current user
-    NSArray *meetings = [UserTaste MR_findAllSortedBy:@"lastMeeting" ascending:NO withPredicate:filterPredicates];
+    NSArray *meetings = [Discovery MR_findAllSortedBy:@"lastDiscovery" ascending:NO withPredicate:filterPredicates];
     
     // Vous avez pas d'amis facebook sur Shound
     UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
@@ -942,7 +942,7 @@
     NSDate *startDate = [[dateFormatter dateFromString:dateString] beginningOfDay];
     NSDate *endDate = [[dateFormatter dateFromString:dateString] endOfDay];
     
-    NSPredicate *datePredicate = [NSPredicate predicateWithFormat:@"(lastMeeting >= %@) AND (lastMeeting <= %@)", startDate, endDate];
+    NSPredicate *datePredicate = [NSPredicate predicateWithFormat:@"(lastDiscovery >= %@) AND (lastDiscovery <= %@)", startDate, endDate];
     
     [self.discoveries setObject:[meetings filteredArrayUsingPredicate:datePredicate]
                          forKey:dateString];
@@ -981,9 +981,9 @@
     
     [self getCurrentUserLikes];
     // Calc of the stats
-    UserTaste *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
-    
-    NSDictionary *currentUserMetTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet taste]] mutableCopy];
+    Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
+
+    NSDictionary *currentUserMetTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]] mutableCopy];
     
     NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
     int commonTasteCount = 0;
@@ -1050,19 +1050,19 @@
     
     cell.selectedBackgroundView = selectedBackgroundView;
     
-    cell.model = [currentUserMet fbid];
+    cell.model = [currentUserMet fbId];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.indentationLevel = 1;
     
     cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
-    cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[currentUserMet lastMeeting]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+    cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[currentUserMet lastDiscovery]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
     
     
     
     cell.detailTextLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
     cell.textLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
     
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:[currentUserMet fbid]]) {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:[currentUserMet fbId]]) {
         NSString *indicateFavUpdatedString = @" - ";
         indicateFavUpdatedString = [indicateFavUpdatedString stringByAppendingString:NSLocalizedString(@"updated", nil)];
         cell.detailTextLabel.text = [cell.detailTextLabel.text stringByAppendingString:indicateFavUpdatedString];
@@ -1072,11 +1072,11 @@
     }
     
     // If the user is a facebook friend so we display his facebook profile image GENTOO
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[currentUserMet fbid] stringValue]]) {
-        [self getImageCellForData:[[currentUserMet fbid] stringValue] aCell:cell];
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[currentUserMet fbId]]) {
+        [self getImageCellForData:[currentUserMet fbId] aCell:cell];
         
-        cell.imageView.image = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbid] forDarkBG:NO];
-        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbid] forDarkBG:YES];
+        cell.imageView.image = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId] forDarkBG:NO];
+        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId] forDarkBG:YES];
         cell.imageView.backgroundColor = [UIColor clearColor];
         cell.imageView.opaque = YES;
         cell.imageView.tag = indexPath.row;
@@ -1136,9 +1136,9 @@
     return [MeetingsListViewController imageWithView:imageCellView];
 }
 
-+ (UIImage *) imageFromFacebookFriendInitialForId:(NSNumber*)fbid forDarkBG:(BOOL)isDarkBG
++ (UIImage *) imageFromFacebookFriendInitialForId:(NSString*)fbId forDarkBG:(BOOL)isDarkBG
 {
-    NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [fbid stringValue]]];
+    NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", fbId]];
     NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] substringToIndex:1];
     NSString *lastNameFirstLetter = [[[facebookFriendDatas valueForKey:@"last_name"] componentsJoinedByString:@""] substringToIndex:1];
     
@@ -1252,7 +1252,7 @@
 {
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == NO) {
         NSString *currentUserfbID = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
-        NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&lastuserid=%@", currentUserfbID, [[UserTaste MR_findFirstOrderedByAttribute:@"lastMeeting" ascending:NO] fbid]];
+        NSString *postString = [NSString stringWithFormat:@"fbiduser=%@&lastuserid=%@", currentUserfbID, [[Discovery MR_findFirstOrderedByAttribute:@"lastDiscovery" ascending:NO] fbId]];
 
         [NSURLConnection sendAsynchronousRequest:[self fetchUsersDatasQueryWithUrlWithParams:postString] queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             if (error) {
@@ -1403,15 +1403,16 @@
         return;
     }
     
-    NSNumberFormatter *formatNumber = [NSNumberFormatter new];
-    [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
-    NSNumber *randomUserfbID = [formatNumber numberFromString:[randomUserDatas objectForKey:@"fbId"]];
+//    NSNumberFormatter *formatNumber = [NSNumberFormatter new];
+//    [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSString *randomUserfbId = [randomUserDatas objectForKey:@"fbId"];
+    NSNumber *randomUserdbId = [randomUserDatas objectForKey:@"id"];
     
     NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[randomUserDatas objectForKey:@"list"]];
     
-    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", randomUserfbID];
-    UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_defaultContext]];
-    NSNumber *oldUserCount = oldUserTaste.numberOfMeetings;
+    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbId == %@", randomUserfbId];
+    Discovery *oldUserDiscovered = [Discovery MR_findFirstWithPredicate:userPredicate inContext:[NSManagedObjectContext MR_defaultContext]];
+    NSNumber *oldUserCount = oldUserDiscovered.numberOfDiscoveries;
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *discoveryDate;
@@ -1426,10 +1427,10 @@
     [dateFormatter stringFromDate:[NSDate date]];
     
     // If user exists we just update his value like streetpass on 3ds
-    if (oldUserCount != 0 && randomUserfbID != nil && oldUserTaste != nil) {
+    if (oldUserCount != 0 && randomUserfbId != nil && oldUserDiscovered != nil) {
         NSCalendar *calendar = [NSCalendar currentCalendar];
         
-        NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserTaste lastMeeting] toDate:[NSDate date] options:0];
+        NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[oldUserDiscovered lastDiscovery] toDate:[NSDate date] options:0];
         
         //        NSInteger days = [conversionInfo day];
         NSInteger hours = [conversionInfo hour];
@@ -1444,14 +1445,15 @@
             //            return;
         }
 
-        oldUserTaste.taste = arrayData;
-        oldUserTaste.fbid = randomUserfbID;
-        oldUserTaste.lastMeeting = discoveryDate; //[NSDate date];
-        oldUserTaste.numberOfMeetings = [NSNumber numberWithInt:[oldUserTaste.numberOfMeetings intValue] + 1];
+        oldUserDiscovered.dbId = randomUserdbId;
+        oldUserDiscovered.likes = arrayData;
+        oldUserDiscovered.fbId = randomUserfbId;
+        oldUserDiscovered.lastDiscovery = discoveryDate; //[NSDate date];
+        oldUserDiscovered.numberOfDiscoveries = [NSNumber numberWithInt:[oldUserDiscovered.numberOfDiscoveries intValue] + 1];
         
         
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
-            oldUserTaste.isRandomDiscover = NO;
+            oldUserDiscovered.isRandomDiscover = NO;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
         
@@ -1460,12 +1462,13 @@
         // It's a new user
         // So we create a entity in CoreData for him
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-            UserTaste *userTaste = [UserTaste MR_createEntityInContext:localContext];
-            userTaste.taste = arrayData;
-            userTaste.fbid = randomUserfbID;
-            userTaste.lastMeeting = discoveryDate;
+            Discovery *userTaste = [Discovery MR_createEntityInContext:localContext];
+            userTaste.dbId = randomUserdbId;
+            userTaste.likes = arrayData;
+            userTaste.fbId = randomUserfbId;
+            userTaste.lastDiscovery = discoveryDate;
             userTaste.isFavorite = NO;
-            userTaste.numberOfMeetings = [NSNumber numberWithInt:1];
+            userTaste.numberOfDiscoveries = [NSNumber numberWithInt:1];
             
             if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)
                 userTaste.isRandomDiscover = NO;

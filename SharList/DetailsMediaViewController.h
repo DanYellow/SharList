@@ -24,7 +24,7 @@
 #import "ShopButton.h"
 
 //Models
-#import "UserTaste.h"
+#import "Discovery.h"
 
 #import "UILabel+HeightToFit.h"
 #import "UIButton+TrailerID.h"

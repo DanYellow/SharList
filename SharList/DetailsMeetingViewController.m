@@ -65,28 +65,30 @@
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     
-    userMet = [UserTaste MR_findFirstByAttribute:@"fbid"
+    userMet = [Discovery MR_findFirstByAttribute:@"fbId"
                                                   withValue:self.metUserId];
+    
+    
     
     NSDateFormatter *formatter = [NSDateFormatter new];
     formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
     
     
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]]) {
-        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [[userMet fbid] stringValue]]];
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]]) {
+        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [userMet fbId]]];
         self.title = [[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
     } else {
-        self.title = [formatter stringFromDate:[userMet lastMeeting]];
+        self.title = [formatter stringFromDate:[userMet lastDiscovery]];
     }
     
     // We get the datas of current user to compare it to the current list
-    UserTaste *currentUser = [UserTaste MR_findFirstByAttribute:@"fbid"
+    Discovery *currentUser = [Discovery MR_findFirstByAttribute:@"fbId"
                                                       withValue:[userPreferences objectForKey:@"currentUserfbID"]];
     // Xcode can throw a NSLog if [currentUser taste] is nil
-    currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser taste]] mutableCopy];
+    currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser likes]] mutableCopy];
     
     self.metUserTasteDict = [NSMutableDictionary new];
-    self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet taste]] mutableCopy];
+    self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet likes]] mutableCopy];
    
 //    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
     self.navigationController.navigationBar.backIndicatorImage = [UIImage imageNamed:@"list-tab-icon"];
@@ -117,7 +119,7 @@
     
     
     UIBarButtonItem *addMeetingToFavoriteBtnItem;
-    // This list is not among user's favorites
+    // This discovery is not among user's favorites
     if (![userMet isFavorite]) {
         addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
     } else {
@@ -142,7 +144,7 @@
     tableFooter.textAlignment = NSTextAlignmentCenter;
     tableFooter.opaque = YES;
     tableFooter.font = [UIFont boldSystemFontOfSize:15];
-    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [userMet numberOfMeetings]]];
+    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [userMet numberOfDiscoveries]]];
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareShoundBtn setFrame:CGRectMake(0, tableFooter.frame.size.height + tableFooter.frame.origin.y + 12, screenWidth - 24, 54)];
@@ -164,7 +166,7 @@
     
 
     // If the user is a facebook friend so we display the button to take about this meeting on facebook
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]]) {
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]]) {
         [tableFooterView addSubview:shareShoundBtn];
     }
     
@@ -234,7 +236,7 @@
 //    }
     
     NSString *urlAPI = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
-    NSDictionary *apiParams = @{@"fbiduser" : [self.metUserId stringValue]};
+    NSDictionary *apiParams = @{@"fbiduser" : self.metUserId};
     // NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue], @"isspecificuser" : @"yes"};
     
     [manager GET:urlAPI
@@ -352,7 +354,7 @@
     int intWidthScreen = screenWidth;
     int heightImg = ceilf(intWidthScreen / GOLDENRATIO);
     
-    NSString *fbMetUserString = [self.metUserId stringValue];
+    NSString *fbMetUserString = self.metUserId;
     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
     
     UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
@@ -488,7 +490,7 @@
 
 #pragma mark - server communication
 // This methods allows to retrieve and send (?) user datas from the server
-- (void) getServerDatasForFbID:(NSNumber*)userfbID
+- (void) getServerDatasForFbID:(NSString*)userfbID
 {
     NSString *aURLString = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
     aURLString = [aURLString stringByAppendingString:[NSString stringWithFormat:@"?fbiduser=%@", userfbID]];
@@ -530,9 +532,9 @@
                 self.metUserTasteDict = [[allDatasFromServerDict objectForKey:@"list"] mutableCopy];
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[allDatasFromServerDict objectForKey:@"list"]];
                 
-                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbid == %@", self.metUserId];
-                UserTaste *oldUserTaste = [UserTaste MR_findFirstWithPredicate:userPredicate];
-                oldUserTaste.taste = arrayData;
+                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbId == %@", self.metUserId];
+                Discovery *oldDiscovery = [Discovery MR_findFirstWithPredicate:userPredicate];
+                oldDiscovery.likes = arrayData;
                 [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                 
                 [self displayMatchRateList];
@@ -920,7 +922,7 @@
 - (void) addAsFavorite:(UIBarButtonItem*)sender
 {
     NSString *currentUserPFChannelName = @"sh_channel_";
-    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:[self.metUserId stringValue]];
+    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:self.metUserId];
 
 
     NSMutableArray *rightBarButtonItemsArray = [[NSMutableArray alloc] initWithArray:self.navigationItem.rightBarButtonItems];

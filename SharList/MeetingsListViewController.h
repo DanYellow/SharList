@@ -25,6 +25,7 @@
 
 //Models
 #import "UserTaste.h"
+#import "Discovery.h"
 
 // Categories
 #import "NSArray+Reverse.h"
@@ -62,7 +63,7 @@
 - (void) manageDisplayOfFacebookFriendsButton;
 
 + (UIImage *) imageForCellWithName:(NSString*)imageName forDarkBG:(BOOL)isDarkBG thingsInCommon:(int)thingsInCommonCount;
-+ (UIImage *) imageFromFacebookFriendInitialForId:(NSNumber*)fbid forDarkBG:(BOOL)isDarkBG;
++ (UIImage *) imageFromFacebookFriendInitialForId:(NSString*)fbId forDarkBG:(BOOL)isDarkBG;
 
 
 @end

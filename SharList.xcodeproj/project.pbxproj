@@ -46,6 +46,9 @@
 		1A549EF71B24A02400B9305B /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A549EF51B24A02400B9305B /* UserTaste.xcdatamodeld */; };
 		1A5682A81AE19809007D6D93 /* UIImage+ColorImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5682A71AE19809007D6D93 /* UIImage+ColorImage.m */; };
 		1A61F5101AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */; };
+		1A655F461B3493CC00E98A9F /* DiscoveryPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A655F451B3493CC00E98A9F /* DiscoveryPolicy.m */; };
+		1A655F4D1B3496D900E98A9F /* UserTasteToShoundEntityV2.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 1A655F4C1B3496D900E98A9F /* UserTasteToShoundEntityV2.xcmappingmodel */; };
+		1A655F501B34986300E98A9F /* Discovery.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A655F4F1B34986300E98A9F /* Discovery.m */; };
 		1A66AA121B31DF3C001D92D7 /* NSDate+CupertinoYankee.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */; };
 		1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6744B01AAB4BB000FA610F /* PFPushManager.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
@@ -168,6 +171,11 @@
 		1A5682A71AE19809007D6D93 /* UIImage+ColorImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ColorImage.m"; sourceTree = "<group>"; };
 		1A61F50E1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+FilterKeysForNullObj.h"; sourceTree = "<group>"; };
 		1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+FilterKeysForNullObj.m"; sourceTree = "<group>"; };
+		1A655F441B3493CC00E98A9F /* DiscoveryPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiscoveryPolicy.h; sourceTree = "<group>"; };
+		1A655F451B3493CC00E98A9F /* DiscoveryPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiscoveryPolicy.m; sourceTree = "<group>"; };
+		1A655F4C1B3496D900E98A9F /* UserTasteToShoundEntityV2.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UserTasteToShoundEntityV2.xcmappingmodel; sourceTree = "<group>"; };
+		1A655F4E1B34986300E98A9F /* Discovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Discovery.h; sourceTree = "<group>"; };
+		1A655F4F1B34986300E98A9F /* Discovery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Discovery.m; sourceTree = "<group>"; };
 		1A66AA101B31DF3C001D92D7 /* NSDate+CupertinoYankee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+CupertinoYankee.h"; sourceTree = "<group>"; };
 		1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+CupertinoYankee.m"; sourceTree = "<group>"; };
 		1A6744AF1AAB4BB000FA610F /* PFPushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFPushManager.h; sourceTree = "<group>"; };
@@ -476,8 +484,13 @@
 			isa = PBXGroup;
 			children = (
 				1A549EF51B24A02400B9305B /* UserTaste.xcdatamodeld */,
+				1A655F4E1B34986300E98A9F /* Discovery.h */,
+				1A655F4F1B34986300E98A9F /* Discovery.m */,
 				1A3C22801A114339005B31E4 /* UserTaste.h */,
 				1A3C22811A114339005B31E4 /* UserTaste.m */,
+				1A655F441B3493CC00E98A9F /* DiscoveryPolicy.h */,
+				1A655F451B3493CC00E98A9F /* DiscoveryPolicy.m */,
+				1A655F4C1B3496D900E98A9F /* UserTasteToShoundEntityV2.xcmappingmodel */,
 			);
 			name = CoreData;
 			sourceTree = "<group>";
@@ -742,6 +755,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A655F501B34986300E98A9F /* Discovery.m in Sources */,
 				1A1BE6111B06869C00B813CD /* NSString+URLEncodeValue.m in Sources */,
 				1AF4745C1A4DD424003ED4AF /* UIButton+TrailerID.m in Sources */,
 				1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */,
@@ -750,6 +764,7 @@
 				1A61F5101AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m in Sources */,
 				1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */,
 				1A076DBF1A0FE20900CD725A /* ViewController.m in Sources */,
+				1A655F461B3493CC00E98A9F /* DiscoveryPolicy.m in Sources */,
 				1A0586CD1B0BE40600D2432C /* PostCommentViewController.m in Sources */,
 				1A66AA121B31DF3C001D92D7 /* NSDate+CupertinoYankee.m in Sources */,
 				1A0014ED1A157C0F003430E9 /* CCARadialGradientLayer.m in Sources */,
@@ -764,6 +779,7 @@
 				1A36E3131A9D4C1C004B0DBC /* ConnectView.m in Sources */,
 				1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */,
 				1A3C227C1A113069005B31E4 /* DetailsMediaViewController.m in Sources */,
+				1A655F4D1B3496D900E98A9F /* UserTasteToShoundEntityV2.xcmappingmodel in Sources */,
 				1A3C22821A114339005B31E4 /* UserTaste.m in Sources */,
 				1A076DB91A0FE20900CD725A /* main.m in Sources */,
 				1AE9E7A71A2683700072EF91 /* DetailsMeetingViewController.m in Sources */,
@@ -1021,7 +1037,7 @@
 				1A3926F81B33903400F38B11 /* ShoundEntitiesV2.xcdatamodel */,
 				1A549EF61B24A02400B9305B /* UserTaste.xcdatamodel */,
 			);
-			currentVersion = 1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */;
+			currentVersion = 1A3926F81B33903400F38B11 /* ShoundEntitiesV2.xcdatamodel */;
 			path = UserTaste.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
