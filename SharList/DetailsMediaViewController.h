@@ -97,7 +97,7 @@
 - (void) showTutorial;
 - (void) hideTutorial;
 - (void) showPoster;
-- (void) connectWithBSAccount:(NSString*)BSUserToken;
+- (UIButton*) connectWithBSAccount:(NSString*)BSUserToken;
 
 
 @end
