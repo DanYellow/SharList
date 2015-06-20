@@ -541,10 +541,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) displayFacebookFriendsThumbnailsForDatas:(NSArray*)friendsList
 {
-    NSArray *people = [[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] arrayByAddingObjectsFromArray:[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
-    
-    
     UIScrollView *aContainerView = (UIScrollView*)[self.view viewWithTag:2];
+    
+    if (friendsList.count == 0) {
+        UITextView *mediaDescription = (UITextView*)[aContainerView viewWithTag:14];
+        
+        [self displayNumberOfIterationsAmongDiscoveriesForView:mediaDescription];
+        return;
+    }
     
     UITextView *mediaDescription = (UITextView*)[aContainerView viewWithTag:12];
     CGFloat mediaDescriptionHeight = mediaDescription.frame.size.height + 30 + mediaDescription.frame.origin.y;
@@ -578,8 +582,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     int i = 0;
     int offsetX = (5 * screenWidth) / 100;
     
-    for (NSString *friendId in people) {
-        NSURL *facebookFriendImgProfile = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%.0f&height=%.0f", friendId, thumbFriendContainerSize, thumbFriendContainerSize]];
+    for (NSDictionary *friend in friendsList) {
+        NSURL *facebookFriendImgProfile = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%.0f&height=%.0f", friend[@"fbId"], thumbFriendContainerSize, thumbFriendContainerSize]];
 
         UIImageView *thumbFriendContainer = [[UIImageView alloc] initWithFrame:CGRectMake(offsetX + (i * thumbFriendContainerSize) + (i * 12),
                                                                                           0,
