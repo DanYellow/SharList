@@ -107,6 +107,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // Shoud contain raw data from the server
     self.responseData = [NSMutableData new];
     
+    // Disabled the swipe back of the view
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     }
@@ -116,6 +117,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     screenHeight = screenRect.size.height;
     
 //    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
+    
+
     
 
     // Contains globals datas of the project
@@ -390,7 +393,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view insertSubview:infoMediaView atIndex:1];
     
     if (![self connected]) {
-        [self displayNumberOfIterationsAmongDiscoveriesForView:infoMediaView];
+//        [self displayNumberOfIterationsAmongDiscoveriesForView:infoMediaView];
     }
     
    
@@ -416,7 +419,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view addGestureRecognizer:rightGesture];
 }
 
-- (void) displayNumberOfIterationsAmongDiscoveriesForView:(UIScrollView*) aContainerView
+- (UILabel*) displayNumberOfIterationsAmongDiscoveries
 {
     NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId != %@",
                                           [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
@@ -437,12 +440,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UILabel *numberOfIterationAmongDiscoveriesLabel = [UILabel new];
     numberOfIterationAmongDiscoveriesLabel.tag = 13;
     
-    UIView *facebookFriendsContainer = (UITextView*)[aContainerView viewWithTag:14];
-    CGFloat mediaDescriptionHeight = CGRectGetMaxY(facebookFriendsContainer.frame) + 30;
+//    UIView *facebookFriendsContainer = (UITextView*)[aContainerView viewWithTag:14];
+//    CGFloat mediaDescriptionHeight = CGRectGetMaxY(facebookFriendsContainer.frame) + 30;
     
-    CGFloat numberOfIterationAmongDiscoveriesLabelY = ([self connected]) ? mediaDescriptionHeight : screenHeight - 83;
+//    CGFloat numberOfIterationAmongDiscoveriesLabelY = ([self connected]) ? mediaDescriptionHeight : screenHeight - 83;
     
-    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, numberOfIterationAmongDiscoveriesLabelY, screenWidth, 20);
+    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, 0, screenWidth, 20);
     numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
     
     CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
@@ -481,11 +484,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     numberOfIterationAmongDiscoveriesLabelLayerT.anchorPoint = CGPointMake(0.5, 0.5);
     [numberOfIterationAmongDiscoveriesLabel.layer addSublayer:numberOfIterationAmongDiscoveriesLabelLayerT];
     
-    [aContainerView addSubview:numberOfIterationAmongDiscoveriesLabel];
-    
-    UIView *aContainerViewLastView = [aContainerView subviews].lastObject;
-    aContainerView.contentSize = CGSizeMake(screenWidth,
-                                            CGRectGetMaxY(aContainerViewLastView.frame));
+//    [aContainerView addSubview:numberOfIterationAmongDiscoveriesLabel];
+//    
+//    UIView *aContainerViewLastView = [aContainerView subviews].lastObject;
+//    aContainerView.contentSize = CGSizeMake(screenWidth,
+//                                            CGRectGetMaxY(aContainerViewLastView.frame));
     
     // We display the BS part only if the device's user iPhone is in French
     if ([[[NSLocale preferredLanguages] objectAtIndex:0] isEqualToString:@"fr"] && [self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
@@ -494,16 +497,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [self connectWithBSAccount:BSUserToken];
         }
     }
+    
+    return numberOfIterationAmongDiscoveriesLabel;
 }
 
-- (void) fetchFacebookFriendsForMedia
+- (NSArray*) fetchFacebookFriendsForMedia
 {
+    //@TODO : Manage the facebook's friends rejection - GENTOO
     
-    // We fetch the list of facebook friends among
+    // We retrieve the list of facebook friends
     NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
 //    NSPredicate *facebookFrienddbIdFilter = [NSPredicate predicateWithFormat:@"dbId != 0"];
     NSArray *facebookFriends = [[Discovery MR_findAllWithPredicate:facebookFriendsFilter] valueForKey:@"fbId"];
-    
     
     NSString *paramsString = @"";
     NSMutableArray *paramsArray = [NSMutableArray new];
@@ -525,33 +530,47 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                                                        timeoutInterval:9.0];
     [request setValue:@"discover" forHTTPHeaderField:@"X-Shound"];
     [request setHTTPMethod:@"GET"];
-//
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if (error) {
-            
-        } else {
-            __block NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self displayFacebookFriendsThumbnailsForDatas:serverResponse[@"response"]];
-            });
-            
-        }
-    }];
-}
-
-- (void) displayFacebookFriendsThumbnailsForDatas:(NSArray*)friendsList
-{
-    UIScrollView *aContainerView = (UIScrollView*)[self.view viewWithTag:2];
     
-    if (friendsList.count == 0) {
-        UITextView *mediaDescription = (UITextView*)[aContainerView viewWithTag:14];
-        
-        [self displayNumberOfIterationsAmongDiscoveriesForView:mediaDescription];
-        return;
+    
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    
+    NSData *data = [NSURLConnection sendSynchronousRequest:request
+                          returningResponse:&response error:&error];
+    
+    if (error == nil) {
+        NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        return serverResponse[@"response"];
+    } else {
+        return @[];
     }
     
-    UITextView *mediaDescription = (UITextView*)[aContainerView viewWithTag:12];
-    CGFloat mediaDescriptionHeight = mediaDescription.frame.size.height + 30 + mediaDescription.frame.origin.y;
+    return @[];
+
+//    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+//        if (error) {
+//            
+//        } else {
+//            __block NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+//            
+////            return serverResponse[@"response"];
+//        }
+//    }];
+}
+
+- (UIView*) displayFacebookFriends
+{
+//    UIScrollView *aContainerView = (UIScrollView*)[self.view viewWithTag:2];
+    
+//    if (friendsList.count == 0) {
+//        UITextView *mediaDescription = (UITextView*)[aContainerView viewWithTag:14];
+//        
+//        [self displayNumberOfIterationsAmongDiscoveriesForView:mediaDescription];
+//        return;
+//    }
+    
+//    UITextView *mediaDescription = (UITextView*)[aContainerView viewWithTag:12];
+//    CGFloat mediaDescriptionHeight = mediaDescription.frame.size.height + 30 + mediaDescription.frame.origin.y;
     
     UIView *facebookFriendsContainer = [UIView new];
     facebookFriendsContainer.backgroundColor = [UIColor clearColor];
@@ -582,7 +601,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     int i = 0;
     int offsetX = (5 * screenWidth) / 100;
     
-    for (NSDictionary *friend in friendsList) {
+    for (NSDictionary *friend in [self fetchFacebookFriendsForMedia]) {
         NSURL *facebookFriendImgProfile = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%.0f&height=%.0f", friend[@"fbId"], thumbFriendContainerSize, thumbFriendContainerSize]];
 
         UIImageView *thumbFriendContainer = [[UIImageView alloc] initWithFrame:CGRectMake(offsetX + (i * thumbFriendContainerSize) + (i * 12),
@@ -610,7 +629,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UIView *facebookFriendsContainerLastView = [[facebookFriendsContainer subviews] lastObject];
     facebookFriendsContainerLastView.backgroundColor = [UIColor clearColor];
-    facebookFriendsContainer.frame = CGRectMake(0, mediaDescriptionHeight,
+    facebookFriendsContainer.frame = CGRectMake(0, 0,
                                                 screenWidth, CGRectGetMaxY(facebookFriendsContainerLastView.frame));
     
     CGFloat layerWidth = (90 * screenWidth) / 100;
@@ -622,14 +641,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     numberOfIterationAmongDiscoveriesLabelLayerT.anchorPoint = CGPointMake(0.5, 0.5);
     [facebookFriendsContainer.layer addSublayer:numberOfIterationAmongDiscoveriesLabelLayerT];
 
-    [aContainerView addSubview:facebookFriendsContainer];
+//    [aContainerView addSubview:facebookFriendsContainer];
     
-    UIView *aContainerViewLastView = [aContainerView subviews].lastObject;
+//    UIView *aContainerViewLastView = [aContainerView subviews].lastObject;
+//    
+//    aContainerView.contentSize = CGSizeMake(screenWidth,
+//                                            CGRectGetMaxY(aContainerViewLastView.frame));
     
-    aContainerView.contentSize = CGSizeMake(screenWidth,
-                                            CGRectGetMaxY(aContainerViewLastView.frame));
-    
-    [self displayNumberOfIterationsAmongDiscoveriesForView:aContainerView];
+//
+    facebookFriendsContainer.translatesAutoresizingMaskIntoConstraints = NO;
+//    [self displayNumberOfIterationsAmongDiscoveriesForView:aContainerView];
+    return facebookFriendsContainer;
 }
 
 - (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
@@ -957,6 +979,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, 0)];
+    
     if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
         // the movie db does not provide description for this media
         mediaDescription.text = NSLocalizedString(@"nodescription", nil);
@@ -992,7 +1015,30 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [infoMediaView addSubview:mediaDescription];
     
     
-    [self fetchFacebookFriendsForMedia];
+    
+
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, (unsigned long)NULL), ^(void) {
+        NSLog(@"hrrrlo");
+        UIView *fbFriendsContainer = [self displayFacebookFriends];
+        fbFriendsContainer.frame = CGRectMake(0, CGRectGetMaxY(mediaDescription.frame) + 20,
+                                              CGRectGetWidth(fbFriendsContainer.frame),
+                                              CGRectGetHeight(fbFriendsContainer.frame));
+        fbFriendsContainer.backgroundColor = [UIColor redColor];
+        [infoMediaView addSubview:fbFriendsContainer];
+        
+        UILabel *nbIterationAmongDiscoveries = [self displayNumberOfIterationsAmongDiscoveries];
+        nbIterationAmongDiscoveries.frame = CGRectMake(0, CGRectGetMaxY(fbFriendsContainer.frame) + 40,
+                                                       CGRectGetWidth(nbIterationAmongDiscoveries.frame),
+                                                       CGRectGetHeight(nbIterationAmongDiscoveries.frame));
+        [infoMediaView addSubview:nbIterationAmongDiscoveries];
+        
+//    });
+    
+    
+//    [self fetchFacebookFriendsForMedia];
+    
+    
+//    [self displayFacebookFriendsThumbnailsForDatas:serverResponse[@"response"]];
     
     UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
     CGFloat lastViewCntHeight = infoMediaViewLastView.frame.size.height + infoMediaViewLastView.frame.origin.y + 30;
