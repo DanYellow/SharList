@@ -1200,22 +1200,32 @@
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     CGFloat fontSize = 16.0f;
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 52.0)];
     headerView.opaque = YES;
 
     NSString *title = [NSLocalizedString([categoryList objectAtIndex:section], nil) uppercaseString];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 52.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
     label.text = title;
+    [label sizeToFit];
+    label.frame = CGRectMake(15.0, CGRectGetHeight(headerView.frame) - CGRectGetHeight(label.frame) - 10,
+                             screenWidth, CGRectGetHeight(label.frame));
     
-    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+    if (tableView == ((UITableViewController *) self.searchController.searchResultsController).tableView) {
         headerView.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
         label.textColor = [UIColor blackColor];
         headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.37];
     } else {
-        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
+//        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
         label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
+        UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+        
+        UIVisualEffectView *visualEffectView;
+        visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        visualEffectView.frame = headerView.frame;
+        
+        [headerView addSubview:visualEffectView];
     }
     [headerView addSubview:label];
     

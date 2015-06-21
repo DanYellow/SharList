@@ -827,19 +827,21 @@
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     CGFloat fontSize = 18.0f;
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 52.0)];
     headerView.opaque = YES;
-//    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
     headerView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
 
-    
+
     NSString *title = [self.listOfDistinctsDay objectAtIndex:section];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 52.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
     label.text = title;
-//    label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
+    label.backgroundColor = [UIColor clearColor];
     label.textColor = [UIColor whiteColor];
+    [label sizeToFit];
+    label.frame = CGRectMake(15.0, CGRectGetHeight(headerView.frame) - CGRectGetHeight(label.frame) - 10,
+                             screenWidth, CGRectGetHeight(label.frame));
     
 
     [headerView addSubview:label];

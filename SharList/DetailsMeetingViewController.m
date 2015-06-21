@@ -320,9 +320,9 @@
     numberFollowersLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
     numberFollowersLabel.text = [NSString stringWithFormat:@"%@", numberOfFollowers];
     numberFollowersLabel.tag = 8;
-//    statCount.text = @"2";
-    numberFollowersLabel.backgroundColor = [UIColor blackColor];
+    numberFollowersLabel.backgroundColor = [UIColor clearColor];
     numberFollowersLabel.textAlignment = NSTextAlignmentRight;
+    
     [followersLabelContainerBtn addSubview:numberFollowersLabel];
     if (![followersLabelContainerBtn isDescendantOfView:metUserFBView]) {
         [metUserFBView addSubview:followersLabelContainerBtn];
@@ -713,18 +713,33 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     CGFloat fontSize = 16.0f;
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 69.0)];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 52.0)];
     headerView.opaque = YES;
+    
+    //    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.85f];
+    //    headerView.backgroundColor = [UIColor clearColor];
+    
+    UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = headerView.frame;
+    
+    [headerView addSubview:visualEffectView];
+    
+    
     
     NSString *sectionTitleRaw = [[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
     NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 69.0)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 52.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
     label.text = title;
-    
-    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
     label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
+    [label sizeToFit];
+    label.frame = CGRectMake(15.0, CGRectGetHeight(headerView.frame) - CGRectGetHeight(label.frame) - 10,
+                             screenWidth, CGRectGetHeight(label.frame));
+    
     
     [headerView addSubview:label];
     
