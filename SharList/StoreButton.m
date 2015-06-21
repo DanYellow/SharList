@@ -51,6 +51,10 @@
     
     self.layer.borderWidth = 2.0f;
     
+    [self setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    
+    self.storeName = storeName;
+    
     switch (storeName) {
         case Amazon:
             [self setColorForBtn:btnsColor[@"amazon"]];
@@ -69,6 +73,8 @@
     /* Events */
     [self addTarget:self action:@selector(highlightBorder) forControlEvents:UIControlEventTouchDown];
     [self addTarget:self action:@selector(unhighlightBorder) forControlEvents:UIControlEventTouchUpInside];
+   
+
     
     return self;
 }
