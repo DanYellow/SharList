@@ -43,6 +43,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 13 : numberOfIterationAmongDiscoveriesLabel
 // 14 : fbFriendsContainer
 // 15 : titleBuyMedia
+// 16 : storesView
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -103,7 +104,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     // Init vars
     self.PhysicsAdded = NO;
-    self.itunesIDString = @"";
     buyButtonsInitPositions = [NSMutableArray new];
     // Shoud contain raw data from the server
     self.responseData = [NSMutableData new];
@@ -312,11 +312,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [manager GET:shoundAPIPath parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              NSNumber *mediaLikeNumber = [responseObject valueForKeyPath:@"response.hits"];
-              
-              NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
-              [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-              
               if (!self.mediaDatas[@"id"]) {
                   [tempDict setObject:(NSString *)[responseObject valueForKeyPath:@"response.id"] forKey:@"id"];
                   self.mediaDatas = tempDict;
@@ -328,22 +323,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   self.mediaDatas = tempDict;
               }
               
-
-              NSString *numberString = [numberFormatter stringFromNumber:mediaLikeNumber];
-
-              if ([mediaLikeNumber integerValue] > 1) {
-                  self.numberLikesString = numberString;
-              }
-              
-              self.itunesIDString = [responseObject valueForKeyPath:@"response.itunesId"];
               
               [self displayBuyButtonForShops:[responseObject valueForKeyPath:@"response.storeLinks"]];
-              
-              [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
               
               
               NSNumber *numberMessages = [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.commentsCount"] integerValue]];
               self.numberOfComments = numberMessages;
+              
+              NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
+              [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
               
               UIButton *messagesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
               [messagesBtn addTarget:self action:@selector(displayMessageForMediaWithId:) forControlEvents:UIControlEventTouchUpInside];
@@ -369,6 +357,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view insertSubview:infoMediaView atIndex:1];
     
     if (![self connected]) {
+        UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
+        
+        UILabel *nbIterationAmongDiscoveries = [self displayNumberOfIterationsAmongDiscoveries];
+        nbIterationAmongDiscoveries.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
+                                                       CGRectGetWidth(nbIterationAmongDiscoveries.frame),
+                                                       CGRectGetHeight(nbIterationAmongDiscoveries.frame));
+        [infoMediaView addSubview:nbIterationAmongDiscoveries];
 //        [self displayNumberOfIterationsAmongDiscoveriesForView:infoMediaView];
     }
     
@@ -785,33 +780,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIView *displayBuyView = [[UIView alloc] initWithFrame:self.view.bounds];
     displayBuyView.tag = 1;
     displayBuyView.hidden = YES;
-    displayBuyView.alpha = .25f;
-    displayBuyView.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
-    
-    
-//    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];
-//    bluredImageView.alpha = .85f;
-//    [bluredImageView setFrame:displayBuyView.frame];
-//    
-//    UIVisualEffect *blurEffect;
-//    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-//    
-//    UIVisualEffectView *visualEffectView;
-//    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-//    visualEffectView.frame = bluredImageView.bounds;
-//    
-//    [bluredImageView addSubview:visualEffectView];
-    
+    displayBuyView.alpha = 0.0f;
+
     
     UIVisualEffect *blurEffect;
     blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     
     UIVisualEffectView *visualEffectView;
     visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    
     visualEffectView.frame = displayBuyView.frame;
-//    [imageView addSubview:visualEffectView];
-    
     
     [displayBuyView addSubview:visualEffectView];
     
@@ -856,7 +833,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     closeBuyScreenWindowBtn.layer.borderWidth = 1.0f;
     closeBuyScreenWindowBtn.layer.cornerRadius = 25;
     closeBuyScreenWindowBtn.layer.masksToBounds = YES;
-    [closeBuyScreenWindowBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.4]] forState:UIControlStateHighlighted];
+    [closeBuyScreenWindowBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]]
+                                       forState:UIControlStateHighlighted];
     closeBuyScreenWindowBtn.center = CGPointMake(self.view.center.x, closeBuyScreenWindowBtn.frame.origin.y);
     [displayBuyView addSubview:closeBuyScreenWindowBtn];
     
@@ -878,18 +856,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIScrollView *storesView = [self displayButtonsForStores:storesList];
     storesView.frame = CGRectMake(0, CGRectGetMaxY(displayBuyViewLastView.frame) + 20,
                                   screenWidth, CGRectGetMinY(closeBuyScreenWindowBtn.frame) - CGRectGetMaxY(displayBuyViewLastView.frame) - 40);
+    storesView.tag = 16;
     storesView.center = CGPointMake(storesView.center.x, self.view.center.y);
     [displayBuyView addSubview:storesView];
-    
-    
-    // Create array of all shop buttons one time only
-    if (self.isPhysicsAdded == NO) {
-        for (StoreButton *shopButton in displayBuyView.subviews) {
-            if ([shopButton isKindOfClass:[StoreButton class]]) {
-                [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:shopButton.frame]];
-            }
-        }
-    }
 }
 
 - (void) showBuyScreen
@@ -913,6 +882,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) hideBuyScreen
 {
     UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
+    UIView *storesView = (UIView*)[self.view viewWithTag:16];
     
     //    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
     //    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
@@ -926,22 +896,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }
                      completion:^(BOOL finished){
                          displayBuyView.hidden = YES;
-                         
                          // We need uinavigationcontroller so...
                          [self.navigationController setNavigationBarHidden:NO];
                          
-                         
-                         NSUInteger count = 0;
-                         // shopButton.frame = [(UIView *)[buyButtonsInitPositions objectAtIndex:count] frame];
-                         // shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
-                         for (StoreButton *shopButton in displayBuyView.subviews) {
-                             if ([shopButton isKindOfClass:[StoreButton class]]) {
-                                 //                                 ShopButton *foo = (ShopButton *)[buyButtonsInitPositions objectAtIndex:count];
-                                 //                                 shopButton.frame = [(ShopButton *)[buyButtonsInitPositions objectAtIndex:count] frame];
-                                 shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
-                                 count++;
+            
+                         [storesView.subviews enumerateObjectsUsingBlock:^(StoreButton *storeButton, NSUInteger idx, BOOL *stop) {
+                             if ([storeButton isKindOfClass:[StoreButton class]]) {
+                                 storeButton.frame = [[buyButtonsInitPositions objectAtIndex:idx] CGRectValue];
                              }
-                         }
+                         }];
                          [animator removeAllBehaviors];
                      }];
 }
@@ -963,7 +926,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [buyButton setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f]
                     forState:UIControlStateHighlighted];
     [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    
+
     // There is no links to stores
     if ([storesList count] > 0) {
         [self.view insertSubview:buyButton atIndex:42];
@@ -989,16 +952,19 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [storesList enumerateObjectsUsingBlock:^(NSDictionary *store, NSUInteger idx, BOOL *stop) {
         CGSize buttonSize = CGSizeMake((90 * screenWidth) / 100, 50.0f);
         CGPoint buttonPos = CGPointMake( ((screenWidth - buttonSize.width) / 2), 16 * idx);
-        
         StoreButton *storeButton = [[StoreButton alloc] initWithType:Itunes];
         storeButton.frame = CGRectMake(buttonPos.x, buttonPos.y, buttonSize.width, buttonSize.height);
         storeButton.storeLink = store[@"itunesLink"];
+        storeButton.tag = 401;
         [storeButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
         
         [storeButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
         
         [storesBtnsContainer addSubview:storeButton];
+        
+        [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:storeButton.frame]];
     }];
+
     
     UIView *storesBtnsContainerLastView = [storesBtnsContainer.subviews lastObject];
     storesBtnsContainer.contentSize = CGSizeMake(screenWidth, CGRectGetMaxY(storesBtnsContainerLastView.frame));
@@ -1125,15 +1091,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-
-//    CGFloat lastViewCntHeight = CGRectGetMaxY(infoMediaViewLastView.frame) + 90;
     
     infoMediaView.frame = CGRectMake(infoMediaView.frame.origin.x,
                                      CGRectGetMinY(infoMediaView.frame),
                                      CGRectGetWidth(infoMediaView.frame),
                                      CGRectGetHeight(infoMediaView.frame) - 60);
     
-    infoMediaView.contentSize = CGSizeMake(screenWidth, CGRectGetMaxY(infoMediaViewLastView.frame) + 60);
+    infoMediaView.contentSize = CGSizeMake(screenWidth, CGRectGetMaxY(infoMediaViewLastView.frame) + 30);
     
     [UIView animateWithDuration:0.3 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -1155,7 +1119,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaDescriptionY - 34, screenWidth - 30, 25)];
     mediaGenresLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    mediaGenresLabel.text = genresString; // Space + comma
+    mediaGenresLabel.text = genresString;
     mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
     mediaGenresLabel.textAlignment = NSTextAlignmentLeft;
     mediaGenresLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
@@ -1463,27 +1427,26 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addPhysics
 {
-//    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
-
+    UIView *storesView = (UIView*)[self.view viewWithTag:16];
     
-//    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
-//    StoreButton *itunesBuyButton = (StoreButton*)[self.view viewWithTag:401];
-//    
-//    animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-//    gravity = [[UIGravityBehavior alloc] initWithItems:@[itunesBuyButton]];
-//    collision = [[UICollisionBehavior alloc] initWithItems:@[itunesBuyButton]]; //itunesBuyButton
-//    collision.collisionDelegate = self;
-//    
-//    UIDynamicItemBehavior* itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[itunesBuyButton]]; //itunesBuyButton
-//    itemBehaviour.elasticity = 0.9;
-//    itemBehaviour.allowsRotation = NO;
-//    itemBehaviour.density = .4000;
-//    
-//    [animator addBehavior:gravity];
-//    [animator addBehavior:itemBehaviour];
-//    [animator addBehavior:collision];
-//        
-//    self.PhysicsAdded = YES;
+    NSPredicate *storePredicate = [NSPredicate predicateWithFormat:@"self.class = %@", [StoreButton class]];
+    NSArray *storeBtns = [storesView.subviews filteredArrayUsingPredicate:storePredicate];
+
+    animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
+    gravity = [[UIGravityBehavior alloc] initWithItems:storeBtns];
+    collision = [[UICollisionBehavior alloc] initWithItems:storeBtns];
+    collision.collisionDelegate = self;
+    
+    UIDynamicItemBehavior *itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:storeBtns];
+    itemBehaviour.elasticity = 0.9;
+    itemBehaviour.allowsRotation = NO;
+    itemBehaviour.density = .4000;
+    
+    [animator addBehavior:gravity];
+    [animator addBehavior:itemBehaviour];
+    [animator addBehavior:collision];
+        
+    self.PhysicsAdded = YES;
 }
 
 
@@ -1708,8 +1671,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void) openStore:(StoreButton*)sender
 {
     NSString *storeLink = @"";
-    
-    switch (sender.storeName) {
+
+    switch (sender.storeName)
+    {
         case Amazon:
             storeLink = [NSString stringWithFormat:@"http://www.shound.fr"];
             break;
