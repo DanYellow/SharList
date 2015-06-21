@@ -321,14 +321,12 @@
     numberFollowersLabel.text = [NSString stringWithFormat:@"%@", numberOfFollowers];
     numberFollowersLabel.tag = 8;
 //    statCount.text = @"2";
-    numberFollowersLabel.backgroundColor = [UIColor clearColor];
+    numberFollowersLabel.backgroundColor = [UIColor blackColor];
     numberFollowersLabel.textAlignment = NSTextAlignmentRight;
     [followersLabelContainerBtn addSubview:numberFollowersLabel];
     if (![followersLabelContainerBtn isDescendantOfView:metUserFBView]) {
         [metUserFBView addSubview:followersLabelContainerBtn];
     }
-    
-//    NSLog(@"statCount.text : %@", statCount.text);
     
     if ([numberOfFollowers integerValue] > 1) {
         followersTitle.text = [NSLocalizedString(@"followers", nil) uppercaseString];
@@ -394,8 +392,7 @@
 //    commonTasteCountPercentLabel.layer.shadowOpacity = .75f;
     
     [metUserFBView addSubview:commonTasteCountPercentLabel];
-    
-    
+
     
     CGRect tasteMetUserMessageLabelFrame = CGRectMake(16.0,
                                                       commonTasteCountPercentLabel.frame.size.height + commonTasteCountPercentLabel.frame.origin.y,
@@ -690,8 +687,9 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // User have no list of taste
+    // User have no list of taste - technically impossible beacase the api filter user with no likes
     UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
+    
     BOOL IsTableViewEmpty = YES;
     // This loop is here to check the value of all keys
     for (int i = 0; i < [[self.metUserTasteDict allKeys] count]; i++) {
@@ -707,8 +705,7 @@
         
         return 0;
     }
-    emptyUserTasteLabel.hidden = YES;
-    
+
     return [[self.metUserTasteDict filterKeysForNullObj] count];
 }
 
@@ -912,7 +909,7 @@
     
     ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     
-    DetailsMediaViewController *detailsMediaViewController = [[DetailsMediaViewController alloc] init];
+    DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
     detailsMediaViewController.mediaDatas = selectedCell.model;
     detailsMediaViewController.userDiscoverId = self.metUserId;
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
@@ -988,7 +985,7 @@
     
     if (aStatus == Unfollow) {
         [HTTPManager DELETE:urlLinkString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSInteger nbFollowers = (([statCount.text intValue]-1) > 0) ? ([statCount.text intValue]-1) : 0;
+            NSInteger nbFollowers = (([statCount.text intValue] - 1) > 0) ? ([statCount.text intValue]-1) : 0;
             statCount.text = [[NSNumber numberWithInteger:nbFollowers] stringValue];
             self.navigationController.navigationItem.rightBarButtonItem.enabled = YES;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
