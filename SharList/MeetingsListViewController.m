@@ -300,7 +300,7 @@
     // Message for empty list meetings
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  in a meeting to add it among your favorites", nil)];
     UIImage *lensIcon = [UIImage imageNamed:@"favorite-icon-message-alt"];
-    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    NSTextAttachment *textAttachment = [NSTextAttachment new];
     textAttachment.image = lensIcon;
     textAttachment.bounds = CGRectMake(0, -10, lensIcon.size.width, lensIcon.size.height);
     
@@ -795,14 +795,16 @@
                                              ascending:NO
                                          withPredicate:meetingsFilter] valueForKey:@"lastDiscovery"];
 
+    
     NSMutableSet *listUniqueDays = [NSMutableSet new];
-    for (NSDate *aDate in meetings) {
+    [meetings enumerateObjectsUsingBlock:^(NSDate *aDate, NSUInteger idx, BOOL *stop) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-
+        if ([aDate isEqual:[NSNull null]]) {
+            return;
+        }
         [listUniqueDays addObject:[dateFormatter stringFromDate:aDate]];
-    }
-    
+    }];
     
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"self"
                                                                ascending:NO];
@@ -1071,7 +1073,7 @@
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
     }
     
-    // If the user is a facebook friend so we display his facebook profile image GENTOO
+    // If the user is a facebook friend so we display his facebook profile image
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[currentUserMet fbId]]) {
         [self getImageCellForData:[currentUserMet fbId] aCell:cell];
         
