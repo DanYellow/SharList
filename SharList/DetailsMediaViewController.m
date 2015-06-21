@@ -42,6 +42,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 12 : mediaDescription
 // 13 : numberOfIterationAmongDiscoveriesLabel
 // 14 : fbFriendsContainer
+// 15 : titleBuyMedia
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -300,7 +301,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     // This NSDict will be used to set id to local media
     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media"];
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/beta"];
     
     NSDictionary *parameters = @{@"imdbId": self.mediaDatas[@"imdbID"]};
 
@@ -336,32 +337,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               
               self.itunesIDString = [responseObject valueForKeyPath:@"response.itunesId"];
               
-              UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-              [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
-              buyButton.tag = 7;
-              [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
-              buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
-              buyButton.frame = CGRectMake(0, screenHeight + 50, screenWidth, 50);
-              buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
-              [buyButton setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:(22.0f/255.0f) green:(22.0f/255.0f) blue:(22.0f/255.0f) alpha:1.0f]] forState:UIControlStateHighlighted];
-              
-              [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
-              [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
-              [buyButton setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f]
-                              forState:UIControlStateHighlighted];
-              [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-              
-              // There is no link to itunes
-              if (![self.itunesIDString isKindOfClass:[NSNull class]] && [self.itunesIDString length] != 0) {
-                  [self.view insertSubview:buyButton atIndex:42];
-                  
-                  [UIView animateWithDuration:0.4 delay:0.0
-                                      options: UIViewAnimationOptionCurveEaseOut
-                                   animations:^{
-                                       buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
-                                   }
-                                   completion:nil];
-              }
+              [self displayBuyButtonForShops:[responseObject valueForKeyPath:@"response.storeLinks"]];
               
               [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
               
@@ -418,6 +394,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     rightGesture.direction = UISwipeGestureRecognizerDirectionRight;
     [self.view addGestureRecognizer:rightGesture];
 }
+
+
 
 - (UILabel*) displayNumberOfIterationsAmongDiscoveries
 {
@@ -509,7 +487,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     paramsString = [paramsString stringByAppendingString:[NSString stringWithFormat:@"&imdbId=%@", self.mediaDatas[@"imdbID"]]];
 
 
-    NSString *urlString = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"media.php/media/friends?"];
+    NSString *urlString = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/friends?"];
     urlString = [urlString stringByAppendingString:paramsString];
     
 
@@ -585,10 +563,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [facebookFriendsList enumerateObjectsUsingBlock:^(NSDictionary *friend, NSUInteger idx, BOOL *stop) {
         if (idx == limitFriendsThumbs) {
-            
-
-            
-            
             UIView *moreFriendsIndicator = [[UIView alloc] initWithFrame:CGRectMake(offsetX + (idx * thumbFriendContainerSize) + (idx * 12),
                                                                                          0,
                                                                                          thumbFriendContainerSize,
@@ -632,18 +606,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         thumbFbFriendImg.layer.borderColor = [[UIColor colorWithWhite:1 alpha:.1] CGColor];
         thumbFbFriendImg.layer.borderWidth = 1.0f;
         
+        [UIView transitionFromView:thumbFbFriendImg toView:thumbFbFriendImg
+                          duration:1.0
+                           options:UIViewAnimationOptionTransitionFlipFromLeft
+                        completion:NULL];
+        
         [thumbFbFriendImg setImageWithURL:facebookFriendImgProfile
                              placeholderImage:nil];
         
         
         [thumbsFriendsScrollView addSubview:thumbFbFriendImg];
     }];
-    
-//    for (NSDictionary *friend in facebookFriendsList) {
-//
-//        
-//        i++;
-//    }
     
     UIView *thumbsFriendsScrollViewLastView = [[thumbsFriendsScrollView subviews] lastObject];
     thumbsFriendsScrollView.frame = CGRectMake(thumbsFriendsScrollView.frame.origin.x,
@@ -739,7 +712,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }];
 }
 
-#pragma mark - Overlay views
+#pragma mark - Tutorial
 
 - (void) showTutorial
 {
@@ -803,56 +776,52 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [tutorialView addSubview:endTutorial];
 }
 
-- (void) showBuyScreen
+#pragma mark - buying part
+
+
+// Creates view for to buy media
+- (void) buyScreenForStores:(NSArray*)storesList
 {
-    // We don't need uinavigationcontroller so...
-    [self.navigationController setNavigationBarHidden:YES animated:NO];
-//    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    
     UIView *displayBuyView = [[UIView alloc] initWithFrame:self.view.bounds];
     displayBuyView.tag = 1;
-    displayBuyView.hidden = NO;
+    displayBuyView.hidden = YES;
     displayBuyView.alpha = .25f;
     displayBuyView.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
     
     
-    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];
-    bluredImageView.alpha = .85f;
-    [bluredImageView setFrame:displayBuyView.frame];
+//    UIImageView *bluredImageView = [[UIImageView alloc] initWithImage: [self takeSnapshotOfView:self.view]];
+//    bluredImageView.alpha = .85f;
+//    [bluredImageView setFrame:displayBuyView.frame];
+//    
+//    UIVisualEffect *blurEffect;
+//    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+//    
+//    UIVisualEffectView *visualEffectView;
+//    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+//    visualEffectView.frame = bluredImageView.bounds;
+//    
+//    [bluredImageView addSubview:visualEffectView];
+    
     
     UIVisualEffect *blurEffect;
     blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     
     UIVisualEffectView *visualEffectView;
     visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    visualEffectView.frame = bluredImageView.bounds;
     
-    [bluredImageView addSubview:visualEffectView];
+    visualEffectView.frame = displayBuyView.frame;
+//    [imageView addSubview:visualEffectView];
     
-    [displayBuyView addSubview:bluredImageView];
     
-    BOOL doesContain = [self.view.subviews containsObject:(UIView*)[self.view viewWithTag:1]];
-    UIView *displayBuyViewAlias = (UIView*)[self.view viewWithTag:1];
-    if (doesContain == YES) {
-        displayBuyViewAlias.hidden = NO;
-    } else {
-        [self.view addSubview:displayBuyView];
-    }
+    [displayBuyView addSubview:visualEffectView];
     
-    [UIView animateWithDuration:0.4 delay:0.2
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         displayBuyView.alpha = 1;
-                         displayBuyViewAlias.alpha = 1;
-                     }
-                     completion:nil];
-    
+    [self.view addSubview:displayBuyView];
     
     UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:86 forDimension:screenHeight], [self computeRatio:574 forDimension:screenWidth], 16.0f)];
     titleBuyMedia.textColor = [UIColor whiteColor];
     titleBuyMedia.backgroundColor = [UIColor clearColor];
     titleBuyMedia.opaque = NO;
+    titleBuyMedia.tag = 15;
     titleBuyMedia.lineBreakMode = NSLineBreakByWordWrapping;
     titleBuyMedia.font = [UIFont fontWithName:@"HelveticaNeue" size:19.0f];
     
@@ -872,51 +841,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [displayBuyView addSubview:titleBuyMedia];
     
-    UIFont *buttonFont = [UIFont fontWithName:@"HelveticaNeue" size:18.0f];
-    CGSize buttonSize = CGSizeMake((90 * screenWidth) / 100, 50.0f);
-    CGPoint buttonPos = CGPointMake( ((screenWidth - buttonSize.width) / 2), [self computeRatio:190 forDimension:screenHeight]);
+    // It's used later in the code
+    UIView *displayBuyViewLastView = [displayBuyView.subviews lastObject];
     
     
-    UIColor *amazonOrange = [UIColor colorWithRed:1 green:(124.0f/255.0f) blue:(2.0f/255.0f) alpha:1.0f];
-    
-    ShopButton *amazonBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
-    amazonBuyButton.tag = 400;
-    [amazonBuyButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
-    [amazonBuyButton setTitle:[@"Amazon" uppercaseString] forState:UIControlStateNormal];
-    [amazonBuyButton setTitleColor:amazonOrange forState:UIControlStateNormal];
-    amazonBuyButton.titleLabel.font = buttonFont;
-    amazonBuyButton.frame = CGRectMake(buttonPos.x, buttonPos.y + 30, buttonSize.width, buttonSize.height);
-    amazonBuyButton.backgroundColor = [UIColor clearColor];
-    amazonBuyButton.layer.borderColor = amazonOrange.CGColor;
-    amazonBuyButton.layer.borderWidth = 2.0f;
-//    [displayBuyView addSubview:amazonBuyButton];
-    
-    
-    
-//    CGFloat itunesBuyButtonPosY = amazonBuyButton.frame.origin.y + amazonBuyButton.frame.size.height + (38/2);
-    UIColor *itunesGray = [UIColor colorWithRed:(166.0f/255.0f) green:(166.0f/255.0f) blue:(166.0f/255.0f) alpha:1.0f];
-    UIColor *itunesGrayHighlight = [UIColor colorWithRed:(133.0f/255.0f) green:(133.0f/255.0f) blue:(133.0f/255.0f) alpha:1.0f];
-    
-    ShopButton *itunesBuyButton = [ShopButton buttonWithType:UIButtonTypeCustom];
-    itunesBuyButton.tag = 401;
-    [itunesBuyButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
-    [itunesBuyButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
-    itunesBuyButton.titleLabel.font = buttonFont;
-    [itunesBuyButton setTitleColor:itunesGray forState:UIControlStateNormal];
-    [itunesBuyButton setTitleColor:itunesGrayHighlight forState:UIControlStateHighlighted];
-    itunesBuyButton.frame = CGRectMake(buttonPos.x, buttonPos.y + 30, buttonSize.width, buttonSize.height);
-    //CGRectMake(buttonPos.x, itunesBuyButtonPosY, buttonSize.width, buttonSize.height);
-    itunesBuyButton.backgroundColor = [UIColor clearColor];
-    itunesBuyButton.layer.borderColor = itunesGray.CGColor;
-    itunesBuyButton.layer.borderWidth = 2.0f;
-    
-    [displayBuyView addSubview:itunesBuyButton];
-    
-    
-    
-    
+    // Close button
     CGRect lineFrame = CGRectMake(0, 18, 35, 4);
-    
     
     UIButton *closeBuyScreenWindowBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     closeBuyScreenWindowBtn.frame = CGRectMake([self computeRatio:250 forDimension:screenWidth], screenHeight - [self computeRatio:116 forDimension:screenHeight], 50, 50);
@@ -945,16 +875,137 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [closeBuyScreenWindowBtn addSubview:lineLeft];
     
     
+    UIScrollView *storesView = [self displayButtonsForStores:storesList];
+    storesView.frame = CGRectMake(0, CGRectGetMaxY(displayBuyViewLastView.frame) + 20,
+                                  screenWidth, CGRectGetMinY(closeBuyScreenWindowBtn.frame) - CGRectGetMaxY(displayBuyViewLastView.frame) - 40);
+    storesView.center = CGPointMake(storesView.center.x, self.view.center.y);
+    [displayBuyView addSubview:storesView];
+    
+    
     // Create array of all shop buttons one time only
     if (self.isPhysicsAdded == NO) {
-        for (ShopButton *shopButton in displayBuyView.subviews) {
-            if ([shopButton isKindOfClass:[ShopButton class]]) {
+        for (StoreButton *shopButton in displayBuyView.subviews) {
+            if ([shopButton isKindOfClass:[StoreButton class]]) {
                 [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:shopButton.frame]];
             }
         }
     }
 }
 
+- (void) showBuyScreen
+{
+    // We don't need uinavigationcontroller so...
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+//    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    //    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    
+    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
+    displayBuyView.hidden = NO;
+    
+    [UIView animateWithDuration:0.4 delay:0.2
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         displayBuyView.alpha = 1;
+                     }
+                     completion:nil];
+}
+
+- (void) hideBuyScreen
+{
+    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
+    
+    //    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
+    //    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
+    
+    [self addPhysics];
+    
+    [UIView animateWithDuration:0.7 delay:0.2
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         displayBuyView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         displayBuyView.hidden = YES;
+                         
+                         // We need uinavigationcontroller so...
+                         [self.navigationController setNavigationBarHidden:NO];
+                         
+                         
+                         NSUInteger count = 0;
+                         // shopButton.frame = [(UIView *)[buyButtonsInitPositions objectAtIndex:count] frame];
+                         // shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
+                         for (StoreButton *shopButton in displayBuyView.subviews) {
+                             if ([shopButton isKindOfClass:[StoreButton class]]) {
+                                 //                                 ShopButton *foo = (ShopButton *)[buyButtonsInitPositions objectAtIndex:count];
+                                 //                                 shopButton.frame = [(ShopButton *)[buyButtonsInitPositions objectAtIndex:count] frame];
+                                 shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
+                                 count++;
+                             }
+                         }
+                         [animator removeAllBehaviors];
+                     }];
+}
+
+
+- (void) displayBuyButtonForShops:(NSArray*)storesList
+{
+    UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
+    buyButton.tag = 7;
+    [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
+    buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
+    buyButton.frame = CGRectMake(0, screenHeight + 50, screenWidth, 50);
+    buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
+    [buyButton setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:(22.0f/255.0f) green:(22.0f/255.0f) blue:(22.0f/255.0f) alpha:1.0f]] forState:UIControlStateHighlighted];
+    
+    [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
+    [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
+    [buyButton setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f]
+                    forState:UIControlStateHighlighted];
+    [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    
+    // There is no links to stores
+    if ([storesList count] > 0) {
+        [self.view insertSubview:buyButton atIndex:42];
+        [self buyScreenForStores:storesList];
+        [UIView animateWithDuration:0.4 delay:0.0
+                            options: UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
+                         }
+                         completion:^(BOOL completion){
+                             
+                         }];
+    }
+}
+
+- (UIScrollView*) displayButtonsForStores:(NSArray*)storesList
+{
+    UIScrollView *storesBtnsContainer = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 200, screenWidth, 42)];
+    storesBtnsContainer.backgroundColor = [UIColor clearColor];
+    storesBtnsContainer.showsHorizontalScrollIndicator = NO;
+    storesBtnsContainer.showsVerticalScrollIndicator = NO;
+    
+    [storesList enumerateObjectsUsingBlock:^(NSDictionary *store, NSUInteger idx, BOOL *stop) {
+        CGSize buttonSize = CGSizeMake((90 * screenWidth) / 100, 50.0f);
+        CGPoint buttonPos = CGPointMake( ((screenWidth - buttonSize.width) / 2), 16 * idx);
+        
+        StoreButton *storeButton = [[StoreButton alloc] initWithType:Itunes];
+        storeButton.frame = CGRectMake(buttonPos.x, buttonPos.y, buttonSize.width, buttonSize.height);
+        storeButton.storeLink = store[@"itunesLink"];
+        [storeButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
+        
+        [storeButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [storesBtnsContainer addSubview:storeButton];
+    }];
+    
+    UIView *storesBtnsContainerLastView = [storesBtnsContainer.subviews lastObject];
+    storesBtnsContainer.contentSize = CGSizeMake(screenWidth, CGRectGetMaxY(storesBtnsContainerLastView.frame));
+    
+    
+    return storesBtnsContainer;
+}
 
 - (void) setMediaViewForData:(NSDictionary*)data
 {
@@ -1123,8 +1174,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [loadingIndicator stopAnimating];
 }
-
-
 
 - (void) displayLabelForNextOrLastEpisodeForDate:(NSDate*)aDate andSeasonForEpisode:(NSString*)aEpisodeString
 {
@@ -1418,60 +1467,25 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     
 //    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
-    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
-    
-    animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-    gravity = [[UIGravityBehavior alloc] initWithItems:@[itunesBuyButton]];
-    collision = [[UICollisionBehavior alloc] initWithItems:@[itunesBuyButton]]; //itunesBuyButton
-    collision.collisionDelegate = self;
-    
-    UIDynamicItemBehavior* itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[itunesBuyButton]]; //itunesBuyButton
-    itemBehaviour.elasticity = 0.9;
-    itemBehaviour.allowsRotation = NO;
-    itemBehaviour.density = .4000;
-    
-    [animator addBehavior:gravity];
-    [animator addBehavior:itemBehaviour];
-    [animator addBehavior:collision];
-        
-    self.PhysicsAdded = YES;
+//    StoreButton *itunesBuyButton = (StoreButton*)[self.view viewWithTag:401];
+//    
+//    animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
+//    gravity = [[UIGravityBehavior alloc] initWithItems:@[itunesBuyButton]];
+//    collision = [[UICollisionBehavior alloc] initWithItems:@[itunesBuyButton]]; //itunesBuyButton
+//    collision.collisionDelegate = self;
+//    
+//    UIDynamicItemBehavior* itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[itunesBuyButton]]; //itunesBuyButton
+//    itemBehaviour.elasticity = 0.9;
+//    itemBehaviour.allowsRotation = NO;
+//    itemBehaviour.density = .4000;
+//    
+//    [animator addBehavior:gravity];
+//    [animator addBehavior:itemBehaviour];
+//    [animator addBehavior:collision];
+//        
+//    self.PhysicsAdded = YES;
 }
 
-- (void) hideBuyScreen
-{
-    UIView *displayBuyView = (UIView*)[self.view viewWithTag:1];
-    
-//    ShopButton *amazonBuyButton = (ShopButton*)[self.view viewWithTag:400];
-//    ShopButton *itunesBuyButton = (ShopButton*)[self.view viewWithTag:401];
-    
-    [self addPhysics];
-    
-    [UIView animateWithDuration:0.7 delay:0.2
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         displayBuyView.alpha = 0;
-                     }
-                     completion:^(BOOL finished){
-                         displayBuyView.hidden = YES;
-                         
-                         // We need uinavigationcontroller so...
-                         [self.navigationController setNavigationBarHidden:NO];
-
-                         
-                         NSUInteger count = 0;
-                         // shopButton.frame = [(UIView *)[buyButtonsInitPositions objectAtIndex:count] frame];
-                         // shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
-                         for (ShopButton *shopButton in displayBuyView.subviews) {
-                             if ([shopButton isKindOfClass:[ShopButton class]]) {
-//                                 ShopButton *foo = (ShopButton *)[buyButtonsInitPositions objectAtIndex:count];
-//                                 shopButton.frame = [(ShopButton *)[buyButtonsInitPositions objectAtIndex:count] frame];
-                                 shopButton.frame = [[buyButtonsInitPositions objectAtIndex:count] CGRectValue];
-                                 count++;
-                             }
-                         }
-                         [animator removeAllBehaviors];
-                     }];
-}
 
 
 - (void) hideTutorial
@@ -1691,13 +1705,27 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 #pragma mark - Misc
 
-- (void) openStore:(UIButton*)sender
+- (void) openStore:(StoreButton*)sender
 {
-    NSString *iTunesURLString = @"https://itunes.apple.com/fr/";
-    iTunesURLString = [iTunesURLString stringByAppendingString:self.itunesIDString];
-    iTunesURLString = [iTunesURLString stringByAppendingString:@"?uo=4&at=11lRd6"];
+    NSString *storeLink = @"";
     
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iTunesURLString]];
+    switch (sender.storeName) {
+        case Amazon:
+            storeLink = [NSString stringWithFormat:@"http://www.shound.fr"];
+            break;
+        case Itunes:
+            storeLink = [NSString stringWithFormat:@"https://itunes.apple.com/fr/%@?uo=4&at=11lRd6", sender.storeLink];
+            break;
+        case Fnac:
+            storeLink = [NSString stringWithFormat:@"http://www.shound.fr"];
+            break;
+        default:
+            return;
+            break;
+    }
+    
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:storeLink]];
 }
 
 - (void) cancelLocalNotificationWithValueForKey:(NSString*)aValue

@@ -21,7 +21,7 @@
 #import <XCDYouTubeKit/XCDYouTubeKit.h>
 
 //Custom views
-#import "ShopButton.h"
+#import "StoreButton.h"
 
 //Models
 #import "Discovery.h"
