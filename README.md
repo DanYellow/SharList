@@ -33,16 +33,17 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Correction de bugs
 - Ajout du numéro du prochain épisode
 
-### v 1.2.0
+### v 1.2.0 - Not Released
 
 - New API !
 
 - Gestion des likes Facebook (Possibilité remplir sa liste en fonction de ses likes Facebook)
-- Ajout d'un système de pourcentage vis-à-vis d'un film/série découvert (plus il est présent plus )
-- Possibilité de voir le nombre d'utilisateur qui suivent votre liste (ils ont mis votre liste parmi leur favoris)
+- Ajout d'un système de pourcentage vis-à-vis d'un film/série découvert
+- Possibilité de voir le nombre d'utilisateurs qui suivent votre liste (votre liste est parmi leur favoris)
 - Possibilité de poster un commentaire sur un film/série
 - Amélioration de l'ergonomie
 - Affichage du numéro du prochain épisode d'une série (c'est toujours mieux avec sa date)
+- Affichage de vos amis facebook dans les fiches. Vous n'avez même pas besoin de les avoir découvert pour voir ce qu'ils aiment
 
 # TODO
 
