@@ -299,6 +299,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
+
+    // SHOUND API
+    
     // This NSDict will be used to set id to local media
     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/beta"];
@@ -912,6 +915,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) displayBuyButtonForShops:(NSArray*)storesList
 {
+    // There is no links to stores
+    if ([storesList count] == 0) return;
+    
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
     buyButton.tag = 7;
@@ -927,19 +933,18 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                     forState:UIControlStateHighlighted];
     [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 
-    // There is no links to stores
-    if ([storesList count] > 0) {
-        [self.view insertSubview:buyButton atIndex:42];
-        [self buyScreenForStores:storesList];
-        [UIView animateWithDuration:0.4 delay:0.0
-                            options: UIViewAnimationOptionCurveEaseOut
-                         animations:^{
-                             buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
-                         }
-                         completion:^(BOOL completion){
-                             
-                         }];
-    }
+    [self.view insertSubview:buyButton atIndex:42];
+    [self buyScreenForStores:storesList];
+
+
+    [UIView animateWithDuration:0.4 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
+                     }
+                     completion:^(BOOL completion){
+                         
+                     }];
 }
 
 - (UIScrollView*) displayButtonsForStores:(NSArray*)storesList
@@ -975,8 +980,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) setMediaViewForData:(NSDictionary*)data
 {
-    themovieDBID = data[@"id"];
-
     UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
 
     UIImageView *imgMedia = [UIImageView new];
@@ -1090,7 +1093,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
-    
     
     infoMediaView.frame = CGRectMake(infoMediaView.frame.origin.x,
                                      CGRectGetMinY(infoMediaView.frame),

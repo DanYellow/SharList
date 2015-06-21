@@ -62,8 +62,6 @@
     UIActivityIndicatorView *loadingIndicator;
     
     PFPushManager *pfPushManager;
-    
-    __block NSString *themovieDBID;
 }
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
