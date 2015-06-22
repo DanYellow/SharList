@@ -13,14 +13,14 @@
 
 "Introduce the world what you love" = "Introduce the world what you like";
 
-"serie" = "TV Series";
-"movie" = "movies";
-"book" = "books";
+"series" = "TV Series";
+"movies" = "movies";
+"books" = "books";
 "buy" = "buy";
 "buy %@" = "buy %@";
 
-"serie singular" = "TV Serie";
-"movie singular" = "Movie";
+"serieU" = "TV Serie"; // U stands for unique
+"movieU" = "Movie";
 
 "push remote notif update list" = "One of your favorite discoveries was updated!";
 
@@ -121,8 +121,9 @@
 "release tomorrow" = "Tomorrow!";
 
 
-
-"Present of %@ discoveries" = "Present in %@ of your discoveries";
+"Presentf" = "present";
+"Presentm" = "present";
+"%@ %@ Present of %@ discoveries" = "%@ %@ in %@ of your discoveries";
 "Present in following friends list" = "In the list of following friends:";
 "p %@ discoveries" = "%@ of your discoveries";
 "Present in no discovery" = "Present in no discovery";

@@ -123,16 +123,6 @@
     [self.view addSubview:settingsTableview];
 }
 
-// User quits the app
-- (void) loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
-{
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbImageData"];
-    
-    [self.tabBarController setSelectedIndex:0];
-}
-
-
 - (void) showBetaSeriesConnect
 {
     UIAlertView *alert =[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"BSConnect", nil)
@@ -646,6 +636,18 @@
 - (void) loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result
                error:(NSError *)error
 {}
+
+// User quits the app
+- (void) loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
+{
+    [[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]
+                                              forKey:@"lastUserfbID"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbID"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentUserfbImageData"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"facebookFriendsList"];
+    
+    [self.tabBarController setSelectedIndex:0];
+}
 
 
 //- (void)updateSwitchAtIndexPath:(NSIndexPath *)indexPath

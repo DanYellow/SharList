@@ -42,7 +42,14 @@
     // Animate background of cell selected on press back button
     UITableView *tableView = (UITableView*)[self.view viewWithTag:4];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
-    [tableView deselectRowAtIndexPath:tableSelection animated:YES];    
+    [tableView deselectRowAtIndexPath:tableSelection animated:YES];
+    
+    
+    if ([userPreferences objectForKey:@"currentUserfbID"] && ![[userPreferences objectForKey:@"currentUserfbID"] isEqual:[userPreferences objectForKey:@"lastUserfbID"]] && [userPreferences objectForKey:@"lastUserfbID"] != nil) {
+        [userPreferences setObject:[userPreferences objectForKey:@"currentUserfbID"]
+                                                  forKey:@"lastUserfbID"];
+        [self userConnectionForFbID:[userPreferences objectForKey:@"currentUserfbID"]];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -171,9 +178,7 @@
     emptyResultLabel.hidden = YES;
     [self.searchResultsController.tableView addSubview:emptyResultLabel];
     
-    
-    
-    
+
     // Empty list view
     UIView *userTasteListTableViewEmptyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 120)];
     userTasteListTableViewEmptyView.backgroundColor = [UIColor clearColor];
@@ -266,14 +271,6 @@
     infosAboutSearchLabel.backgroundColor = [UIColor colorWithRed:1 green:0 blue:0 alpha:1];
     infosAboutSearchLabel.bounds = CGRectInset(infosAboutSearchLabel.frame, 10.0f, 10.0f);
 //    [self.searchController.view addSubview:infosAboutSearchLabel];
-    
-    
-//    CALayer *searchControllerBGimgLayer = [CALayer layer];
-//    searchControllerBGimgLayer.contents = (id)[UIImage imageNamed:@"triangles-bg.png"].CGImage;
-//    searchControllerBGimgLayer.masksToBounds = YES;
-//    searchControllerBGimgLayer.contentsGravity = @"resizeAspectFill";
-//    searchControllerBGimgLayer.frame = self.view.frame;
-//    [self.searchController.view.layer insertSublayer:searchControllerBGimgLayer atIndex:0];
 
     self.searchController.view.opaque = YES;
     self.searchController.view.frame = CGRectMake(0, 0, screenWidth, screenHeight);
@@ -299,15 +296,7 @@
     }
         
     // Test if it's the first use
-    if (![userPreferences boolForKey:@"firstTime"]) {
-        // Display and extra button for
-        //[userPreferences setBool:YES forKey:@"firstTime"];
-//        NSLog(@"Log tutorial");
-        
-//        UIView *foo = [[ UIView alloc] initWithFrame:self.view.bounds];
-//        foo.backgroundColor = [UIColor redColor];
-//        [[[UIApplication sharedApplication] keyWindow] addSubview:foo];
-    }
+    if (![userPreferences boolForKey:@"firstTime"]) {}
     
     if ([userPreferences objectForKey:@"currentUserfbID"]) {
         [self userConnectionForFbID:[userPreferences objectForKey:@"currentUserfbID"]];

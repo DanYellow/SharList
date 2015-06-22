@@ -273,6 +273,7 @@
     highlightMessagesSV.center = CGPointMake(self.view.center.x, highlightMessagesSV.center.y);
     highlightMessagesSV.pagingEnabled = YES;
     highlightMessagesSV.delegate = self;
+    highlightMessagesSV.tag = 3;
     highlightMessagesSV.showsHorizontalScrollIndicator = NO;
     
     if (![highlightMessagesSV isDescendantOfView:headerView]) {
@@ -314,15 +315,18 @@
     highlightMessagesPC.tag = 5;
     highlightMessagesPC.hidesForSinglePage = YES;
     highlightMessagesPC.backgroundColor = [UIColor clearColor];
+    [highlightMessagesPC addTarget:self action:@selector(changeComment:) forControlEvents:UIControlEventTouchUpInside];
     if (![highlightMessagesPC isDescendantOfView:headerView]) {
         [headerView addSubview:highlightMessagesPC];
     }
     
     
     // 10205919757172919
+    // We check if the user met have made a comment
     NSPredicate *predicateDiscover = [NSPredicate predicateWithFormat:@"fbId == %@", discoveryId];
     NSArray *filteredDiscover = [[NSArray alloc] initWithArray:[self.comments filteredArrayUsingPredicate:predicateDiscover]];
     
+    // We check if the current user has made a comment
     NSPredicate *predicateUser = [NSPredicate predicateWithFormat:@"fbId == %@", userId];
     NSArray *filteredUser = [[NSArray alloc] initWithArray:[self.comments filteredArrayUsingPredicate:predicateUser]];
     
@@ -336,10 +340,13 @@
 //    }
     
     if (self.userDiscoverId) {
-        // We add a null object at index 0 if the user discovered
-        // doesn't made a meeting
-        if ([filteredDatas count] == 1) {
+        
+        if ([filteredDiscover count] == 0) {
             [filteredDatas insertObject:[NSNull null] atIndex:0];
+        }
+        
+        if ([filteredUser count] == 0) {
+            [filteredDatas insertObject:[NSNull null] atIndex:1];
         }
         
         // There no data for current user and the user discovered
@@ -453,6 +460,17 @@
             }
         }
     }
+}
+
+- (void) changeComment:(UIPageControl*)sender
+{
+    NSUInteger page = sender.currentPage;
+    UIScrollView *highlightMessagesSV = (UIScrollView*)[self.view viewWithTag:3];
+    
+    CGRect frame = highlightMessagesSV.frame;
+    frame.origin.x = frame.size.width * page;
+    frame.origin.y = 0;
+    [highlightMessagesSV scrollRectToVisible:frame animated:YES];
 }
 
 - (void) showWarningMessage

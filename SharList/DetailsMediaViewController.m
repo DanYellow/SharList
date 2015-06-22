@@ -422,7 +422,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //    CGFloat numberOfIterationAmongDiscoveriesLabelY = ([self connected]) ? mediaDescriptionHeight : screenHeight - 83;
     
     numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, 0, screenWidth, 20);
-    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
+    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
     
     CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
     
@@ -430,20 +430,25 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         iterationAmongDiscoveriesPercent = 0.0f;
     }
     
+    
+    NSString *serieOrMovieString = ([self.mediaDatas[@"type"] isEqualToString:@"serie"]) ? NSLocalizedString(@"serieU", nil) : NSLocalizedString(@"movieU", nil);
+    NSString *presentString = ([self.mediaDatas[@"type"] isEqualToString:@"serie"]) ? NSLocalizedString(@"Presentf", nil) : NSLocalizedString(@"Presentm", nil);
+    
+    
     if (iterationAmongDiscoveriesPercent == 0) {
-        NSString *localizeKey = @"Present in no discovery";
-        numberOfIterationAmongDiscoveriesLabel.text = NSLocalizedString(localizeKey, nil);
+        NSString *localizeKey = @"%@ %@ in no discovery";
+        numberOfIterationAmongDiscoveriesLabel.text = [NSString stringWithFormat:NSLocalizedString(localizeKey, nil), serieOrMovieString, presentString];
     } else {
         NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
         [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
         
         NSString *percentApparition = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:iterationAmongDiscoveriesPercent]];
         
-        NSMutableAttributedString *NbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"Present of %@ discoveries", nil), percentApparition] attributes:nil];
+        NSMutableAttributedString *NbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"%@ %@ Present of %@ discoveries", nil), serieOrMovieString, presentString, percentApparition] attributes:nil];
         
         NSRange hellStringRange = [[NbrDiscoveriesAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), percentApparition]];
         
-        [NbrDiscoveriesAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
+        [NbrDiscoveriesAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
         
         numberOfIterationAmongDiscoveriesLabel.attributedText = NbrDiscoveriesAttrString;
     }
@@ -786,8 +791,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     displayBuyView.alpha = 0.0f;
 
     
-    UIVisualEffect *blurEffect;
-    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     
     UIVisualEffectView *visualEffectView;
     visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
@@ -998,7 +1002,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = imgMedia.frame;
     overlayLayer.name = @"overlayLayerImgMedia";
-    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.63].CGColor;
+    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.8].CGColor;
     [imgMedia.layer insertSublayer:overlayLayer atIndex:0];
     
     CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
@@ -1011,9 +1015,41 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     UILabel *mediaTitleLabel = (UILabel*)[self.view viewWithTag:4];
     
+    UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    
+    NSString *genresString = NSLocalizedString(@"Genres", nil);
+    
+    NSMutableArray *genresArray = [NSMutableArray new];
+    for (id genre in data[@"genres"]) {
+        [genresArray addObject:genre[@"name"]];
+    }
+    
+    genresString = [genresString stringByAppendingString:[genresArray componentsJoinedByString:@", "]];
+    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, CGRectGetMaxY(mediaTitleLabel.frame) + 30, screenWidth - 30, 25)];
+    mediaGenresLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    mediaGenresLabel.text = genresString;
+    mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
+    mediaGenresLabel.textAlignment = NSTextAlignmentLeft;
+    mediaGenresLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+    mediaGenresLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    mediaGenresLabel.layer.shadowRadius = 2.5;
+    mediaGenresLabel.layer.shadowOpacity = 0.75;
+    mediaGenresLabel.clipsToBounds = NO;
+    mediaGenresLabel.numberOfLines = 0;
+    mediaGenresLabel.backgroundColor = [UIColor clearColor];
+    mediaGenresLabel.layer.masksToBounds = NO;
+    mediaGenresLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
+    [mediaGenresLabel sizeToFit];
+    mediaGenresLabel.tag = 11;
+    mediaGenresLabel.alpha = (genresArray.count == 0) ? 0 : 1;
+    [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
+    
+    
+    infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    
     CGFloat mediaDescriptionWidthPercentage = 82.0;
     CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
-    CGFloat mediaDescriptionY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height + 55;
+    CGFloat mediaDescriptionY = CGRectGetMaxY(infoMediaViewLastView.frame) + 10;
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, 0)];
     
@@ -1023,6 +1059,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     } else {
         mediaDescription.text = [data[@"overview"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
+    
+    // http://www.amazon.fr/gp/product/B00RTG7894?ie=UTF8&camp=1642&creativeASIN=B00RTG7894&linkCode=xm2&tag=shound-21
+    
+//    http://www.amazon.fr/Breaking-Bad-Int%C3%A9grale-%C3%89dition-Collector/dp/B00FZ6JX5C/?_encoding=UTF8&camp=1642&creative=6746&linkCode=ur2&qid=1435001328&s=dvd&sr=1-1&tag=shound-21
+    
     
     mediaDescription.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
     if (mediaDescription.contentSize.height > mediaDescription.frame.size.height) {
@@ -1052,29 +1093,28 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [infoMediaView addSubview:mediaDescription];
     
     
-    UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, (unsigned long)NULL), ^(void) {
-        UIView *fbFriendsContainer = [self displayFacebookFriends];
-        fbFriendsContainer.tag = 14;
-        fbFriendsContainer.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 20,
-                                              CGRectGetWidth(fbFriendsContainer.frame),
-                                              CGRectGetHeight(fbFriendsContainer.frame));
-        [infoMediaView addSubview:fbFriendsContainer];
+    UIView *fbFriendsContainer = [self displayFacebookFriends];
+    fbFriendsContainer.tag = 14;
+    fbFriendsContainer.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 20,
+                                          CGRectGetWidth(fbFriendsContainer.frame),
+                                          CGRectGetHeight(fbFriendsContainer.frame));
+    [infoMediaView addSubview:fbFriendsContainer];
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-        UILabel *nbIterationAmongDiscoveries = [self displayNumberOfIterationsAmongDiscoveries];
-        nbIterationAmongDiscoveries.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
-                                                       CGRectGetWidth(nbIterationAmongDiscoveries.frame),
-                                                       CGRectGetHeight(nbIterationAmongDiscoveries.frame));
-        [infoMediaView addSubview:nbIterationAmongDiscoveries];
+    UILabel *nbIterationAmongDiscoveries = [self displayNumberOfIterationsAmongDiscoveries];
+    // This variable is here to manage the case where there is no facebook friends
+    NSUInteger fbFriendsContainerPosY = (fbFriendsContainer.frame.size.height == 0) ? CGRectGetMaxY(fbFriendsContainer.frame) : CGRectGetMaxY(infoMediaViewLastView.frame) + 30;
     
-    
-    
-//    });
-    
+    nbIterationAmongDiscoveries.frame = CGRectMake(0, fbFriendsContainerPosY,
+                                                   CGRectGetWidth(nbIterationAmongDiscoveries.frame),
+                                                   CGRectGetHeight(nbIterationAmongDiscoveries.frame));
+    [infoMediaView addSubview:nbIterationAmongDiscoveries];
+
+
+    // We display the betaseries button only if the user has his device language set to french
     if ([[[NSLocale preferredLanguages] objectAtIndex:0] isEqualToString:@"fr"] && [self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
         NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
         if (BSUserToken != nil || [BSUserToken isKindOfClass:[NSNull class]]) {
@@ -1091,6 +1131,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [infoMediaView addSubview:connectWithBSBtn];
         }
     }
+    
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
@@ -1109,34 +1150,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }
                      completion:nil];
     
-    
-    NSString *genresString = NSLocalizedString(@"Genres", nil);
-    
-    NSMutableArray *genresArray = [NSMutableArray new];
-    for (id genre in data[@"genres"]) {
-        [genresArray addObject:genre[@"name"]];
-    }
-    
-    genresString = [genresString stringByAppendingString:[genresArray componentsJoinedByString:@", "]];
-    
-    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, mediaDescriptionY - 34, screenWidth - 30, 25)];
-    mediaGenresLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    mediaGenresLabel.text = genresString;
-    mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
-    mediaGenresLabel.textAlignment = NSTextAlignmentLeft;
-    mediaGenresLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-    mediaGenresLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-    mediaGenresLabel.layer.shadowRadius = 2.5;
-    mediaGenresLabel.layer.shadowOpacity = 0.75;
-    mediaGenresLabel.clipsToBounds = NO;
-    mediaGenresLabel.numberOfLines = 0;
-    mediaGenresLabel.backgroundColor = [UIColor clearColor];
-    mediaGenresLabel.layer.masksToBounds = NO;
-    mediaGenresLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
-    [mediaGenresLabel sizeToFit];
-    mediaGenresLabel.tag = 11;
-    mediaGenresLabel.alpha = (genresArray.count == 0) ? 0 : 1;
-    [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
     
     [loadingIndicator stopAnimating];
 }
@@ -1451,8 +1464,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     self.PhysicsAdded = YES;
 }
 
-
-
 - (void) hideTutorial
 {
     self.navigationItem.hidesBackButton = NO;
@@ -1677,7 +1688,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     switch (sender.storeName)
     {
         case Amazon:
-            storeLink = [NSString stringWithFormat:@"http://www.shound.fr"];
+            sender.storeLink = @"B007MFUGIC";
+            storeLink = [NSString stringWithFormat:@"http://www.amazon.fr/gp/product/%@/?ie=UTF8&camp=1642&creative=19458&linkCode=as2&tag=shound-21", sender.storeLink];
             break;
         case Itunes:
             storeLink = [NSString stringWithFormat:@"https://itunes.apple.com/fr/%@?uo=4&at=11lRd6", sender.storeLink];

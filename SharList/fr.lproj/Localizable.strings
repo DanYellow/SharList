@@ -16,8 +16,10 @@
 "movie" = "films";
 "book" = "livres";
 
-"serie singular" = "Série";
-"movie singular" = "Film";
+
+
+"serieU" = "Série";
+"movieU" = "Film";
 
 "buy" = "acheter";
 "buy %@" = "acheter %@";
@@ -135,10 +137,14 @@
 "release today" = "Aujourd'hui !";
 "release tomorrow" = "Demain !";
 
-"Present of %@ discoveries" = "Présent dans %@ de vos découvertes";
+
+"Presentf" = "présente";
+"Presentm" = "présent";
+"%@ %@ Present of %@ discoveries" = "%@ %@ dans %@ de vos découvertes";
 "Present in following friends list" = "Présent dans la liste de :";
-"p %@ discoveries" = "%@ de vos découvertes";
-"Present in no discovery" = "Présent dans aucune découverte";
+"p %@ discoveries" = "%@ de vos découvertes"; // <- For NSMutableString
+"%@ %@ in no discovery" = "%@ %@ dans aucune découverte";
+
 
 // MediaCommentsViewController
 "yyyy/MM/dd at HH:mm" = "dd/MM/yyyy à HH:mm";
