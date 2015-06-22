@@ -44,7 +44,7 @@
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
     
-    
+    // Manage disconnect case
     if ([userPreferences objectForKey:@"currentUserfbID"] && ![[userPreferences objectForKey:@"currentUserfbID"] isEqual:[userPreferences objectForKey:@"lastUserfbID"]] && [userPreferences objectForKey:@"lastUserfbID"] != nil) {
         [userPreferences setObject:[userPreferences objectForKey:@"currentUserfbID"]
                                                   forKey:@"lastUserfbID"];
@@ -1424,7 +1424,7 @@
 //            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
 //            f.numberStyle = NSNumberFormatterDecimalStyle;
 //            NSNumber *currentFbIduser = [f numberFromString:[userPreferences objectForKey:@"currentUserfbID"]];
-            userTaste.fbId = [[userPreferences objectForKey:@"currentUserfbID"] stringValue];
+            userTaste.fbId = [userPreferences objectForKey:@"currentUserfbID"];
             userTaste.isFavorite = @0; //User cannot favorite himself (by the way it's impossible technically)
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
             [self displayUserTasteList];

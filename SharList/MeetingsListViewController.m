@@ -50,6 +50,13 @@
         [window addSubview:connectView];
     }
     
+    // Manage disconnect case
+    if ([userPreferences objectForKey:@"currentUserfbID"] && ![[userPreferences objectForKey:@"currentUserfbID"] isEqual:[userPreferences objectForKey:@"lastUserfbID"]] && [userPreferences objectForKey:@"lastUserfbID"] != nil) {
+        [userPreferences setObject:[userPreferences objectForKey:@"currentUserfbID"]
+                            forKey:@"lastUserfbID"];
+        [tableView reloadData];
+    }
+    
     [self navigationItemRightButtonEnablingManagement];
 }
 
@@ -255,7 +262,7 @@
     segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
-    segmentedControlView.hidden = YES;
+//    segmentedControlView.hidden = YES;
     
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"All", nil), NSLocalizedString(@"Favorites", nil), @"Facebook"]];
     
@@ -319,7 +326,7 @@
     emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, -10.0f);
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
-    emptyFavoritesLabel.hidden = NO;
+    emptyFavoritesLabel.hidden = YES;
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
     // Message for no meetings /:
@@ -333,7 +340,7 @@
     emptyMeetingsLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emptyMeetingsLabel.backgroundColor = [UIColor clearColor];
     emptyMeetingsLabel.tag = 4;
-    emptyMeetingsLabel.hidden = YES;
+    emptyMeetingsLabel.hidden = NO;
     [userMeetingsListTableView addSubview:emptyMeetingsLabel];
     
     
@@ -786,8 +793,6 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    
-
     NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbId != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     
     // Count the number of distinct days
@@ -814,6 +819,8 @@
     if ([self.listOfDistinctsDay count] > 0) {
         UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
         segmentedControlView.hidden = NO;
+    } else {
+        [self manageEmptyViewForDatas:self.listOfDistinctsDay andAtableView:tableView];
     }
     
     for (NSString *dateString in listUniqueDays) {
@@ -893,49 +900,7 @@
     // We don't want the taste of the current user
     NSArray *meetings = [Discovery MR_findAllSortedBy:@"lastDiscovery" ascending:NO withPredicate:filterPredicates];
     
-    // Vous avez pas d'amis facebook sur Shound
-    UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
-    emptyFacebookFriendsLabelView.hidden = YES;
-    
-    // Vous n'avez pas de favoris user
-    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
-    emptyFavoritesLabel.hidden = YES;
-    
-    // Vous n'avez pas rencontré de personnes
-    UILabel *emptyMeetingsLabel = (UILabel*)[tableView viewWithTag:4];
-    emptyMeetingsLabel.hidden = YES;
-    
-    if ([meetings count] == 0) {
-        // We hide the segmented control on page load
-        // only if there is nothing among ALL meetings
-        // so user can have no favorites but he still has the segmentedControl
-        
-        UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-        switch (segmentedControl.selectedSegmentIndex) {
-            // Filter disabled
-            case 0:
-            {
-                emptyMeetingsLabel.hidden = NO;
-            }
-                break;
-                
-                // Favorites
-            case 1:
-            {
-                emptyFavoritesLabel.hidden = NO;
-            }
-                break;
-                
-            case 2:
-            {
-                emptyFacebookFriendsLabelView.hidden = NO;
-            }
-                break;
-            default:
-                break;
-        }
-    }
-    
+    [self manageEmptyViewForDatas:meetings andAtableView:tableView];
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
@@ -1205,6 +1170,52 @@
      [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbFriendID, (int)cellFrame.size.width, (int)cellFrame.size.height]]
                   placeholderImage:[UIImage imageNamed:@"TrianglesBG"]]; //10204498235807141
     [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
+
+}
+
+- (void) manageEmptyViewForDatas:(NSArray*)datas andAtableView:(UITableView*)tableView
+{
+    // Vous avez pas d'amis facebook sur Shound
+    UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
+    emptyFacebookFriendsLabelView.hidden = YES;
+    
+    // Vous n'avez pas de favoris user
+    UILabel *emptyFavoritesLabel = (UILabel*)[tableView viewWithTag:3];
+    emptyFavoritesLabel.hidden = YES;
+    
+    // Vous n'avez pas rencontré de personnes
+    UILabel *emptyMeetingsLabel = (UILabel*)[tableView viewWithTag:4];
+    emptyMeetingsLabel.hidden = YES;
+    if ([datas count] == 0) {
+        // We hide the segmented control on page load
+        // only if there is nothing among ALL meetings
+        // so user can have no favorites but he still has the segmentedControl
+        
+        UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
+        switch (segmentedControl.selectedSegmentIndex) {
+                // Filter disabled
+            case 0:
+            {
+                emptyMeetingsLabel.hidden = NO;
+            }
+                break;
+                
+                // Favorites
+            case 1:
+            {
+                emptyFavoritesLabel.hidden = NO;
+            }
+                break;
+                
+            case 2:
+            {
+                emptyFacebookFriendsLabelView.hidden = NO;
+            }
+                break;
+            default:
+                break;
+        }
+    }
 
 }
 

@@ -72,10 +72,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         }
     }
     
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
+//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMediaTutorial"];
         [self showTutorial];
-    }
+//    }
 }
 
 
@@ -747,7 +747,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     tutorialView.tag = 8;
     tutorialView.alpha = .25;
     tutorialView.opaque = NO;
-    [self.view insertSubview:tutorialView atIndex:4];
+    [[[UIApplication sharedApplication] keyWindow] addSubview:tutorialView];
     
     [UIView animateWithDuration:0.35 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -1466,11 +1466,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) hideTutorial
 {
+    
     self.navigationItem.hidesBackButton = NO;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
-    
-    UIView *tutorialView = (UIView*)[self.view viewWithTag:8];
+    UIView *tutorialView = (UIView*)[[[UIApplication sharedApplication] keyWindow] viewWithTag:8];
+
     [UIView animateWithDuration:0.25 delay:0.1
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
