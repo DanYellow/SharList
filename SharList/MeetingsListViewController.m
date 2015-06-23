@@ -329,10 +329,22 @@
     emptyFavoritesLabel.hidden = YES;
     [userMeetingsListTableView addSubview:emptyFavoritesLabel];
     
+    
+    NSMutableAttributedString *emptyMeetingsLabelAttrString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  to discover new things", nil)];
+    UIImage *refreshIcon = [[UIImage imageNamed:@"refreshBarItem"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    NSTextAttachment *textAttachment2 = [NSTextAttachment new];
+    textAttachment2.image = refreshIcon;
+    textAttachment2.bounds = CGRectMake(0, -10, 38.0, 38.0);
+
+    NSAttributedString *attrStringWithRefreshImage = [NSAttributedString attributedStringWithAttachment:textAttachment2];
+    
+    NSRange r2 = [[emptyMeetingsLabelAttrString string] rangeOfString:NSLocalizedString(@"Tap on ", nil)];
+    [emptyMeetingsLabelAttrString insertAttributedString:attrStringWithRefreshImage atIndex:(r2.location + r2.length)];
+    
     // Message for no meetings /:
     UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 110)];
     emptyMeetingsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
-    emptyMeetingsLabel.text = NSLocalizedString(@"You haven't met a person yet", nil);
+    emptyMeetingsLabel.attributedText = emptyMeetingsLabelAttrString;
     emptyMeetingsLabel.textColor = [UIColor whiteColor];
     emptyMeetingsLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyMeetingsLabel.numberOfLines = 0;

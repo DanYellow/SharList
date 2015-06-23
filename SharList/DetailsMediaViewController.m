@@ -72,10 +72,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         }
     }
     
-//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMediaTutorial"];
         [self showTutorial];
-//    }
+    }
 }
 
 
@@ -476,9 +476,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
     
     // We retrieve the list of facebook friends
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
+//    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
+    NSArray *facebookFriends = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"];
+
 //    NSPredicate *facebookFrienddbIdFilter = [NSPredicate predicateWithFormat:@"dbId != 0"];
-    NSArray *facebookFriends = [[Discovery MR_findAllWithPredicate:facebookFriendsFilter] valueForKey:@"fbId"];
+//    NSArray *facebookFriends = [[Discovery MR_findAllWithPredicate:facebookFriendsFilter] valueForKey:@"fbId"];
     
     NSString *paramsString = @"";
     NSMutableArray *paramsArray = [NSMutableArray new];

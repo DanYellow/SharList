@@ -50,7 +50,7 @@
 "nothing to update" = "Rien à synchroniser";
 
 // Meetingslistviewcontroller
-"You haven't met a person yet" = "Vous n'avez pas encore découvert d'autres utilisateurs.\nAppuyez sur le bouton \"rafraîchir\" pour découvrir de nouvelles choses";
+"Tap on  to discover new things" = "Appuyez sur   pour découvrir de nouvelles choses";
 "All" = "Toutes";
 "Favorites" = "Favoris";
 "no facebook friends" = "Aucun de vos amis Facebook n'est sur Shound";

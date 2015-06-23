@@ -125,6 +125,7 @@
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     loadingIndicator.hidesWhenStopped = YES;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
+    [loadingIndicator startAnimating];
     [self.view insertSubview:loadingIndicator atIndex:1000];
     
 
@@ -579,7 +580,7 @@
     NSString *linkAPI = [settingsDict valueForKey:@"apiPathV2"];
     linkAPI = [linkAPI stringByAppendingString:@"media.php/media/search"];
    // Loading indicator of the app
-    loadingIndicator = [[UIActivityIndicatorView alloc] init];
+    loadingIndicator = [UIActivityIndicatorView new];
     loadingIndicator.center = self.view.center;
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     loadingIndicator.hidesWhenStopped = YES;
@@ -593,9 +594,6 @@
             completion(responseObject[@"response"]);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"error : %@", error);
-//        UIAlertView *errConnectionAlertView = [[UIAlertView alloc] initWithTitle:@"Oups" message:@"Il semblerait qu'on ait du mal à afficher cette fiche. \n Réessayez plus tard." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-//        [errConnectionAlertView show];
-//        [loadingIndicator stopAnimating];
     }];
 }
 
@@ -672,7 +670,7 @@
                        nil];
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
     userTasteListTableView.hidden = YES;
-    [loadingIndicator startAnimating];
+    
     if (self.userTaste) {
         // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
         if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste likes]] != nil) {
@@ -804,7 +802,7 @@
 
         if (IsTableViewEmpty == YES) {
             userTasteListTableViewEmptyView.hidden = NO;
-            [loadingIndicator stopAnimating];
+//            [loadingIndicator stopAnimating];
             
             return 0;
         }
@@ -1420,7 +1418,7 @@
             
             NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
             userTaste.likes = arrayData;
-            
+            userTaste.lastDiscovery = [NSDate new];
 //            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
 //            f.numberStyle = NSNumberFormatterDecimalStyle;
 //            NSNumber *currentFbIduser = [f numberFromString:[userPreferences objectForKey:@"currentUserfbID"]];
