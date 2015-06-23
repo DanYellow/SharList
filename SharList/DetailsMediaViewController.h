@@ -19,6 +19,7 @@
 #import "CCARadialGradientLayer.h"
 #import <JLTMDbClient.h>
 #import <XCDYouTubeKit/XCDYouTubeKit.h>
+#import "JDStatusBarNotification.h"
 
 //Custom views
 #import "StoreButton.h"

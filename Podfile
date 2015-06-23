@@ -15,6 +15,7 @@ target "SharList" do
 	pod 'Parse', '~> 1.6'
 	pod 'XCDYouTubeKit', '~> 2.1'
 	# pod 'PromiseKit', '~> 2.0'
+	pod 'JDStatusBarNotification'
 end
 
 target "SharListTests" do

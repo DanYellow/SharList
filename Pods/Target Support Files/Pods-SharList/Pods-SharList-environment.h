@@ -102,6 +102,12 @@
 #define COCOAPODS_VERSION_MINOR_FBSDKShareKit 2
 #define COCOAPODS_VERSION_PATCH_FBSDKShareKit 0
 
+// JDStatusBarNotification
+#define COCOAPODS_POD_AVAILABLE_JDStatusBarNotification
+#define COCOAPODS_VERSION_MAJOR_JDStatusBarNotification 1
+#define COCOAPODS_VERSION_MINOR_JDStatusBarNotification 5
+#define COCOAPODS_VERSION_PATCH_JDStatusBarNotification 2
+
 // JLTMDbClient
 #define COCOAPODS_POD_AVAILABLE_JLTMDbClient
 #define COCOAPODS_VERSION_MAJOR_JLTMDbClient 0

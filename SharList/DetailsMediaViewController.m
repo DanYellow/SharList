@@ -30,7 +30,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // Tag list
 // 1 : displayBuyView (blurred view)
 // 2 : addMediaBtnItem
-// 3 : addRemoveMediaLabel
+// 3 : __undefined__
 // 4 : title label
 // 5 : mediaLikeNumberLabel
 // 6 : imgMedia
@@ -146,18 +146,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     infoMediaView.tag = 2;
     infoMediaView.showsVerticalScrollIndicator = YES;
     infoMediaView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
-    
-
-
-    UILabel *addRemoveMediaLabel = [[UILabel alloc] initWithFrame:CGRectMake(-5, 0, screenWidth - 5, 20)];
-    addRemoveMediaLabel.textColor = [UIColor whiteColor];
-    addRemoveMediaLabel.textAlignment = NSTextAlignmentRight;
-    
-    addRemoveMediaLabel.alpha = 0;
-    addRemoveMediaLabel.hidden = YES;
-    addRemoveMediaLabel.tag = 3;
-    [infoMediaView insertSubview:addRemoveMediaLabel atIndex:10];
-//    [self.view addSubview:addRemoveMediaLabel];
 
     
     self.userTaste = [Discovery MR_findFirstByAttribute:@"fbId"
@@ -190,24 +178,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         // Because imdbID's key is unique we check if this key is among user media list api key
         // Like the we are not screwed if we change api or CoreData'model structure
         if (![[[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
-            self.Added = NO;
+//            self.Added = NO;
             addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
-            addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
         } else {
             self.Added = YES;
             addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
-            addRemoveMediaLabel.text = NSLocalizedString(@"Deleted", nil);
         }
     } else {
         self.Added = NO;
         addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
-        addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
     }
-    
-//    UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"listMessagesNavIcon@2x"]
-//                                                                       style:UIBarButtonItemStylePlain
-//                                                                      target:self
-//                                                                      action:@selector(displayMessageForMediaWithId:)];
+
     
 
     if (![self connected]) {
@@ -1524,29 +1505,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) addAndRemoveMediaToList:(UIBarButtonItem*) sender
 {
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    UILabel *addRemoveMediaLabel = (UILabel*)[infoMediaView viewWithTag:3];
-    addRemoveMediaLabel.hidden = NO;
-    addRemoveMediaLabel.alpha = 1;
-    
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
         [self addMediaToUserList];
-        addRemoveMediaLabel.text = NSLocalizedString(@"Added", nil);
     }else{
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
         [self removeMediaToUserList];
-        addRemoveMediaLabel.text = NSLocalizedString(@"Deleted", nil);
     }
     
-    [UIView animateWithDuration:0.6 delay:0.1
-                        options: UIViewAnimationOptionCurveLinear
-                     animations:^{
-                         addRemoveMediaLabel.alpha = 0;
-                     }
-                     completion:^(BOOL finished){
-                         addRemoveMediaLabel.hidden = YES;
-                     }];
+    [JDStatusBarNotification showWithStatus:NSLocalizedString(@"list updated", nil)
+                               dismissAfter:3
+                                  styleName:@"JDStatusBarStyleDark"];
 }
 
 - (void) addMediaToUserList
