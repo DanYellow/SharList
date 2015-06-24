@@ -953,7 +953,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     for (NSString *key in sortedStoreList) {
         NSString *storeName = @"";
         StoreButton *storeButton;
-        if ([key isEqualToString:@"amazonLink"] && ![storesList[key] isKindOfClass:[NSNull class]]) {
+
+        if ([key isEqualToString:@"amazonDVD"] && ![storesList[key] isKindOfClass:[NSNull class]]) {
+            storeButton = [[StoreButton alloc] initWithType:Amazon];
+            storeButton.storeLink = storesList[key];
+            storeName = NSLocalizedString(@"amazon", nil);
+        } else if ([key isEqualToString:@"amazonBR"] && ![storesList[key] isKindOfClass:[NSNull class]]) {
             storeButton = [[StoreButton alloc] initWithType:Amazon];
             storeButton.storeLink = storesList[key];
             storeName = NSLocalizedString(@"amazon", nil);
