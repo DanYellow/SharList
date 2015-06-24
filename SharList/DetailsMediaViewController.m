@@ -307,7 +307,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                   self.mediaDatas = tempDict;
               }
               
-              
               [self displayBuyButtonForShops:[responseObject valueForKeyPath:@"response.storeLinks"]];
               
               
@@ -766,7 +765,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
 // Creates view for to buy media
-- (void) buyScreenForStores:(NSArray*)storesList
+- (void) buyScreenForStores:(NSDictionary*)storesList
 {
     UIView *displayBuyView = [[UIView alloc] initWithFrame:self.view.bounds];
     displayBuyView.tag = 1;
@@ -893,14 +892,17 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                          [storesView.subviews enumerateObjectsUsingBlock:^(StoreButton *storeButton, NSUInteger idx, BOOL *stop) {
                              if ([storeButton isKindOfClass:[StoreButton class]]) {
                                  storeButton.frame = [[buyButtonsInitPositions objectAtIndex:idx] CGRectValue];
+                                 
+                                 CGAffineTransform transform = CGAffineTransformRotate(CGAffineTransformIdentity, DegreesToRadians(0));
+                                 storeButton.transform = transform;
                              }
                          }];
                          [animator removeAllBehaviors];
                      }];
 }
 
-
-- (void) displayBuyButtonForShops:(NSArray*)storesList
+// It displays the button 'buy' at the bottom of the screen
+- (void) displayBuyButtonForShops:(NSDictionary*)storesList
 {
     // There is no links to stores
     if ([storesList count] == 0) return;
@@ -921,6 +923,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 
     [self.view insertSubview:buyButton atIndex:42];
+    // Display screen with all buttons to buy
     [self buyScreenForStores:storesList];
 
 
@@ -934,30 +937,55 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      }];
 }
 
-- (UIScrollView*) displayButtonsForStores:(NSArray*)storesList
+- (UIScrollView*) displayButtonsForStores:(NSDictionary*)storesList
 {
+
     UIScrollView *storesBtnsContainer = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 200, screenWidth, 42)];
     storesBtnsContainer.backgroundColor = [UIColor clearColor];
     storesBtnsContainer.showsHorizontalScrollIndicator = NO;
     storesBtnsContainer.showsVerticalScrollIndicator = NO;
+
+    CGSize buttonSize = CGSizeMake((90 * screenWidth) / 100, 50.0f);
     
-    [storesList enumerateObjectsUsingBlock:^(NSDictionary *store, NSUInteger idx, BOOL *stop) {
-        CGSize buttonSize = CGSizeMake((90 * screenWidth) / 100, 50.0f);
-        CGPoint buttonPos = CGPointMake( ((screenWidth - buttonSize.width) / 2), 16 * idx);
-        StoreButton *storeButton = [[StoreButton alloc] initWithType:Itunes];
+    NSUInteger idx = 0;
+    NSArray *sortedStoreList = [[storesList allKeys] sortedArrayUsingSelector: @selector(compare:)];
+    
+    for (NSString *key in sortedStoreList) {
+        NSString *storeName = @"";
+        StoreButton *storeButton;
+        if ([key isEqualToString:@"amazonLink"] && ![storesList[key] isKindOfClass:[NSNull class]]) {
+            storeButton = [[StoreButton alloc] initWithType:Amazon];
+            storeButton.storeLink = storesList[key];
+            storeName = NSLocalizedString(@"amazon", nil);
+        } else if ([key isEqualToString:@"fnacLink"] && ![storesList[key] isKindOfClass:[NSNull class]]) {
+            storeButton = [[StoreButton alloc] initWithType:Fnac];
+            storeButton.storeLink = storesList[key];
+            storeName = NSLocalizedString(@"fnac", nil);
+        } else if ([key isEqualToString:@"itunesLinkVF"] && ![storesList[key] isKindOfClass:[NSNull class]]) {
+            storeButton = [[StoreButton alloc] initWithType:Itunes];
+            storeButton.storeLink = storesList[key];
+            storeName = NSLocalizedString(@"itunesVF", nil);
+        } else if ([key isEqualToString:@"itunesLinkVO"] && ![storesList[key] isKindOfClass:[NSNull class]]) {
+            storeButton = [[StoreButton alloc] initWithType:Itunes];
+            storeButton.storeLink = storesList[key];
+            storeName = NSLocalizedString(@"itunesVO", nil);
+        } else {
+            // We dont want to shift the button so we dont increment the button pos if there is no datas
+            continue;
+        }
+        CGPoint buttonPos = CGPointMake( ((screenWidth - buttonSize.width) / 2), (buttonSize.height * idx) + (idx * 22));
         storeButton.frame = CGRectMake(buttonPos.x, buttonPos.y, buttonSize.width, buttonSize.height);
-        storeButton.storeLink = store[@"itunesLink"];
-        storeButton.tag = 401;
-        [storeButton setTitle:[@"itunes" uppercaseString] forState:UIControlStateNormal];
-        
+        [storeButton setTitle:[storeName uppercaseString] forState:UIControlStateNormal];
         [storeButton addTarget:self action:@selector(openStore:) forControlEvents:UIControlEventTouchUpInside];
         
         [storesBtnsContainer addSubview:storeButton];
         
         [buyButtonsInitPositions addObject:[NSValue valueWithCGRect:storeButton.frame]];
-    }];
+        
+        idx++;
+    }
 
-    
+
     UIView *storesBtnsContainerLastView = [storesBtnsContainer.subviews lastObject];
     storesBtnsContainer.contentSize = CGSizeMake(screenWidth, CGRectGetMaxY(storesBtnsContainerLastView.frame));
     
@@ -1431,14 +1459,14 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     NSArray *storeBtns = [storesView.subviews filteredArrayUsingPredicate:storePredicate];
 
     animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-    gravity = [[UIGravityBehavior alloc] initWithItems:storeBtns];
+    gravity = [[UIGravityBehavior alloc] initWithItems:@[[storeBtns firstObject]]];
     collision = [[UICollisionBehavior alloc] initWithItems:storeBtns];
     collision.collisionDelegate = self;
     
-    UIDynamicItemBehavior *itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:storeBtns];
+    UIDynamicItemBehavior *itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[[storeBtns firstObject]]];
     itemBehaviour.elasticity = 0.9;
     itemBehaviour.allowsRotation = NO;
-    itemBehaviour.density = .4000;
+    itemBehaviour.density = .90000;
     
     [animator addBehavior:gravity];
     [animator addBehavior:itemBehaviour];
@@ -1660,7 +1688,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     switch (sender.storeName)
     {
         case Amazon:
-            sender.storeLink = @"B007MFUGIC";
             storeLink = [NSString stringWithFormat:@"http://www.amazon.fr/gp/product/%@/?ie=UTF8&camp=1642&creative=19458&linkCode=as2&tag=shound-21", sender.storeLink];
             break;
         case Itunes:

@@ -138,6 +138,12 @@
 "release tomorrow" = "Demain !";
 "list updated" = "Liste mise à jour";
 
+// Store names :
+"amazon" = "amazon";
+"itunesVO" = "Itunes VO";
+"itunesVF" = "Itunes VF";
+"fnac" = "fnac";
+
 
 "Presentf" = "présente";
 "Presentm" = "présent";
