@@ -84,8 +84,10 @@
     // We get the datas of current user to compare it to the current list
     Discovery *currentUser = [Discovery MR_findFirstByAttribute:@"fbId"
                                                       withValue:[userPreferences objectForKey:@"currentUserfbID"]];
-    // Xcode can throw a NSLog if [currentUser taste] is nil
-    currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser likes]] mutableCopy];
+    // Xcode cannot throw a NSLog if [currentUser likes] is nil
+    if ([currentUser likes]) {
+        currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser likes]] mutableCopy];
+    }
     
     self.metUserTasteDict = [NSMutableDictionary new];
     self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet likes]] mutableCopy];
@@ -349,14 +351,15 @@
     if ([datas[@"isAnonymous"] boolValue] == YES) {
         return;
     }
-    int intWidthScreen = screenWidth;
-    int heightImg = ceilf(intWidthScreen / GOLDENRATIO);
+    
+    NSUInteger intWidthScreen = screenWidth;
+    NSUInteger heightImg = ceilf(intWidthScreen / GOLDENRATIO);
     
     NSString *fbMetUserString = self.metUserId;
-    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString, intWidthScreen, heightImg];
+    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString, intWidthScreen, heightImg];
     
     UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
-    [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:[UIImage animatedImageNamed:@"list-tab-icon2" duration:.1f]];
+    [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
     metUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
     metUserFBImgView.tag = 5;
     [metUserFBView insertSubview:metUserFBImgView atIndex:0];
@@ -562,8 +565,10 @@
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:self.metUserId]) {
             NSMutableArray *favsIDUpdatedList = [[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] mutableCopy];
             [favsIDUpdatedList removeObject:self.metUserId];
-            [[NSUserDefaults standardUserDefaults] setObject:favsIDUpdatedList forKey:@"favsIDUpdatedList"];
-            [[NSNotificationCenter defaultCenter] postNotificationName: @"seenFavUpdated" object:nil userInfo:nil];
+            [[NSUserDefaults standardUserDefaults] setObject:favsIDUpdatedList
+                                                      forKey:@"favsIDUpdatedList"];
+            [[NSNotificationCenter defaultCenter] postNotificationName: @"seenFavUpdated"
+                                                                object:nil userInfo:nil];
         }
     }
 }
@@ -596,8 +601,13 @@
     
     CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
     
-    if (isnan(commonTasteCountPercent) || isinf(commonTasteCountPercent)) {
+    if (isnan(commonTasteCountPercent)) {
         commonTasteCountPercent = 0.0f;
+    }
+    
+    // If the user has only 1% in common
+    if (commonTasteCountPercent == (float)1) {
+        commonTasteCountPercent = 0.01;
     }
     
     

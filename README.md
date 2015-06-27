@@ -40,7 +40,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Gestion des likes Facebook (Possibilité remplir sa liste en fonction de ses likes Facebook)
 - Ajout d'un système de pourcentage vis-à-vis d'un film/série découvert
 - Possibilité de voir le nombre d'utilisateurs qui suivent votre liste (votre liste est parmi leur favoris)
-- Possibilité de poster un commentaire sur un film/série
+- Possibilité de poster un commentaire sur un film/série. Avec un commentaire, une recommendation est toujours plus pertinente.
 - Amélioration de l'ergonomie
 - Affichage du numéro du prochain épisode d'une série (c'est toujours mieux avec sa date)
 - Affichage de vos amis facebook dans les fiches. Vous n'avez même pas besoin de les avoir découvert pour voir ce qu'ils aiment
@@ -49,10 +49,12 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 
 ###### 1.2.0
 - Voir les messages vides pour facebook no friends / access no granted - Done
-- Afficher les amis facebook qui ont le media parmi leur liste Shound
+- Afficher les amis facebook qui ont le media parmi leur liste Shound - Done
 - Afficher le taux de présence d'une fiche parmi **toutes** les listes Shound
 - Utiliser la nouvelle API pour gérer les liens vers les stores
 - Ajouter un système de like pour les messages + tri par pertinence (1.2.1 ?)
+- Possibilité d'acheter sur Amazon (Blu-ray ou DVD, et ce, tout en nous supportant)
+- Possibilité d'acheter une série ou un film dans sa version originale sous-titrée (dans la limite des disponibilité d'iTunes)
 
 ## Améliorations potentielles
 - Gérer le système de géoloc lors de l'actualisation par bouton (ça garde l'ancienne position) - **done !!!!**
@@ -80,7 +82,7 @@ User
 {
     "id":"174",
     "fbiduser":"1405994199720672",
-    "user_favs":
+    "list":
                 {
                     "book" : null, 
                     "movie" : [
@@ -135,6 +137,7 @@ _ Nombre de films / séries retirées
 - Post de 15 commentaires
 - Post de X commentaires...
 - Update d'un commentaire
+- Rencontrer tous ses amis facebook
 
 ## Pods dependancies
 

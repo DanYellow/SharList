@@ -802,7 +802,7 @@
 
         if (IsTableViewEmpty == YES) {
             userTasteListTableViewEmptyView.hidden = NO;
-//            [loadingIndicator stopAnimating];
+            [loadingIndicator stopAnimating];
             
             return 0;
         }
@@ -1461,7 +1461,7 @@
 
     NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
     NSString *userFbId = [FBSDKAccessToken currentAccessToken].userID;
-    
+    NSLog(@"userFbId : %@", userFbId);
     if (!userFbId) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"Facebook account issue", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alert show];
@@ -1489,8 +1489,7 @@
                                               JSONObjectWithData:data
                                               options:NSJSONReadingMutableContainers
                                               error:&error];
-
-                    if (!error) {
+                    if (!error && jsonData.count > 0) {
                         // If the server send and error
                         if ([jsonData objectForKey:@"error"]) {
                             sender.enabled = YES;
@@ -1503,7 +1502,7 @@
                                                                            cancelButtonTitle:@"OK"
                                                                            otherButtonTitles: nil];
                             [endSynchronize performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
-                            
+                            sender.enabled = YES;
                             [loadingIndicator stopAnimating];
                         } else {
                             NSMutableDictionary *userDatasFromServer = [[NSMutableDictionary alloc] initWithDictionary:jsonData[@"response"]];
@@ -1564,6 +1563,7 @@
 - (void) synchronizeUserListWithServer
 {
     UIButton *getUserFacebookLikesBtn = (UIButton*)[self.view viewWithTag:11];
+
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
     
     NSDictionary *parameters = @{@"fbiduser": [userPreferences objectForKey:@"currentUserfbID"], @"list": [self updateTasteForServer]};

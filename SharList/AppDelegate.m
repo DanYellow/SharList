@@ -240,32 +240,23 @@
         [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", (long)[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     }
     
-
-    if ([FBSDKAccessToken currentAccessToken] && [AFNetworkReachabilityManager sharedManager].isReachable) {
-//        FBSDKGraphRequest* friendsRequest = [FBSDKGraphRequest requestForMyFriends];
-//        [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-//                                                      NSDictionary* result,
-//                                                      NSError *error) {
-//            if (!error) {
-//                NSArray* friends;
-//                
-//                if ([[result objectForKey:@"data"] isEqual:[NSNull null]]) {
-//                    friends = @[];
-//                } else {
-//                    friends = [result objectForKey:@"data"];
-//                }
-//                
-//                [[NSUserDefaults standardUserDefaults] setObject:friends forKey:@"facebookFriendsList"];
-//            } else {
-//                if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
-//                    [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
-//                }
-//            }
-//        }];
+    // Every time user relauch app we check his friends
+    if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
+        [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?fields=first_name,last_name" parameters:nil]
+         startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+             if (!error) {
+                 NSArray* facebookFriends;
+                 
+                 if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
+                     facebookFriends = @[];
+                 } else {
+                     facebookFriends = [result valueForKeyPath:@"data"];
+                 }
+                 [[NSUserDefaults standardUserDefaults] setObject:facebookFriends forKey:@"facebookFriendsList"];
+             }
+         }];
     } else {
-        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] isEqual:[NSNull null]] || [[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] == nil) {
-            [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
-        }
+        [[NSUserDefaults standardUserDefaults] setObject:@[] forKey:@"facebookFriendsList"];
     }
 }
 

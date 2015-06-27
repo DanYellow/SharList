@@ -41,7 +41,8 @@
     }
 }
 
-- (void)viewDidLoad {
+- (void) viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
@@ -222,6 +223,9 @@
             [self updateMessageSendedStatus:NSLocalizedString(@"sent comment", nil) forColor:[UIColor colorWithRed:(0.0f/255.0f) green:(88.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
             [self.view endEditing:YES];
             [mediaCommentsViewController loadComments];
+            // It's useful if the user stay on the same page and wants to update his comment
+            self.havingComment = YES;
+            // [self.navigationController popViewControllerAnimated:YES];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             [self updateMessageSendedStatus:NSLocalizedString(@"sent comment", nil) forColor:[UIColor colorWithRed:(186.0f/255.0f) green:(0.0f/255.0f) blue:(9.0f/255.0f) alpha:1.0f]];
         }];

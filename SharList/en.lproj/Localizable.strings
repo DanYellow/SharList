@@ -122,7 +122,8 @@
 "list updated" = "List updated";
 
 // Store names :
-"amazon" = "amazon";
+"amazonBR" = "amazon Blu-ray";
+"amazonDVD" = "amazon DVD";
 "itunesVO" = "Itunes VO";
 "itunesVF" = "Itunes VF";
 "fnac" = "fnac";

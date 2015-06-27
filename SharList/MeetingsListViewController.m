@@ -390,7 +390,6 @@
                                                       withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     if ([currentUser likes]) {
         currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser likes]] mutableCopy];
-        
     }
 }
 
@@ -927,12 +926,7 @@
     
     [self.discoveries setObject:[meetings filteredArrayUsingPredicate:datePredicate]
                          forKey:dateString];
-    
-    if (section == 0) {
-//        NSLog(@"fi : %li", [[self.discoveries objectForKey:[[self.discoveries allKeys] objectAtIndex:section]] count]);
-    }
-    
-//    NSLog(@"foo : %@", self.view);
+
     
     return [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex:section]] count];
 }
@@ -1054,10 +1048,13 @@
     
     // If the user is a facebook friend so we display his facebook profile image
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[currentUserMet fbId]]) {
-        [self getImageCellForData:[currentUserMet fbId] aCell:cell];
+        [self getImageCellForData:[currentUserMet fbId]
+                            aCell:cell];
         
-        cell.imageView.image = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId] forDarkBG:NO];
-        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId] forDarkBG:YES];
+        cell.imageView.image = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
+                                                                                     forDarkBG:NO];
+        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
+                                                                                                forDarkBG:YES];
         cell.imageView.backgroundColor = [UIColor clearColor];
         cell.imageView.opaque = YES;
         cell.imageView.tag = indexPath.row;
@@ -1562,11 +1559,12 @@
 
 - (void) allowFacebookFriendsPermission
 {
-    FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+    FBSDKLoginManager *loginManager = [FBSDKLoginManager new];
     [loginManager logInWithReadPermissions:@[@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
         //TODO: process error or result.
         if (!error) {
             [self fetchUserFacebookFriendsReloadAfter:YES];
+            
         }
     }];
 }
@@ -1579,7 +1577,7 @@
          startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
              if (!error) {
                  NSArray* facebookFriends;
-
+                 
                  if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
                      facebookFriends = @[];
                  } else {
@@ -1587,7 +1585,7 @@
                  }
                  
                  [[NSUserDefaults standardUserDefaults] setObject:facebookFriends forKey:@"facebookFriendsList"];
-                 
+                 [self manageDisplayOfFacebookFriendsButton];
                  if (haveToReloadViewAfter) {
                      [self performSelectorOnMainThread:@selector(reloadTableview) withObject:nil waitUntilDone:YES];
                  }
@@ -1663,7 +1661,8 @@
         emptyFacebookFriendsLabel.text = NSLocalizedString(@"facebook shound not granted", nil);
         
         [fbSegCtrlBtn setTitle:NSLocalizedString(@"authorize fb friends", nil) forState:UIControlStateNormal];
-        [fbSegCtrlBtn addTarget:self action:@selector(allowFacebookFriendsPermission) forControlEvents:UIControlEventTouchUpInside];
+        [fbSegCtrlBtn addTarget:self action:@selector(allowFacebookFriendsPermission)
+               forControlEvents:UIControlEventTouchUpInside];
     } else {
         
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] count] > 0) {

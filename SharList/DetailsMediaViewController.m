@@ -44,6 +44,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 14 : fbFriendsContainer
 // 15 : titleBuyMedia
 // 16 : storesView
+// 17 : thumbFbFriendImg
 
 // 400 - 410 : Buttons buy range
 // 400 : Amazon
@@ -492,7 +493,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     if (error == nil) {
         NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        return serverResponse[@"response"];
+        NSPredicate *facebookFriendsForMedia = [NSPredicate predicateWithFormat:@"id IN %@", [serverResponse[@"response"] valueForKey:@"fbId" ]];
+        NSArray *facebookFriends = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"]  filteredArrayUsingPredicate:facebookFriendsForMedia];
+
+        return facebookFriends;
     } else {
         return @[];
     }
@@ -544,7 +548,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     int offsetX = (5 * screenWidth) / 100;
     int limitFriendsThumbs = 10;
-    CGFloat thumbFriendContainerSize = 66.0f;
+    CGFloat thumbFriendContainerSize = 70.0f;
     
     [facebookFriendsList enumerateObjectsUsingBlock:^(NSDictionary *friend, NSUInteger idx, BOOL *stop) {
         if (idx == limitFriendsThumbs) {
@@ -578,29 +582,57 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             return;
         }
         
-        NSURL *facebookFriendImgProfile = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%.0f&height=%.0f", friend[@"fbId"], thumbFriendContainerSize, thumbFriendContainerSize]];
+        NSURL *facebookFriendImgProfile = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%.0f&height=%.0f", friend[@"id"], thumbFriendContainerSize, thumbFriendContainerSize]];
         
-        UIImageView *thumbFbFriendImg = [[UIImageView alloc] initWithFrame:CGRectMake(offsetX + (idx * thumbFriendContainerSize) + (idx * 12),
-                                                                                          0,
+        UIButton *thumbFbFriendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [thumbFbFriendBtn addTarget:self action:@selector(seeFriendPatronym:) forControlEvents:UIControlEventTouchUpInside];
+        thumbFbFriendBtn.frame = CGRectMake(offsetX + (idx * thumbFriendContainerSize) + (idx * 12), 0, thumbFriendContainerSize, thumbFriendContainerSize);
+        thumbFbFriendBtn.backgroundColor = [UIColor clearColor];
+        
+        
+        UIImageView *thumbFbFriendImg = [[UIImageView alloc] initWithFrame:CGRectMake(0,
+                                                                                          -(thumbFriendContainerSize/2),
                                                                                           thumbFriendContainerSize,
                                                                                           thumbFriendContainerSize)];
         thumbFbFriendImg.backgroundColor = [UIColor clearColor];
         thumbFbFriendImg.clipsToBounds = YES;
-        
-        thumbFbFriendImg.layer.cornerRadius = 33;
+        thumbFbFriendImg.layer.anchorPoint = CGPointMake(.5, 0);
+        thumbFbFriendImg.layer.cornerRadius = thumbFriendContainerSize/2;
         thumbFbFriendImg.layer.borderColor = [[UIColor colorWithWhite:1 alpha:.1] CGColor];
         thumbFbFriendImg.layer.borderWidth = 1.0f;
+        thumbFbFriendImg.tag = 17;
         
+        CALayer *overlayLayer = [CALayer layer];
+        overlayLayer.frame = thumbFbFriendImg.frame;
+        overlayLayer.opacity = 0;
+        overlayLayer.name = @"overlayLayerThumbFbFriendImg";
+        overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.8].CGColor;
+        [thumbFbFriendImg.layer insertSublayer:overlayLayer atIndex:1];
+        
+        UILabel *friendPatronymLabel = [UILabel new];
+        friendPatronymLabel.text = friend[@"first_name"];
+        friendPatronymLabel.tag = 18;
+        [friendPatronymLabel sizeToFit];
+        friendPatronymLabel.frame = CGRectMake(0, CGRectGetHeight(thumbFbFriendBtn.frame) - CGRectGetHeight(friendPatronymLabel.frame) + 50,
+                                 CGRectGetWidth(thumbFbFriendBtn.frame), CGRectGetHeight(friendPatronymLabel.frame));
+        friendPatronymLabel.textColor = [UIColor whiteColor];
+        friendPatronymLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+        friendPatronymLabel.textAlignment = NSTextAlignmentCenter;
+
         [UIView transitionFromView:thumbFbFriendImg toView:thumbFbFriendImg
                           duration:1.0
                            options:UIViewAnimationOptionTransitionFlipFromLeft
                         completion:NULL];
         
         [thumbFbFriendImg setImageWithURL:facebookFriendImgProfile
-                             placeholderImage:nil];
+                         placeholderImage:nil];
         
         
-        [thumbsFriendsScrollView addSubview:thumbFbFriendImg];
+        [thumbFbFriendBtn addSubview:thumbFbFriendImg];
+        [thumbFbFriendBtn addSubview:friendPatronymLabel];
+        
+        
+        [thumbsFriendsScrollView addSubview:thumbFbFriendBtn];
     }];
     
     UIView *thumbsFriendsScrollViewLastView = [[thumbsFriendsScrollView subviews] lastObject];
@@ -627,6 +659,48 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [facebookFriendsContainer.layer addSublayer:numberOfIterationAmongDiscoveriesLabelLayerT];
 
     return facebookFriendsContainer;
+}
+
+- (void) seeFriendPatronym:(UIButton*)sender
+{
+    UIImageView *imgBtn = (UIImageView*)[sender viewWithTag:17];
+    UILabel *friendPatronymLabel = (UILabel*)[sender viewWithTag:18];
+    
+    CGFloat animDuration = .42;
+//    friendPatronymLabel.frame =
+    
+    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
+
+    if ([[self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn] opacity] == 0) {
+        [self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn].opacity = 1;
+        
+        [UIView animateWithDuration:animDuration
+                              delay:0.0
+                            options: UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             friendPatronymLabel.frame = CGRectMake(0, CGRectGetHeight(sender.frame) - CGRectGetHeight(friendPatronymLabel.frame) - 10,
+                                                                    CGRectGetWidth(sender.frame), CGRectGetHeight(friendPatronymLabel.frame));
+                         }
+                         completion:nil];
+    } else {
+        [self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn].opacity = 0;
+        
+        [UIView animateWithDuration:animDuration
+                              delay:0.0
+                            options: UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             friendPatronymLabel.frame = CGRectMake(0, CGRectGetHeight(sender.frame) - CGRectGetHeight(friendPatronymLabel.frame) + 50,
+                                                                    CGRectGetWidth(sender.frame), CGRectGetHeight(friendPatronymLabel.frame));
+                         }
+                         completion:nil];
+    }
+    
+    overlayAlphaAnim.duration = animDuration;
+    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    overlayAlphaAnim.fillMode = kCAFillModeForwards;
+    overlayAlphaAnim.removedOnCompletion = NO;
+    [[self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
+    
 }
 
 - (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
