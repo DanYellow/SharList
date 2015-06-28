@@ -326,7 +326,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               messagesBtn.frame = CGRectMake(0, 0, 55, 24);
               messagesBtn.backgroundColor = [UIColor clearColor];
               [messagesBtn setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f] forState:UIControlStateHighlighted];
-              messagesBtn.imageEdgeInsets = UIEdgeInsetsMake(0, messagesBtn.titleLabel.frame.size.width, 0, -messagesBtn.titleLabel.frame.size.width - 5);
+              messagesBtn.imageEdgeInsets = UIEdgeInsetsMake(0, messagesBtn.titleLabel.frame.size.width, 0, -messagesBtn.titleLabel.frame.size.width - 10);
               messagesBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.imageView.frame.size.width, 3, messagesBtn.imageView.frame.size.width + 10);
               messagesBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
               
@@ -666,9 +666,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIImageView *imgBtn = (UIImageView*)[sender viewWithTag:17];
     UILabel *friendPatronymLabel = (UILabel*)[sender viewWithTag:18];
     
-    CGFloat animDuration = .42;
-//    friendPatronymLabel.frame =
-    
+    CGFloat animDuration = .3;
     CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
 
     if ([[self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn] opacity] == 0) {

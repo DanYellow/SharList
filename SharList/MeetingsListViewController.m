@@ -951,6 +951,23 @@
     
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
+        cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
+        
+        UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+        UIVisualEffectView * selectedBackgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        selectedBackgroundView.frame = cell.contentView.bounds;
+        
+        cell.selectedBackgroundView = selectedBackgroundView;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.indentationLevel = 1;
+        cell.backgroundColor = [UIColor colorWithWhite:1 alpha:.06];
+        
+        cell.detailTextLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
+        cell.textLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
+        
+        
     }
     
     
@@ -1015,27 +1032,11 @@
     NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
     cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
   
-    cell.textLabel.text = textLabelString;
-    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
-    cell.backgroundColor = [UIColor colorWithWhite:1 alpha:.06];
-    
-    UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-    UIVisualEffectView * selectedBackgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
-    selectedBackgroundView.frame = cell.contentView.bounds;
-    
-    cell.selectedBackgroundView = selectedBackgroundView;
-    
     cell.model = [currentUserMet fbId];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.indentationLevel = 1;
     
-    cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
+    cell.textLabel.text = textLabelString;
     cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[currentUserMet lastDiscovery]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
     
-    
-    
-    cell.detailTextLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
-    cell.textLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
     
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:[currentUserMet fbId]]) {
         NSString *indicateFavUpdatedString = @" - ";

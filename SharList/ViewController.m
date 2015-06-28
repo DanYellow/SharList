@@ -839,7 +839,6 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-//    CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
     
     NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
     NSString *title, *year, *imdbID;
@@ -858,12 +857,16 @@
             UIView *bgColorView = [UIView new];
             [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
             [cell setSelectedBackgroundView:bgColorView];
+            
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.indentationLevel = 1;
+            
+            cell.textLabel.textColor = [UIColor whiteColor];
+            cell.detailTextLabel.text = year;
+            cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
+            cell.detailTextLabel.textColor = [UIColor colorWithRed:(59.0/255.0) green:(59.0/255.0) blue:(59.0/255.0) alpha:1];
         }
-        
-//        NSLog(@"name : %@", [rowsOfSection objectAtIndex:indexPath.row][@"name"]);
-//        NSLog(@"type : %@", [rowsOfSection objectAtIndex:indexPath.row][@"type"]);
-//        NSLog(@"imdbID : %@", [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"]);
-        
+
         NSDictionary *cellModelDict = @{
                                         @"name": [rowsOfSection objectAtIndex:indexPath.row][@"name"],
                                         @"type": [rowsOfSection objectAtIndex:indexPath.row][@"type"],
@@ -877,10 +880,6 @@
         year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
         cell.textLabel.text = title;
         
-        cell.textLabel.textColor = [UIColor whiteColor];
-        cell.detailTextLabel.text = year;
-        cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
-        cell.detailTextLabel.textColor = [UIColor colorWithRed:(59.0/255.0) green:(59.0/255.0) blue:(59.0/255.0) alpha:1];
         
         if (![userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
             if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
@@ -893,12 +892,13 @@
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
-        CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
         
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
         imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
         
         if (cell == nil) {
+            CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
+            
             cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
             cell.delegate = self;
             cell.rightUtilityButtons = [self rightCellButtons];
@@ -906,18 +906,22 @@
             UIView *bgColorView = [UIView new];
             [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
             [cell setSelectedBackgroundView:bgColorView];
+            
+            cell.delegate = self;
+            // For "Classic mode" we want a cell's background more opaque
+            cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.35];; //[UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
+            
+            // We hide this part to get easily datas
+            cell.textLabel.frame = cellFrame;
+            
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+            cell.textLabel.textColor = [UIColor whiteColor];
+            cell.alpha = .3f;
+            
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.indentationLevel = 1;
         }
-        cell.delegate = self;
-        // For "Classic mode" we want a cell's background more opaque
-        cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.35];; //[UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
         
-        
-        // We hide this part to get easily datas
-        cell.textLabel.frame = cellFrame;
-        
-        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
-        cell.textLabel.textColor = [UIColor whiteColor];
-
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
         
         if ([[rowsOfSection objectAtIndex:indexPath.row][@"type"] isEqualToString:@"serie"]) {
@@ -932,12 +936,10 @@
     
 
         cell.textLabel.text = title;
-        cell.alpha = .3f;
+
     }
     
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.indentationLevel = 1;
-    
+
     
     return cell;
 }
