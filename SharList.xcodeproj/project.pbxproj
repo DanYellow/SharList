@@ -37,6 +37,12 @@
 		1A21F2471B0A9852004BBE55 /* addMessageNavIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A21F2441B0A9852004BBE55 /* addMessageNavIcon@2x.png */; };
 		1A21F2481B0A9852004BBE55 /* addMessageNavIcon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A21F2451B0A9852004BBE55 /* addMessageNavIcon@3x.png */; };
 		1A36E3131A9D4C1C004B0DBC /* ConnectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36E3121A9D4C1C004B0DBC /* ConnectView.m */; };
+		1A3897961B3F1B8D00DC1905 /* like-comment-empty.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3897901B3F1B8D00DC1905 /* like-comment-empty.png */; };
+		1A3897971B3F1B8D00DC1905 /* like-comment-empty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3897911B3F1B8D00DC1905 /* like-comment-empty@2x.png */; };
+		1A3897981B3F1B8D00DC1905 /* like-comment-empty@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3897921B3F1B8D00DC1905 /* like-comment-empty@3x.png */; };
+		1A3897991B3F1B8D00DC1905 /* like-comment.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3897931B3F1B8D00DC1905 /* like-comment.png */; };
+		1A38979A1B3F1B8D00DC1905 /* like-comment@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3897941B3F1B8D00DC1905 /* like-comment@2x.png */; };
+		1A38979B1B3F1B8D00DC1905 /* like-comment@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3897951B3F1B8D00DC1905 /* like-comment@3x.png */; };
 		1A3BD0AA1B1653860014A407 /* warning-picto.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3BD0A71B1653860014A407 /* warning-picto.png */; };
 		1A3BD0AB1B1653860014A407 /* warning-picto@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3BD0A81B1653860014A407 /* warning-picto@2x.png */; };
 		1A3BD0AC1B1653860014A407 /* warning-picto@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A3BD0A91B1653860014A407 /* warning-picto@3x.png */; };
@@ -154,6 +160,12 @@
 		1A21F2451B0A9852004BBE55 /* addMessageNavIcon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "addMessageNavIcon@3x.png"; sourceTree = "<group>"; };
 		1A36E3111A9D4C1C004B0DBC /* ConnectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectView.h; sourceTree = "<group>"; };
 		1A36E3121A9D4C1C004B0DBC /* ConnectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectView.m; sourceTree = "<group>"; };
+		1A3897901B3F1B8D00DC1905 /* like-comment-empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "like-comment-empty.png"; sourceTree = "<group>"; };
+		1A3897911B3F1B8D00DC1905 /* like-comment-empty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "like-comment-empty@2x.png"; sourceTree = "<group>"; };
+		1A3897921B3F1B8D00DC1905 /* like-comment-empty@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "like-comment-empty@3x.png"; sourceTree = "<group>"; };
+		1A3897931B3F1B8D00DC1905 /* like-comment.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "like-comment.png"; sourceTree = "<group>"; };
+		1A3897941B3F1B8D00DC1905 /* like-comment@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "like-comment@2x.png"; sourceTree = "<group>"; };
+		1A3897951B3F1B8D00DC1905 /* like-comment@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "like-comment@3x.png"; sourceTree = "<group>"; };
 		1A3926F81B33903400F38B11 /* ShoundEntitiesV2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ShoundEntitiesV2.xcdatamodel; sourceTree = "<group>"; };
 		1A3BD0A71B1653860014A407 /* warning-picto.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-picto.png"; sourceTree = "<group>"; };
 		1A3BD0A81B1653860014A407 /* warning-picto@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning-picto@2x.png"; sourceTree = "<group>"; };
@@ -415,6 +427,12 @@
 				1AFE13721A32EEAB006F2366 /* meetingFavoriteUnselected@3x.png */,
 				1AF474561A4DCBAF003ED4AF /* trailer-icon@2x.png */,
 				1AF474571A4DCBAF003ED4AF /* trailer-icon@3x.png */,
+				1A3897901B3F1B8D00DC1905 /* like-comment-empty.png */,
+				1A3897911B3F1B8D00DC1905 /* like-comment-empty@2x.png */,
+				1A3897921B3F1B8D00DC1905 /* like-comment-empty@3x.png */,
+				1A3897931B3F1B8D00DC1905 /* like-comment.png */,
+				1A3897941B3F1B8D00DC1905 /* like-comment@2x.png */,
+				1A3897951B3F1B8D00DC1905 /* like-comment@3x.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -667,7 +685,9 @@
 				1A16F65D1A458929000BC4AB /* settings-tab-icon@3x.png in Resources */,
 				1A1515E91B07D1FE0083CCAD /* newMessageBtn@3x.png in Resources */,
 				1A91FE071B2358A400E8B5D7 /* FacebookSDKStrings.bundle in Resources */,
+				1A3897991B3F1B8D00DC1905 /* like-comment.png in Resources */,
 				1A1515E71B07D1FE0083CCAD /* newMessageBtn.png in Resources */,
+				1A3897981B3F1B8D00DC1905 /* like-comment-empty@3x.png in Resources */,
 				1A91FDFE1B2341F600E8B5D7 /* FacebookSDKStrings.strings in Resources */,
 				1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */,
 				1AFE13751A32EEAB006F2366 /* meetingFavoriteSelected@3x.png in Resources */,
@@ -678,6 +698,7 @@
 				1A95471A1A29E7DD002AC281 /* favorite-icon-message-alt@2x.png in Resources */,
 				1A21F2481B0A9852004BBE55 /* addMessageNavIcon@3x.png in Resources */,
 				1A9547191A29E7DD002AC281 /* favorite-icon-message-alt.png in Resources */,
+				1A3897961B3F1B8D00DC1905 /* like-comment-empty.png in Resources */,
 				1AF42CBA1ADB2463008622E6 /* locationMeetingIcon@3x.png in Resources */,
 				1A3BD0AB1B1653860014A407 /* warning-picto@2x.png in Resources */,
 				1AF42CBD1ADB2463008622E6 /* randomMeetingIcon@3x.png in Resources */,
@@ -688,6 +709,7 @@
 				1AF42CB91ADB2463008622E6 /* locationMeetingIcon@2x.png in Resources */,
 				1A3BD0AC1B1653860014A407 /* warning-picto@3x.png in Resources */,
 				1AF42CBC1ADB2463008622E6 /* randomMeetingIcon@2x.png in Resources */,
+				1A38979A1B3F1B8D00DC1905 /* like-comment@2x.png in Resources */,
 				1AE9E7AC1A26884D0072EF91 /* meetingFavoriteUnselected@2x.png in Resources */,
 				1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */,
 				1AF42CBB1ADB2463008622E6 /* randomMeetingIcon.png in Resources */,
@@ -698,11 +720,13 @@
 				1A95470F1A29E3A0002AC281 /* lens-icon-message@3x.png in Resources */,
 				1A21F2461B0A9852004BBE55 /* addMessageNavIcon.png in Resources */,
 				1A1251CC1ADDBEC500EA0506 /* refreshBarItem.png in Resources */,
+				1A3897971B3F1B8D00DC1905 /* like-comment-empty@2x.png in Resources */,
 				1AF42CB81ADB2463008622E6 /* locationMeetingIcon.png in Resources */,
 				1AF474581A4DCBB0003ED4AF /* trailer-icon@2x.png in Resources */,
 				1A16754F1A3F93E300AE7A9D /* InfoPlist.strings in Resources */,
 				1AF474591A4DCBB0003ED4AF /* trailer-icon@3x.png in Resources */,
 				1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */,
+				1A38979B1B3F1B8D00DC1905 /* like-comment@3x.png in Resources */,
 				1A95471D1A29E8B6002AC281 /* favorite-icon-message-alt@3x.png in Resources */,
 				1A16F65C1A458929000BC4AB /* settings-tab-icon@2x.png in Resources */,
 			);

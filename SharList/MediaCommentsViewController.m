@@ -194,6 +194,8 @@
     commentsTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0);
     commentsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     commentsTableView.allowsSelection = NO;
+    commentsTableView.rowHeight = UITableViewAutomaticDimension;
+    commentsTableView.estimatedRowHeight = 44.0;
     
     if (![commentsTableView isDescendantOfView:self.view]) {
         [self.view insertSubview:commentsTableView atIndex:1];
@@ -633,65 +635,114 @@
     static NSString *CellIdentifier = @"Cell";
     
     UITableViewCell *cell;
-    
+
     NSString *message, *dateMessageString;
+    
+    UITextView *messageLabel;
+    UIView *messageContainer;
+    UILabel *dateMessageLabel;
     
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         
+        CGRect cellFrame = [tableView rectForRowAtIndexPath:indexPath];
+        
         cell.backgroundColor = [UIColor clearColor];
+        cell.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        messageContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, floorf(((screenWidth * 89.375) / 100)), cellFrame.size.height)];
+        messageContainer.backgroundColor = [UIColor clearColor];
+        messageContainer.center = CGPointMake(self.view.center.x, messageContainer.center.y);
+        
+
+        messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 14, floorf(((screenWidth * 85.53125) / 100)), 76)];
+        messageLabel.editable = NO;
+        messageLabel.tag = 60;
+        messageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
+        messageLabel.textColor = [UIColor whiteColor];
+        messageLabel.textAlignment = NSTextAlignmentLeft;
+        messageLabel.showsVerticalScrollIndicator = NO;
+        messageLabel.textContainerInset = UIEdgeInsetsZero;
+        messageLabel.textContainer.lineFragmentPadding = 0;
+        messageLabel.scrollEnabled = NO;
+        messageLabel.backgroundColor = [UIColor clearColor];
+        
+        //    messageLabel.backgroundColor = [UIColor redColor];
+        
+
+        
+        CALayer *messageContainerBottomBorder = [CALayer layer];
+        messageContainerBottomBorder.frame = CGRectMake(0, cellFrame.size.height, messageContainer.frame.size.width, 1.0f);
+        messageContainerBottomBorder.backgroundColor = [UIColor colorWithRed:(87.0/255.0) green:(86.0/255.0) blue:(75.0/255.0) alpha:1.0].CGColor;
+        [messageContainer.layer addSublayer:messageContainerBottomBorder];
+        
+        
+        dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 15, messageContainer.frame.size.width, 13)];
+        dateMessageLabel.textAlignment = NSTextAlignmentRight;
+        dateMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
+        dateMessageLabel.textColor = [UIColor colorWithRed:(124.0/255.0) green:(124.0/255.0) blue:(124.0/255.0) alpha:1.0];
+        dateMessageLabel.layer.shadowColor = [UIColor blackColor].CGColor;
+        dateMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
+        dateMessageLabel.layer.shadowOpacity = .95f;
+        [messageContainer addSubview:dateMessageLabel];
+        
+        
+        UILongPressGestureRecognizer *longPressCellGesture = [[UILongPressGestureRecognizer alloc]
+                                                              initWithTarget:self action:@selector(displayComment:)];
+        longPressCellGesture.minimumPressDuration = 1.0; //seconds
+        [cell addGestureRecognizer:longPressCellGesture];
     }
     
-    CGRect cellFrame = [tableView rectForRowAtIndexPath:indexPath];
-
     
-    UIView *messageContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, floorf(((screenWidth * 89.375) / 100)), cellFrame.size.height)];
-    messageContainer.backgroundColor = [UIColor clearColor];
-    messageContainer.center = CGPointMake(self.view.center.x, messageContainer.center.y);
-
-    CALayer *messageContainerBottomBorder = [CALayer layer];
-    messageContainerBottomBorder.frame = CGRectMake(0, cellFrame.size.height, messageContainer.frame.size.width, 1.0f);
-    messageContainerBottomBorder.backgroundColor = [UIColor colorWithRed:(87.0/255.0) green:(86.0/255.0) blue:(75.0/255.0) alpha:1.0].CGColor;
-    [messageContainer.layer addSublayer:messageContainerBottomBorder];
     
     message = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"];
     
-    UITextView *messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 14, floorf(((screenWidth * 85.53125) / 100)), 76)];
+
+    
     messageLabel.text = message;
-    messageLabel.editable = NO;
-    messageLabel.tag = 60;
-    messageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
-    messageLabel.textColor = [UIColor whiteColor];
-   
-    messageLabel.showsVerticalScrollIndicator = NO;
-    messageLabel.scrollEnabled = NO;
-    messageLabel.contentInset = UIEdgeInsetsMake(-10, 0, 0, 0);
-    messageLabel.backgroundColor = [UIColor clearColor];
+    [messageLabel sizeToFit];
+    
+    
+    
+    [messageLabel.textContainer setSize:messageLabel.frame.size];
+    
+    
     
     [messageContainer addSubview:messageLabel];
+    
+    
+    NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
+    [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
+    
+//    UIButton *likeCommentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [likeCommentBtn addTarget:self action:@selector(likeComment:) forControlEvents:UIControlEventTouchUpInside];
+//    [likeCommentBtn setTitle:[numberFormatter stringFromNumber:@420] forState:UIControlStateNormal];
+//    likeCommentBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+//    [likeCommentBtn setImage:[UIImage imageNamed:@"like-comment-empty"]
+//                 forState:UIControlStateNormal];
+//    likeCommentBtn.frame = CGRectMake(3, CGRectGetHeight(cellFrame) - 40, 70, 22);
+//    likeCommentBtn.backgroundColor = [UIColor clearColor];
+//    [likeCommentBtn setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f] forState:UIControlStateHighlighted];
+//    likeCommentBtn.imageEdgeInsets = UIEdgeInsetsMake(0, likeCommentBtn.titleLabel.frame.size.width, 0, -likeCommentBtn.titleLabel.frame.size.width - 30);
+//    likeCommentBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -likeCommentBtn.imageView.frame.size.width, 3, likeCommentBtn.imageView.frame.size.width + 10);
+//    likeCommentBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+//    [messageContainer addSubview:likeCommentBtn];
+    
+    NSLog(@"%@", NSStringFromCGRect(messageLabel.frame));
+//    [self.cellsHeight addObject:[NSNumber numberWithFloat:CGRectGetMaxY(likeCommentBtn.frame)]];
+    
     
     dateMessageString = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.date.date"];
     
     // Exemple date : 2015-05-10 17:28:12
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.ssssss";
-    
     NSDate *dateMessage = [dateFormatter dateFromString:dateMessageString];
-    
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd at HH:mm" , nil);
     
-
-    UILabel *dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 15, messageContainer.frame.size.width, 13)];
-    dateMessageLabel.textAlignment = NSTextAlignmentRight;
     dateMessageLabel.text = [dateFormatter stringFromDate:dateMessage];
-    dateMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
-    dateMessageLabel.textColor = [UIColor colorWithRed:(124.0/255.0) green:(124.0/255.0) blue:(124.0/255.0) alpha:1.0];
-    dateMessageLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-    dateMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-    dateMessageLabel.layer.shadowOpacity = .95f;
-    [messageContainer addSubview:dateMessageLabel];
 
-    
+
     NSString *commentUserId = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"fbId"];
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:commentUserId]) {
         messageLabel.alpha = 1;
@@ -710,11 +761,6 @@
     
     
     [cell.contentView addSubview:messageContainer];
-    
-    UILongPressGestureRecognizer *longPressCellGesture = [[UILongPressGestureRecognizer alloc]
-                                          initWithTarget:self action:@selector(displayComment:)];
-    longPressCellGesture.minimumPressDuration = 1.0; //seconds
-    [cell addGestureRecognizer:longPressCellGesture];
     
     
     return cell;
@@ -737,13 +783,30 @@
     return [self.comments count];
 }
 
-//- (CGFloat) tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    return 85.0f;
-//}
+- (CGFloat) tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewAutomaticDimension;
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 115.0f;
+//    [self calculateHeightForConfiguredSizingCell:[tableView cellForRowAtIndexPath:indexPath]];
+    NSLog(@"hello : %@", [self.comments objectAtIndex:indexPath.row]);
+    CGSize labelHeight = [self heigtForCellwithString:[[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"]
+                                             withFont:[UIFont fontWithName:@"HelveticaNeue" size:14.0f]];
+    NSLog(@"labelHeight : %@", NSStringFromCGSize(labelHeight));
+    return labelHeight.height + 55;
+    return 135.0;
+}
+
+-(CGSize)heigtForCellwithString:(NSString *)stringValue withFont:(UIFont*)font{
+    CGSize constraint = CGSizeMake(floorf(((screenWidth * 89.375) / 100)),9999); // Replace 300 with your label width
+    NSDictionary *attributes = @{NSFontAttributeName: font};
+    CGRect rect = [stringValue boundingRectWithSize:constraint
+                                            options:         (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                         attributes:attributes
+                                            context:nil];
+    return rect.size;
+    
 }
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -766,6 +829,17 @@
 - (void) dismissModal
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void) likeComment:(UIButton*)sender
+{
+    if ([sender.imageView.image isEqual:[UIImage imageNamed:@"like-comment"]]) {
+        [sender setImage:[UIImage imageNamed:@"like-comment-empty"]
+                forState:UIControlStateNormal];
+    } else {
+        [sender setImage:[UIImage imageNamed:@"like-comment"]
+                forState:UIControlStateNormal];
+    }
 }
 
 #pragma mark - delegate function
