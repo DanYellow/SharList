@@ -655,7 +655,7 @@
         messageContainer.center = CGPointMake(self.view.center.x, messageContainer.center.y);
         
 
-        messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 14, floorf(((screenWidth * 85.53125) / 100)), 76)];
+        messageLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 14, floorf(((screenWidth * 87.53125) / 100)), 76)];
         messageLabel.editable = NO;
         messageLabel.tag = 60;
         messageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
@@ -666,10 +666,8 @@
         messageLabel.textContainer.lineFragmentPadding = 0;
         messageLabel.scrollEnabled = NO;
         messageLabel.backgroundColor = [UIColor clearColor];
+//        messageLabel.backgroundColor = [UIColor redColor];
         
-        //    messageLabel.backgroundColor = [UIColor redColor];
-        
-
         
         CALayer *messageContainerBottomBorder = [CALayer layer];
         messageContainerBottomBorder.frame = CGRectMake(0, cellFrame.size.height, messageContainer.frame.size.width, 1.0f);
@@ -789,13 +787,16 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    [self calculateHeightForConfiguredSizingCell:[tableView cellForRowAtIndexPath:indexPath]];
-    NSLog(@"hello : %@", [self.comments objectAtIndex:indexPath.row]);
-    CGSize labelHeight = [self heigtForCellwithString:[[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"]
-                                             withFont:[UIFont fontWithName:@"HelveticaNeue" size:14.0f]];
-    NSLog(@"labelHeight : %@", NSStringFromCGSize(labelHeight));
-    return labelHeight.height + 55;
-    return 135.0;
+    NSString *message = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"];
+    CGSize constraint = CGSizeMake(floorf(((screenWidth * 87.53125) / 100)) - (floorf(((screenWidth * 13.53125) / 100)) * 2), 20000.0f);
+    CGRect size = [message boundingRectWithSize:constraint
+                                     options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                  attributes:@{NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue" size:14.0f]}
+                                     context:nil];
+    CGFloat height = MAX(CGRectGetHeight(size), 44.0f);
+    
+
+    return height + 30;
 }
 
 -(CGSize)heigtForCellwithString:(NSString *)stringValue withFont:(UIFont*)font{
