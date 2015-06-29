@@ -150,7 +150,9 @@
 "no comment user" = "You haven't yet comment";
 "close" = "Close";
 "warning message" = "Some comments can spoil \n \n Press and hold to display them";
-"your comment" = "Your comment • ";
+"your comment" = "Your comment \n";
+"by relevance" = "By relevance";
+"by date" = "By date";
 
 //PostCommentsViewController
 "comments" = "comments";

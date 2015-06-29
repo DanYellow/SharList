@@ -182,7 +182,7 @@
 {
     // Table view
     UITableView *commentsTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
-                                                                                   80,
+                                                                                   70,
                                                                                    screenWidth,
                                                                                    CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds) - 98)
                                                                   style:UITableViewStylePlain];
@@ -282,7 +282,6 @@
         [headerView addSubview:highlightMessagesSV];
     }
     
-
     CALayer *highlightMessagesSVBottomBorder = [CALayer layer];
     highlightMessagesSVBottomBorder.frame = CGRectMake(-(highlightMessagesSV.frame.size.width / 2), highlightMessagesSV.frame.size.height - 1, screenWidth*3, 1.0f);
     highlightMessagesSVBottomBorder.backgroundColor = [UIColor whiteColor].CGColor;
@@ -293,6 +292,23 @@
     highlightMessagesSVTopBorder.backgroundColor = [UIColor whiteColor].CGColor;
     [highlightMessagesSV.layer addSublayer:highlightMessagesSVTopBorder];
     
+    UIView *headerViewLastView = [[headerView subviews] lastObject];
+    
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"by date", nil), NSLocalizedString(@"by relevance", nil)]];
+    
+    segmentedControl.frame = CGRectMake(10, CGRectGetMaxY(headerViewLastView.frame) + 9, screenWidth - 20, 30);
+    [segmentedControl addTarget:self action:@selector(sortTableview:) forControlEvents: UIControlEventValueChanged];
+    segmentedControl.selectedSegmentIndex = 0;
+    segmentedControl.tintColor = [UIColor whiteColor];
+    
+    // There is no segmented control if there is only one comment
+    if (![segmentedControl isDescendantOfView:headerView] && [self.comments count] > 1) {
+        [headerView addSubview:segmentedControl];
+    }
+    
+    headerViewLastView = [[headerView subviews] lastObject];
+    
+    headerView.frame = CGRectMake(0, 0, screenWidth, CGRectGetMaxY(headerViewLastView.frame) + 10);
     
     commentsTableView.tableHeaderView = headerView;
     
@@ -561,25 +577,25 @@
 
     NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId};
     
-        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-        [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
-        
-        [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            if (responseObject[@"response"] != nil) {
-                self.comments = responseObject[@"response"];
-                
-                if ([commentsTableView isDescendantOfView:self.view]) {
-                    if ([self.comments count] >= 1) {
-                        [self displayDiscoverAndUserCommentForDatas];
-                    }
-                    [commentsTableView reloadData];
-                } else {
-                    [self displayComments];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
+    
+    [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (responseObject[@"response"] != nil) {
+            self.comments = responseObject[@"response"];
+            
+            if ([commentsTableView isDescendantOfView:self.view]) {
+                if ([self.comments count] >= 1) {
+                    [self displayDiscoverAndUserCommentForDatas];
                 }
+                [commentsTableView reloadData];
+            } else {
+                [self displayComments];
             }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [messagesLoadingIndicator stopAnimating];
-        }];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [messagesLoadingIndicator stopAnimating];
+    }];
     
 }
 
@@ -642,10 +658,15 @@
     UIView *messageContainer;
     UILabel *dateMessageLabel;
     
+//    NSNumberFormatter *numberFormatter;
+    // Exemple date : 2015-05-10 17:28:12
+    NSDateFormatter *dateFormatter;
+    
+    UIButton *likeCommentBtn;
+    CGRect cellFrame = [tableView rectForRowAtIndexPath:indexPath];
+
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        
-        CGRect cellFrame = [tableView rectForRowAtIndexPath:indexPath];
         
         cell.backgroundColor = [UIColor clearColor];
         cell.contentView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -667,6 +688,7 @@
         messageLabel.scrollEnabled = NO;
         messageLabel.backgroundColor = [UIColor clearColor];
 //        messageLabel.backgroundColor = [UIColor redColor];
+        [messageContainer addSubview:messageLabel];
         
         
         CALayer *messageContainerBottomBorder = [CALayer layer];
@@ -675,13 +697,15 @@
         [messageContainer.layer addSublayer:messageContainerBottomBorder];
         
         
-        dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 15, messageContainer.frame.size.width, 13)];
-        dateMessageLabel.textAlignment = NSTextAlignmentRight;
+        dateMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, cellFrame.size.height - 25, 0, 50)];
+        dateMessageLabel.textAlignment = NSTextAlignmentLeft;
+        dateMessageLabel.numberOfLines = 0;
         dateMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
         dateMessageLabel.textColor = [UIColor colorWithRed:(124.0/255.0) green:(124.0/255.0) blue:(124.0/255.0) alpha:1.0];
         dateMessageLabel.layer.shadowColor = [UIColor blackColor].CGColor;
         dateMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
         dateMessageLabel.layer.shadowOpacity = .95f;
+        
         [messageContainer addSubview:dateMessageLabel];
         
         
@@ -689,66 +713,64 @@
                                                               initWithTarget:self action:@selector(displayComment:)];
         longPressCellGesture.minimumPressDuration = 1.0; //seconds
         [cell addGestureRecognizer:longPressCellGesture];
+        
+        dateFormatter = [NSDateFormatter new];
+        dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.ssssss";
+        
+        likeCommentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [likeCommentBtn addTarget:self action:@selector(likeComment:) forControlEvents:UIControlEventTouchUpInside];
+//        [likeCommentBtn setTitle:[numberFormatter stringFromNumber:@420] forState:UIControlStateNormal];
+        likeCommentBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+        likeCommentBtn.frame = CGRectMake(0, cellFrame.size.height - 28, 70, 25); //
+        likeCommentBtn.backgroundColor = [UIColor clearColor];
+        [likeCommentBtn.imageView setContentMode:UIViewContentModeScaleAspectFit];
+        [likeCommentBtn setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f] forState:UIControlStateHighlighted];
+        likeCommentBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        likeCommentBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 3, 0, -likeCommentBtn.titleLabel.frame.size.width - 10);
+        likeCommentBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 1, 0);
+        likeCommentBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+        
+        
+        [messageContainer addSubview:likeCommentBtn];
+        
+        [cell.contentView addSubview:messageContainer];
     }
     
-    
+    likeCommentBtn.tag = 1000 + [[[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.id"] integerValue];
     
     message = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"];
-    
-
-    
     messageLabel.text = message;
     [messageLabel sizeToFit];
-    
-    
-    
     [messageLabel.textContainer setSize:messageLabel.frame.size];
     
     
+    [likeCommentBtn setTitle:[[self.comments objectAtIndex:indexPath.row] valueForKey:@"likesNumber"]
+                    forState:UIControlStateNormal];
     
-    [messageContainer addSubview:messageLabel];
-    
-    
-    NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
-    [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
-    
-//    UIButton *likeCommentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [likeCommentBtn addTarget:self action:@selector(likeComment:) forControlEvents:UIControlEventTouchUpInside];
-//    [likeCommentBtn setTitle:[numberFormatter stringFromNumber:@420] forState:UIControlStateNormal];
-//    likeCommentBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
-//    [likeCommentBtn setImage:[UIImage imageNamed:@"like-comment-empty"]
-//                 forState:UIControlStateNormal];
-//    likeCommentBtn.frame = CGRectMake(3, CGRectGetHeight(cellFrame) - 40, 70, 22);
-//    likeCommentBtn.backgroundColor = [UIColor clearColor];
-//    [likeCommentBtn setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f] forState:UIControlStateHighlighted];
-//    likeCommentBtn.imageEdgeInsets = UIEdgeInsetsMake(0, likeCommentBtn.titleLabel.frame.size.width, 0, -likeCommentBtn.titleLabel.frame.size.width - 30);
-//    likeCommentBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -likeCommentBtn.imageView.frame.size.width, 3, likeCommentBtn.imageView.frame.size.width + 10);
-//    likeCommentBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
-//    [messageContainer addSubview:likeCommentBtn];
-    
-    NSLog(@"%@", NSStringFromCGRect(messageLabel.frame));
-//    [self.cellsHeight addObject:[NSNumber numberWithFloat:CGRectGetMaxY(likeCommentBtn.frame)]];
-    
+    // User already like this comment
+    if ([[[self.comments objectAtIndex:indexPath.row] valueForKey:@"isLiked"] boolValue]) {
+        [likeCommentBtn setImage:[UIImage imageNamed:@"like-comment"] forState:UIControlStateNormal];
+    } else {
+        [likeCommentBtn setImage:[UIImage imageNamed:@"like-comment-empty"] forState:UIControlStateNormal];
+    }
     
     dateMessageString = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.date.date"];
     
-    // Exemple date : 2015-05-10 17:28:12
-    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.ssssss";
+    
     NSDate *dateMessage = [dateFormatter dateFromString:dateMessageString];
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd at HH:mm" , nil);
     
     dateMessageLabel.text = [dateFormatter stringFromDate:dateMessage];
-
 
     NSString *commentUserId = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"fbId"];
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:commentUserId]) {
         messageLabel.alpha = 1;
         
         NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", commentUserId]];
-        NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] stringByAppendingString:@" • "];
+        NSString *firstNameFirstLetter = [[[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""] stringByAppendingString:@"\n"]; // •
         
         dateMessageLabel.text = [firstNameFirstLetter stringByAppendingString:dateMessageLabel.text];
+        
     } else if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"] isEqualToString:commentUserId] ) {
         messageLabel.alpha = 1;
     
@@ -757,9 +779,18 @@
         messageLabel.alpha = .005;
     }
     
+    [dateMessageLabel sizeToFit];
+    dateMessageLabel.frame = CGRectMake(CGRectGetWidth(messageContainer.frame) - CGRectGetWidth(dateMessageLabel.frame),
+                                        cellFrame.size.height - 28,
+                                        CGRectGetWidth(dateMessageLabel.frame),
+                                        CGRectGetHeight(dateMessageLabel.frame));
     
-    [cell.contentView addSubview:messageContainer];
-    
+    likeCommentBtn.frame = CGRectMake(CGRectGetMinX(dateMessageLabel.frame) - CGRectGetWidth(likeCommentBtn.frame) - 10,
+                                      CGRectGetMinY(likeCommentBtn.frame) + 1,
+                                      CGRectGetWidth(likeCommentBtn.frame),
+                                      CGRectGetHeight(likeCommentBtn.frame));
+
+
     
     return cell;
 }
@@ -777,6 +808,7 @@
         // We show the header if there are messages
         tableView.tableHeaderView.hidden = NO;
     }
+
     
     return [self.comments count];
 }
@@ -796,19 +828,9 @@
     CGFloat height = MAX(CGRectGetHeight(size), 44.0f);
     
 
-    return height + 30;
+    return height + 40;
 }
 
--(CGSize)heigtForCellwithString:(NSString *)stringValue withFont:(UIFont*)font{
-    CGSize constraint = CGSizeMake(floorf(((screenWidth * 89.375) / 100)),9999); // Replace 300 with your label width
-    NSDictionary *attributes = @{NSFontAttributeName: font};
-    CGRect rect = [stringValue boundingRectWithSize:constraint
-                                            options:         (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
-                                         attributes:attributes
-                                            context:nil];
-    return rect.size;
-    
-}
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -834,13 +856,62 @@
 
 - (void) likeComment:(UIButton*)sender
 {
+    NSUInteger numberLikes = [sender.titleLabel.text integerValue];
     if ([sender.imageView.image isEqual:[UIImage imageNamed:@"like-comment"]]) {
         [sender setImage:[UIImage imageNamed:@"like-comment-empty"]
                 forState:UIControlStateNormal];
+        numberLikes--;
     } else {
         [sender setImage:[UIImage imageNamed:@"like-comment"]
                 forState:UIControlStateNormal];
+        numberLikes++;
     }
+
+    // Unbalanced calls to begin/end appearance transitions for
+    [sender setTitle:[[NSNumber numberWithInteger:numberLikes] stringValue]
+                    forState:UIControlStateNormal];
+    
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(likeCommentQueryForId:) object:nil];
+    [self performSelector:@selector(likeCommentQueryForId:) withObject:[NSNumber numberWithInteger:sender.tag - 1000] afterDelay:0.0];
+}
+
+- (void) likeCommentQueryForId:(NSNumber*)commentId
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:@"likecomment" forHTTPHeaderField:@"X-Shound"];
+    
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comment/like"];
+    NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"commentId": commentId};
+    
+    [manager POST:shoundAPIPath parameters:parameters success:nil failure:nil];
+}
+
+- (void) sortTableview:(UISegmentedControl*)sender
+{
+    UITableView *commentsTableView = (UITableView*)[self.view viewWithTag:1];
+    NSSortDescriptor *sorter;
+    
+    switch (sender.selectedSegmentIndex) {
+        case 0:
+        {
+            sorter = [NSSortDescriptor sortDescriptorWithKey:@"comment.date.date"
+                                                                     ascending:NO];
+        }
+            break;
+            
+        case 1:
+        {
+            sorter = [NSSortDescriptor sortDescriptorWithKey:@"likesNumber"
+                                                   ascending:NO];
+        }
+            break;
+            
+        default:
+            break;
+    }
+    
+    self.comments = [[self.comments sortedArrayUsingDescriptors:[NSArray arrayWithObject:sorter]] mutableCopy];
+    [commentsTableView reloadData];
 }
 
 #pragma mark - delegate function

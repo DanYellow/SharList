@@ -168,7 +168,9 @@
 "no comment user" = "Vous n'avez pas encore commenté";
 "close" = "Fermer";
 "warning message for comments" = "Certains commentaires peuvent SPOILER \n \n APPUyez longuement pour les afficher";
-"your comment" = "Votre commentaire • ";
+"your comment" = "Votre commentaire \n";
+"by relevance" = "Par pertinence";
+"by date" = "Par date";
 
 //PostCommentsViewController
 "comments" = "commentaires";
