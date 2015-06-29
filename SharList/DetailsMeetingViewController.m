@@ -798,6 +798,13 @@
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         cell.indentationLevel = 1;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        
+        UIView *bgColorView = [UIView new];
+        [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
+        [cell setSelectedBackgroundView:bgColorView];
+        
+        cell.alpha = .3f;
     }
     
     if (![currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
@@ -808,8 +815,6 @@
         }
     }
     
-    cell.alpha = .3f;
-
     cell.model = [rowsOfSection objectAtIndex:indexPath.row];
     
     if (imdbID != nil) {
@@ -822,13 +827,11 @@
         cell.detailTextLabel.text = @"";
     }
     
-    UIView *bgColorView = [UIView new];
-    [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
-    [cell setSelectedBackgroundView:bgColorView];
+
     
     cell.textLabel.text = title;
     
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
 //    cell.detailTextLabel.text = @"year";
 //    cell.detailTextLabel.textColor = [UIColor whiteColor];
     
