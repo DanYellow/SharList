@@ -12,11 +12,23 @@
 
 - (void) heightToFit
 {
+//    CGSize maxSize = CGSizeMake(self.frame.size.width, CGFLOAT_MAX);
+//    CGSize textSize = [self.text sizeWithFont:self.font constrainedToSize:maxSize lineBreakMode:self.lineBreakMode];
+    
+    
     CGSize maxSize = CGSizeMake(self.frame.size.width, CGFLOAT_MAX);
-    CGSize textSize = [self.text sizeWithFont:self.font constrainedToSize:maxSize lineBreakMode:self.lineBreakMode];
+    
+    NSStringDrawingOptions options = NSStringDrawingTruncatesLastVisibleLine |
+    NSStringDrawingUsesLineFragmentOrigin;
+    
+    NSDictionary *attr = @{NSFontAttributeName: self.font};
+    CGRect labelBounds = [self.text boundingRectWithSize:maxSize
+                                              options:options
+                                           attributes:attr
+                                              context:nil];
     
     CGRect labelRect = self.frame;
-    labelRect.size.height = textSize.height;
+    labelRect.size.height = CGRectGetHeight(labelBounds);
     [self setFrame:labelRect];
 }
 
