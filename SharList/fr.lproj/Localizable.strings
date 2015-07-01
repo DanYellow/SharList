@@ -118,8 +118,6 @@
 "Talk about this discover" = "Parler de cette découverte";
 
 // DetailsMediaViewController
-"Added" = "Ajouté";
-"Deleted" = "Supprimé";
 "Liked by %@ people" = "Aimé par %@ personnes";
 "%@" = "%@";
 "noconnection" = "Il semblerait que vous ne soyez pas connecté à Internet. \nConnectez-vous et réessayez.";
@@ -137,6 +135,8 @@
 "release today" = "Aujourd'hui !";
 "release tomorrow" = "Demain !";
 "list updated" = "Liste mise à jour";
+"AddToList" = "Ajouter à la liste";
+"RemoveToList" = "Retirer de la liste";
 
 // Store names :
 "amazonBR" = "amazon Blu-ray";

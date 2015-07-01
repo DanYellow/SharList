@@ -105,8 +105,6 @@
 "Talk about shound" = "Talk about Shound to my friends";
 
 // DetailsMediaViewController
-"Added" = "Added";
-"Deleted" = "Deleted";
 "Liked by %@ people" = "Liked by %@ people";
 "noconnection" = "It's looks like you're not connected to Internet. \nConnect your device and try again.";
 "nodescription" = "No description";
@@ -120,6 +118,8 @@
 "next episode %@" = "Next episode: %@";
 "release tomorrow" = "Tomorrow!";
 "list updated" = "List updated";
+"AddToList" = "Add to list";
+"RemoveToList" = "Remove from list";
 
 // Store names :
 "amazonBR" = "amazon Blu-ray";

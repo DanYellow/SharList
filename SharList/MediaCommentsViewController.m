@@ -568,6 +568,11 @@
 
 -  (void) loadComments
 {
+    if (self.numberOfComments == 0) {
+        [self displayComments];
+        return;
+    }
+        
     UIActivityIndicatorView *messagesLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
     
     UITableView *commentsTableView = (UITableView*)[self.view viewWithTag:1];
@@ -575,7 +580,8 @@
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comments"];
     
 
-    NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId};
+    NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"],
+                                 @"imdbId": self.mediaId};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
@@ -584,6 +590,8 @@
         if (responseObject[@"response"] != nil) {
             self.comments = responseObject[@"response"];
             
+            // This part is called for reload uitableview
+            // e.g : current user adds new comment
             if ([commentsTableView isDescendantOfView:self.view]) {
                 if ([self.comments count] >= 1) {
                     [self displayDiscoverAndUserCommentForDatas];
@@ -720,7 +728,7 @@
         likeCommentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [likeCommentBtn addTarget:self action:@selector(likeComment:) forControlEvents:UIControlEventTouchUpInside];
 //        [likeCommentBtn setTitle:[numberFormatter stringFromNumber:@420] forState:UIControlStateNormal];
-        likeCommentBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+        likeCommentBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0f];
         likeCommentBtn.frame = CGRectMake(0, cellFrame.size.height - 28, 70, 25); //
         likeCommentBtn.backgroundColor = [UIColor clearColor];
         [likeCommentBtn.imageView setContentMode:UIViewContentModeScaleAspectFit];
@@ -785,10 +793,10 @@
                                         CGRectGetWidth(dateMessageLabel.frame),
                                         CGRectGetHeight(dateMessageLabel.frame));
     
-    likeCommentBtn.frame = CGRectMake(CGRectGetMinX(dateMessageLabel.frame) - CGRectGetWidth(likeCommentBtn.frame) - 10,
-                                      CGRectGetMinY(likeCommentBtn.frame) + 1,
-                                      CGRectGetWidth(likeCommentBtn.frame),
-                                      CGRectGetHeight(likeCommentBtn.frame));
+//    likeCommentBtn.frame = CGRectMake(CGRectGetMinX(dateMessageLabel.frame) - CGRectGetWidth(likeCommentBtn.frame) - 10,
+//                                      CGRectGetMinY(likeCommentBtn.frame) + 1,
+//                                      CGRectGetWidth(likeCommentBtn.frame),
+//                                      CGRectGetHeight(likeCommentBtn.frame));
 
 
     

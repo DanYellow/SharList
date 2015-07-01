@@ -48,13 +48,19 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 # TODO
 
 ###### 1.2.0
-- Voir les messages vides pour facebook no friends / access no granted - Done
-- Afficher les amis facebook qui ont le media parmi leur liste Shound - Done
+- Voir les messages vides pour facebook no friends / access no granted - **Done**
+- Afficher les amis facebook qui ont le media parmi leur liste Shound - **Done**
 - Afficher le taux de présence d'une fiche parmi **toutes** les listes Shound
-- Utiliser la nouvelle API pour gérer les liens vers les stores
-- Ajouter un système de like pour les messages + tri par pertinence (1.2.1 ?)
-- Possibilité d'acheter sur Amazon (Blu-ray ou DVD, et ce, tout en nous supportant)
-- Possibilité d'acheter une série ou un film dans sa version originale sous-titrée (dans la limite des disponibilité d'iTunes)
+- Utiliser la nouvelle API pour gérer les liens vers les stores - **Done**
+- Ajouter un système de like pour les messages + tri par pertinence - **Done***
+- Possibilité d'acheter sur Amazon (Blu-ray ou DVD, et ce, tout en nous supportant) - **Done**
+- Possibilité d'acheter une série ou un film dans sa version originale sous-titrée (dans la limite des disponibilité d'iTunes) - **Done**
+
+###### X.X.X
+- Afficher la série la plus présente et le film le plus présent parmi les découvertes
+- Proposer un chat (prioriété de la prochaine màj)
+- Créer une vue notifications
+
 
 ## Améliorations potentielles
 - Gérer le système de géoloc lors de l'actualisation par bouton (ça garde l'ancienne position) - **done !!!!**

@@ -779,6 +779,7 @@
     
     NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
     
+    // We start the switch case value at 1 because we already have a default Predicate loaded
     switch (segmentedControl.selectedSegmentIndex) {
             // Favorites
         case 1:
@@ -812,6 +813,7 @@
                                          withPredicate:meetingsFilter] valueForKey:@"lastDiscovery"];
 
     
+    // First loop get the unique days among meetings
     NSMutableSet *listUniqueDays = [NSMutableSet new];
     [meetings enumerateObjectsUsingBlock:^(NSDate *aDate, NSUInteger idx, BOOL *stop) {
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -819,13 +821,24 @@
         if ([aDate isEqual:[NSNull null]]) {
             return;
         }
-        [listUniqueDays addObject:[dateFormatter stringFromDate:aDate]];
+        [listUniqueDays addObject:[dateFormatter dateFromString:[dateFormatter stringFromDate:aDate]]];
     }];
     
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"self"
                                                                ascending:NO];
-    NSArray *descriptors = [NSArray arrayWithObject:descriptor];
-    self.listOfDistinctsDay = [[listUniqueDays allObjects] sortedArrayUsingDescriptors:descriptors];
+    
+    // Transform to nsstring every date after ordering nsdate
+    NSMutableArray *temp = [NSMutableArray new];
+    [[[listUniqueDays allObjects] sortedArrayUsingDescriptors:@[descriptor]] enumerateObjectsUsingBlock:^(NSDate *aDate, NSUInteger idx, BOOL *stop) {
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+        
+        [temp addObject:[dateFormatter stringFromDate:aDate]];
+    }];
+    
+    self.listOfDistinctsDay = temp;
+    
+    
     
     if ([self.listOfDistinctsDay count] > 0) {
         UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];

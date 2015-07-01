@@ -191,7 +191,7 @@
     // Message for empty list taste
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  to fill your list", nil)];
     UIImage *lensIcon = [UIImage imageNamed:@"lens-icon-message"];
-    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    NSTextAttachment *textAttachment = [NSTextAttachment new];
     textAttachment.image = lensIcon;
     textAttachment.bounds = CGRectMake(150, -15, lensIcon.size.width, lensIcon.size.height);
     
@@ -496,17 +496,6 @@
     
     UIImageView *currentUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
     [currentUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
-//    // We save the raw data of current user facebook image profil
-//    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
-//        [currentUserFBImgView addObserver:self
-//                               forKeyPath:@"image"
-//                                  options:(NSKeyValueObservingOptionNew |
-//                                           NSKeyValueObservingOptionOld)
-//                                  context:NULL];
-//        [currentUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
-//    } else {
-//        currentUserFBImgView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]];
-//    }
     
     currentUserFBImgView.contentMode = UIViewContentModeScaleAspectFit;
     currentUserFBImgView.backgroundColor = [UIColor clearColor];
@@ -862,7 +851,6 @@
             cell.indentationLevel = 1;
             
             cell.textLabel.textColor = [UIColor whiteColor];
-            cell.detailTextLabel.text = year;
             cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
             cell.detailTextLabel.textColor = [UIColor colorWithRed:(59.0/255.0) green:(59.0/255.0) blue:(59.0/255.0) alpha:1];
         }
@@ -878,8 +866,9 @@
 
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
         year = [NSString stringWithFormat:@"%@", [[rowsOfSection objectAtIndex:indexPath.row] valueForKey:@"year"]];
-        cell.textLabel.text = title;
         
+        cell.textLabel.text = title;
+        cell.detailTextLabel.text = year;
         
         if (![userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
             if ([[userTasteDict[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
@@ -1463,7 +1452,7 @@
 
     NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
     NSString *userFbId = [FBSDKAccessToken currentAccessToken].userID;
-    NSLog(@"userFbId : %@", userFbId);
+
     if (!userFbId) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil) message:NSLocalizedString(@"Facebook account issue", nil) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alert show];

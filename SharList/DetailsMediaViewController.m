@@ -45,12 +45,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // 15 : titleBuyMedia
 // 16 : storesView
 // 17 : thumbFbFriendImg
-
-// 400 - 410 : Buttons buy range
-// 400 : Amazon
-// 401 : iTunes
+// 18 : friendPatronymLabel
+// 19 : __empty__
+// 20 : addRemoveFromListBtn
 
 // Before page loading we hide the tabbar
+// Because we don't need it
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -172,7 +172,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     self.navigationController.navigationBar.translucent = YES;
     
     UIBarButtonItem *addMediaToFavoriteBtnItem;
-    
+
     // User has data of this type
     if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] class] != [NSNull class]) {
         // This media is not among user list
@@ -189,8 +189,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         self.Added = NO;
         addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
     }
-
-    
 
     if (![self connected]) {
         self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
@@ -311,23 +309,27 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               [self displayBuyButtonForShops:[responseObject valueForKeyPath:@"response.storeLinks"]];
               
               
-              NSNumber *numberMessages = [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.commentsCount"] integerValue]];
-              self.numberOfComments = numberMessages;
+              NSNumber *numberComments = [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.commentsCount"] integerValue]];
+
+              self.numberOfComments = numberComments;
               
               NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
               [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
               
               UIButton *messagesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-              [messagesBtn addTarget:self action:@selector(displayMessageForMediaWithId:) forControlEvents:UIControlEventTouchUpInside];
-              [messagesBtn setTitle:[numberFormatter stringFromNumber:numberMessages] forState:UIControlStateNormal];
-              messagesBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+              [messagesBtn addTarget:self action:@selector(displayMessageForMediaWithId:) forControlEvents:UIControlEventTouchUpInside]; // numberMessages
+              [messagesBtn setTitle:[numberFormatter stringFromNumber:numberComments] forState:UIControlStateNormal];
+              messagesBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
               [messagesBtn setImage:[[UIImage imageNamed:@"listMessagesNavIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
                            forState:UIControlStateNormal];
               messagesBtn.frame = CGRectMake(0, 0, 55, 24);
               messagesBtn.backgroundColor = [UIColor clearColor];
+              [messagesBtn.imageView setContentMode:UIViewContentModeScaleAspectFit];
               [messagesBtn setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f] forState:UIControlStateHighlighted];
-              messagesBtn.imageEdgeInsets = UIEdgeInsetsMake(0, messagesBtn.titleLabel.frame.size.width, 0, -messagesBtn.titleLabel.frame.size.width - 10);
-              messagesBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.imageView.frame.size.width, 3, messagesBtn.imageView.frame.size.width + 10);
+              messagesBtn.imageEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.titleLabel.frame.size.width,
+                                                             0, messagesBtn.imageView.frame.size.width);
+              messagesBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.imageView.frame.size.width + 10, 0, 0);
+              messagesBtn.titleLabel.textAlignment = NSTextAlignmentRight;
               messagesBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
               
               UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithCustomView:messagesBtn];
@@ -448,6 +450,43 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     
     return numberOfIterationAmongDiscoveriesLabel;
+}
+
+- (UIButton*) displayAddRemoveFromListBtn:(NSString*)txt
+{
+    UIButton *addRemoveFromListBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    addRemoveFromListBtn.tag = 20;
+    [addRemoveFromListBtn setFrame:CGRectMake(0, 0, (screenWidth * 90) / 100, 54)];
+    [addRemoveFromListBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [addRemoveFromListBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    
+    addRemoveFromListBtn.center = CGPointMake(self.view.center.x, addRemoveFromListBtn.center.y);
+    
+    [addRemoveFromListBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]]
+                                    forState:UIControlStateHighlighted];
+    [addRemoveFromListBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]]
+                                    forState:UIControlStateDisabled];
+    [addRemoveFromListBtn addTarget:self action:@selector(addAndRemoveMediaToList:)
+                   forControlEvents:UIControlEventTouchUpInside];
+    
+    [addRemoveFromListBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [addRemoveFromListBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
+    [addRemoveFromListBtn setTitle:txt forState:UIControlStateNormal];
+    addRemoveFromListBtn.backgroundColor = [UIColor clearColor];
+    addRemoveFromListBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    addRemoveFromListBtn.layer.borderWidth = 2.0f;
+    
+    
+    CGFloat layerWidth = (90 * screenWidth) / 100;
+    CGFloat layerX = ((self.view.frame.size.width - layerWidth) / 2) - CGRectGetMinX(addRemoveFromListBtn.frame);
+    
+    CALayer *connectWithBSBtnLayerT = [CALayer layer];
+    connectWithBSBtnLayerT.frame = CGRectMake(layerX, -15.0f, layerWidth, 1.0);
+    connectWithBSBtnLayerT.backgroundColor = [UIColor whiteColor].CGColor;
+    connectWithBSBtnLayerT.anchorPoint = CGPointMake(0.5, 0.5);
+    [addRemoveFromListBtn.layer addSublayer:connectWithBSBtnLayerT];
+    
+    return addRemoveFromListBtn;
 }
 
 - (NSArray*) fetchFacebookFriendsForMedia
@@ -976,7 +1015,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // It displays the button 'buy' at the bottom of the screen
 - (void) displayBuyButtonForShops:(NSDictionary*)storesList
 {
+    
+    
     // There is no links to stores
+    if([storesList isKindOfClass:[NSNull class]]) return;
     if ([storesList count] == 0) return;
     
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -1113,7 +1155,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
     
     genresString = [genresString stringByAppendingString:[genresArray componentsJoinedByString:@", "]];
-    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, CGRectGetMaxY(mediaTitleLabel.frame) + 30, screenWidth - 30, 25)];
+    
+    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, CGRectGetMaxY(mediaTitleLabel.frame) + 40, screenWidth - 30, 25)];
     mediaGenresLabel.translatesAutoresizingMaskIntoConstraints = NO;
     mediaGenresLabel.text = genresString;
     mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
@@ -1137,7 +1180,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     CGFloat mediaDescriptionWidthPercentage = 82.0;
     CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
-    CGFloat mediaDescriptionY = CGRectGetMaxY(infoMediaViewLastView.frame) + 10;
+    CGFloat mediaDescriptionY = CGRectGetMaxY(infoMediaViewLastView.frame) + 7;
 
     UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, 0)];
     
@@ -1202,6 +1245,22 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [infoMediaView addSubview:nbIterationAmongDiscoveries];
 
 
+
+    
+    // Btn add / remove from list
+    infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    
+    NSString *addRemoveFromListBtnText = (self.isAdded) ? NSLocalizedString(@"RemoveToList", nil) : NSLocalizedString(@"AddToList", nil);
+
+    UIButton *addRemoveFromListBtn = [self displayAddRemoveFromListBtn:addRemoveFromListBtnText];
+    addRemoveFromListBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
+                                                   CGRectGetWidth(addRemoveFromListBtn.frame),
+                                                   CGRectGetHeight(addRemoveFromListBtn.frame));
+    addRemoveFromListBtn.center = CGPointMake(self.view.center.x, addRemoveFromListBtn.center.y);
+    [infoMediaView addSubview:addRemoveFromListBtn];
+    
+    
+    
     // We display the betaseries button only if the user has his device language set to french
     if ([[[NSLocale preferredLanguages] objectAtIndex:0] isEqualToString:@"fr"] && [self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
         NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
@@ -1211,8 +1270,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             
             UIButton *connectWithBSBtn = [self connectWithBSAccount:BSUserToken];
             connectWithBSBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
-                                                           CGRectGetWidth(connectWithBSBtn.frame),
-                                                           CGRectGetHeight(connectWithBSBtn.frame));
+                                                CGRectGetWidth(connectWithBSBtn.frame),
+                                                CGRectGetHeight(connectWithBSBtn.frame));
             connectWithBSBtn.center = CGPointMake(self.view.center.x, connectWithBSBtn.center.y);
             
             
@@ -1220,9 +1279,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         }
     }
     
+    // set the good dimension of the main container (UIScrollview)
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
-    
+
     infoMediaView.frame = CGRectMake(infoMediaView.frame.origin.x,
                                      CGRectGetMinY(infoMediaView.frame),
                                      CGRectGetWidth(infoMediaView.frame),
@@ -1339,8 +1399,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
     overlayAlphaAnim.fromValue = @0;
     overlayAlphaAnim.toValue   = @1;
-    overlayAlphaAnim.duration = 0.21;
-    overlayAlphaAnim.fillMode = kCAFillModeForwards;
+    overlayAlphaAnim.duration  = 0.21;
+    overlayAlphaAnim.fillMode  = kCAFillModeForwards;
     overlayAlphaAnim.removedOnCompletion = NO;
     overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
     [[self myLayerWithName:@"overlayLayerImgMedia" andParent:imgMedia] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
@@ -1608,13 +1668,53 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 #pragma mark - Saving user list
 
-- (void) addAndRemoveMediaToList:(UIBarButtonItem*) sender
+- (void) addAndRemoveMediaToList:(id) sender
 {
-    if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
-        sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+    if ([sender isKindOfClass:[UIButton class]]) {
+        UIBarButtonItem *barBtnItem = (UIBarButtonItem*)[self.navigationItem.rightBarButtonItems objectAtIndex:0];
+        UIButton *addRemoveFromListBtn = (UIButton *)sender;
+        
+        barBtnItem.enabled = NO;
+        addRemoveFromListBtn.enabled = NO;
+        
+        if ([barBtnItem.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
+            barBtnItem.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+            [addRemoveFromListBtn setTitle:NSLocalizedString(@"RemoveToList", nil) forState:UIControlStateNormal];
+            [self addMediaToUserList];
+        } else {
+            barBtnItem.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
+            [addRemoveFromListBtn setTitle:NSLocalizedString(@"AddToList", nil) forState:UIControlStateNormal];
+            [self removeMediaToUserList];
+        }
+    } else if ([sender isKindOfClass:[UIBarButtonItem class]]) {
+        UIButton *addRemoveFromListBtn = (UIButton*)[self.view viewWithTag:20];
+        UIBarButtonItem *barBtnItem = (UIBarButtonItem *)sender;
+        
+        barBtnItem.enabled = NO;
+        addRemoveFromListBtn.enabled = NO;
+        
+        if ([barBtnItem.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
+            barBtnItem.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+            [addRemoveFromListBtn setTitle:NSLocalizedString(@"RemoveToList", nil) forState:UIControlStateNormal];
+            [self addMediaToUserList];
+        } else {
+            barBtnItem.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
+            [addRemoveFromListBtn setTitle:NSLocalizedString(@"AddToList", nil) forState:UIControlStateNormal];
+            [self removeMediaToUserList];
+        }
+    }
+    
+//    // indicate the update of the list
+    [JDStatusBarNotification showWithStatus:NSLocalizedString(@"list updated", nil)
+                               dismissAfter:3
+                                  styleName:@"JDStatusBarStyleDark"];
+}
+
+- (void) addAndRemoveMediaToListForBtn:(UIButton*) sender
+{
+    if ([sender.titleLabel.text isEqualToString:@"hello"]) {
         [self addMediaToUserList];
-    }else{
-        sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
+    } else {
         [self removeMediaToUserList];
     }
     
@@ -1668,9 +1768,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         } else {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"endSave" object:nil userInfo:userTasteDict];
         }
-        // 7 secondes after update user list we update the database with new datas
-        // Like this we are "sure" that user really wants to add this media to his list
         
+        UIBarButtonItem *barBtnItem = (UIBarButtonItem*)[self.navigationItem.rightBarButtonItems objectAtIndex:0];
+        barBtnItem.enabled = YES;
+        UIButton *addRemoveFromListBtn = (UIButton*)[self.view viewWithTag:20];
+        addRemoveFromListBtn.enabled = YES;
+        
+        
+        // 7 seconds after update user list we update the database with new datas
+        // Like this we are "sure" that user really wants to add this media to his list
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(synchronizeUserListWithServer) object:nil];
         [self performSelector:@selector(synchronizeUserListWithServer) withObject:nil afterDelay:7.5]; // 7.0
         // [pfPushManager notifyUpdateList];
