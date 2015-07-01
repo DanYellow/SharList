@@ -36,6 +36,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 ### v 1.2.0 - Not Released
 
 - New API !
+- Gestion des emojis
 
 - Gestion des likes Facebook (Possibilité remplir sa liste en fonction de ses likes Facebook)
 - Ajout d'un système de pourcentage vis-à-vis d'un film/série découvert
@@ -44,6 +45,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Amélioration de l'ergonomie
 - Affichage du numéro du prochain épisode d'une série (c'est toujours mieux avec sa date)
 - Affichage de vos amis facebook dans les fiches. Vous n'avez même pas besoin de les avoir découvert pour voir ce qu'ils aiment
+
 
 # TODO
 

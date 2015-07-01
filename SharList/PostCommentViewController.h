@@ -13,6 +13,8 @@
 
 #import "MediaCommentsViewController.h"
 
+#import "NSString+URLEncodeValue.h"
+
 @interface PostCommentViewController : UIViewController <UITextViewDelegate, NSLayoutManagerDelegate>
 {
     CGFloat screenWidth;

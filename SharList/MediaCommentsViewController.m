@@ -451,7 +451,11 @@
                 }
                 
             }
-            discoverCommentViewTextView.text = [datas valueForKeyPath:@"comment.text"];
+            
+            NSString *rawMessage = [datas valueForKeyPath:@"comment.text"];
+            NSData *data = [rawMessage dataUsingEncoding:NSUTF8StringEncoding];
+            
+            discoverCommentViewTextView.text = [[NSString alloc] initWithData:data encoding:NSNonLossyASCIIStringEncoding];
             
             // Exemple date : 2015-05-10 17:28:12
             NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -746,7 +750,10 @@
     
     likeCommentBtn.tag = 1000 + [[[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.id"] integerValue];
     
-    message = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"];
+    NSString *goodValue = [[self.comments objectAtIndex:indexPath.row] valueForKeyPath:@"comment.text"];
+    NSData *data = [goodValue dataUsingEncoding:NSUTF8StringEncoding];
+    message = [[NSString alloc] initWithData:data encoding:NSNonLossyASCIIStringEncoding];
+    
     messageLabel.text = message;
     [messageLabel sizeToFit];
     [messageLabel.textContainer setSize:messageLabel.frame.size];

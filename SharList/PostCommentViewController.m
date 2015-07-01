@@ -133,11 +133,15 @@
     [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
         if ([responseObject valueForKeyPath:@"response.text"] != (id)[NSNull null]) {
-            postField.text = [responseObject valueForKeyPath:@"response.text"];
+            NSString *rawMessage = [responseObject valueForKeyPath:@"response.text"];
+            NSData *data = [rawMessage dataUsingEncoding:NSUTF8StringEncoding];
+            postField.text = [[NSString alloc] initWithData:data encoding:NSNonLossyASCIIStringEncoding];
+            
+
             self.oldComment = postField.text;
             commentId = [responseObject valueForKeyPath:@"response.commentId"];
         }
-
+        
         placeholderLabel.text = [NSString stringWithFormat:NSLocalizedString(@"think about %@", nil), [responseObject valueForKeyPath:@"response.name"]];
         
         postField.editable = YES;
@@ -197,7 +201,10 @@
     if (self.ishavingComment) {
         NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comment"];
         
-        NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId, @"text": postField.text, @"commentId": commentId};
+        NSData *rawMessage = [postField.text dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+        NSString *encodedMessage = [[NSString alloc] initWithData:rawMessage encoding:NSUTF8StringEncoding];
+        
+        NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId, @"text": encodedMessage, @"commentId": commentId};
         
         AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
         [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
@@ -213,8 +220,11 @@
     } else {
         NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/comment"];
         
-        NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId, @"text": postField.text};
+        NSData *rawMessage = [postField.text dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+        NSString *encodedMessage = [[NSString alloc] initWithData:rawMessage encoding:NSUTF8StringEncoding];
         
+        NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"imdbId": self.mediaId, @"text": encodedMessage};
+
         AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
         [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
         
