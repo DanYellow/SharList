@@ -1414,7 +1414,7 @@
 //            f.numberStyle = NSNumberFormatterDecimalStyle;
 //            NSNumber *currentFbIduser = [f numberFromString:[userPreferences objectForKey:@"currentUserfbID"]];
             userTaste.fbId = [userPreferences objectForKey:@"currentUserfbID"];
-            userTaste.isFavorite = @0; //User cannot favorite himself (by the way it's impossible technically)
+            userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
             [self displayUserTasteList];
         }

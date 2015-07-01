@@ -356,7 +356,7 @@
     NSUInteger heightImg = ceilf(intWidthScreen / GOLDENRATIO);
     
     NSString *fbMetUserString = self.metUserId;
-    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString, intWidthScreen, heightImg];
+    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,(unsigned long)intWidthScreen, (unsigned long)heightImg];
     
     UIImageView *metUserFBImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, heightImg)];
     [metUserFBImgView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
