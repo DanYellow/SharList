@@ -12,10 +12,6 @@
 
 - (void) heightToFit
 {
-//    CGSize maxSize = CGSizeMake(self.frame.size.width, CGFLOAT_MAX);
-//    CGSize textSize = [self.text sizeWithFont:self.font constrainedToSize:maxSize lineBreakMode:self.lineBreakMode];
-    
-    
     CGSize maxSize = CGSizeMake(self.frame.size.width, CGFLOAT_MAX);
     
     NSStringDrawingOptions options = NSStringDrawingTruncatesLastVisibleLine |

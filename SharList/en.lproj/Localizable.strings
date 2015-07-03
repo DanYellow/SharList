@@ -161,7 +161,7 @@
 //AboutViewController
 "About" = "About";
 "About Shound - Highlight words" = "Credits|Privacy|Comments";
-"About Shound" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your likes.\n\n\Credits\nMovies and TV series datas, and posters art are provided by themoviedb's API.\n\n\Privacy\nYour lastname and your firstname on facebook are not save by the app or the third services used by the app.\n\n\Comments\nAny comments injuring, racist, insulting, inciting hatred against an ethnic group or religion will be deleted without notice";
+"About Shound" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your likes.\n\n\Credits\nMovies and TV series datas, and posters art are provided by themoviedb's API.\n\n\Privacy\nYour lastname and your firstname on facebook are not save by the app or the third services used by the app.\n\n\Comments\nAny comments injuring, racist, insulting, inciting hatred against an ethnic group or religion will be deleted without notice.";
 
 //PostCommentViewController
 "post comment" = "Comment";

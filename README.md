@@ -44,7 +44,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Possibilité de poster un commentaire sur un film/série. Avec un commentaire, une recommendation est toujours plus pertinente.
 - Amélioration de l'ergonomie
 - Affichage du numéro du prochain épisode d'une série (c'est toujours mieux avec sa date)
-- Affichage de vos amis facebook dans les fiches. Vous n'avez même pas besoin de les avoir découvert pour voir ce qu'ils aiment
+- Affichage de vos amis facebook dans les fiches.
 
 
 # TODO
