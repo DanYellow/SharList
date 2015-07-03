@@ -224,20 +224,21 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
-            // We made a second query for tv show to get datas from imdb
+            // We made a second query for tv show to get datas with imdb id
             if (responseObject[@"tv_results"] != nil && [responseObject[@"tv_results"] count] != 0) {
                 NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0], @"language": userLanguage};
                 [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
                     if(!error){
                         [self setMediaViewForData:responseObject];
-                        [self getTrailerAndNextEpisodeDateForResponse:responseObject];
+//                        [self getTrailerAndNextEpisodeDateForResponse:responseObject];
                     }
                 }];
             // It's a serie directly from themoviedbapi
-            } else if([responseObject objectForKey:@"number_of_seasons"] != nil) {
+            } else if ([responseObject objectForKey:@"number_of_seasons"] != nil) {
                 [self setMediaViewForData:responseObject];
-                [self getTrailerAndNextEpisodeDateForResponse:responseObject];
+//                [self getTrailerAndNextEpisodeDateForResponse:responseObject];
             } else {
+                // It's a movie
                 [self setMediaViewForData:responseObject];
                 [[JLTMDbClient sharedAPIInstance] GET:trailerApiLink withParameters:@{@"id": self.mediaDatas[@"imdbID"]} andResponseBlock:^(id responseObject, NSError *error) {
                     if ([responseObject valueForKeyPath:@"youtube.source"] != nil && [[responseObject valueForKeyPath:@"youtube.source"] count] > 0) {
@@ -742,6 +743,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
 {
+    // Retrieve trailer
     __block NSString *trailerID = @"";
     [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
         // We check if there is a video called "trailer"
@@ -757,6 +759,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [self displayTrailerButtonForId:trailerID];
         }
     }];
+    
     // Get the date of the next episode
     NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
                                           @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
@@ -873,7 +876,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 }
 
 #pragma mark - buying part
-
 
 // Creates view for to buy media
 - (void) buyScreenForStores:(NSDictionary*)storesList
@@ -1114,6 +1116,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) setMediaViewForData:(NSDictionary*)data
 {
+    if ([self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
+        [self getTrailerAndNextEpisodeDateForResponse:data];
+    }
+    
+    
     UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
 
     UIImageView *imgMedia = [UIImageView new];

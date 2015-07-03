@@ -858,9 +858,9 @@
         NSDictionary *cellModelDict = @{
                                         @"name": [rowsOfSection objectAtIndex:indexPath.row][@"name"],
                                         @"type": [rowsOfSection objectAtIndex:indexPath.row][@"type"],
-                                        @"imdbID": [rowsOfSection objectAtIndex:indexPath.row][@"imdbId"]
+                                        @"imdbID": [rowsOfSection objectAtIndex:indexPath.row][@"imdbId"],
+                                        @"themoviedbID": [rowsOfSection objectAtIndex:indexPath.row][@"themoviedbId"]
                                         };
-
         
         cell.model = cellModelDict;
 
