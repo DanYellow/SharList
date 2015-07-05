@@ -241,7 +241,7 @@
 
     [emptyTableView addSubview:authorLabel];
     
-    
+
     UIImage *newCommentBtnImage = [[UIImage imageNamed:@"newMessageBtn"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     UIButton *newCommentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -572,11 +572,14 @@
 
 -  (void) loadComments
 {
-    if (self.numberOfComments == 0) {
-        [self displayComments];
+    if ([self.numberOfComments integerValue] == 0) {
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self displayComments];
+        });
         return;
     }
-        
+
     UIActivityIndicatorView *messagesLoadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:4];
     
     UITableView *commentsTableView = (UITableView*)[self.view viewWithTag:1];
