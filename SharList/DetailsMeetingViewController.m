@@ -207,58 +207,32 @@
     loadingIndicator.tag = 7;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     [self.view addSubview:loadingIndicator];
-//    UIRefreshControl *userSelectRefresh = [UIRefreshControl new];
-//    userSelectRefresh.backgroundColor = [UIColor colorWithRed:(5.0f/255.0f) green:(37.0f/255.0f) blue:(72.0f/255.0f) alpha:.9f];
-//    userSelectRefresh.tintColor = [UIColor whiteColor];
-//    userSelectRefresh.tag = 2;
-//    [userSelectRefresh addTarget:self
-//                          action:@selector(fetchUserDatas)
-//                forControlEvents:UIControlEventValueChanged];
+
+
     
-    // If the current user list is among user's favorites and the meeting have been made one hour ago
-    // He can fetch his update to follow him
-//    NSCalendar *calendar = [NSCalendar currentCalendar];
-//    
-//    NSDateComponents *conversionInfo = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[self.meetingDatas lastMeeting] toDate:[NSDate date] options:0];
-//    NSInteger hours = [conversionInfo hour];
-    
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
-    [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
-//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
     
     // Display the percent match between current user and the user met
     [self displayMatchRateList];
     
-//    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"]) {
-//
-//    } else {
-//        // If the current user is anonymous. He still show his facebook profile photo to his friends
-//        if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]])
-//            [self displayMetUserfbImgProfile];
-//    }
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager new];
+    [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
     
     NSString *urlAPI = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
     NSDictionary *apiParams = @{@"fbiduser" : self.metUserId};
-    // NSDictionary *apiParams = @{@"fbiduser" : [[userMet fbid] stringValue], @"isspecificuser" : @"yes"};
     
     [manager GET:urlAPI
-       parameters:apiParams
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              
-              if (!responseObject[@"error"]) {
-                  [self displayMetUserfbImgProfileForDatas:responseObject[@"response"]];
-              }
-              // The user met accepts to be public (default behaviour)
-              // Or met user is among current user facebook friends' list
-//              if (![responseObject[@"isAnonymous"] boolValue] || [[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[[userMet fbid] stringValue]] ) {
-//              NSLog(@"doo : %@", responseObject);
-//
-//              }
-          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-              NSLog(@"Error: %@", error);
-          }];
-    
-    
+      parameters:apiParams
+         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+             
+             if (!responseObject[@"error"]) {
+                 [self displayMetUserfbImgProfileForDatas:responseObject[@"response"]];
+             }
+
+         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             NSLog(@"Error: %@", error);
+         }];
+
+
     NSMutableArray *rightBarButtonItemsArray = [NSMutableArray new];
     [rightBarButtonItemsArray addObject:addMeetingToFavoriteBtnItem];
 
@@ -348,7 +322,13 @@
 
     [self displayUserFollowersForNumber: datas[@"followersCount"]];
     
-    if ([datas[@"isAnonymous"] boolValue] == YES) {
+    
+    // We don't display user picture for the following cases :
+    // - Current user is anonymous AND user met is not his friend on facebook
+    // - Current user is not anonymous, user met is anonymous AND not his friend on facebook
+    if (([datas[@"isAnonymous"] boolValue] == YES && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]]) ||
+        ([[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"] && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]])
+    ) {
         return;
     }
     

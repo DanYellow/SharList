@@ -61,7 +61,12 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 ###### X.X.X
 - Afficher la série la plus présente et le film le plus présent parmi les découvertes
 - Proposer un chat (prioriété de la prochaine màj)
-- Créer une vue notifications
+- Créer une vue notifications (prioriété de la prochaine màj)
+- Le retour de Parse (prioriété de la prochaine màj)
+- Créer une vue profil (si présence de chat)
+- Ajouter le taux de progression d'une série si réponse favorable de BS avec PNChart
+- Ajouter la publicité
+
 
 
 ## Améliorations potentielles

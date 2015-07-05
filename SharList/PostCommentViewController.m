@@ -232,6 +232,7 @@
             sender.enabled = YES;
             [self updateMessageSendedStatus:NSLocalizedString(@"sent comment", nil) forColor:[UIColor colorWithRed:(0.0f/255.0f) green:(88.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
             [self.view endEditing:YES];
+            // We force to one the number of comment to create
             mediaCommentsViewController.numberOfComments = [NSNumber numberWithInteger:1];
             [mediaCommentsViewController loadComments];
             

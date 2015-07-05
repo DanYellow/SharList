@@ -41,6 +41,10 @@
     aboutAppTxtV.center = CGPointMake(self.view.center.x, aboutAppTxtV.center.y);
     aboutAppTxtV.font = [UIFont fontWithName:@"Helvetica" size:13.0f];
     aboutAppTxtV.showsVerticalScrollIndicator = YES;
+    aboutAppTxtV.editable = NO;
+    aboutAppTxtV.selectable = YES;
+    aboutAppTxtV.dataDetectorTypes = UIDataDetectorTypeLink;
+    aboutAppTxtV.linkTextAttributes = @{NSForegroundColorAttributeName : [UIColor lightGrayColor]};
     
     NSMutableAttributedString *aboutAppDescAttrStr = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"About Shound", nil) attributes:nil];
     
