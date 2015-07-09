@@ -66,6 +66,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Créer une vue profil (si présence de chat)
 - Ajouter le taux de progression d'une série si réponse favorable de BS avec PNChart
 - Ajouter la publicité
+- Améliorer les miniatures des amis facebook sur les images
 
 
 

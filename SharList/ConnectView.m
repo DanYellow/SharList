@@ -121,7 +121,7 @@
     
     [manager POST:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        Manage a welcome bck if the user is already connected ?
-//        NSLog(@"responseObject: %@", responseObject);
+        NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {}];
     
     // We save the user's friends using application (and accepts this feature) for later

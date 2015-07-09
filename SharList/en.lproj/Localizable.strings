@@ -24,7 +24,7 @@
 
 "push remote notif update list" = "One of your favorite discoveries was updated!";
 
-"yyyy/MM/dd" = "yyyy/MM/dd";
+"yyyy/MM/dd" = "M/d/y";
 
 //tab bar controller
 "meetings" = "discoveries";
@@ -46,6 +46,7 @@
 "follower" = "follower";
 "no likes from api" = "You haven't any like related to tv shows or movies on Facebook.";
 "nothing to update" = "Nothing to synchronize";
+"Fill my list with facebook" = "Fill my list with facebook";
 
 // Meetinglistviewcontroller
 "Tap on  to discover new things" = "Tap on   to discover new things.";
@@ -151,6 +152,8 @@
 "close" = "Close";
 "warning message" = "Some comments can spoil \n \n Press and hold to display them";
 "your comment" = "Your comment \n";
+"warning message for comments" = "Some comments may spoiler \n \n Press and hold to display them";
+
 "by relevance" = "By relevance";
 "by date" = "By date";
 

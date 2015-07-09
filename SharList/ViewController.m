@@ -213,11 +213,12 @@
     
     UILabel *retrieveFacebookLikesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, retrieveFacebookLikesLabelY, screenWidth, 30)];
     retrieveFacebookLikesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
-    retrieveFacebookLikesLabel.text = @"Remplissez votre liste avec Facebook"; //Appuyez {sur la loupe} pour rechercher
+    retrieveFacebookLikesLabel.text = NSLocalizedString(@"Fill my list with facebook", nil); //Appuyez {sur la loupe} pour rechercher
     retrieveFacebookLikesLabel.textColor = [UIColor whiteColor];
     retrieveFacebookLikesLabel.numberOfLines = 0;
     retrieveFacebookLikesLabel.textAlignment = NSTextAlignmentCenter;
     [userTasteListTableViewEmptyView addSubview:retrieveFacebookLikesLabel];
+    
     
     
     int getUserFacebookLikesBtnY = retrieveFacebookLikesLabel.frame.size.height + retrieveFacebookLikesLabel.frame.origin.y + 5;

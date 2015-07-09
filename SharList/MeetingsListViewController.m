@@ -812,7 +812,6 @@
                                              ascending:NO
                                          withPredicate:meetingsFilter] valueForKey:@"lastDiscovery"];
 
-    
     // First loop get the unique days among meetings
     NSMutableSet *listUniqueDays = [NSMutableSet new];
     [meetings enumerateObjectsUsingBlock:^(NSDate *aDate, NSUInteger idx, BOOL *stop) {
@@ -827,26 +826,27 @@
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"self"
                                                                ascending:NO];
     
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setLocale:[NSLocale currentLocale]];
+    
     // Transform to nsstring every date after ordering nsdate
     NSMutableArray *temp = [NSMutableArray new];
     [[[listUniqueDays allObjects] sortedArrayUsingDescriptors:@[descriptor]] enumerateObjectsUsingBlock:^(NSDate *aDate, NSUInteger idx, BOOL *stop) {
-        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-        [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-        
         [temp addObject:[dateFormatter stringFromDate:aDate]];
     }];
-    
+
     self.listOfDistinctsDay = temp;
     
-    
-    
     if ([self.listOfDistinctsDay count] > 0) {
+        // We show the uiSegmentedControl if there is some datas
         UIView *segmentedControlView = (UIView*)[self.view viewWithTag:2];
         segmentedControlView.hidden = NO;
     } else {
         [self manageEmptyViewForDatas:self.listOfDistinctsDay andAtableView:tableView];
     }
     
+    // We create placeholder for future datas for the days
     for (NSString *dateString in listUniqueDays) {
         [self.discoveries setObject:@[] forKey:dateString];
     }
@@ -928,6 +928,7 @@
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
+    [dateFormatter setLocale:[NSLocale currentLocale]];
     
     NSString *dateString = [self.listOfDistinctsDay objectAtIndex:section];
     
@@ -936,7 +937,7 @@
     NSDate *endDate = [[dateFormatter dateFromString:dateString] endOfDay];
     
     NSPredicate *datePredicate = [NSPredicate predicateWithFormat:@"(lastDiscovery >= %@) AND (lastDiscovery <= %@)", startDate, endDate];
-    
+
     [self.discoveries setObject:[meetings filteredArrayUsingPredicate:datePredicate]
                          forKey:dateString];
 
@@ -1297,7 +1298,6 @@
                 [loadingIndicator stopAnimating];
                 [self noInternetAlert];
             } else {
-                [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
                 [self saveRandomUserDatas:data];
             }
         }];
@@ -1441,6 +1441,9 @@
         return;
     }
     
+    // If the user finds someone we postpone the query
+    [userPreferences setObject:[NSDate date] forKey:@"lastManualUpdate"];
+    
 //    NSNumberFormatter *formatNumber = [NSNumberFormatter new];
 //    [formatNumber setNumberStyle:NSNumberFormatterDecimalStyle];
     NSString *randomUserfbId = [randomUserDatas objectForKey:@"fbId"];
@@ -1454,7 +1457,6 @@
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *discoveryDate;
-    // Gentoo
     discoveryDate = [calendar dateByAddingUnit:NSCalendarUnitDay
                                              value:0
                                             toDate:[NSDate date]
@@ -1482,7 +1484,7 @@
             //            [self fetchUsersDatasBtnAction];
             //            return;
         }
-
+        
         oldUserDiscovered.dbId = randomUserdbId;
         oldUserDiscovered.likes = arrayData;
         oldUserDiscovered.fbId = randomUserfbId;
