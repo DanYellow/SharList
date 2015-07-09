@@ -92,7 +92,6 @@
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"CommentsWarning"];
             [self showWarningMessage];
         }
-        [self showWarningMessage];
     });
     
     
