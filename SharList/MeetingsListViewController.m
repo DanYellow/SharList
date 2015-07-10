@@ -1061,6 +1061,9 @@
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
     }
     
+    CGSize itemSize = CGSizeMake(40, 40);
+    UIGraphicsBeginImageContextWithOptions(itemSize, NO, 0.0);
+    
     // If the user is a facebook friend so we display his facebook profile image
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[currentUserMet fbId]]) {
         [self getImageCellForData:[currentUserMet fbId]
@@ -1068,8 +1071,20 @@
         
         cell.imageView.image = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
                                                                                      forDarkBG:NO];
-        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
-                                                                                                forDarkBG:YES];
+//        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
+//                                                                                                forDarkBG:YES];
+        
+        
+        if ([currentUserMet isRandomDiscover]) {
+            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
+                                                                                     forDarkBG:YES
+                                                                                thingsInCommon:commonTasteCount];
+        } else {
+            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon"
+                           forDarkBG:YES
+                      thingsInCommon:commonTasteCount];
+        }
+        
         cell.imageView.backgroundColor = [UIColor clearColor];
         cell.imageView.opaque = YES;
         cell.imageView.tag = indexPath.row;
@@ -1094,11 +1109,6 @@
     }
     
     cell.imageView.tag = 1000;
-
-    UIView *bgColorView = [UIView new];
-    [bgColorView setBackgroundColor:[UIColor colorWithRed:(235.0f/255.0f) green:(242.0f/255.0f) blue:(245.0f/255.0f) alpha:.9f]];
-//    [cell setSelectedBackgroundView:bgColorView];
-    
     
     return cell;
 }
@@ -1117,6 +1127,12 @@
     UIImage *imageCell = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     UIImageView *imageCellView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     imageCellView.image = imageCell;
+    
+//    imageCellView.layer.borderColor = (isDarkBG) ? [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0].CGColor : [UIColor whiteColor].CGColor;
+//    imageCellView.clipsToBounds = YES;
+//    imageCellView.layer.cornerRadius = 20.0f;
+//    imageCellView.layer.borderWidth = 1.0f;
+    
     
     if (!isDarkBG && thingsInCommonCount == 0) {
         imageCellView.tintColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
