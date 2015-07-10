@@ -920,6 +920,8 @@
     DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
     detailsMediaViewController.mediaDatas = selectedCell.model;
     detailsMediaViewController.userDiscoverId = self.metUserId;
+    detailsMediaViewController.title = [selectedCell.model objectForKey:@"name"];
+
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 
@@ -1062,7 +1064,7 @@
 - (void) shareFb
 {
     FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
-    content.contentURL = [NSURL URLWithString:@"https://appsto.re/us/sYAB4.i"];
+    content.contentURL = [NSURL URLWithString:@"http://www.shound.fr"];
     content.contentTitle = [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_metfriend_name %@", nil), self.title];
     content.contentDescription = NSLocalizedString(@"FBLinkShareParams_metfriend_desc", nil);
     content.imageURL = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];

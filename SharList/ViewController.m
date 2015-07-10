@@ -1167,6 +1167,7 @@
     DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
     detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.delegate = self;
+    detailsMediaViewController.title = [selectedCell.model objectForKey:@"name"];
 //    // Trick for weird issue about present view and pushview
     detailsMediaViewController.tabBarController.tabBar.hidden = YES;
     

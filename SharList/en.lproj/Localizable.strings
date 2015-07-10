@@ -121,6 +121,7 @@
 "list updated" = "List updated";
 "AddToList" = "Add to list";
 "RemoveToList" = "Remove from list";
+"To introduce friends" = "To introduce my friends";
 
 // Store names :
 "amazonBR" = "amazon Blu-ray";
@@ -186,5 +187,7 @@
 "FBLinkShareParams_postsuccess_title" = "Great!";
 "FBLinkShareParams_metfriend_name %@" = "I discovered the likes of %@ on Shound";
 "FBLinkShareParams_metfriend_desc" = "Do the same!";
+"FBLinkShareParams_introducemedia_name %@" = "Discover %@!";
+"FBLinkShareParams_introducemedia_desc" = "And more on my list on Shound";
 
 "Facebook account issue" = "It looks like there is an issue with your facebook account.\n Please log out in the Settings then log in";

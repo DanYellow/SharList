@@ -77,6 +77,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMediaTutorial"];
         [self showTutorial];
     }
+    
+
+    // We just want the title of the uiviewcontroller
+    self.navigationItem.titleView = [UIView new];
 }
 
 
@@ -114,6 +118,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     }
     
+
+
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
@@ -560,7 +566,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     NSArray *facebookFriendsList = [self fetchFacebookFriendsForMedia];
     
     // None of user facebook friends has this media among his list
+    // So we add a button to talk about the movie / serie to the user friends
     if ([facebookFriendsList count] == 0) {
+        
+        [facebookFriendsContainer addSubview:[self introduceMediaToFriends]];
+        
+        UIView *facebookFriendsContainerLastView = [[facebookFriendsContainer subviews] lastObject];
+        facebookFriendsContainerLastView.backgroundColor = [UIColor clearColor];
+        facebookFriendsContainer.frame = CGRectMake(0, 0,
+                                                    screenWidth, CGRectGetMaxY(facebookFriendsContainerLastView.frame));
+        
         return facebookFriendsContainer;
     }
     
@@ -605,14 +620,12 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             extraFbFriendsLayer.wrapped = true;
             // Removes aliasing
             extraFbFriendsLayer.contentsScale = [[UIScreen mainScreen] scale];
-            
 
             moreFriendsIndicator.backgroundColor = [UIColor clearColor];
             moreFriendsIndicator.layer.cornerRadius = 33;
             moreFriendsIndicator.layer.borderColor = [[UIColor colorWithWhite:1 alpha:1] CGColor];
             moreFriendsIndicator.layer.borderWidth = 1.0f;
             [moreFriendsIndicator.layer addSublayer:extraFbFriendsLayer];
-//            moreFriendsIndicator.layer.mask = extraFbFriendsLayer;
             [thumbsFriendsScrollView addSubview:moreFriendsIndicator];
             
             *stop = YES;
@@ -698,6 +711,38 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     return facebookFriendsContainer;
 }
+
+
+- (UIButton *) introduceMediaToFriends
+{
+    UIButton *introduceMediaToFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    introduceMediaToFriendsBtn.tag = 20;
+    [introduceMediaToFriendsBtn setFrame:CGRectMake(0, 0, (screenWidth * 90) / 100, 54)];
+    [introduceMediaToFriendsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [introduceMediaToFriendsBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    
+    introduceMediaToFriendsBtn.center = CGPointMake(self.view.center.x, introduceMediaToFriendsBtn.center.y);
+    
+    [introduceMediaToFriendsBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]]
+                                    forState:UIControlStateHighlighted];
+    [introduceMediaToFriendsBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]]
+                                    forState:UIControlStateDisabled];
+    [introduceMediaToFriendsBtn addTarget:self action:@selector(introduceMediaToFriendsAction:)
+                   forControlEvents:UIControlEventTouchUpInside];
+    
+    [introduceMediaToFriendsBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [introduceMediaToFriendsBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
+    [introduceMediaToFriendsBtn setTitle:NSLocalizedString(@"To introduce friends", nil)
+                                forState:UIControlStateNormal];
+    
+    
+    introduceMediaToFriendsBtn.backgroundColor = [UIColor clearColor];
+    introduceMediaToFriendsBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    introduceMediaToFriendsBtn.layer.borderWidth = 2.0f;
+    
+    return introduceMediaToFriendsBtn;
+}
+
 
 - (void) seeFriendPatronym:(UIButton*)sender
 {
@@ -1867,7 +1912,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     return;
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (alertView.tag == 9) {
         [self.navigationController popViewControllerAnimated:YES];
     }
@@ -1899,6 +1944,38 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:storeLink]];
 }
 
+- (void) introduceMediaToFriendsAction:(UIButton*)sender
+{
+    FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
+    content.contentTitle = [NSString stringWithFormat:NSLocalizedString(@"FBLinkShareParams_introducemedia_name %@", nil), self.title];
+    content.contentDescription = NSLocalizedString(@"FBLinkShareParams_introducemedia_desc", nil);
+    // We use the url of the application or else Facebook tricks us
+    content.contentURL = [NSURL URLWithString:@"http://www.shound.fr"];
+    content.imageURL = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+    
+    [FBSDKShareDialog showFromViewController:self
+                                 withContent:content
+                                    delegate:self];
+}
+
+- (void) sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results
+{
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"FBLinkShareParams_postsuccess_title", nil)
+                                message:NSLocalizedString(@"FBLinkShareParams_postsuccess", nil)
+                               delegate:nil
+                      cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+}
+
+- (void) sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error
+{
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Oops", nil)
+                                message:NSLocalizedString(@"FBLinkShareParams_posterror", nil)
+                               delegate:nil cancelButtonTitle:NSLocalizedString(@"Ok", nil) otherButtonTitles: nil] show];
+    
+}
+
+- (void)sharerDidCancel:(id<FBSDKSharing>)sharer {}
+
 - (void) cancelLocalNotificationWithValueForKey:(NSString*)aValue
 {
     UIApplication *app = [UIApplication sharedApplication];
@@ -1916,9 +1993,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     }
 }
 
-
-
-//<a href="https://itunes.apple.com/fr/movie/scarface-1983/id371011281" target="itunes_store">Scarface (1983)</a>
 
 
 - (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension

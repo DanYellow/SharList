@@ -43,7 +43,7 @@
 
 @protocol UpdateUserTasteListDelegate;
 
-@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate, UIGestureRecognizerDelegate>
+@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate, UIGestureRecognizerDelegate, FBSDKSharingDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

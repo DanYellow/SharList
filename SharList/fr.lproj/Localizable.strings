@@ -138,6 +138,7 @@
 "list updated" = "Liste mise à jour";
 "AddToList" = "Ajouter à la liste";
 "RemoveToList" = "Retirer de la liste";
+"To introduce friends" = "Faire découvrir à mes amis";
 
 // Store names :
 "amazonBR" = "amazon Blu-ray";
@@ -204,5 +205,7 @@
 "FBLinkShareParams_postsuccess_title" = "Super !";
 "FBLinkShareParams_metfriend_name %@" = "J'ai découvert les goûts de %@ sur Shound";
 "FBLinkShareParams_metfriend_desc" = "Faites de même !";
+"FBLinkShareParams_introducemedia_name %@" = "Découvrez %@ !";
+"FBLinkShareParams_introducemedia_desc" = "Et plus encore dans ma liste sur Shound.";
 
 "Facebook account issue" = "Il semblerait qu'il y ait un problème avec votre compte facebook.\n Déconnectez-vous dans les paramètres puis reconnectez-vous";

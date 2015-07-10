@@ -33,7 +33,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Correction de bugs
 - Ajout du numéro du prochain épisode
 
-### v 1.2.0 - Not Released
+### v 1.2.0 - Released
 
 - New API !
 - Gestion des emojis
@@ -45,6 +45,10 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Amélioration de l'ergonomie
 - Affichage du numéro du prochain épisode d'une série (c'est toujours mieux avec sa date)
 - Affichage de vos amis facebook dans les fiches.
+
+### v 1.2.1 - Not Released
+
+
 
 
 # TODO
@@ -58,6 +62,9 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Possibilité d'acheter sur Amazon (Blu-ray ou DVD, et ce, tout en nous supportant) - **Done**
 - Possibilité d'acheter une série ou un film dans sa version originale sous-titrée (dans la limite des disponibilité d'iTunes) - **Done**
 
+###### 1.2.1
+
+
 ###### X.X.X
 - Afficher la série la plus présente et le film le plus présent parmi les découvertes
 - Proposer un chat (prioriété de la prochaine màj)
@@ -67,6 +74,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Ajouter le taux de progression d'une série si réponse favorable de BS avec PNChart
 - Ajouter la publicité
 - Améliorer les miniatures des amis facebook sur les images
+- Inviter les amis facebook à découvrir la série "Faire découvrir à mes amis"
 
 
 
