@@ -230,13 +230,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                 [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
                     if(!error){
                         [self setMediaViewForData:responseObject];
-//                        [self getTrailerAndNextEpisodeDateForResponse:responseObject];
                     }
                 }];
             // It's a serie directly from themoviedbapi
             } else if ([responseObject objectForKey:@"number_of_seasons"] != nil) {
                 [self setMediaViewForData:responseObject];
-//                [self getTrailerAndNextEpisodeDateForResponse:responseObject];
             } else {
                 // It's a movie
                 [self setMediaViewForData:responseObject];
@@ -743,6 +741,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 - (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
 {
+
+    if ([responseObject valueForKeyPath:@"id"] == nil) {
+        return;
+    }
+    
     // Retrieve trailer
     __block NSString *trailerID = @"";
     [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
@@ -1290,6 +1293,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
 
+    
     infoMediaView.frame = CGRectMake(infoMediaView.frame.origin.x,
                                      CGRectGetMinY(infoMediaView.frame),
                                      CGRectGetWidth(infoMediaView.frame),
