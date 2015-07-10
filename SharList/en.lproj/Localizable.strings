@@ -83,8 +83,14 @@
 "pull to refresh fav" = "This discovery is now among your favs.\nYou can \"pull-to-refresh\" to see if this has been updated.";
 "nothing common" = "Discover! Nothing in common.";
 "things common" = "Things in common, but also to discover";
+
 "in common" = "likes in common";
 "%@ in common" = "%@ likes in common";
+
+"not in common" = "likes to discover!";
+"%@ not in common" = "%@ likes to discover!";
+
+// When user met a friend
 "Talk about this discover" = "Talk about this discover";
 
 

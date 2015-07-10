@@ -365,15 +365,12 @@
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
-    UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 24.0, 150.0, 48.0)];
+    UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 24.0, 155.0, 48.0)];
     commonTasteCountPercentLabel.textColor = [UIColor whiteColor];
     commonTasteCountPercentLabel.backgroundColor = [UIColor clearColor];
     commonTasteCountPercentLabel.text = [self calcUserMetPercentMatch];
     commonTasteCountPercentLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:52.0f];
-//    commonTasteCountPercentLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
-//    commonTasteCountPercentLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-//    commonTasteCountPercentLabel.layer.shadowOpacity = .75f;
-    
+
     [metUserFBView addSubview:commonTasteCountPercentLabel];
 
     
@@ -385,11 +382,9 @@
     UILabel *tasteMetUserMessageLabel = [[UILabel alloc] initWithFrame:tasteMetUserMessageLabelFrame];
     tasteMetUserMessageLabel.textColor = [UIColor whiteColor];
     tasteMetUserMessageLabel.backgroundColor = [UIColor clearColor];
-    tasteMetUserMessageLabel.text = NSLocalizedString(@"in common", nil);
+    tasteMetUserMessageLabel.text = NSLocalizedString(@"not in common", nil);
     tasteMetUserMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
-//    tasteMetUserMessageLabel.layer.shadowColor = (__bridge CGColorRef)((id)[UIColor blackColor].CGColor);
-//    tasteMetUserMessageLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-//    tasteMetUserMessageLabel.layer.shadowOpacity = .75f;
+
     [metUserFBView addSubview:tasteMetUserMessageLabel];
     
     userSelectionTableView.tableHeaderView = metUserFBView;
@@ -565,7 +560,7 @@
         if (![[currentUserTaste objectForKey:key] isEqual:[NSNull null]]) {
             currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
             
-            currentUserNumberItems += [[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"] count];
+            currentUserNumberItems += [[self.metUserTasteDict objectForKey:key] count];
         }
         
         if (![[self.metUserTasteDict objectForKey:key] isEqual:[NSNull null]]) {
@@ -577,6 +572,8 @@
         NSArray* result = [currentUserMetTasteSet allObjects];
         
         commonTasteCount += result.count;
+        
+        
     }
     
     CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
@@ -590,6 +587,8 @@
         commonTasteCountPercent = 0.01;
     }
     
+    // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
+    commonTasteCountPercent = 1 - commonTasteCountPercent;
     
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];

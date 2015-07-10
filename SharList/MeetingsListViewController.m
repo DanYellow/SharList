@@ -989,21 +989,22 @@
     // Calc of the stats
     Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
 
-    NSDictionary *currentUserMetTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]] mutableCopy];
+    NSDictionary *userMetLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]] mutableCopy];
     
+
     NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
     int commonTasteCount = 0;
     int currentUserNumberItems = 0;
-    for (int i = 0; i < [[currentUserMetTaste filterKeysForNullObj] count]; i++) {
-        NSString *key = [[currentUserMetTaste filterKeysForNullObj] objectAtIndex:i];
+    for (int i = 0; i < [[userMetLikes filterKeysForNullObj] count]; i++) {
+        NSString *key = [[userMetLikes filterKeysForNullObj] objectAtIndex:i];
         if (![[currentUserTaste objectForKey:key] isEqual:[NSNull null]]) {
             currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
             
-            currentUserNumberItems += [[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"] count];
+            currentUserNumberItems += [[userMetLikes objectForKey:key] count];
         }
         
-        if (![[currentUserMetTaste objectForKey:key] isEqual:[NSNull null]]) {
-            currentUserMetTasteSet = [NSMutableSet setWithArray:[[currentUserMetTaste objectForKey:key] valueForKey:@"imdbID"]];
+        if (![[userMetLikes objectForKey:key] isEqual:[NSNull null]]) {
+            currentUserMetTasteSet = [NSMutableSet setWithArray:[[userMetLikes objectForKey:key] valueForKey:@"imdbID"]];
         }
         
         [currentUserMetTasteSet intersectSet:currentUserTasteSet]; //this will give you only the obejcts that are in both sets
@@ -1012,6 +1013,8 @@
         
         commonTasteCount += result.count;
     }
+    
+    
     
     NSString *textLabelString = @"";
     
@@ -1033,10 +1036,15 @@
     } else {
         NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
         [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
+
+        
+        // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
+        commonTasteCountPercent = 1 - commonTasteCountPercent;
         
         NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:commonTasteCountPercent]];
         
-        textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ in common", nil), strNumber];
+        textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ not in common", nil), strNumber];
+//        textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ in common", nil), strNumber];
         
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.detailTextLabel.textColor = [UIColor whiteColor];
