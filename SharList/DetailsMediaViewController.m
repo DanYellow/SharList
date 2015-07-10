@@ -600,7 +600,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [facebookFriendsContainer addSubview:thumbsFriendsScrollView];
 
     int offsetX = (5 * screenWidth) / 100;
-    int limitFriendsThumbs = 10;
+    int limitFriendsThumbs = 13;
     CGFloat thumbFriendContainerSize = 70.0f;
     
     [facebookFriendsList enumerateObjectsUsingBlock:^(NSDictionary *friend, NSUInteger idx, BOOL *stop) {
@@ -614,7 +614,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             extraFbFriendsLayer.frame = CGRectMake(0, 10, thumbFriendContainerSize, thumbFriendContainerSize);
             extraFbFriendsLayer.foregroundColor = [UIColor whiteColor].CGColor;
             extraFbFriendsLayer.backgroundColor = [UIColor clearColor].CGColor;
-            extraFbFriendsLayer.string = @"3+";
+            
+            NSUInteger remainingFriends = [facebookFriendsList count] - limitFriendsThumbs;
+            extraFbFriendsLayer.string = [@"+" stringByAppendingString:[[NSNumber numberWithInteger:remainingFriends] stringValue]];
             extraFbFriendsLayer.font = (__bridge CFTypeRef)([UIFont fontWithName:@"HelveticaNeue" size:30]);
             extraFbFriendsLayer.alignmentMode = kCAAlignmentCenter;
             extraFbFriendsLayer.wrapped = true;
