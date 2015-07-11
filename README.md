@@ -63,10 +63,12 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Possibilité d'acheter une série ou un film dans sa version originale sous-titrée (dans la limite des disponibilité d'iTunes) - **Done**
 
 ###### 1.2.1
-- Inverser l'affichage des goûts en commun (X % de la liste à découvrir!)
+- Inverser l'affichage des goûts en commun (X % de la liste à découvrir!) - **Done**
 - Ajouter "pull to refresh" pour permettre de découvrir de nouvelles choses + Indiquer le temps restant avant la prochaine rencontre : 'XX:XX avant de pouvoir découvrir de nouvelles choses'
 - Remettre le scroll-to-top lors de la recherche d'une nouvelle récouverte'
 - Ajouter une segmentation pour la fiche de découverte  
+- Inviter ses amis à découvrir de nouvelles choses si aucun d'eux apprécient un film ou une série - **Done**
+- Afficher les dernières recherches
 
 
 
