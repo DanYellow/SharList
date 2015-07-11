@@ -535,6 +535,11 @@
     
     NSInteger aSectionNumber = sender.tag;
     
+    // If the category selected (movie, serie, what ever) doesn't exist nothing happen
+    if ([userTasteDict[[[userTasteDict filterKeysForNullObj] objectAtIndex:aSectionNumber]] count] == 0) {
+        return;
+    }
+    
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
     [userTasteListTableView scrollToRowAtIndexPath:indexPath
