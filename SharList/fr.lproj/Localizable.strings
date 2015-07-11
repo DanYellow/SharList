@@ -68,14 +68,17 @@
 "no datas updated for this user" = "Cet utilisateur n'a pas mis à jour sa liste";
 "numberOfJSONErrorsMaxReached" = "Mince. Le serveur n'a pas de nouvelles choses à vous proposer";
 "nothing common" = "Découvrez ! Rien en commun.";
+
 "things common" = "On peut toujours apprendre des autres";
 "full common" = "On peut toujours apprendre des autres";
-"in common" = "de goût en commun";
 
-//"%@ in common" = "%@ de goût en commun";
-//"%@ not in common" = "%@ de goûts différents";
+"in common likes" = "de goût en commun";
+
+//"%@ in common likes" = "%@ de goût en commun";
+
 "%@ not in common" = "%@ de la liste à découvrir !";
 "not in common" = "de la liste à découvrir !";
+"everything in common list" = "Rien à découvrir !";
 
 "localNotificationAlertActionRefresh" = "découvrir";
 "localNotificationAlertBodyRefresh" = "Il y a toujours de nouvelles choses à découvrir";
@@ -122,6 +125,9 @@
 "met %@ times" = "découvert %@ fois";
 //"pull to refresh fav" = "Cette découverte est parmi vos favoris.\nVous pouvez \"tirer-pour-rafraîchir\" pour voir si elle a été mise à jour";
 "Talk about this discover" = "Parler de cette découverte";
+"Alls" = "Tout";
+"not in common but much discover" = "Rien en commun mais tant à découvrir";
+
 
 // DetailsMediaViewController
 "Liked by %@ people" = "Aimé par %@ personnes";
@@ -199,6 +205,10 @@
 
 //Facebook
 "errorConnect" = "Facebook a rencontré une problème";
+
+// DetailsMeetingViewController
+"in common" = "En commun";
+"to discover" = "À découvrir";
 
 
 // Facebook post

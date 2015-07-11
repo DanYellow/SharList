@@ -10,7 +10,10 @@
 
 @interface DetailsMeetingViewController ()
 
-@property (nonatomic, copy) NSMutableDictionary *metUserTasteDict;
+
+// We have to create two NSArray one to keep a reference of likes and a another one
+@property (nonatomic, copy) NSMutableDictionary *metUserLikesDictRef;
+@property (nonatomic, strong) NSMutableDictionary *metUserLikesDict;
 
 @end
 
@@ -24,6 +27,8 @@
 // 6 : refreshBtn
 // 7 : UIRefreshControl
 // 8 : statCount
+// 9 : filterUserMetListSC
+// 10 : emptyUserLikeLabel
 
 @implementation DetailsMeetingViewController
 
@@ -89,8 +94,11 @@
         currentUserTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUser likes]] mutableCopy];
     }
     
-    self.metUserTasteDict = [NSMutableDictionary new];
-    self.metUserTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet likes]] mutableCopy];
+    self.metUserLikesDictRef = [NSMutableDictionary new];
+    self.metUserLikesDictRef = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet likes]] mutableCopy];
+    
+    self.metUserLikesDict = [NSMutableDictionary new];
+    self.metUserLikesDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet likes]] mutableCopy];
    
 //    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
     self.navigationController.navigationBar.backIndicatorImage = [UIImage imageNamed:@"list-tab-icon"];
@@ -184,21 +192,22 @@
     
     //___________________
     // Uitableview of user selection (what user likes) initWithStyle:UITableViewStylePlain
-    UITableView *userSelectionTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
+    UITableView *userMetLikesTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
 //    userSelectionTableView.frame = CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height);
-    userSelectionTableView.dataSource = self;
-    userSelectionTableView.delegate = self;
-    userSelectionTableView.backgroundColor = [UIColor clearColor];
-    userSelectionTableView.tag = 1;
-    userSelectionTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    userSelectionTableView.tableFooterView = tableFooterView; //[[UIView alloc] initWithFrame:CGRectZero];
-    userSelectionTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
-    userSelectionTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
-    [self.view addSubview:userSelectionTableView];
+    userMetLikesTableView.dataSource = self;
+    userMetLikesTableView.delegate = self;
+    userMetLikesTableView.backgroundColor = [UIColor clearColor];
+    userMetLikesTableView.tag = 1;
+    userMetLikesTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    userMetLikesTableView.tableFooterView = tableFooterView; //[[UIView alloc] initWithFrame:CGRectZero];
+    userMetLikesTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
+    userMetLikesTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
+    [self.view addSubview:userMetLikesTableView];
     
-    if ([userSelectionTableView respondsToSelector:@selector(setSeparatorInset:)]) {
-        [userSelectionTableView setSeparatorInset:UIEdgeInsetsZero];
+    if ([userMetLikesTableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [userMetLikesTableView setSeparatorInset:UIEdgeInsetsZero];
     }
+    
     
     UIActivityIndicatorView *loadingIndicator = [UIActivityIndicatorView new];
     loadingIndicator.center = self.view.center;
@@ -225,6 +234,7 @@
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
              
              if (!responseObject[@"error"]) {
+                 // gentoo
                  [self displayMetUserfbImgProfileForDatas:responseObject[@"response"]];
              }
 
@@ -263,6 +273,14 @@
     NSInteger aSectionNumber = sender.tag;
 
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
+    
+    
+    // If the category selected (movie, serie, what ever) doesn't exist nothing happen
+    if ([self.metUserLikesDict[[[self.metUserLikesDict filterKeysForNullObj] objectAtIndex:aSectionNumber]] count] == 0) {
+        return;
+    }
+    
+    
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
 
     [userSelectionTableView scrollToRowAtIndexPath:indexPath
@@ -276,7 +294,7 @@
     UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
     
     UIButton *followersLabelContainerBtn = [[UIButton alloc] initWithFrame:CGRectMake(metUserFBView.frame.size.width - widthViews,
-                                                                                      metUserFBView.frame.size.height - 75,
+                                                                                      metUserFBView.frame.size.height - (75 + 45),
                                                                                       widthViews, 70)];
     
     UILabel *followersTitle = [[UILabel alloc] initWithFrame:CGRectMake(-12, -5, widthViews, 30)];
@@ -333,7 +351,7 @@
     }
     
     NSUInteger intWidthScreen = screenWidth;
-    NSUInteger heightImg = ceilf(intWidthScreen / GOLDENRATIO);
+    NSUInteger heightImg = ceilf(intWidthScreen / GOLDENRATIO) + 50;
     
     NSString *fbMetUserString = self.metUserId;
     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,(unsigned long)intWidthScreen, (unsigned long)heightImg];
@@ -356,9 +374,9 @@
 
 - (void) displayMatchRateList
 {
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
+    UITableView *userMetLikesTableView = (UITableView*)[self.view viewWithTag:1];
     
-    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, ceilf(screenWidth / GOLDENRATIO))];
+    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, ceilf(screenWidth / GOLDENRATIO) + 50)];
     metUserFBView.backgroundColor = [UIColor clearColor];
     metUserFBView.tag = 4;
 
@@ -387,9 +405,47 @@
 
     [metUserFBView addSubview:tasteMetUserMessageLabel];
     
-    userSelectionTableView.tableHeaderView = metUserFBView;
-    [self displayMetUserStats];
-    [userSelectionTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
+//    userSelectionTableView.tableHeaderView = metUserFBView;
+    
+    
+    UIView *statsContainer = [self displayMetUserStats];
+    statsContainer.frame = CGRectMake(0, metUserFBView.frame.size.height - (75 + 45),
+                                      CGRectGetWidth(statsContainer.frame), CGRectGetHeight(statsContainer.frame));
+    [metUserFBView addSubview:statsContainer];
+    
+    UISegmentedControl *filterUserMetListSC = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"Alls", nil), NSLocalizedString(@"to discover", nil), NSLocalizedString(@"in common", nil)]];
+    filterUserMetListSC.frame = CGRectMake(10, 5, screenWidth - 20, 30);
+    [filterUserMetListSC addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
+    filterUserMetListSC.selectedSegmentIndex = 0;
+    filterUserMetListSC.tag = 9;
+    filterUserMetListSC.tintColor = [UIColor whiteColor];
+    filterUserMetListSC.backgroundColor = [UIColor clearColor];
+    
+    UIView *metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
+
+    filterUserMetListSC.frame = CGRectMake(10, CGRectGetMaxY(statsContainer.frame) + 15, screenWidth - 20, 30);
+    
+    [metUserFBView addSubview:filterUserMetListSC];
+    
+    metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
+
+    UILabel *emptyUserLikesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 330, screenWidth, 0)];
+    emptyUserLikesLabel.text = NSLocalizedString(@"not in common but much discover", nil);
+    emptyUserLikesLabel.numberOfLines = 0;
+    emptyUserLikesLabel.textColor = [UIColor whiteColor];
+    emptyUserLikesLabel.textAlignment = NSTextAlignmentCenter;
+    [emptyUserLikesLabel sizeToFit];
+    emptyUserLikesLabel.tag = 10;
+    emptyUserLikesLabel.frame = CGRectMake(CGRectGetMinX(emptyUserLikesLabel.frame), CGRectGetMinY(emptyUserLikesLabel.frame), screenWidth, CGRectGetHeight(emptyUserLikesLabel.frame));
+    emptyUserLikesLabel.font = [UIFont boldSystemFontOfSize:15];
+    emptyUserLikesLabel.center = CGPointMake(self.view.center.x, emptyUserLikesLabel.center.y);
+    emptyUserLikesLabel.backgroundColor = [UIColor clearColor];
+    [userMetLikesTableView addSubview:emptyUserLikesLabel];
+    
+    
+    [userMetLikesTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
+    
+    userMetLikesTableView.tableHeaderView = metUserFBView;
 }
 
 /*
@@ -398,21 +454,25 @@
  *
  */
 
-- (void) displayMetUserStats
+- (UIView*) displayMetUserStats
 {
-    UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
+//    UIView *metUserFBView = (UIView*)[self.view viewWithTag:4];
+    
+    UIView *statsContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 70)];
+    statsContainer.backgroundColor = [UIColor clearColor];
+//    [metUserFBView addSubview:statsContainer];
     
     float widthViews = 99.0f;
-    for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
+    for (int i = 0; i < [[self.metUserLikesDictRef filterKeysForNullObj] count]; i++) {
         CALayer *rightBorder = [CALayer layer];
         rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 75.0f);
         rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
         
-        NSString *title = [NSLocalizedString([[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
+        NSString *title = [NSLocalizedString([[[self.metUserLikesDictRef filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
         
         
         CGRect statContainerFrame = CGRectMake(0 + (95 * i),
-                                               metUserFBView.frame.size.height - 75,
+                                               0,
                                                widthViews, 70);
         
         
@@ -423,8 +483,8 @@
         [statContainer addTarget:self action:@selector(scrollToSectionWithNumber:) forControlEvents:UIControlEventTouchUpInside];
 
         
-        [metUserFBView addSubview:statContainer];
-        if ( i != ([[self.metUserTasteDict filterKeysForNullObj] count] - 1)) {
+        [statsContainer addSubview:statContainer];
+        if ( i != ([[self.metUserLikesDictRef filterKeysForNullObj] count] - 1)) {
             [statContainer.layer addSublayer:rightBorder];
         }
         
@@ -443,10 +503,12 @@
         statCount.backgroundColor = [UIColor clearColor];
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
 
-        NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserTasteDict objectForKey:[[[self.metUserTasteDict filterKeysForNullObj]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]objectAtIndex:i]] count]] stringValue];
+        NSString *statCountNumber = [[NSNumber numberWithInteger:[[self.metUserLikesDictRef objectForKey:[[[self.metUserLikesDictRef filterKeysForNullObj]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]objectAtIndex:i]] count]] stringValue];
         statCount.text = statCountNumber;
         [statContainer insertSubview:statCount atIndex:10];
     }
+    
+    return statsContainer;
 }
 
 - (void) updateCurrentUser
@@ -502,9 +564,9 @@
             NSDictionary *allDatasFromServerDict = [[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"];
             
             // This user has really updated is data we udpdate locals datas
-            if (![self.metUserTasteDict isEqualToDictionary:[[allDatasFromServerDict objectForKey:@"list"] mutableCopy] ]) {
+            if (![self.metUserLikesDictRef isEqualToDictionary:[[allDatasFromServerDict objectForKey:@"list"] mutableCopy] ]) {
                 // We update the current data from the server
-                self.metUserTasteDict = [[allDatasFromServerDict objectForKey:@"list"] mutableCopy];
+                self.metUserLikesDictRef = [[allDatasFromServerDict objectForKey:@"list"] mutableCopy];
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:[allDatasFromServerDict objectForKey:@"list"]];
                 
                 NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbId == %@", self.metUserId];
@@ -554,17 +616,17 @@
     int commonTasteCount = 0;
     int currentUserNumberItems = 0;
 
-    for (int i = 0; i < [[self.metUserTasteDict filterKeysForNullObj] count]; i++) {
-        NSString *key = [[self.metUserTasteDict filterKeysForNullObj] objectAtIndex:i];
+    for (int i = 0; i < [[self.metUserLikesDictRef filterKeysForNullObj] count]; i++) {
+        NSString *key = [[self.metUserLikesDictRef filterKeysForNullObj] objectAtIndex:i];
 
         if (![[currentUserTaste objectForKey:key] isEqual:[NSNull null]]) {
             currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
             
-            currentUserNumberItems += [[self.metUserTasteDict objectForKey:key] count];
+            currentUserNumberItems += [[self.metUserLikesDictRef objectForKey:key] count];
         }
         
-        if (![[self.metUserTasteDict objectForKey:key] isEqual:[NSNull null]]) {
-            currentUserMetTasteSet = [NSMutableSet setWithArray:[[self.metUserTasteDict objectForKey:key] valueForKey:@"imdbID"]];
+        if (![[self.metUserLikesDictRef objectForKey:key] isEqual:[NSNull null]]) {
+            currentUserMetTasteSet = [NSMutableSet setWithArray:[[self.metUserLikesDictRef objectForKey:key] valueForKey:@"imdbID"]];
         }
         
         [currentUserMetTasteSet intersectSet:currentUserTasteSet]; //this will give you only the obejcts that are in both sets
@@ -582,13 +644,15 @@
         commonTasteCountPercent = 0.0f;
     }
     
-    // If the user has only 1% in common
+
+    // If the user has only 100% in common
     if (commonTasteCountPercent == (float)1) {
-        commonTasteCountPercent = 0.01;
+        commonTasteCountPercent = 1.0;
     }
     
     // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
     commonTasteCountPercent = 1 - commonTasteCountPercent;
+    
     
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
@@ -662,40 +726,94 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSString *sectionTitle = [[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
-    NSArray *sectionElements = [self.metUserTasteDict objectForKey:sectionTitle];
+    NSString *sectionTitle = [[[self.metUserLikesDictRef filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
     
-//    NSLog(@"sectionElements : %@, %li", [[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)], section);
+    
+
+    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:9];
+    
+    //    NSMutableArray *ello = [[[currentUserTaste objectsForKeys:[currentUserTaste allKeys] notFoundMarker:[NSNull null]] valueForKey:@"imdbID"] mutableCopy];
+    //    [ello removeObjectIdenticalTo:[NSNull null]];
+    
+    //    NSMutableArray *ello = [[[self.metUserLikesDict objectsForKeys:[self.metUserLikesDict allKeys] notFoundMarker:[NSNull null]] valueForKey:@"imdbID"] mutableCopy];
+    //    [ello removeObjectIdenticalTo:[NSNull null]];
+    
+    //    NSLog(@"self.metUserLikesDict : %@", self.metUserLikesDict);
+    
+    NSArray *sectionElements;
+    
+    NSArray *currentUserImdbID = [currentUserTaste[sectionTitle] valueForKey:@"imdbID"];
+    NSArray *metUserLikesForKey = self.metUserLikesDictRef[sectionTitle];
+
+    switch (segmentedControl.selectedSegmentIndex) {
+            // Everything
+        case 0:
+            sectionElements = metUserLikesForKey;
+            break;
+            // to discover
+        case 1:
+            sectionElements = [metUserLikesForKey filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT imdbID IN %@", currentUserImdbID]];
+            break;
+            // in common
+        case 2:
+            sectionElements = [metUserLikesForKey filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"imdbID IN %@", currentUserImdbID]];
+            break;
+        
+        default:
+            break;
+    }
+    
+    [self.metUserLikesDict setObject:sectionElements
+                         forKey:sectionTitle];
+    
+    
     // If the category is empty so the section not appears
     if ([sectionElements isKindOfClass:[NSNull class]]) {
         return 0;
     }
+    
+    
+    UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:10];
+    if (sectionElements.count == 0) {
+        emptyUserTasteLabel.hidden = NO;
+    } else {
+        emptyUserTasteLabel.hidden = YES;
+    }
+    
 
     return sectionElements.count;
 }
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // User have no list of taste - technically impossible beacase the api filter user with no likes
-    UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:8];
+    // User have no list of likes - technically impossible beacase the api filter user with no likes
+    
     
     BOOL IsTableViewEmpty = YES;
-    // This loop is here to check the value of all keys
-    for (int i = 0; i < [[self.metUserTasteDict allKeys] count]; i++) {
-        if (![[self.metUserTasteDict objectForKey:[[self.metUserTasteDict allKeys] objectAtIndex:i]] isKindOfClass:[NSNull class]]) {
-            if ([[self.metUserTasteDict objectForKey:[[self.metUserTasteDict allKeys] objectAtIndex:i]] count] != 0) {
-                IsTableViewEmpty = NO;
-            }
-        }
-    }
     
-    if (IsTableViewEmpty == YES && [FBSDKAccessToken currentAccessToken]) {
-        emptyUserTasteLabel.hidden = NO;
-        
-        return 0;
-    }
+    // This loop is here to check the value of all keys
+//    for (int i = 0; i < [[self.metUserLikesDict allKeys] count]; i++) {
+//        if (![[self.metUserLikesDict objectForKey:[[self.metUserLikesDict allKeys] objectAtIndex:i]] isKindOfClass:[NSNull class]]) {
+//            if ([[self.metUserLikesDict objectForKey:[[self.metUserLikesDict allKeys] objectAtIndex:i]] count] != 0) {
+//                IsTableViewEmpty = NO;
+//            }
+//        }
+//    }
+//    
+//    emptyUserTasteLabel.hidden = NO;
+//    
+//    if (IsTableViewEmpty == YES) {
+//        <#statements#>
+//    }
+    
+//    if (IsTableViewEmpty == YES && [FBSDKAccessToken currentAccessToken]) {
+//        emptyUserTasteLabel.hidden = NO;
+//        self.metUserLikesDict = [self.metUserLikesDictRef mutableCopy];
+//        return 0;
+//    }
 
-    return [[self.metUserTasteDict filterKeysForNullObj] count];
+
+    return [[self.metUserLikesDict filterKeysForNullObj] count];
 }
 
 // Title of categories
@@ -718,7 +836,7 @@
     
     
     
-    NSString *sectionTitleRaw = [[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+    NSString *sectionTitleRaw = [[[self.metUserLikesDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
     NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 52.0)];
@@ -754,13 +872,13 @@
     static NSString *CellIdentifier = @"Cell";
     
     // Keys from NSDict is sorted alphabetically
-    NSString *sectionTitle = [[[self.metUserTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
+    NSString *sectionTitle = [[[self.metUserLikesDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
                                                                           objectAtIndex:indexPath.section];
     NSString *title, *imdbID; // year
     ShareListMediaTableViewCell *cell;
     
     cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    NSArray *rowsOfSection = [self.metUserTasteDict objectForKey:sectionTitle];
+    NSArray *rowsOfSection = [self.metUserLikesDict objectForKey:sectionTitle];
     CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
 
     title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
@@ -806,21 +924,13 @@
         cell.detailTextLabel.text = @"";
     }
     
-
-    
     cell.textLabel.text = title;
-    
-    
-//    cell.detailTextLabel.text = @"year";
-//    cell.detailTextLabel.textColor = [UIColor whiteColor];
-    
     
     return cell;
 }
 
 - (void) getLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell
 {
-
     NSDictionary *queryParams =  @{@"id": [aCell.model objectForKey:@"imdbID"], @"external_source": @"imdb_id"};
     
     [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
@@ -922,6 +1032,25 @@
     detailsMediaViewController.title = [selectedCell.model objectForKey:@"name"];
 
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+}
+
+
+- (void) filterTableview:(id)sender
+{
+    [self reloadTableview];
+}
+
+- (void) reloadTableview
+{    
+    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+    [userMeetingsListTableView reloadData];
+    
+    CATransition *animation = [CATransition animation];
+    [animation setType:kCATransitionFade];
+    [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    [animation setFillMode:kCAFillModeBoth];
+    [animation setDuration:.3];
+    [[userMeetingsListTableView layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
 }
 
 
