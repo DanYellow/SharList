@@ -64,9 +64,9 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 
 ###### 1.2.1
 - Inverser l'affichage des goûts en commun (X % de la liste à découvrir!) - **Done**
-- Ajouter "pull to refresh" pour permettre de découvrir de nouvelles choses + Indiquer le temps restant avant la prochaine rencontre : 'XX:XX avant de pouvoir découvrir de nouvelles choses'
-- Remettre le scroll-to-top lors de la recherche d'une nouvelle récouverte'
-- Ajouter une segmentation pour la fiche de découverte  
+- Ajouter "pull to refresh" pour permettre de découvrir de nouvelles choses + Indiquer le temps restant avant la prochaine rencontre : 'XX:XX avant de pouvoir découvrir de nouvelles choses' - **Done**
+- Remettre le scroll-to-top lors de la recherche d'une nouvelle récouverte' - **Done**
+- Ajouter une segmentation pour la fiche de découverte pour pouvoir filtrer la liste - **Done**
 - Inviter ses amis à découvrir de nouvelles choses si aucun d'eux apprécient un film ou une série - **Done**
 - Afficher les dernières recherches
 

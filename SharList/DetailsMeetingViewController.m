@@ -170,7 +170,7 @@
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     
-    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 100)];
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 30)];
     tableFooter.opaque = YES;
     tableFooter.backgroundColor = [UIColor clearColor];
     
@@ -274,12 +274,10 @@
 
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     
-    
     // If the category selected (movie, serie, what ever) doesn't exist nothing happen
     if ([self.metUserLikesDict[[[self.metUserLikesDict filterKeysForNullObj] objectAtIndex:aSectionNumber]] count] == 0) {
         return;
     }
-    
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
 
@@ -423,24 +421,31 @@
     
     UIView *metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
 
-    filterUserMetListSC.frame = CGRectMake(10, CGRectGetMaxY(statsContainer.frame) + 15, screenWidth - 20, 30);
+    filterUserMetListSC.frame = CGRectMake(10, CGRectGetMaxY(statsContainer.frame) + 10, screenWidth - 20, 30);
     
     [metUserFBView addSubview:filterUserMetListSC];
     
     metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
 
-    UILabel *emptyUserLikesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 330, screenWidth, 0)];
-    emptyUserLikesLabel.text = NSLocalizedString(@"not in common but much discover", nil);
-    emptyUserLikesLabel.numberOfLines = 0;
-    emptyUserLikesLabel.textColor = [UIColor whiteColor];
-    emptyUserLikesLabel.textAlignment = NSTextAlignmentCenter;
-    [emptyUserLikesLabel sizeToFit];
-    emptyUserLikesLabel.tag = 10;
-    emptyUserLikesLabel.frame = CGRectMake(CGRectGetMinX(emptyUserLikesLabel.frame), CGRectGetMinY(emptyUserLikesLabel.frame), screenWidth, CGRectGetHeight(emptyUserLikesLabel.frame));
-    emptyUserLikesLabel.font = [UIFont boldSystemFontOfSize:15];
-    emptyUserLikesLabel.center = CGPointMake(self.view.center.x, emptyUserLikesLabel.center.y);
-    emptyUserLikesLabel.backgroundColor = [UIColor clearColor];
-    [userMetLikesTableView addSubview:emptyUserLikesLabel];
+    UIButton *emptyUserLikesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    emptyUserLikesBtn.frame = CGRectMake(0, 330, screenWidth, 30);
+    
+    [emptyUserLikesBtn setTitle:NSLocalizedString(@"not in common but much discover", nil)
+                       forState:UIControlStateNormal];
+    [emptyUserLikesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [emptyUserLikesBtn setTitleColor:[UIColor colorWithWhite:1 alpha:.6] forState:UIControlStateHighlighted];
+
+    emptyUserLikesBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [emptyUserLikesBtn sizeToFit];
+    emptyUserLikesBtn.tag = 10;
+    [emptyUserLikesBtn addTarget:self action:@selector(displayDiscoverTabTV:) forControlEvents:UIControlEventTouchUpInside];
+    emptyUserLikesBtn.frame = CGRectMake(CGRectGetMinX(emptyUserLikesBtn.frame), CGRectGetMinY(emptyUserLikesBtn.frame), screenWidth, CGRectGetHeight(emptyUserLikesBtn.frame));
+    emptyUserLikesBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+    emptyUserLikesBtn.center = CGPointMake(self.view.center.x, emptyUserLikesBtn.center.y);
+    emptyUserLikesBtn.backgroundColor = [UIColor clearColor];
+    [userMetLikesTableView addSubview:emptyUserLikesBtn];
+    
+//    userMetLikesTableView.backgroundView = emptyUserLikesBtn;
     
     
     [userMetLikesTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
@@ -773,11 +778,11 @@
     }
     
     
-    UILabel *emptyUserTasteLabel = (UILabel*)[self.view viewWithTag:10];
+    UIButton *emptyUserLikesBtn = (UIButton*)[self.view viewWithTag:10];
     if (sectionElements.count == 0) {
-        emptyUserTasteLabel.hidden = NO;
+        emptyUserLikesBtn.hidden = NO;
     } else {
-        emptyUserTasteLabel.hidden = YES;
+        emptyUserLikesBtn.hidden = YES;
     }
     
 
@@ -1185,6 +1190,16 @@
                      completion:^(BOOL finished){
                          [tutorialView removeFromSuperview];
                      }];
+}
+
+#pragma mark - custom methods
+
+- (void) displayDiscoverTabTV:(UIButton*)sender
+{
+    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:9];
+    
+    [segmentedControl setSelectedSegmentIndex:1];
+    [segmentedControl sendActionsForControlEvents:UIControlEventValueChanged];
 }
 
 #pragma mark - facebook sharing

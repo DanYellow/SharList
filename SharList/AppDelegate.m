@@ -200,7 +200,7 @@
             self.tabBarController.selectedIndex = 0;
             
             MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
-            [meetingsListViewController fetchUsersDatas];
+            [meetingsListViewController fetchNewDiscovery];
         } else if ([[[notification userInfo] objectForKey:@"locatificationName"] isEqualToString:@"updateList"]) {
             // User doesn't change his list for a longtime
             self.tabBarController.selectedIndex = 1;
