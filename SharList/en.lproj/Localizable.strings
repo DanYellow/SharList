@@ -13,9 +13,9 @@
 
 "Introduce the world what you love" = "Introduce the world what you like";
 
-"series" = "TV Series";
-"movies" = "movies";
-"books" = "books";
+"serie" = "TV shows";
+"movie" = "movies";
+"book" = "books";
 "buy" = "buy";
 "buy %@" = "buy %@";
 
@@ -75,6 +75,7 @@
 "random" = "Random";
 "randomMeetingExplained" = "Random\nThe unknown does not scare you";
 "notefacebook" = "Note: If an icon is replaced by initials, you discovered a facebook friend!\n Note 2: You can make a discovery only every hours.";
+"%@ time remaining before next" = "%@ before discovering new things";
 
 "warning message for update login issue" = "If you just update the app, please log out into the settings and reconnect";
 
@@ -134,7 +135,7 @@
 "list updated" = "List updated";
 "AddToList" = "Add to list";
 "RemoveToList" = "Remove from list";
-"To introduce friends" = "To introduce my friends";
+"To introduce friends" = "Introduce my friends";
 
 // Store names :
 "amazonBR" = "amazon Blu-ray";
@@ -178,7 +179,7 @@
 //AboutViewController
 "About" = "About";
 "About Shound - Highlight words" = "Credits|Privacy|Comments";
-"About Shound" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your likes.\n\n\Credits\nMovies and TV series datas, and posters art are provided by themoviedb's API.\n\n\Privacy\nYour lastname and your firstname on facebook are not save by the app or the third services used by the app.\n\n\Comments\nAny comments injuring, racist, insulting, inciting hatred against an ethnic group or religion will be deleted without notice.";
+"About Shound" = "Shound allows you introduce the world what you like. People around you can discover your favorites movies or tv shows. Show them your likes.\n\n\Credits\nMovies and TV shows datas, and posters art are provided by themoviedb's API.\n\n\Privacy\nYour lastname and your firstname on facebook are not save by the app or the third services used by the app.\n\n\Comments\nAny comments injuring, racist, insulting, inciting hatred against an ethnic group or religion will be deleted without notice.";
 
 //PostCommentViewController
 "post comment" = "Comment";

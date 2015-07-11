@@ -83,6 +83,8 @@
 "localNotificationAlertActionRefresh" = "découvrir";
 "localNotificationAlertBodyRefresh" = "Il y a toujours de nouvelles choses à découvrir";
 "authorize fb friends" = "J'aimerais voir mes amis";
+"%@ time remaining before next" = "%@ avant de pouvoir découvrir de nouvelles choses";
+
 // Tutorial part \\
 "refreshmeetingType" = "Le bouton rafraîchir permet de faire des découvertes, elles peuvent être de deux types : ";
 "geolocated" = "Géolocalisées";
@@ -90,6 +92,7 @@
 "random" = "Aléatoires";
 "randomMeetingExplained" = "Aléatoires\nPour ceux qui n'ont pas peur de l'inconnu";
 "notefacebook" = "Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !\n Note 2 : Vous ne pouvez faire une découverte que toutes les heures.";
+
 
 "warning message for update login issue" = "Vous venez de mettre à jour l'application ? Merci ! \n\n Mais pour profiter des nouveautés veuillez vous déconnecter dans les paramètres puis vous reconnecter";
 

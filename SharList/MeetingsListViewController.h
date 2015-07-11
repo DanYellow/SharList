@@ -58,7 +58,7 @@
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 - (void) navigationItemRightButtonEnablingManagement;
 - (void) noInternetAlert;
-- (void) fetchUsersDatas;
+- (void) fetchNewDiscovery;
 - (void) reloadTableview;
 - (void) manageDisplayOfFacebookFriendsButton;
 

@@ -26,6 +26,7 @@
 // 8  : emptyFacebookFriendsLabel
 // 9  : tutorialView
 // 10 : refreshBtnBar
+// 11 : refreshControl
 
 @implementation MeetingsListViewController
 
@@ -175,7 +176,7 @@
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
-    self.TableViewAdded = NO;
+    self.tableViewAdded = NO;
     
     //Main screen display
 //    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
@@ -285,21 +286,29 @@
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"%@ meetings", nil), countMeetings]];
     
     // Uitableview of user selection (what user likes)
-    UITableView *userMeetingsListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
-    userMeetingsListTableView.dataSource = self;
-    userMeetingsListTableView.delegate = self;
-    userMeetingsListTableView.backgroundColor = [UIColor clearColor];
+    UITableView *discoveriesListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
+    discoveriesListTableView.dataSource = self;
+    discoveriesListTableView.delegate = self;
+    discoveriesListTableView.backgroundColor = [UIColor clearColor];
 //    userMeetingsListTableView.backgroundColor = [UIColor colorWithWhite:1 alpha:.5];
-    userMeetingsListTableView.tag = 1;
-    userMeetingsListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    userMeetingsListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    userMeetingsListTableView.tableHeaderView = segmentedControlView;
-    userMeetingsListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
+    discoveriesListTableView.tag = 1;
+    discoveriesListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    discoveriesListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    discoveriesListTableView.tableHeaderView = segmentedControlView;
+    discoveriesListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
+    
+    UIRefreshControl *refreshControl = [UIRefreshControl new];
+    refreshControl.tag = 11;
+    refreshControl.tintColor = [UIColor whiteColor];
+//    refreshControl.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
+    refreshControl.backgroundColor = [UIColor clearColor];
+    [refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+    [discoveriesListTableView addSubview:refreshControl];
     
     //    [userMeetingsListTableView scrollToRowAtIndexPath:0 atScrollPosition:UITableViewScrollPositionTop animated:NO];
 
     if (!self.isTableViewAdded) {
-        [self.view addSubview:userMeetingsListTableView];
+        [self.view addSubview:discoveriesListTableView];
         self.tableViewAdded = YES;
     }
     
@@ -327,7 +336,7 @@
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
     emptyFavoritesLabel.hidden = YES;
-    [userMeetingsListTableView addSubview:emptyFavoritesLabel];
+    [discoveriesListTableView addSubview:emptyFavoritesLabel];
     
     
     NSMutableAttributedString *emptyMeetingsLabelAttrString = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"Tap on  to discover new things", nil)];
@@ -353,7 +362,7 @@
     emptyMeetingsLabel.backgroundColor = [UIColor clearColor];
     emptyMeetingsLabel.tag = 4;
     emptyMeetingsLabel.hidden = NO;
-    [userMeetingsListTableView addSubview:emptyMeetingsLabel];
+    [discoveriesListTableView addSubview:emptyMeetingsLabel];
     
     
     // Message for no fb friends /:
@@ -363,7 +372,7 @@
     emptyFacebookFriendsLabelView.userInteractionEnabled = YES;
     emptyFacebookFriendsLabelView.hidden = YES;
     emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
-    [userMeetingsListTableView addSubview:emptyFacebookFriendsLabelView];
+    [discoveriesListTableView addSubview:emptyFacebookFriendsLabelView];
     
     [self manageDisplayOfFacebookFriendsButton];
     
@@ -375,8 +384,45 @@
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];
     [self.view addSubview:loadingIndicator];
     
-    
     [self getCurrentUserLikes];
+}
+
+- (NSString*) displayTimeWithSecond:(NSInteger)seconds
+{
+    NSInteger remindMinute = seconds / 60;
+    NSInteger remindHours = remindMinute / 60;
+    
+    NSInteger remindMinutes = seconds - (remindHours * 3600);
+    NSInteger remindMinuteNew = remindMinutes / 60;
+    
+    NSInteger remindSecond = seconds - (remindMinuteNew * 60) - (remindHours * 3600);
+
+    NSString *remainingTime = [NSString stringWithFormat:@"%02d:%02d:%02d", remindHours, remindMinuteNew, remindSecond];
+
+    return remainingTime;
+}
+
+- (void)refresh:(id)sender
+{
+    UIRefreshControl *refreshControl = (UIRefreshControl*)sender;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [sender beginRefreshing];
+    });
+    
+    // User can make a new discovery
+    if ([self timeBeforeNextDiscovery] > BGFETCHDELAY) {
+        [self fetchNewDiscovery];
+    } else {
+        NSString *title = [NSString stringWithFormat:NSLocalizedString(@"%@ time remaining before next", nil), [self displayTimeWithSecond:(BGFETCHDELAY - [self timeBeforeNextDiscovery])]];
+        NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
+                                                                    forKey:NSForegroundColorAttributeName];
+        NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
+        refreshControl.attributedTitle = attributedTitle;
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [sender endRefreshing];
+    });
 }
 
 /*
@@ -595,7 +641,21 @@
     [self.navigationController pushViewController:detailsMeetingViewController animated:NO];
 }
 
-
+- (NSInteger) timeBeforeNextDiscovery
+{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
+    
+    NSInteger hours = [lastDataFetchingInterval hour];
+    NSInteger minutes = [lastDataFetchingInterval minute];
+    NSInteger seconds = [lastDataFetchingInterval second];
+    
+    // If the meeting have been made less than one hour ago we do nothing
+    NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
+    
+    return delayLastMeetingUser;
+}
 
 // This function manage the enable state of refresh button
 - (void) navigationItemRightButtonEnablingManagement
@@ -606,9 +666,10 @@
     refreshBtnBarDisabledBG.tintColor = [UIColor blackColor];
     refreshBtnBarDisabledBG.userInteractionEnabled = NO;
     
+    
     UIButton *refreshBtnBar = [UIButton buttonWithType:UIButtonTypeCustom];
     refreshBtnBar.frame = CGRectMake(0, 0, 24, 24);
-    [refreshBtnBar addTarget:self action:@selector(fetchUsersDatas) forControlEvents:UIControlEventTouchUpInside];
+    [refreshBtnBar addTarget:self action:@selector(fetchNewDiscovery) forControlEvents:UIControlEventTouchUpInside];
     refreshBtnBar.showsTouchWhenHighlighted = NO;
     refreshBtnBar.alpha = 1.0;
     refreshBtnBar.enabled = NO;
@@ -635,18 +696,10 @@
     self.navigationItem.rightBarButtonItem = refreshBtn;
     
     if ([userPreferences objectForKey:@"lastManualUpdate"]) {
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        
-        NSDateComponents *lastDataFetchingInterval = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:[userPreferences objectForKey:@"lastManualUpdate"] toDate:[NSDate date] options:0];
-        
-        NSInteger hours = [lastDataFetchingInterval hour];
-        NSInteger minutes = [lastDataFetchingInterval minute];
-        NSInteger seconds = [lastDataFetchingInterval second];
-
         // If the meeting have been made less than one hour ago we do nothing
-        NSInteger delayLastMeetingUser = (hours * 60 * 60) + (minutes * 60) + seconds;
-    
-        if (delayLastMeetingUser > BGFETCHDELAY) { //BGFETCHDELAY
+        NSInteger delayLastMeetingUser = [self timeBeforeNextDiscovery];
+        
+        if (delayLastMeetingUser > BGFETCHDELAY) {
             self.navigationItem.rightBarButtonItem.enabled = YES;
             refreshBtnBar.enabled = YES;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -662,7 +715,6 @@
             [maskWithHole setFillRule:kCAFillRuleEvenOdd];
             refreshBtnBar.layer.mask = maskWithHole;
             self.navigationItem.rightBarButtonItem.enabled = NO;
-            
             dispatch_async(dispatch_get_main_queue(), ^{
                 if(!self.timerRefreshBtn.isValid) {
                     self.timerRefreshBtn = [NSTimer scheduledTimerWithTimeInterval:2.0
@@ -1311,7 +1363,7 @@
     return [AFNetworkReachabilityManager sharedManager].isReachable;
 }
 
-- (void) fetchUsersDatas
+- (void) fetchNewDiscovery
 {
     if ([self connected] == NO) {
         [self noInternetAlert];
