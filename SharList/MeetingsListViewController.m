@@ -300,7 +300,7 @@
 
     if (!self.isTableViewAdded) {
         [self.view addSubview:userMeetingsListTableView];
-        self.TableViewAdded = YES;
+        self.tableViewAdded = YES;
     }
     
     
@@ -753,7 +753,17 @@
     [loadingIndicator startAnimating];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+    [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     [userMeetingsListTableView reloadData];
+    
+    // http://stackoverflow.com/questions/7547934/animated-reloaddata-on-uitableview
+    CATransition *animation = [CATransition animation];
+    [animation setType:kCATransitionFade];
+    [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    [animation setFillMode:kCAFillModeBoth];
+    [animation setDuration:.3];
+    [[userMeetingsListTableView layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
+    
     
     [loadingIndicator stopAnimating];
 }
@@ -1018,17 +1028,20 @@
     
     NSString *textLabelString = @"";
     
-    CGFloat commonTasteCountPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
-    if (isnan(commonTasteCountPercent)) {
-        commonTasteCountPercent = 0.0f;
+    CGFloat notCommonLikesPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
+    if (isnan(notCommonLikesPercent)) {
+        notCommonLikesPercent = 0.0f;
     }
     
     // If the user has only 1% in common
-    if (commonTasteCountPercent == (float)1) {
-        commonTasteCountPercent = 0.01;
+    if (notCommonLikesPercent == (float)1) {
+        notCommonLikesPercent = 1.0;
     }
     
-    if (commonTasteCount == 0) {
+    // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
+    notCommonLikesPercent = 1 - notCommonLikesPercent;
+    
+    if (notCommonLikesPercent == 1) {
         UIColor *noLikeCommonColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
         cell.detailTextLabel.textColor = noLikeCommonColor;
         cell.textLabel.textColor = noLikeCommonColor;
@@ -1036,18 +1049,23 @@
     } else {
         NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
         [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
-
         
-        // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
-        commonTasteCountPercent = 1 - commonTasteCountPercent;
-        
-        NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:commonTasteCountPercent]];
-        
-        textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ not in common", nil), strNumber];
-//        textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ in common", nil), strNumber];
-        
-        cell.textLabel.textColor = [UIColor whiteColor];
-        cell.detailTextLabel.textColor = [UIColor whiteColor];
+        if (notCommonLikesPercent == 0) {
+            textLabelString = NSLocalizedString(@"everything in common list", nil);
+            
+            UIColor *invisibleCellColor = [UIColor colorWithRed:(43.0/255.0)
+                                                     green:(97.0/255.0)
+                                                      blue:(122.0/255.0) alpha:1.0f];
+            
+            cell.textLabel.textColor = invisibleCellColor;
+            cell.detailTextLabel.textColor = invisibleCellColor;
+        } else {
+            NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:notCommonLikesPercent]];
+            textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ not in common", nil), strNumber];
+            
+            cell.textLabel.textColor = [UIColor whiteColor];
+            cell.detailTextLabel.textColor = [UIColor whiteColor];
+        }
     }
     
 
@@ -1069,8 +1087,7 @@
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
     }
     
-    CGSize itemSize = CGSizeMake(40, 40);
-    UIGraphicsBeginImageContextWithOptions(itemSize, NO, 0.0);
+
     
     // If the user is a facebook friend so we display his facebook profile image
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[currentUserMet fbId]]) {
@@ -1081,16 +1098,14 @@
                                                                                      forDarkBG:NO];
 //        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
 //                                                                                                forDarkBG:YES];
-        
-        
         if ([currentUserMet isRandomDiscover]) {
             cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
                                                                                      forDarkBG:YES
-                                                                                thingsInCommon:commonTasteCount];
+                                                                                thingsInCommon:notCommonLikesPercent];
         } else {
             cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon"
                            forDarkBG:YES
-                      thingsInCommon:commonTasteCount];
+                      thingsInCommon:notCommonLikesPercent];
         }
         
         cell.imageView.backgroundColor = [UIColor clearColor];
@@ -1100,18 +1115,16 @@
         if ([currentUserMet isRandomDiscover]) {
             cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
                                                                           forDarkBG:NO
-                                                                     thingsInCommon:commonTasteCount];
+                                                                     thingsInCommon:notCommonLikesPercent];
             cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
                                                                                      forDarkBG:YES
-                                                                                thingsInCommon:commonTasteCount];
+                                                                                thingsInCommon:notCommonLikesPercent];
         } else {
-            cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:NO thingsInCommon:commonTasteCount];
-            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:YES thingsInCommon:commonTasteCount];
+            cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:NO thingsInCommon:notCommonLikesPercent];
+            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:YES thingsInCommon:notCommonLikesPercent];
         }
 
         cell.backgroundView = nil;
-        
-        cell.imageView.tintColor = [UIColor whiteColor];
         cell.imageView.backgroundColor = [UIColor clearColor];
         cell.imageView.layer.cornerRadius = 20.0f;
     }
@@ -1130,7 +1143,7 @@
     }
 }
 
-+ (UIImage *) imageForCellWithName:(NSString*)imageName forDarkBG:(BOOL)isDarkBG thingsInCommon:(int)thingsInCommonCount
++ (UIImage *) imageForCellWithName:(NSString*)imageName forDarkBG:(BOOL)isDarkBG thingsInCommon:(CGFloat)thingsInCommonCount
 {
     UIImage *imageCell = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     UIImageView *imageCellView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
@@ -1141,14 +1154,20 @@
 //    imageCellView.layer.cornerRadius = 20.0f;
 //    imageCellView.layer.borderWidth = 1.0f;
     
-    
-    if (!isDarkBG && thingsInCommonCount == 0) {
+    if (!isDarkBG && thingsInCommonCount == 1) {
+        // Nothing in common
         imageCellView.tintColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
-        
-        return [MeetingsListViewController imageWithView:imageCellView];
+    } else if (!isDarkBG && thingsInCommonCount == 0) {
+        // Everything in common
+        UIColor *invisibleCellColor = [UIColor colorWithRed:(43.0/255.0)
+                                                      green:(97.0/255.0)
+                                                       blue:(122.0/255.0) alpha:1.0f];
+        imageCellView.tintColor = invisibleCellColor;
+    } else {
+        imageCellView.tintColor = (isDarkBG) ? [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0] : [UIColor whiteColor];
     }
     
-    imageCellView.tintColor = (isDarkBG) ? [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0] : [UIColor whiteColor];
+    
     
     return [MeetingsListViewController imageWithView:imageCellView];
 }
