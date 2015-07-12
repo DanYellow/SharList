@@ -54,7 +54,7 @@
 "no facebook friends" = "None of your friends on Facebook using Shound";
 "has facebook friends" = "Some of your facebook friends use Shound but you didn't discovered them yet";
 "%@ has facebook friends" = "%@ and other friends use Shound but you didn't discovered them yet";
-"facebook shound not granted" = "Shound isn't allower to see your facebook friends who using the application";
+"facebook shound not granted" = "Shound isn't allower to see your facebook friends who using the app";
 "All" = "All";
 "Favorites" = "Favorites";
 "Met at %@" = "Discovered at %@";
@@ -75,7 +75,7 @@
 "random" = "Random";
 "randomMeetingExplained" = "Random\nThe unknown does not scare you";
 "notefacebook" = "Note: If an icon is replaced by initials, you discovered a facebook friend!\n Note 2: You can make a discovery only every hours.";
-"%@ time remaining before next" = "%@ before discovering new things";
+"%@ time remaining before next" = "%@ \nbefore discovering new things";
 
 "warning message for update login issue" = "If you just update the app, please log out into the settings and reconnect";
 

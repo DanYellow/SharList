@@ -150,9 +150,11 @@
     
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    screenWidth = screenRect.size.width;
+    // We create an offset to manage uisplitview we user the width of the masterview because this view is the masterviewcontroller
+    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : screenRect.size.width;
+    
+    screenWidth = offsetWidth;
     screenHeight = screenRect.size.height;
-
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     self.FilterEnabled = NO;
@@ -234,6 +236,12 @@
     }
 }
 
+- (void) viewDidAppear:(BOOL)animated
+{
+//    CGRect screenRect = [[UIScreen mainScreen] bounds];
+//    NSLog(@"CGRect screenRect = [[UIScreen mainScreen] bounds]; : %@", NSStringFromCGRect(screenRect));
+}
+
 // Because of the facebook login we can't load the ui directly
 - (void) initializer
 {
@@ -263,7 +271,6 @@
     segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
-//    segmentedControlView.hidden = YES;
     
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"All", nil), NSLocalizedString(@"Favorites", nil), @"Facebook"]];
     
@@ -271,7 +278,6 @@
     [segmentedControl addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tag = 5;
-//    segmentedControl.tintColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1.0f];
     segmentedControl.tintColor = [UIColor whiteColor];
     
     [segmentedControlView addSubview:segmentedControl];
@@ -285,8 +291,7 @@
     NSNumber *countMeetings = [NSNumber numberWithInt:[[Discovery MR_numberOfEntities] intValue] - 1]; // We remove current user
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"%@ meetings", nil), countMeetings]];
     
-    // Uitableview of user selection (what user likes)
-    UITableView *discoveriesListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
+    UITableView *discoveriesListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 49) style:UITableViewStylePlain];
     discoveriesListTableView.dataSource = self;
     discoveriesListTableView.delegate = self;
     discoveriesListTableView.backgroundColor = [UIColor clearColor];
@@ -326,16 +331,17 @@
     [attributedString insertAttributedString:attrStringWithImage atIndex:(r.location + r.length)];
     
     CGFloat emptyUserTasteLabelPosY = 45;
-    UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 24, 90)];
+    UILabel *emptyFavoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, screenWidth - 24, 90)];
     emptyFavoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyFavoritesLabel.attributedText = attributedString; //Appuyez {sur l'étoile} pour ajouter aux favoris
     emptyFavoritesLabel.textColor = [UIColor whiteColor];
-    emptyFavoritesLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
     emptyFavoritesLabel.numberOfLines = 0;
     emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, -10.0f);
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
     emptyFavoritesLabel.hidden = YES;
+    emptyFavoritesLabel.backgroundColor = [UIColor clearColor];
+    emptyFavoritesLabel.center = CGPointMake(screenWidth / 2, self.view.center.y - 60);
     [discoveriesListTableView addSubview:emptyFavoritesLabel];
     
     
@@ -350,12 +356,12 @@
     NSRange r2 = [[emptyMeetingsLabelAttrString string] rangeOfString:NSLocalizedString(@"Tap on ", nil)];
     [emptyMeetingsLabelAttrString insertAttributedString:attrStringWithRefreshImage atIndex:(r2.location + r2.length)];
     
-    // Message for no meetings /:
+    // Message for no meetings
     UILabel *emptyMeetingsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 110)];
     emptyMeetingsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
     emptyMeetingsLabel.attributedText = emptyMeetingsLabelAttrString;
     emptyMeetingsLabel.textColor = [UIColor whiteColor];
-    emptyMeetingsLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+    emptyMeetingsLabel.center = CGPointMake(screenWidth / 2, self.view.center.y - 60);
     emptyMeetingsLabel.numberOfLines = 0;
     emptyMeetingsLabel.textAlignment = NSTextAlignmentCenter;
     emptyMeetingsLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -365,10 +371,10 @@
     [discoveriesListTableView addSubview:emptyMeetingsLabel];
     
     
-    // Message for no fb friends /:
+    // Message for no fb friends :(
     UIView *emptyFacebookFriendsLabelView = [[UIView alloc] initWithFrame:CGRectMake(0.0, emptyUserTasteLabelPosY, screenWidth - 24, 99.0)];
     emptyFacebookFriendsLabelView.tag = 6;
-    emptyFacebookFriendsLabelView.center = CGPointMake(self.view.center.x, self.view.center.y - 60);
+    emptyFacebookFriendsLabelView.center = CGPointMake(screenWidth / 2, self.view.center.y - 60);
     emptyFacebookFriendsLabelView.userInteractionEnabled = YES;
     emptyFacebookFriendsLabelView.hidden = YES;
     emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
@@ -638,7 +644,7 @@
     detailsMeetingViewController.delegate = self;
     detailsMeetingViewController.isDisplayedFromPush = YES;
     [detailsMeetingViewController updateCurrentUser];
-    [self.navigationController pushViewController:detailsMeetingViewController animated:NO];
+//    [self.navigationController pushViewController:detailsMeetingViewController animated:NO];
 }
 
 - (NSInteger) timeBeforeNextDiscovery
@@ -1014,8 +1020,17 @@
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.metUserId = selectedCell.model;
     detailsMeetingViewController.delegate = self;
-   
-    [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
+
+    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ) {
+        UISplitViewController *split = self.splitViewController;
+        
+        UINavigationController *detailMeetingNavController = [[UINavigationController alloc]
+                                                         initWithRootViewController:detailsMeetingViewController];
+
+        split.viewControllers = @[self.navigationController, detailMeetingNavController];
+    } else {
+        [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
+    }
 }
 
 
@@ -1037,13 +1052,12 @@
         
         cell.selectedBackgroundView = selectedBackgroundView;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
         cell.indentationLevel = 1;
         cell.backgroundColor = [UIColor colorWithWhite:1 alpha:.06];
         
         cell.detailTextLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
         cell.textLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
-        
-        
     }
     
     

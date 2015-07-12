@@ -44,6 +44,7 @@
     UIActivityIndicatorView *loadingIndicator;
         
     NSDictionary *currentUserTaste;
+    
 }
 
 @property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;
@@ -53,6 +54,8 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) NSTimer *timerRefreshBtn;
 @property (nonatomic, assign, getter=isTableViewAdded) BOOL tableViewAdded;
+
+//@property (strong, nonatomic) UISplitViewController *splitViewController;
 
 
 - (void) fetchNewDataWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;

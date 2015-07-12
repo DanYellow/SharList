@@ -83,7 +83,7 @@
 "localNotificationAlertActionRefresh" = "découvrir";
 "localNotificationAlertBodyRefresh" = "Il y a toujours de nouvelles choses à découvrir";
 "authorize fb friends" = "J'aimerais voir mes amis";
-"%@ time remaining before next" = "%@ avant de pouvoir découvrir de nouvelles choses";
+"%@ time remaining before next" = "Encore %@ et vous pourrez à nouveau découvrir";
 
 // Tutorial part \\
 "refreshmeetingType" = "Le bouton rafraîchir permet de faire des découvertes, elles peuvent être de deux types : ";

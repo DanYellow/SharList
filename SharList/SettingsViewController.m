@@ -57,6 +57,8 @@
     screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
+    self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
     // Contains globals datas of the project
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
     // Build the array from the plist
@@ -614,6 +616,26 @@
     [FBSDKShareDialog showFromViewController:self
                                  withContent:content
                                     delegate:self];
+}
+
+- (void)splitViewController:(UISplitViewController*)svc
+     willHideViewController:(UIViewController *)aViewController
+          withBarButtonItem:(UIBarButtonItem*)barButtonItem
+       forPopoverController:(UIPopoverController*)pc
+{
+    [barButtonItem setTitle:@"your title"];
+    
+    
+    
+    self.navigationItem.leftBarButtonItem = barButtonItem;
+}
+
+
+- (void)splitViewController:(UISplitViewController*)svc
+     willShowViewController:(UIViewController *)aViewController
+  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+    self.navigationItem.leftBarButtonItem = nil;
 }
 
 - (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results

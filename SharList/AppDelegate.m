@@ -50,9 +50,23 @@
     [application setMinimumBackgroundFetchInterval:BGFETCHDELAY];
 
     
-    ViewController *viewController = [ViewController new];
-    viewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
-    viewController.tabBarItem.image = [UIImage imageNamed:@"liste-tab-icon"];
+    
+
+
+    
+    ViewController *userListViewController = [ViewController new];
+    userListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
+    userListViewController.tabBarItem.image = [UIImage imageNamed:@"liste-tab-icon"];
+    
+    
+//    detailedViewController *detail = [[[detailedViewController alloc] init] autorelease];
+
+    
+    
+    
+//    splitViewController.delegate = detail;
+
+    
     
     MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
     meetingsListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
@@ -63,6 +77,8 @@
     settingsViewController.tabBarItem.image = [UIImage imageNamed:@"settings-tab-icon"];
     
     self.tabBarController = [UITabBarController new];
+    
+    
     
     
     [UITabBar appearance].barTintColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
@@ -82,7 +98,7 @@
     
     // Contains first view of the app
     UINavigationController *navController = [[UINavigationController alloc]
-                                             initWithRootViewController:viewController];
+                                             initWithRootViewController:userListViewController]; //viewController
     navController.navigationBar.barStyle = UIBarStyleBlack;
     navController.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     
@@ -117,9 +133,29 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
     
     
-    NSArray* controllers = @[navControllerMeetingsList, navController, navControllerSettings];
+    DetailsMeetingViewController *detailsMediaViewController = [DetailsMeetingViewController new];
+    
+    UINavigationController *detailsMediaNavController = [[UINavigationController alloc]
+                                                         initWithRootViewController:detailsMediaViewController];
+    
+    // http://devmonologue.com/ios/tutorials/uisplitviewcontroller-tutorial/
+    // http://redartisan.com/2010/6/14/uisplitviewcontroller-views
+    self.splitDiscoveriesViewController = [SHDSplitViewController new];
+    self.splitDiscoveriesViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
+    self.splitDiscoveriesViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon2"];
+//    splitViewController.delegate = detailsMediaViewController;
+    self.splitDiscoveriesViewController.viewControllers = @[navControllerMeetingsList, detailsMediaNavController];
+    
+//    NSLog(@"fre : %f", self.splitDiscoveriesViewController.primaryColumnWidth);
+//    NSLog(    self..collapsed = NO;)
+//     preferredPrimaryColumnWidthFraction
+
+    
+    NSArray* controllers = @[self.splitDiscoveriesViewController, navController, navControllerSettings];
+//    NSArray* controllers = @[splitViewController];
     
     self.tabBarController.viewControllers = controllers;
+    
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window setRootViewController:self.tabBarController]; //connectViewController
@@ -133,7 +169,7 @@
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
     
-    return YES;
+//    return YES;
 }
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void  (^)(UIBackgroundFetchResult))completionHandler

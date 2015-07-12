@@ -31,7 +31,7 @@ enum SettingsMenuItem : NSUInteger {
 };
 
 @interface SettingsViewController : UIViewController <UITableViewDelegate, FBSDKLoginButtonDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UIAlertViewDelegate, UIActionSheetDelegate, FBSDKSharingDelegate>
+UISearchControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UIAlertViewDelegate, UIActionSheetDelegate, FBSDKSharingDelegate, UISplitViewControllerDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

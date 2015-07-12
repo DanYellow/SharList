@@ -35,14 +35,20 @@
 - (void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.tabBarController.tabBar setHidden:YES];
-
+    
+    if ( UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad )
+    {
+        [self.tabBarController.tabBar setHidden:YES];
+    }
+    
     self.navigationController.navigationBar.translucent = NO;
     
     // Animate background of cell selected on press back button
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
+    
+
 }
 
 - (void) viewWillDisappear:(BOOL)animated
@@ -60,13 +66,40 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+ 
     
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    screenWidth = screenRect.size.width;
-    screenHeight = screenRect.size.height;
+    
+    // We create an offset to manage uisplitview
+    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
+    // We create an offset on height to manage the presence of uitabbar on tablet
+    NSUInteger offsetHeight = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 49 : 0;
+
+    screenWidth = screenRect.size.width - offsetWidth;
+    screenHeight = screenRect.size.height - offsetHeight;
+    
+    // View init
+    self.edgesForExtendedLayout = UIRectEdgeAll;
+    
+    //Main screen display
+    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
+
+    
+    CAGradientLayer *gradientBGView = [CAGradientLayer layer];
+    gradientBGView.frame = self.view.bounds;
+    UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
+    UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
+    gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
+    [self.view.layer insertSublayer:gradientBGView atIndex:0];
+    
+    
+    if (self.metUserId == nil) {
+        return;
+    }
+    
+    
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     
@@ -111,20 +144,7 @@
     settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
     
     
-    // View init
-    self.edgesForExtendedLayout = UIRectEdgeAll;
-    
-    //Main screen display
-    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
-//    CGFloat verticalOffset = -4;
-//    [[UINavigationBar appearance] setTitleVerticalPositionAdjustment:verticalOffset forBarMetrics:UIBarMetricsDefault];
-    
-    CAGradientLayer *gradientBGView = [CAGradientLayer layer];
-    gradientBGView.frame = self.view.bounds;
-    UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
-    UIColor *bottomGradientView = [UIColor colorWithRed:(4.0f/255.0f) green:(49.0/255.0f) blue:(70.0f/255.0f) alpha:1];
-    gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
-    [self.view.layer insertSublayer:gradientBGView atIndex:0];
+
     
     
     
@@ -441,7 +461,7 @@
     [emptyUserLikesBtn addTarget:self action:@selector(displayDiscoverTabTV:) forControlEvents:UIControlEventTouchUpInside];
     emptyUserLikesBtn.frame = CGRectMake(CGRectGetMinX(emptyUserLikesBtn.frame), CGRectGetMinY(emptyUserLikesBtn.frame), screenWidth, CGRectGetHeight(emptyUserLikesBtn.frame));
     emptyUserLikesBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-    emptyUserLikesBtn.center = CGPointMake(self.view.center.x, emptyUserLikesBtn.center.y);
+    emptyUserLikesBtn.center = CGPointMake(screenWidth / 2, emptyUserLikesBtn.center.y);
     emptyUserLikesBtn.backgroundColor = [UIColor clearColor];
     [userMetLikesTableView addSubview:emptyUserLikesBtn];
     

@@ -547,6 +547,8 @@
                                           animated:YES];
 }
 
+
+
 - (void) fetchUserDatas
 {
     UIRefreshControl *userSelectRefresh = (UIRefreshControl*)[self.view viewWithTag:6];

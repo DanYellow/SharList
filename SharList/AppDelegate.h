@@ -15,6 +15,10 @@
 #import "SettingsViewController.h"
 #import "MeetingsListViewController.h"
 
+#import "DetailsMeetingViewController.h"
+
+#import "SHDSplitViewController.h"
+
 //Vendors
 
 #import "NSString+SentenceCapitalizedString.h"
@@ -26,6 +30,8 @@
 }
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) SHDSplitViewController *splitDiscoveriesViewController;
+
 @property (nonatomic,strong) NSManagedObjectContext* managedObjectContext;
 @property (nonatomic) NSTimer* locationUpdateTimer;
 

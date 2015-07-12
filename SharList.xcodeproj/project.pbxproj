@@ -57,6 +57,7 @@
 		1A655F501B34986300E98A9F /* Discovery.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A655F4F1B34986300E98A9F /* Discovery.m */; };
 		1A66AA121B31DF3C001D92D7 /* NSDate+CupertinoYankee.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */; };
 		1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6744B01AAB4BB000FA610F /* PFPushManager.m */; };
+		1A7481911B52516500A66C1F /* SHDSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7481901B52516500A66C1F /* SHDSplitViewController.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		1A91FDFE1B2341F600E8B5D7 /* FacebookSDKStrings.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE001B2341F600E8B5D7 /* FacebookSDKStrings.strings */; };
 		1A91FE071B2358A400E8B5D7 /* FacebookSDKStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE061B2358A400E8B5D7 /* FacebookSDKStrings.bundle */; };
@@ -192,6 +193,8 @@
 		1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+CupertinoYankee.m"; sourceTree = "<group>"; };
 		1A6744AF1AAB4BB000FA610F /* PFPushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFPushManager.h; sourceTree = "<group>"; };
 		1A6744B01AAB4BB000FA610F /* PFPushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFPushManager.m; sourceTree = "<group>"; };
+		1A74818F1B52516500A66C1F /* SHDSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHDSplitViewController.h; sourceTree = "<group>"; };
+		1A7481901B52516500A66C1F /* SHDSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHDSplitViewController.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
 		1A91FDFF1B2341F600E8B5D7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FacebookSDKStrings.strings; sourceTree = "<group>"; };
@@ -336,6 +339,7 @@
 				1A3C22831A114345005B31E4 /* CoreData */,
 				1A36E30A1A9D3F7B004B0DBC /* ConnectViewController */,
 				1A076DDC1A10113000CD725A /* FirstViewController */,
+				1A74818E1B52513200A66C1F /* SHDSplitViewController */,
 				1A0586CE1B0BE41200D2432C /* PostCommentViewController */,
 				1A0014EE1A15819A003430E9 /* Vendors */,
 				1A3C22841A1147CC005B31E4 /* PrefixHeader.pch */,
@@ -520,6 +524,15 @@
 				1A6744B01AAB4BB000FA610F /* PFPushManager.m */,
 			);
 			name = NSObjects;
+			sourceTree = "<group>";
+		};
+		1A74818E1B52513200A66C1F /* SHDSplitViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1A74818F1B52516500A66C1F /* SHDSplitViewController.h */,
+				1A7481901B52516500A66C1F /* SHDSplitViewController.m */,
+			);
+			name = SHDSplitViewController;
 			sourceTree = "<group>";
 		};
 		1A7B09DC1A10DBCD00FA2766 /* CustomViews */ = {
@@ -782,6 +795,7 @@
 				1A655F501B34986300E98A9F /* Discovery.m in Sources */,
 				1A1BE6111B06869C00B813CD /* NSString+URLEncodeValue.m in Sources */,
 				1AF4745C1A4DD424003ED4AF /* UIButton+TrailerID.m in Sources */,
+				1A7481911B52516500A66C1F /* SHDSplitViewController.m in Sources */,
 				1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */,
 				1A549EF71B24A02400B9305B /* UserTaste.xcdatamodeld in Sources */,
 				1A024AB51A3A3EF20098F015 /* NSArray+Reverse.m in Sources */,
@@ -962,6 +976,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharList/SharList-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
@@ -983,6 +998,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharList/SharList-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;

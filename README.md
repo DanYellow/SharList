@@ -69,7 +69,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Ajouter une segmentation pour la fiche de découverte pour pouvoir filtrer la liste - **Done**
 - Inviter ses amis à découvrir de nouvelles choses si aucun d'eux apprécient un film ou une série - **Done**
 - Afficher les dernières recherches
-
+- Gérer l'iPad
 
 
 ###### X.X.X
