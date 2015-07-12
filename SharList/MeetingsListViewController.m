@@ -403,7 +403,7 @@
     
     NSInteger remindSecond = seconds - (remindMinuteNew * 60) - (remindHours * 3600);
 
-    NSString *remainingTime = [NSString stringWithFormat:@"%02d:%02d:%02d", remindHours, remindMinuteNew, remindSecond];
+    NSString *remainingTime = [NSString stringWithFormat:@"%02ld:%02ld:%02ld", (long)remindHours, (long)remindMinuteNew, (long)remindSecond];
 
     return remainingTime;
 }
@@ -415,15 +415,19 @@
         [sender beginRefreshing];
     });
     
-    // User can make a new discovery
-    if ([self timeBeforeNextDiscovery] > BGFETCHDELAY) {
-        [self fetchNewDiscovery];
+    if ([userPreferences objectForKey:@"lastManualUpdate"]) {
+        // User can make a new discovery
+        if ([self timeBeforeNextDiscovery] > BGFETCHDELAY) {
+            [self fetchNewDiscovery];
+        } else {
+            NSString *title = [NSString stringWithFormat:NSLocalizedString(@"%@ time remaining before next", nil), [self displayTimeWithSecond:(BGFETCHDELAY - [self timeBeforeNextDiscovery])]];
+            NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
+                                                                        forKey:NSForegroundColorAttributeName];
+            NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
+            refreshControl.attributedTitle = attributedTitle;
+        }
     } else {
-        NSString *title = [NSString stringWithFormat:NSLocalizedString(@"%@ time remaining before next", nil), [self displayTimeWithSecond:(BGFETCHDELAY - [self timeBeforeNextDiscovery])]];
-        NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
-                                                                    forKey:NSForegroundColorAttributeName];
-        NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
-        refreshControl.attributedTitle = attributedTitle;
+        [self fetchNewDiscovery];
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{

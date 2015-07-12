@@ -24,18 +24,18 @@
     // Override point for customization after application launch.
     
     [MagicalRecord setupAutoMigratingCoreDataStack];
-//    [MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:@"Shound"];
-
+    //    [MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:@"Shound"];
+    
     
     // APNS + Parse part
-//    [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
-//                  clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
-//    
-//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-//    if (![[currentInstallation objectForKey:@"channels"] containsObject:@"appInfos"]) {
-//        [PFPush subscribeToChannelInBackground:@"appInfos"];
-//    }
-//    
+    //    [Parse setApplicationId:@"9dyEc6hGOZDs4dadLx5JkeC0iH8RXkThDFX1oUOb"
+    //                  clientKey:@"McposK2Wpv2TEZcGPECYiRA9bOsJFAXIEDtisKSd"];
+    //
+    //    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    //    if (![[currentInstallation objectForKey:@"channels"] containsObject:@"appInfos"]) {
+    //        [PFPush subscribeToChannelInBackground:@"appInfos"];
+    //    }
+    //
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)])
     {
         UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
@@ -48,11 +48,11 @@
     }
     
     [application setMinimumBackgroundFetchInterval:BGFETCHDELAY];
-
     
     
-
-
+    
+    
+    
     
     ViewController *userListViewController = [ViewController new];
     userListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
@@ -76,12 +76,12 @@
     
     
     UINavigationController *navControllerSettings = [[UINavigationController alloc]
-                                             initWithRootViewController:settingsViewController];
+                                                     initWithRootViewController:settingsViewController];
     navControllerSettings.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     navControllerSettings.navigationBar.barStyle = UIBarStyleBlack;
     
     navControllerMeetingsList = [[UINavigationController alloc]
-                                                     initWithRootViewController:meetingsListViewController];
+                                 initWithRootViewController:meetingsListViewController];
     navControllerMeetingsList.navigationBar.translucent = NO; // Or else we don't have the same background as in the psd
     navControllerMeetingsList.navigationBar.barStyle = UIBarStyleBlack;
     
@@ -127,7 +127,15 @@
     DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
     
     UINavigationController *detailsMeetingNavController = [[UINavigationController alloc]
-                                                         initWithRootViewController:detailsMeetingViewController];
+                                                           initWithRootViewController:detailsMeetingViewController];
+    CALayer *bottomBorder4 = [CALayer layer];
+    bottomBorder4.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+    bottomBorder4.borderWidth = 1;
+    bottomBorder4.name = @"bottomBorderLayer";
+    bottomBorder3.frame = bottomBorderFrame;
+    [detailsMeetingNavController.navigationBar.layer addSublayer:bottomBorder4];
+    
+    
     UINavigationController *detailsMediaNavController = [[UINavigationController alloc]
                                                          initWithRootViewController:detailsMediaViewController];
     
@@ -138,14 +146,14 @@
     self.splitDiscoveriesViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon2"];
     self.splitDiscoveriesViewController.viewControllers = @[navControllerMeetingsList, detailsMeetingNavController];
     
-//    self.splitUserListViewController = [SHDSplitViewController new];
-//    self.splitUserListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
-//    self.splitUserListViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon"];
-//    self.splitUserListViewController.viewControllers = @[navController, detailsMediaNavController];
+    //    self.splitUserListViewController = [SHDSplitViewController new];
+    //    self.splitUserListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
+    //    self.splitUserListViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon"];
+    //    self.splitUserListViewController.viewControllers = @[navController, detailsMediaNavController];
     
     
     NSArray* controllers = @[self.splitDiscoveriesViewController, navController, navControllerSettings];
-//    NSArray* controllers = @[splitViewController];
+    //    NSArray* controllers = @[splitViewController];
     
     self.tabBarController.viewControllers = controllers;
     
@@ -162,7 +170,7 @@
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
     
-//    return YES;
+    //    return YES;
 }
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void  (^)(UIBackgroundFetchResult))completionHandler
@@ -197,17 +205,17 @@
 #pragma mark - Parse + APNS
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     // Store the deviceToken in the current installation and save it to Parse.
-//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-//    [currentInstallation setDeviceTokenFromData:deviceToken];
-//    [currentInstallation saveInBackground];
-//    [PFPush subscribeToChannelInBackground:@"foo"];
+    //    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    //    [currentInstallation setDeviceTokenFromData:deviceToken];
+    //    [currentInstallation saveInBackground];
+    //    [PFPush subscribeToChannelInBackground:@"foo"];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     if (application.applicationState != UIApplicationStateActive) {
-//        [PFPush handlePush:userInfo];
-//        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-
+        //        [PFPush handlePush:userInfo];
+        //        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+        
         
         NSMutableSet *favsUserUpdatedMSet = [[NSMutableSet alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"]];
         [favsUserUpdatedMSet addObject:userInfo[@"userfbid"]];
@@ -217,7 +225,7 @@
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationFavorite" object:nil userInfo:userInfo];
     } else {
-//        NSLog(@"didReceiveRemoteNotification active");
+        //        NSLog(@"didReceiveRemoteNotification active");
     }
 }
 
@@ -234,7 +242,7 @@
             // User doesn't change his list for a longtime
             self.tabBarController.selectedIndex = 1;
         }
-
+        
     }
     
 }
@@ -248,7 +256,7 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-
+    
     // Notify all listener that application have been put in background
     [[NSNotificationCenter defaultCenter] postNotificationName: @"didEnterBackground" object:nil userInfo:nil];
 }
@@ -291,11 +299,11 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-
-//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-//    currentInstallation.badge = 0;
-//    application.applicationIconBadgeNumber = 0;
-//    [currentInstallation saveEventually];
+    
+    //    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    //    currentInstallation.badge = 0;
+    //    application.applicationIconBadgeNumber = 0;
+    //    [currentInstallation saveEventually];
     
     [FBSDKAppEvents activateApp];
 }
@@ -308,7 +316,7 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     
     // Call FBAppCall's handleOpenURL:sourceApplication to handle Facebook app responses
-//    BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+    //    BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
     
     // You can add your app-specific url handling code here if needed
     
@@ -317,23 +325,5 @@
                                                 sourceApplication:sourceApplication
                                                        annotation:annotation];
 }
-
-//
-//- (CGFloat) computeRatio:(CGFloat)aNumber forDimension:(CGFloat)aDimension
-//{
-//    CGFloat ratio = 0;
-//    ratio = ((aNumber * 100)/aDimension);
-//    ratio = ((ratio*aDimension)/100);
-//    
-//    if ([UIScreen mainScreen].scale > 2.1) {
-//        
-//        ratio = ratio/3; // Because we are in retina HD
-//        
-//    } else {
-//        ratio = ratio/2; // Because we are in retina
-//    }
-//    
-//    return roundf(ratio);
-//}
 
 @end
