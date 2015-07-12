@@ -27,6 +27,7 @@
 // 9  : tutorialView
 // 10 : refreshBtnBar
 // 11 : refreshControl
+// 12 : fbSegCtrlBtn
 
 @implementation MeetingsListViewController
 
@@ -380,7 +381,37 @@
     emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
     [discoveriesListTableView addSubview:emptyFacebookFriendsLabelView];
     
-    [self manageDisplayOfFacebookFriendsButton];
+    
+    
+    UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(emptyFacebookFriendsLabelView.frame), 50)];
+    emptyFacebookFriendsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
+    emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];
+    emptyFacebookFriendsLabel.numberOfLines = 0;
+    emptyFacebookFriendsLabel.tag = 8;
+    emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
+    emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    emptyFacebookFriendsLabel.backgroundColor = [UIColor clearColor];
+    
+    [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
+    
+    UIButton *fbSegCtrlBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    fbSegCtrlBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
+    [fbSegCtrlBtn setFrame:CGRectMake(0, emptyFacebookFriendsLabel.frame.size.height + emptyFacebookFriendsLabel.frame.origin.y + 15.0f, emptyFacebookFriendsLabelView.frame.size.width, 54)];
+    [fbSegCtrlBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    
+    [fbSegCtrlBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [fbSegCtrlBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
+    
+    [fbSegCtrlBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    fbSegCtrlBtn.backgroundColor = [UIColor clearColor];
+    fbSegCtrlBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    fbSegCtrlBtn.layer.borderWidth = 2.0f;
+    fbSegCtrlBtn.tag = 12;
+    [emptyFacebookFriendsLabelView addSubview:fbSegCtrlBtn];
+    
+    
+    
+    [self manageDisplayTabFacebookContent];
     
     
     loadingIndicator = [UIActivityIndicatorView new];
@@ -1033,6 +1064,13 @@
 
         split.viewControllers = @[self.navigationController, detailMeetingNavController];
         [self.tabBarController.tabBar setHidden:NO];
+        
+        CATransition *animation = [CATransition animation];
+        [animation setType:kCATransitionFade];
+        [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        [animation setFillMode:kCAFillModeBoth];
+        [animation setDuration:.3];
+        [[detailsMeetingViewController.view layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
         
         CGRect bottomBorderFrame = CGRectMake(0.0f, detailMeetingNavController.navigationBar.frame.size.height, detailMeetingNavController.navigationBar.frame.size.width, 1.0f);
         
@@ -1706,6 +1744,7 @@
 
 #pragma mark - facebook
 
+// User want's to see friends
 - (void) allowFacebookFriendsPermission
 {
     FBSDKLoginManager *loginManager = [FBSDKLoginManager new];
@@ -1734,7 +1773,7 @@
                  }
                  
                  [[NSUserDefaults standardUserDefaults] setObject:facebookFriends forKey:@"facebookFriendsList"];
-                 [self manageDisplayOfFacebookFriendsButton];
+                 [self manageDisplayTabFacebookContent];
                  if (haveToReloadViewAfter) {
                      [self performSelectorOnMainThread:@selector(reloadTableview) withObject:nil waitUntilDone:YES];
                  }
@@ -1773,37 +1812,15 @@
 - (void)sharerDidCancel:(id<FBSDKSharing>)sharer {}
 
 
-- (void) manageDisplayOfFacebookFriendsButton
+- (void) manageDisplayTabFacebookContent
 {
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     UIView *emptyFacebookFriendsLabelView = (UIView*)[tableView viewWithTag:6];
     emptyFacebookFriendsLabelView.backgroundColor = [UIColor clearColor];
     
-    UILabel *emptyFacebookFriendsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(emptyFacebookFriendsLabelView.frame), 50)];
-    emptyFacebookFriendsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0f];
-    emptyFacebookFriendsLabel.textColor = [UIColor whiteColor];
-    emptyFacebookFriendsLabel.numberOfLines = 0;
-    emptyFacebookFriendsLabel.tag = 8;
-    emptyFacebookFriendsLabel.textAlignment = NSTextAlignmentCenter;
-    emptyFacebookFriendsLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    emptyFacebookFriendsLabel.backgroundColor = [UIColor clearColor];
-    [emptyFacebookFriendsLabelView addSubview:emptyFacebookFriendsLabel];
-    
-    
-    UIButton *fbSegCtrlBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    fbSegCtrlBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
-    [fbSegCtrlBtn setFrame:CGRectMake(0, emptyFacebookFriendsLabel.frame.size.height + emptyFacebookFriendsLabel.frame.origin.y + 15.0f, emptyFacebookFriendsLabelView.frame.size.width, 54)];
-    [fbSegCtrlBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    
-    [fbSegCtrlBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
-    [fbSegCtrlBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
-    
-    [fbSegCtrlBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
-    fbSegCtrlBtn.backgroundColor = [UIColor clearColor];
-    fbSegCtrlBtn.layer.borderColor = [UIColor whiteColor].CGColor;
-    fbSegCtrlBtn.layer.borderWidth = 2.0f;
-    [emptyFacebookFriendsLabelView addSubview:fbSegCtrlBtn];
-    
+    UILabel *emptyFacebookFriendsLabel = (UILabel*)[emptyFacebookFriendsLabelView viewWithTag:8];
+    UIButton *fbSegCtrlBtn = (UIButton*)[emptyFacebookFriendsLabelView viewWithTag:12];
+
     
     // User doesn't authorize shound to access his facebook friends who using the app
     if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
@@ -1813,7 +1830,6 @@
         [fbSegCtrlBtn addTarget:self action:@selector(allowFacebookFriendsPermission)
                forControlEvents:UIControlEventTouchUpInside];
     } else {
-        
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] count] > 0) {
             NSMutableArray *friendsUsingAppArray = [NSMutableArray new];
             for (int i = 0; i < 3; i++) {
