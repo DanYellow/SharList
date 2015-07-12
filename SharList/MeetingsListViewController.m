@@ -1033,6 +1033,15 @@
 
         split.viewControllers = @[self.navigationController, detailMeetingNavController];
         [self.tabBarController.tabBar setHidden:NO];
+        
+        CGRect bottomBorderFrame = CGRectMake(0.0f, detailMeetingNavController.navigationBar.frame.size.height, detailMeetingNavController.navigationBar.frame.size.width, 1.0f);
+        
+        CALayer *bottomBorder4 = [CALayer layer];
+        bottomBorder4.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+        bottomBorder4.borderWidth = 1;
+        bottomBorder4.name = @"bottomBorderLayer";
+        bottomBorder4.frame = bottomBorderFrame;
+        [detailMeetingNavController.navigationBar.layer addSublayer:bottomBorder4];
     } else {
         [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
     }
@@ -1533,12 +1542,17 @@
                 
                 [noNewDatasAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
             } else {
-                UILocalNotification *localNotif = [UILocalNotification new];
-                localNotif.fireDate = [[NSDate date] dateByAddingTimeInterval:180]; // 180
-                localNotif.timeZone = [NSTimeZone defaultTimeZone];
-                localNotif.alertBody = NSLocalizedString(@"nomeetingsalert", nil);
-                localNotif.soundName = nil;
-                [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+                if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
+                    UIUserNotificationSettings *grantedSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+                    if (grantedSettings.types != UIUserNotificationTypeNone) {                
+                        UILocalNotification *localNotif = [UILocalNotification new];
+                        localNotif.fireDate = [[NSDate date] dateByAddingTimeInterval:180]; // 180
+                        localNotif.timeZone = [NSTimeZone defaultTimeZone];
+                        localNotif.alertBody = NSLocalizedString(@"nomeetingsalert", nil);
+                        localNotif.soundName = nil;
+                        [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+                    }
+                }
             }
         } else {
             numberOfNoResults += 1;
@@ -1647,17 +1661,22 @@
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     }
     
-    // Each time the user press the button refresh
-    // To discover new things he creates a postpone
-    [self cancelLocalNotificationWithValueForKey:@"discoverNew"];
-    UILocalNotification *localNotification = [UILocalNotification new];
-    localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:604800]; //604800 (One week)
-    localNotification.soundName = UILocalNotificationDefaultSoundName;
-    localNotification.applicationIconBadgeNumber = 0;
-    localNotification.alertAction = NSLocalizedString(@"localNotificationAlertActionRefresh", nil);
-    localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyRefresh", nil);
-    localNotification.userInfo = @{@"locatificationName" : @"discoverNew"};
-    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
+        UIUserNotificationSettings *grantedSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+        if (grantedSettings.types != UIUserNotificationTypeNone) {
+            // Each time the user press the button refresh
+            // To discover new things he creates a postpone
+            [self cancelLocalNotificationWithValueForKey:@"discoverNew"];
+            UILocalNotification *localNotification = [UILocalNotification new];
+            localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:604800]; //604800 (One week)
+            localNotification.soundName = UILocalNotificationDefaultSoundName;
+            localNotification.applicationIconBadgeNumber = 0;
+            localNotification.alertAction = NSLocalizedString(@"localNotificationAlertActionRefresh", nil);
+            localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyRefresh", nil);
+            localNotification.userInfo = @{@"locatificationName" : @"discoverNew"};
+            [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+        }
+    }
 }
 
 - (void) cancelLocalNotificationWithValueForKey:(NSString*)aValue

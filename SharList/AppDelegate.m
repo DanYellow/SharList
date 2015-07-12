@@ -132,7 +132,7 @@
     bottomBorder4.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
     bottomBorder4.borderWidth = 1;
     bottomBorder4.name = @"bottomBorderLayer";
-    bottomBorder3.frame = bottomBorderFrame;
+    bottomBorder4.frame = bottomBorderFrame;
     [detailsMeetingNavController.navigationBar.layer addSublayer:bottomBorder4];
     
     
