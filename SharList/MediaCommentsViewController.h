@@ -19,12 +19,15 @@
     CGFloat screenWidth;
     CGFloat screenHeight;
     
+    
+    
     NSDictionary *settingsDict;
 }
 
 @property (strong, nonatomic) NSString *mediaId;
 @property (strong, nonatomic) NSString *userDiscoverId;
 @property (strong, nonatomic) NSNumber *numberOfComments;
+@property (strong, nonatomic) NSNumber *hello;
 
 -  (void) loadComments;
 

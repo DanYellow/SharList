@@ -36,20 +36,18 @@
 {
     [super viewWillAppear:animated];
     
-    if ( UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad )
-    {
+    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
         [self.tabBarController.tabBar setHidden:YES];
     }
     
     self.navigationController.navigationBar.translucent = NO;
-    
+
     // Animate background of cell selected on press back button
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
-    
-
 }
+
 
 - (void) viewWillDisappear:(BOOL)animated
 {
@@ -66,7 +64,6 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
- 
     
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -94,8 +91,19 @@
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
     
+
+    
     if (self.metUserId == nil) {
-        return;
+        NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbId != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+        Discovery *lastDiscovery = [Discovery MR_findFirstWithPredicate:meetingsFilter
+                                                      sortedBy:@"lastDiscovery" ascending:NO];
+
+        // By default we load the last discovery made
+        if (lastDiscovery != nil) {
+            self.metUserId = lastDiscovery.fbId;
+        } else {
+            return;
+        }
     }
     
     
@@ -168,16 +176,42 @@
 //    text.bounds = CGRectInset(meetingInfoView.frame, 10.0f, 10.0f);
 //    [meetingInfoView addSubview:text];
     
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 30)];
   
-    UILabel *tableFooter = [[UILabel alloc] initWithFrame:CGRectMake(0, 15.0, screenWidth, 25)];
-    tableFooter.textColor = [UIColor whiteColor];
-    tableFooter.textAlignment = NSTextAlignmentCenter;
-    tableFooter.opaque = YES;
-    tableFooter.font = [UIFont boldSystemFontOfSize:15];
-    tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [userMet numberOfDiscoveries]]];
+    UILabel *nbDiscoveriesLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 15.0, screenWidth, 25)];
+    nbDiscoveriesLabel.textColor = [UIColor whiteColor];
+    nbDiscoveriesLabel.textAlignment = NSTextAlignmentCenter;
+    nbDiscoveriesLabel.opaque = YES;
+    nbDiscoveriesLabel.backgroundColor = [UIColor clearColor];
+    nbDiscoveriesLabel.font = [UIFont boldSystemFontOfSize:15];
+    nbDiscoveriesLabel.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [userMet numberOfDiscoveries]]];
+    [tableFooterView addSubview:nbDiscoveriesLabel];
+    
+    UIView *tableFooterLastView = [[tableFooterView subviews] lastObject];
+    
+    UIButton *showToDiscoverTabBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    showToDiscoverTabBtn.frame = CGRectMake(0, CGRectGetMaxY(tableFooterLastView.frame) + 12, screenWidth, 30);
+    
+    [showToDiscoverTabBtn setTitle:NSLocalizedString(@"not in common but much discover", nil)
+                       forState:UIControlStateNormal];
+    [showToDiscoverTabBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [showToDiscoverTabBtn setTitleColor:[UIColor colorWithWhite:1 alpha:.6] forState:UIControlStateHighlighted];
+    
+    showToDiscoverTabBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [showToDiscoverTabBtn sizeToFit];
+    showToDiscoverTabBtn.tag = 10;
+    [showToDiscoverTabBtn addTarget:self action:@selector(displayDiscoverTabTV:) forControlEvents:UIControlEventTouchUpInside];
+//    showToDiscoverTabBtn.frame = CGRectMake(CGRectGetMinX(showToDiscoverTabBtn.frame), CGRectGetMinY(showToDiscoverTabBtn.frame), screenWidth, CGRectGetHeight(showToDiscoverTabBtn.frame));
+    showToDiscoverTabBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+    showToDiscoverTabBtn.center = CGPointMake(screenWidth / 2, showToDiscoverTabBtn.center.y);
+    showToDiscoverTabBtn.backgroundColor = [UIColor clearColor];
+    [tableFooterView addSubview:showToDiscoverTabBtn];
+    
+    
+    tableFooterLastView = [[tableFooterView subviews] lastObject];
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [shareShoundBtn setFrame:CGRectMake(0, tableFooter.frame.size.height + tableFooter.frame.origin.y + 12, screenWidth - 24, 54)];
+    [shareShoundBtn setFrame:CGRectMake(0, CGRectGetMaxY(tableFooterLastView.frame) + 12, screenWidth - 24, 54)];
     [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
     [shareShoundBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
     [shareShoundBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
@@ -190,25 +224,15 @@
     [shareShoundBtn setTitleColor:[UIColor colorWithRed:(1/255) green:(76/255) blue:(119/255) alpha:1.0] forState:UIControlStateSelected];
     [shareShoundBtn addTarget:self action:@selector(shareFb) forControlEvents:UIControlEventTouchUpInside];
     
-    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 30)];
-    tableFooter.opaque = YES;
-    tableFooter.backgroundColor = [UIColor clearColor];
-    
 
     // If the user is a facebook friend so we display the button to take about this meeting on facebook
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]]) {
         [tableFooterView addSubview:shareShoundBtn];
     }
     
-    [tableFooterView addSubview:tableFooter];
-    
-    UIView *tableFooterViewLastView = [tableFooterView.subviews objectAtIndex:0];
-    CGFloat tableFooterViewLastViewPos =  tableFooterViewLastView.frame.size.height + tableFooterViewLastView.frame.origin.y + 25.0f;
-    
-    CGRect tableFooterViewFrame = tableFooterView.frame;
-    tableFooterViewFrame.size.height = tableFooterViewLastViewPos;
-    
-    tableFooterView.frame = tableFooterViewFrame;
+    tableFooterLastView = [[tableFooterView subviews] lastObject];
+    tableFooterView.frame = CGRectMake(0, 0, screenWidth, CGRectGetMaxY(tableFooterLastView.frame));
+    tableFooterView.backgroundColor = [UIColor clearColor];
     
     //___________________
     // Uitableview of user selection (what user likes) initWithStyle:UITableViewStylePlain
@@ -218,6 +242,7 @@
     userMetLikesTableView.delegate = self;
     userMetLikesTableView.backgroundColor = [UIColor clearColor];
     userMetLikesTableView.tag = 1;
+    userMetLikesTableView.alpha = 0;
     userMetLikesTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userMetLikesTableView.tableFooterView = tableFooterView; //[[UIView alloc] initWithFrame:CGRectZero];
     userMetLikesTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -446,24 +471,6 @@
     [metUserFBView addSubview:filterUserMetListSC];
     
     metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
-
-    UIButton *emptyUserLikesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    emptyUserLikesBtn.frame = CGRectMake(0, 330, screenWidth, 30);
-    
-    [emptyUserLikesBtn setTitle:NSLocalizedString(@"not in common but much discover", nil)
-                       forState:UIControlStateNormal];
-    [emptyUserLikesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [emptyUserLikesBtn setTitleColor:[UIColor colorWithWhite:1 alpha:.6] forState:UIControlStateHighlighted];
-
-    emptyUserLikesBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
-    [emptyUserLikesBtn sizeToFit];
-    emptyUserLikesBtn.tag = 10;
-    [emptyUserLikesBtn addTarget:self action:@selector(displayDiscoverTabTV:) forControlEvents:UIControlEventTouchUpInside];
-    emptyUserLikesBtn.frame = CGRectMake(CGRectGetMinX(emptyUserLikesBtn.frame), CGRectGetMinY(emptyUserLikesBtn.frame), screenWidth, CGRectGetHeight(emptyUserLikesBtn.frame));
-    emptyUserLikesBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-    emptyUserLikesBtn.center = CGPointMake(screenWidth / 2, emptyUserLikesBtn.center.y);
-    emptyUserLikesBtn.backgroundColor = [UIColor clearColor];
-    [userMetLikesTableView addSubview:emptyUserLikesBtn];
     
 //    userMetLikesTableView.backgroundView = emptyUserLikesBtn;
     
@@ -808,33 +815,6 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // User have no list of likes - technically impossible beacase the api filter user with no likes
-    
-    
-    BOOL IsTableViewEmpty = YES;
-    
-    // This loop is here to check the value of all keys
-//    for (int i = 0; i < [[self.metUserLikesDict allKeys] count]; i++) {
-//        if (![[self.metUserLikesDict objectForKey:[[self.metUserLikesDict allKeys] objectAtIndex:i]] isKindOfClass:[NSNull class]]) {
-//            if ([[self.metUserLikesDict objectForKey:[[self.metUserLikesDict allKeys] objectAtIndex:i]] count] != 0) {
-//                IsTableViewEmpty = NO;
-//            }
-//        }
-//    }
-//    
-//    emptyUserTasteLabel.hidden = NO;
-//    
-//    if (IsTableViewEmpty == YES) {
-//        <#statements#>
-//    }
-    
-//    if (IsTableViewEmpty == YES && [FBSDKAccessToken currentAccessToken]) {
-//        emptyUserTasteLabel.hidden = NO;
-//        self.metUserLikesDict = [self.metUserLikesDictRef mutableCopy];
-//        return 0;
-//    }
-
-
     return [[self.metUserLikesDict filterKeysForNullObj] count];
 }
 
@@ -1052,6 +1032,19 @@
     detailsMediaViewController.title = [selectedCell.model objectForKey:@"name"];
 
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+}
+
+- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Called when the last cell is displayed
+    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
+        [UIView animateWithDuration:0.45 delay:0.1
+                            options: UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             tableView.alpha = 1;
+                         }
+                         completion:nil];
+    }
 }
 
 

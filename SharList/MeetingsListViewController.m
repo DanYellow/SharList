@@ -62,85 +62,27 @@
     [self navigationItemRightButtonEnablingManagement];
 }
 
-- (void) showWarningMessage
-{
-    UIView *warningMessageView = [[UIView alloc] initWithFrame:self.view.frame];
-    warningMessageView.tag = 5678;
-    warningMessageView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.85];
-
-    
-    
-    UIVisualEffect *blurEffect;
-    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-    
-    UIVisualEffectView *visualEffectView;
-    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    visualEffectView.frame = self.view.bounds;
-    
-    [warningMessageView addSubview:visualEffectView];
-    
-    [[[UIApplication sharedApplication] keyWindow] addSubview:warningMessageView];
-    
-    float percentHeight = (150*100)/screenHeight;
-    UIView *warningMessageViewContainer = [[UIView alloc] initWithFrame:CGRectMake(0, (percentHeight*screenHeight)/100, screenWidth, screenHeight-(percentHeight*screenHeight)/100)];
-    warningMessageViewContainer.backgroundColor = [UIColor clearColor];
-    
-    UIImageView *warningPictoContainer = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
-    warningPictoContainer.image = [[UIImage imageNamed:@"warning-picto"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    warningPictoContainer.center = CGPointMake(self.view.center.x, 0.0);
-    warningPictoContainer.tintColor = [UIColor whiteColor];
-    warningPictoContainer.backgroundColor = [UIColor clearColor];
-    warningPictoContainer.contentMode = UIViewContentModeScaleAspectFill;
-    [warningMessageViewContainer addSubview:warningPictoContainer];
-    
-    
-    NSUInteger warningMessageY = warningPictoContainer.frame.size.height - 30;
-    
-    UITextView *warningMessage = [[UITextView alloc] initWithFrame:CGRectMake(0, warningMessageY, 225, 110)];
-    warningMessage.text = [NSLocalizedString(@"warning message for update login issue", nil) uppercaseString];
-    warningMessage.textColor = [UIColor whiteColor];
-    warningMessage.center = CGPointMake(self.view.center.x, warningMessage.center.y);
-    warningMessage.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
-    warningMessage.textAlignment = NSTextAlignmentCenter;
-    warningMessage.editable = NO;
-    [warningMessage sizeToFit];
-    warningMessage.backgroundColor = [UIColor clearColor];
-    [warningMessageViewContainer addSubview:warningMessage];
-    
-    UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
-    [endTutorial addTarget:self action:@selector(hideWarning) forControlEvents:UIControlEventTouchUpInside];
-    [endTutorial setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
-    endTutorial.frame = CGRectMake(0, warningMessageViewContainer.frame.size.height - 150, screenWidth, 49);
-    endTutorial.tintColor = [UIColor whiteColor];
-    [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
-    [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
-    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
-    
-    [warningMessageViewContainer addSubview:endTutorial];
-    
-    [warningMessageView addSubview:warningMessageViewContainer];
-}
-
-- (void) hideWarning
-{
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    UIView *tutorialView = (UIView*)[[[UIApplication sharedApplication] keyWindow] viewWithTag:5678];
-    [UIView animateWithDuration:0.25 delay:0.1
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         tutorialView.alpha = 0;
-                     }
-                     completion:^(BOOL finished){
-                         [tutorialView removeFromSuperview];
-                     }];
-}
-
 - (void) viewWillDisappear:(BOOL)animated
 {
-    // Reset the badge notification number
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-    [[self navigationController] tabBarItem].badgeValue = nil;
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
+        UIUserNotificationSettings *grantedSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+        if (grantedSettings.types != UIUserNotificationTypeNone) {
+            // Reset the badge notification number
+            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+            [[self navigationController] tabBarItem].badgeValue = nil;
+        }
+    }
 }
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    [userMeetingsListTableView selectRowAtIndexPath:indexPath animated:NO
+                     scrollPosition:UITableViewScrollPositionBottom];
+}
+
 
 - (void)viewDidLoad
 {
@@ -237,11 +179,7 @@
     }
 }
 
-- (void) viewDidAppear:(BOOL)animated
-{
-//    CGRect screenRect = [[UIScreen mainScreen] bounds];
-//    NSLog(@"CGRect screenRect = [[UIScreen mainScreen] bounds]; : %@", NSStringFromCGRect(screenRect));
-}
+
 
 // Because of the facebook login we can't load the ui directly
 - (void) initializer
@@ -846,8 +784,14 @@
     [loadingIndicator startAnimating];
     
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+    
+    NSIndexPath *selectedRowIndexPath = [userMeetingsListTableView indexPathForSelectedRow];
+
     [userMeetingsListTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     [userMeetingsListTableView reloadData];
+    
+    [userMeetingsListTableView selectRowAtIndexPath:selectedRowIndexPath animated:NO
+                     scrollPosition:UITableViewScrollPositionBottom];
     
     // http://stackoverflow.com/questions/7547934/animated-reloaddata-on-uitableview
     CATransition *animation = [CATransition animation];
@@ -1260,6 +1204,13 @@
         [loadingIndicator stopAnimating];
     }
 }
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //use this for row u want to prevent to deSelect
+    [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+}
+
 
 + (UIImage *) imageForCellWithName:(NSString*)imageName forDarkBG:(BOOL)isDarkBG thingsInCommon:(CGFloat)thingsInCommonCount
 {
@@ -1852,6 +1803,81 @@
     }
     [emptyFacebookFriendsLabel heightToFit];
     
+}
+
+#pragma mark - custom methods
+
+- (void) showWarningMessage
+{
+    UIView *warningMessageView = [[UIView alloc] initWithFrame:self.view.frame];
+    warningMessageView.tag = 5678;
+    warningMessageView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.85];
+    
+    
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = self.view.bounds;
+    
+    [warningMessageView addSubview:visualEffectView];
+    
+    [[[UIApplication sharedApplication] keyWindow] addSubview:warningMessageView];
+    
+    float percentHeight = (150*100)/screenHeight;
+    UIView *warningMessageViewContainer = [[UIView alloc] initWithFrame:CGRectMake(0, (percentHeight*screenHeight)/100, screenWidth, screenHeight-(percentHeight*screenHeight)/100)];
+    warningMessageViewContainer.backgroundColor = [UIColor clearColor];
+    
+    UIImageView *warningPictoContainer = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
+    warningPictoContainer.image = [[UIImage imageNamed:@"warning-picto"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    warningPictoContainer.center = CGPointMake(self.view.center.x, 0.0);
+    warningPictoContainer.tintColor = [UIColor whiteColor];
+    warningPictoContainer.backgroundColor = [UIColor clearColor];
+    warningPictoContainer.contentMode = UIViewContentModeScaleAspectFill;
+    [warningMessageViewContainer addSubview:warningPictoContainer];
+    
+    
+    NSUInteger warningMessageY = warningPictoContainer.frame.size.height - 30;
+    
+    UITextView *warningMessage = [[UITextView alloc] initWithFrame:CGRectMake(0, warningMessageY, 225, 110)];
+    warningMessage.text = [NSLocalizedString(@"warning message for update login issue", nil) uppercaseString];
+    warningMessage.textColor = [UIColor whiteColor];
+    warningMessage.center = CGPointMake(self.view.center.x, warningMessage.center.y);
+    warningMessage.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+    warningMessage.textAlignment = NSTextAlignmentCenter;
+    warningMessage.editable = NO;
+    [warningMessage sizeToFit];
+    warningMessage.backgroundColor = [UIColor clearColor];
+    [warningMessageViewContainer addSubview:warningMessage];
+    
+    UIButton *endTutorial = [UIButton buttonWithType:UIButtonTypeCustom];
+    [endTutorial addTarget:self action:@selector(hideWarning) forControlEvents:UIControlEventTouchUpInside];
+    [endTutorial setTitle:[NSLocalizedString(@"gotit", nil) uppercaseString] forState:UIControlStateNormal];
+    endTutorial.frame = CGRectMake(0, warningMessageViewContainer.frame.size.height - 150, screenWidth, 49);
+    endTutorial.tintColor = [UIColor whiteColor];
+    [endTutorial setTitleColor:[UIColor redColor] forState:UIControlStateDisabled];
+    [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
+    endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
+    
+    [warningMessageViewContainer addSubview:endTutorial];
+    
+    [warningMessageView addSubview:warningMessageViewContainer];
+}
+
+- (void) hideWarning
+{
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    UIView *tutorialView = (UIView*)[[[UIApplication sharedApplication] keyWindow] viewWithTag:5678];
+    [UIView animateWithDuration:0.25 delay:0.1
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         tutorialView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [tutorialView removeFromSuperview];
+                     }];
 }
 
 #pragma mark - misc

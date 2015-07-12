@@ -167,6 +167,8 @@ _ Nombre de films / séries retirées
 - Post de X commentaires...
 - Update d'un commentaire
 - Rencontrer tous ses amis facebook
+- Rencontrer X % de ses amis
+- Avoir plus de X % de ses amis qui aiment la même série / films que l'utilisateur'
 
 ## Pods dependancies
 

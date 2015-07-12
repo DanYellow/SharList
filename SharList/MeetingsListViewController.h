@@ -44,7 +44,6 @@
     UIActivityIndicatorView *loadingIndicator;
         
     NSDictionary *currentUserTaste;
-    
 }
 
 @property (assign, nonatomic, getter=isFilterEnabled) BOOL FilterEnabled;
@@ -63,7 +62,7 @@
 - (void) noInternetAlert;
 - (void) fetchNewDiscovery;
 - (void) reloadTableview;
-- (void) manageDisplayOfFacebookFriendsButton;
+- (void) manageDisplayTabFacebookContent;
 
 + (UIImage *) imageForCellWithName:(NSString*)imageName forDarkBG:(BOOL)isDarkBG thingsInCommon:(CGFloat)thingsInCommonCount;
 + (UIImage *) imageFromFacebookFriendInitialForId:(NSString*)fbId forDarkBG:(BOOL)isDarkBG;

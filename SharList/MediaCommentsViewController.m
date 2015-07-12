@@ -45,6 +45,10 @@
     }
     
     self.title = [NSLocalizedString(@"comments", nil) uppercaseString];
+    
+    self.hello = [NSNumber numberWithFloat:self.presentingViewController.splitViewController.primaryColumnWidth];
+//    NSLog(@"x-hello : %@", self.hello);
+//        NSLog(@"ref : %f", self.presentingViewController.splitViewController.primaryColumnWidth);
 }
 
 
@@ -59,12 +63,13 @@
     
     
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-    
+
     // Variables init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     
-    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.presentingViewController.splitViewController.primaryColumnWidth : 0;
-    
+    // self.presentingViewController.splitViewController.primaryColumnWidth
+    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 308 : 0;
+
     screenWidth = screenRect.size.width - offsetWidth;
     screenHeight = screenRect.size.height;
     
@@ -212,7 +217,7 @@
     
     // Empty list view
     UIView *emptyTableView = [[UIView alloc] initWithFrame:CGRectMake(0, (floorf(((screenHeight*30.80985915) / 100)) - 118), screenWidth, 120)];
-    emptyTableView.backgroundColor = [UIColor purpleColor];
+    emptyTableView.backgroundColor = [UIColor clearColor];
     emptyTableView.tag = 2;
     emptyTableView.hidden = YES;
     emptyTableView.opaque = YES;
@@ -255,7 +260,7 @@
     
     [newCommentBtn setImage:newCommentBtnImage forState:UIControlStateNormal];
     newCommentBtn.contentMode = UIViewContentModeScaleToFill;
-    newCommentBtn.center = CGPointMake(self.view.center.x, newCommentBtn.center.y);
+    newCommentBtn.center = CGPointMake(screenWidth/2, newCommentBtn.center.y);
     newCommentBtn.backgroundColor = [UIColor clearColor];
     [newCommentBtn addTarget:self action:@selector(postNewComment:) forControlEvents:UIControlEventTouchUpInside];
  

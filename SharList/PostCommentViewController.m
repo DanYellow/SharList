@@ -52,7 +52,8 @@
     // Variables init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     // We create an offset to manage uisplitview
-    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
+    // self.splitViewController.primaryColumnWidth
+    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 308 : 0;
     
     screenWidth = screenRect.size.width - offsetWidth;
     screenHeight = screenRect.size.height;
@@ -84,7 +85,7 @@
     postField.editable = YES;
     postField.textColor = [UIColor whiteColor];
     postField.backgroundColor = [UIColor colorWithWhite:1 alpha:.005];
-    postField.center = CGPointMake(self.view.center.x, postField.center.y);
+    postField.center = CGPointMake(screenWidth/2, postField.center.y);
     postField.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
     postField.delegate = self;
     postField.tag = 2;

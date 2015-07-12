@@ -72,14 +72,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [layer removeFromSuperlayer];
         }
     }
-
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMediaTutorial"];
         [self showTutorial];
-    }
-//    [self showTutorial];
-    
+    }    
 
     // We just want the title of the uiviewcontroller
     self.navigationItem.titleView = [UIView new];

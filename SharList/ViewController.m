@@ -839,13 +839,15 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    NSString *sectionTitle = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
-                              objectAtIndex:indexPath.section];
+
     NSString *title, *year, *imdbID;
     ShareListMediaTableViewCell *cell;
     
     //Search results tableview
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        NSString *sectionTitle = [[categoryList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
+                                  objectAtIndex:indexPath.section];
+        
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [filteredTableDatas objectForKey:sectionTitle];
         if (cell == nil) {
@@ -890,6 +892,9 @@
         }
         
     } else {
+        NSString *sectionTitle = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
+                                  objectAtIndex:indexPath.section];
+        
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         NSArray *rowsOfSection = [userTasteDict objectForKey:sectionTitle];
         
@@ -1193,21 +1198,29 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 52.0)];
     headerView.opaque = YES;
 
-    NSString *sectionTitleRaw = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
-    NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
+
+    
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 52.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-    label.text = title;
+    
     [label sizeToFit];
     label.frame = CGRectMake(15.0, CGRectGetHeight(headerView.frame) - CGRectGetHeight(label.frame) - 10,
                              screenWidth, CGRectGetHeight(label.frame));
     
     if (tableView == ((UITableViewController *) self.searchController.searchResultsController).tableView) {
+        NSString *sectionTitleRaw = [[categoryList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+        NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
+        label.text = title;
+        
         headerView.backgroundColor = [UIColor colorWithWhite:.95 alpha:.80f];
         label.textColor = [UIColor blackColor];
         headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.37];
     } else {
+        NSString *sectionTitleRaw = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+        NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
+        label.text = title;
+        
 //        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
         label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
         UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
@@ -1450,10 +1463,19 @@
     if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_likes"]) {
         [self getUserLikesForSender:sender];
     } else {
-        FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+        FBSDKLoginManager *loginManager = [FBSDKLoginManager new];
         [loginManager logInWithReadPermissions:@[@"user_likes"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
-            [self getUserLikesForSender:sender];
+                            NSLog(@"error : %@", result);
+            if ([result.declinedPermissions containsObject:@"user_likes"]) {
+                // TODO: do not request permissions again immediately. Consider providing a NUX
+                // describing  why the app want this permission.
+
+            } else {
+                [self getUserLikesForSender:sender];
+            }
+            
         }];
+        
     }
 }
 
