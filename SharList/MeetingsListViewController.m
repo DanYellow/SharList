@@ -76,11 +76,12 @@
 
 - (void) viewDidAppear:(BOOL)animated
 {
-    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
-    
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [userMeetingsListTableView selectRowAtIndexPath:indexPath animated:NO
-                     scrollPosition:UITableViewScrollPositionBottom];
+    // Split mode only
+//    UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
+//    
+//    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+//    [userMeetingsListTableView selectRowAtIndexPath:indexPath animated:NO
+//                     scrollPosition:UITableViewScrollPositionBottom];
 }
 
 
@@ -94,9 +95,9 @@
     // Vars init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     // We create an offset to manage uisplitview we user the width of the masterview because this view is the masterviewcontroller
-    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : screenRect.size.width;
+//    NSUInteger realWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : screenRect.size.width;
     
-    screenWidth = offsetWidth;
+    screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
     userPreferences = [NSUserDefaults standardUserDefaults];
@@ -205,7 +206,7 @@
     
     self.discoveries = [NSMutableDictionary new];
     
-    UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
+    UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
 //    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
     segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
     segmentedControlView.opaque = NO;
@@ -217,6 +218,7 @@
     [segmentedControl addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tag = 5;
+    segmentedControl.center = CGPointMake(screenWidth/2, CGRectGetHeight(segmentedControlView.frame)/2);
     segmentedControl.tintColor = [UIColor whiteColor];
     
     [segmentedControlView addSubview:segmentedControl];
@@ -1000,33 +1002,35 @@
     detailsMeetingViewController.metUserId = selectedCell.model;
     detailsMeetingViewController.delegate = self;
 
-    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ) {
-        UISplitViewController *split = self.splitViewController;
-        
-        UINavigationController *detailMeetingNavController = [[UINavigationController alloc]
-                                                         initWithRootViewController:detailsMeetingViewController];
-
-        split.viewControllers = @[self.navigationController, detailMeetingNavController];
-        [self.tabBarController.tabBar setHidden:NO];
-        
-        CATransition *animation = [CATransition animation];
-        [animation setType:kCATransitionFade];
-        [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-        [animation setFillMode:kCAFillModeBoth];
-        [animation setDuration:.3];
-        [[detailsMeetingViewController.view layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
-        
-        CGRect bottomBorderFrame = CGRectMake(0.0f, detailMeetingNavController.navigationBar.frame.size.height, detailMeetingNavController.navigationBar.frame.size.width, 1.0f);
-        
-        CALayer *bottomBorder4 = [CALayer layer];
-        bottomBorder4.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
-        bottomBorder4.borderWidth = 1;
-        bottomBorder4.name = @"bottomBorderLayer";
-        bottomBorder4.frame = bottomBorderFrame;
-        [detailMeetingNavController.navigationBar.layer addSublayer:bottomBorder4];
-    } else {
-        [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
-    }
+//    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ) {
+//        UISplitViewController *split = self.splitViewController;
+//        
+//        UINavigationController *detailMeetingNavController = [[UINavigationController alloc]
+//                                                         initWithRootViewController:detailsMeetingViewController];
+//
+//        split.viewControllers = @[self.navigationController, detailMeetingNavController];
+//        [self.tabBarController.tabBar setHidden:NO];
+//        
+//        CATransition *animation = [CATransition animation];
+//        [animation setType:kCATransitionFade];
+//        [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+//        [animation setFillMode:kCAFillModeBoth];
+//        [animation setDuration:.3];
+//        [[detailsMeetingViewController.view layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
+//        
+//        CGRect bottomBorderFrame = CGRectMake(0.0f, detailMeetingNavController.navigationBar.frame.size.height, detailMeetingNavController.navigationBar.frame.size.width, 1.0f);
+//        
+//        CALayer *bottomBorder4 = [CALayer layer];
+//        bottomBorder4.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+//        bottomBorder4.borderWidth = 1;
+//        bottomBorder4.name = @"bottomBorderLayer";
+//        bottomBorder4.frame = bottomBorderFrame;
+//        [detailMeetingNavController.navigationBar.layer addSublayer:bottomBorder4];
+//    } else {
+//        [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
+//    }
+    
+    [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
 
 

@@ -36,9 +36,10 @@
 {
     [super viewWillAppear:animated];
     
-    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
-        [self.tabBarController.tabBar setHidden:YES];
-    }
+//    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
+//        
+//    }
+    [self.tabBarController.tabBar setHidden:YES];
     
     self.navigationController.navigationBar.translucent = NO;
 
@@ -720,7 +721,7 @@
     
     NSString *apiLink;
     
-    __block NSString *imgURL;
+    __block NSString *imageName;
     if ([model[@"type"] isEqualToString:@"movie"]) {
         apiLink = kJLTMDbMovie;
     } else {
@@ -733,12 +734,14 @@
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             if ([model[@"type"] isEqualToString:@"serie"]) {
-                imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
+                imageName = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
             } else {
-                imgURL = responseObject[@"poster_path"];
+                imageName = responseObject[@"poster_path"];
             }
             
-            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396%@", imgURL];
+            NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w396" : @"w780";
+            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, imageName];
+            
             [imgBackground setImageWithURL:
              [NSURL URLWithString:imgDistURL]
                           placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];

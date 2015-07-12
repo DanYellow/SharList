@@ -152,7 +152,7 @@
     //    self.splitUserListViewController.viewControllers = @[navController, detailsMediaNavController];
     
     
-    NSArray* controllers = @[self.splitDiscoveriesViewController, navController, navControllerSettings];
+    NSArray* controllers = @[navControllerMeetingsList, navController, navControllerSettings];
     //    NSArray* controllers = @[splitViewController];
     
     self.tabBarController.viewControllers = controllers;

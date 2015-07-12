@@ -954,7 +954,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [self.view addSubview:displayBuyView];
     
-    UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(((screenWidth - [self computeRatio:574 forDimension:screenWidth]) / 2), [self computeRatio:86 forDimension:screenHeight], [self computeRatio:574 forDimension:screenWidth], 16.0f)];
+    UILabel *titleBuyMedia = [[UILabel alloc] initWithFrame:CGRectMake(0, 43, screenWidth, 0)];
     titleBuyMedia.textColor = [UIColor whiteColor];
     titleBuyMedia.backgroundColor = [UIColor clearColor];
     titleBuyMedia.opaque = NO;
@@ -969,11 +969,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [typeMeetingAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:19.0] range:NSMakeRange(r.location, r.length)];
     
     titleBuyMedia.attributedText = typeMeetingAttrString;
-    
-    
     titleBuyMedia.textAlignment = NSTextAlignmentCenter;
     titleBuyMedia.numberOfLines = 0;
-    titleBuyMedia.lineBreakMode = NSLineBreakByWordWrapping;
     [titleBuyMedia heightToFit];
     
     [displayBuyView addSubview:titleBuyMedia];
@@ -1182,7 +1179,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
 
     UIImageView *imgMedia = [UIImageView new];
-    NSURL *imgMediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396%@", data[@"poster_path"]]];
+    
+    // If the user is on iPad we load a bigger image
+    NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w396" : @"w780";
+    NSURL *imgMediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, data[@"poster_path"]]];
     
     [imgMedia setImageWithURL:imgMediaURL
              placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];

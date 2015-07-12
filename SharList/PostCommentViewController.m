@@ -53,9 +53,9 @@
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     // We create an offset to manage uisplitview
     // self.splitViewController.primaryColumnWidth
-    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 308 : 0;
+//    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 308 : 0;
     
-    screenWidth = screenRect.size.width - offsetWidth;
+    screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];

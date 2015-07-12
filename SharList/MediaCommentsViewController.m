@@ -68,9 +68,9 @@
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     
     // self.presentingViewController.splitViewController.primaryColumnWidth
-    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 308 : 0;
+//    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 308 : 0;
 
-    screenWidth = screenRect.size.width - offsetWidth;
+    screenWidth = screenRect.size.width ;
     screenHeight = screenRect.size.height;
     
     self.havingComment = NO;
