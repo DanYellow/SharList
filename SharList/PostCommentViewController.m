@@ -51,7 +51,10 @@
     
     // Variables init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    screenWidth = screenRect.size.width;
+    // We create an offset to manage uisplitview
+    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
+    
+    screenWidth = screenRect.size.width - offsetWidth;
     screenHeight = screenRect.size.height;
     
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
@@ -105,7 +108,7 @@
     });
     
     UIActivityIndicatorView *messageLoadingIndicator = [UIActivityIndicatorView new];
-    messageLoadingIndicator.center = self.view.center;
+    messageLoadingIndicator.center = CGPointMake(screenWidth/2, self.view.center.y);
     messageLoadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     messageLoadingIndicator.hidesWhenStopped = YES;
     messageLoadingIndicator.tag = 4;

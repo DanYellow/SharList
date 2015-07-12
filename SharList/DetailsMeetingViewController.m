@@ -752,18 +752,13 @@
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSString *sectionTitle = [[[self.metUserLikesDictRef filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
-    
-    
 
     UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:9];
-    
-    //    NSMutableArray *ello = [[[currentUserTaste objectsForKeys:[currentUserTaste allKeys] notFoundMarker:[NSNull null]] valueForKey:@"imdbID"] mutableCopy];
-    //    [ello removeObjectIdenticalTo:[NSNull null]];
-    
-    //    NSMutableArray *ello = [[[self.metUserLikesDict objectsForKeys:[self.metUserLikesDict allKeys] notFoundMarker:[NSNull null]] valueForKey:@"imdbID"] mutableCopy];
-    //    [ello removeObjectIdenticalTo:[NSNull null]];
-    
-    //    NSLog(@"self.metUserLikesDict : %@", self.metUserLikesDict);
+
+    NSMutableArray *metUserLikesIdsForIndex = [[[self.metUserLikesDict objectsForKeys:[self.metUserLikesDict allKeys] notFoundMarker:[NSNull null]] valueForKey:@"imdbID"] mutableCopy];
+        [metUserLikesIdsForIndex removeObjectIdenticalTo:[NSNull null]];
+    // Linearise the array
+    NSArray *flatArray = [metUserLikesIdsForIndex valueForKeyPath: @"@unionOfArrays.self"];
     
     NSArray *sectionElements;
     
@@ -796,10 +791,12 @@
     if ([sectionElements isKindOfClass:[NSNull class]]) {
         return 0;
     }
-    
+
+//    NSArray *indexes = [tableView indexPathsForVisibleRows];
+//    NSLog(@"%li", indexes.count);
     
     UIButton *emptyUserLikesBtn = (UIButton*)[self.view viewWithTag:10];
-    if (sectionElements.count == 0) {
+    if (flatArray.count == 0) {
         emptyUserLikesBtn.hidden = NO;
     } else {
         emptyUserLikesBtn.hidden = YES;
@@ -858,8 +855,6 @@
     visualEffectView.frame = headerView.frame;
     
     [headerView addSubview:visualEffectView];
-    
-    
     
     NSString *sectionTitleRaw = [[[self.metUserLikesDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
     NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];

@@ -421,7 +421,7 @@
         
         UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
         statContainer.backgroundColor = [UIColor clearColor];
-        statContainer.tag = i + 1; // We add one because the first section of a tableview is the header
+        statContainer.tag = i; // We add one because the first section of a tableview is the header
         
         [statContainer addTarget:self action:@selector(scrollToSectionWithNumber:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -751,7 +751,9 @@
         return sectionElements.count;
     } else {
         
-        NSString *sectionTitle = [[[userTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+//        NSString *sectionTitle = [[[userTasteDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+            NSString *sectionTitle = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+        
         NSArray *sectionElements = [userTasteDict objectForKey:sectionTitle];
         // If the category is empty so the section not appears
         if ([sectionElements isKindOfClass:[NSNull class]]) {
@@ -805,7 +807,7 @@
         }
         userTasteListTableViewEmptyView.hidden = YES;
         
-        return userTasteDict.count;
+        return [[userTasteDict filterKeysForNullObj] count];
     }
 }
 
@@ -837,7 +839,8 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
+    NSString *sectionTitle = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
+                              objectAtIndex:indexPath.section];
     NSString *title, *year, *imdbID;
     ShareListMediaTableViewCell *cell;
     
@@ -1190,7 +1193,8 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 52.0)];
     headerView.opaque = YES;
 
-    NSString *title = [NSLocalizedString([categoryList objectAtIndex:section], nil) uppercaseString];
+    NSString *sectionTitleRaw = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
+    NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 52.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];

@@ -47,6 +47,7 @@
     self.title = [NSLocalizedString(@"comments", nil) uppercaseString];
 }
 
+
 - (void) viewDidLoad
 {
     [super viewDidLoad];
@@ -61,7 +62,10 @@
     
     // Variables init
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    screenWidth = screenRect.size.width;
+    
+    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.presentingViewController.splitViewController.primaryColumnWidth : 0;
+    
+    screenWidth = screenRect.size.width - offsetWidth;
     screenHeight = screenRect.size.height;
     
     self.havingComment = NO;
@@ -78,7 +82,7 @@
     
     
     UIActivityIndicatorView *messagesLoadingIndicator = [UIActivityIndicatorView new];
-    messagesLoadingIndicator.center = self.view.center;
+    messagesLoadingIndicator.center = CGPointMake(screenWidth/2, self.view.center.y);
     messagesLoadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     messagesLoadingIndicator.hidesWhenStopped = YES;
     messagesLoadingIndicator.tag = 4;
@@ -208,11 +212,12 @@
     
     // Empty list view
     UIView *emptyTableView = [[UIView alloc] initWithFrame:CGRectMake(0, (floorf(((screenHeight*30.80985915) / 100)) - 118), screenWidth, 120)];
-    emptyTableView.backgroundColor = [UIColor clearColor];
+    emptyTableView.backgroundColor = [UIColor purpleColor];
     emptyTableView.tag = 2;
     emptyTableView.hidden = YES;
     emptyTableView.opaque = YES;
     [commentsTableView insertSubview:emptyTableView aboveSubview:commentsTableView];
+
     
     
     NSMutableAttributedString *WSQuoteAttrString = [[NSMutableAttributedString alloc] initWithString:[NSLocalizedString(@"WSQuote", "William Shakespeare quote") uppercaseString] attributes:nil];
@@ -229,7 +234,7 @@
     WSQuoteLabel.textAlignment = NSTextAlignmentCenter;
     [WSQuoteLabel sizeToFit];
     WSQuoteLabel.backgroundColor = [UIColor clearColor];
-    WSQuoteLabel.center = CGPointMake(self.view.center.x, WSQuoteLabel.center.y);
+    WSQuoteLabel.center = CGPointMake(screenWidth/2, WSQuoteLabel.center.y);
     
     [emptyTableView addSubview:WSQuoteLabel];
     

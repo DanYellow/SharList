@@ -58,16 +58,6 @@
     userListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
     userListViewController.tabBarItem.image = [UIImage imageNamed:@"liste-tab-icon"];
     
-    
-//    detailedViewController *detail = [[[detailedViewController alloc] init] autorelease];
-
-    
-    
-    
-//    splitViewController.delegate = detail;
-
-    
-    
     MeetingsListViewController *meetingsListViewController = [MeetingsListViewController new];
     meetingsListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
     meetingsListViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon2"];
@@ -133,8 +123,11 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
     
     
-    DetailsMeetingViewController *detailsMediaViewController = [DetailsMeetingViewController new];
+    DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
+    DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
     
+    UINavigationController *detailsMeetingNavController = [[UINavigationController alloc]
+                                                         initWithRootViewController:detailsMeetingViewController];
     UINavigationController *detailsMediaNavController = [[UINavigationController alloc]
                                                          initWithRootViewController:detailsMediaViewController];
     
@@ -143,13 +136,13 @@
     self.splitDiscoveriesViewController = [SHDSplitViewController new];
     self.splitDiscoveriesViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
     self.splitDiscoveriesViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon2"];
-//    splitViewController.delegate = detailsMediaViewController;
-    self.splitDiscoveriesViewController.viewControllers = @[navControllerMeetingsList, detailsMediaNavController];
+    self.splitDiscoveriesViewController.viewControllers = @[navControllerMeetingsList, detailsMeetingNavController];
     
-//    NSLog(@"fre : %f", self.splitDiscoveriesViewController.primaryColumnWidth);
-//    NSLog(    self..collapsed = NO;)
-//     preferredPrimaryColumnWidthFraction
-
+//    self.splitUserListViewController = [SHDSplitViewController new];
+//    self.splitUserListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
+//    self.splitUserListViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon"];
+//    self.splitUserListViewController.viewControllers = @[navController, detailsMediaNavController];
+    
     
     NSArray* controllers = @[self.splitDiscoveriesViewController, navController, navControllerSettings];
 //    NSArray* controllers = @[splitViewController];

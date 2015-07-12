@@ -121,7 +121,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    screenWidth = screenRect.size.width;
+    // We create an offset to manage uisplitview
+    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
+    
+    screenWidth = screenRect.size.width - offsetWidth;
     screenHeight = screenRect.size.height;
     
 //    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
@@ -145,6 +148,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [self.view.layer insertSublayer:gradient atIndex:0];
     
 //    self.edgesForExtendedLayout = UIRectEdgeNone;
+    
+    if (self.mediaDatas == nil) {
+        return;
+    }
     
     UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 60, screenWidth, screenHeight)];
     infoMediaView.backgroundColor = [UIColor clearColor];
@@ -360,8 +367,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
    
     
-    loadingIndicator = [[UIActivityIndicatorView alloc] init];
-    loadingIndicator.center = self.view.center;
+    loadingIndicator = [UIActivityIndicatorView new];
+    loadingIndicator.center = CGPointMake(screenWidth/2, self.view.center.y);
     loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     loadingIndicator.hidesWhenStopped = YES;
     loadingIndicator.tintColor = [UIColor colorWithRed:(17.0f/255.0f) green:(34.0f/255.0f) blue:(42.0f/255.0f) alpha:1];

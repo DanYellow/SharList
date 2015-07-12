@@ -1028,6 +1028,7 @@
                                                          initWithRootViewController:detailsMeetingViewController];
 
         split.viewControllers = @[self.navigationController, detailMeetingNavController];
+        [self.tabBarController.tabBar setHidden:NO];
     } else {
         [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
     }
