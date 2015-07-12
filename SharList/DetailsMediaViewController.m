@@ -72,11 +72,13 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
             [layer removeFromSuperlayer];
         }
     }
+
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMediaTutorial"];
         [self showTutorial];
     }
+//    [self showTutorial];
     
 
     // We just want the title of the uiviewcontroller
@@ -886,15 +888,16 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [maskPath addLineToPoint:CGPointMake(CGRectGetMinX(biggerRect), CGRectGetMinY(biggerRect))];
 
     int radius = 23.0;
-    UIBezierPath *circlePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(screenWidth - 50, 18.0, 2.0 * radius, 2.0 * radius) cornerRadius:radius];
+    UIBezierPath *circlePath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(screenWidth - 52, 18.0, 2.0 * radius, 2.0 * radius) cornerRadius:radius];
     [maskPath appendPath:circlePath];
     
     [maskWithHole setPath:[maskPath CGPath]];
     [maskWithHole setFillRule:kCAFillRuleEvenOdd];
     [maskWithHole setFillColor:[[UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f] CGColor]];
     
+    NSUInteger offsetX = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
     
-    UIView *tutorialView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
+    UIView *tutorialView = [[UIView alloc] initWithFrame:CGRectMake(offsetX, 0, screenWidth, screenHeight)];
     tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.989f];
     tutorialView.layer.mask = maskWithHole;
     tutorialView.tag = 8;
@@ -910,6 +913,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
                      completion:nil];
     
 
+    
     // TUTORIAL VIEW
     UITextView *tutFavsMessageTV = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, screenWidth - 40, 90)];
     tutFavsMessageTV.text = NSLocalizedString(@"tutFavsMessage", nil);
@@ -1727,9 +1731,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mediaCommentsViewController];
     navigationController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-    [self.navigationController presentViewController:navigationController animated:YES completion:nil];
+    
+    [self.navigationController presentViewController:navigationController
+                                            animated:YES
+                                          completion:nil];
 }
-
 
 #pragma mark - Saving user list
 
@@ -1848,15 +1854,20 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
         
 //        [self synchronizeUserListWithServer];
         
-        [self cancelLocalNotificationWithValueForKey:@"updateList"];
-        UILocalNotification *localNotification = [UILocalNotification new];
-        localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:2592000]; //One month later 2592000
-        localNotification.soundName = UILocalNotificationDefaultSoundName;
-        localNotification.applicationIconBadgeNumber = 0;
-        localNotification.alertAction = nil;
-        localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyNotUpdateList", nil);
-        localNotification.userInfo = @{@"locatificationName" : @"updateList"};
-        [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+        if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
+            UIUserNotificationSettings *grantedSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+            if (grantedSettings.types != UIUserNotificationTypeNone) {
+                [self cancelLocalNotificationWithValueForKey:@"updateList"];
+                UILocalNotification *localNotification = [UILocalNotification new];
+                localNotification.fireDate = [[NSDate date] dateByAddingTimeInterval:2592000]; //One month later 2592000
+                localNotification.soundName = UILocalNotificationDefaultSoundName;
+                localNotification.applicationIconBadgeNumber = 0;
+                localNotification.alertAction = nil;
+                localNotification.alertBody = NSLocalizedString(@"localNotificationAlertBodyNotUpdateList", nil);
+                localNotification.userInfo = @{@"locatificationName" : @"updateList"};
+                [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+            }
+        }
     }];
 }
 
