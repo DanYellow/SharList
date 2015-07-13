@@ -818,37 +818,6 @@
     }
 }
 
-- (NSPredicate*) predicateForSegmentTabSelected
-{
-    NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbId != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-    NSPredicate *favoritesMeetingsFilter = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
-    
-    UISegmentedControl *segmentedControl = (UISegmentedControl*)[self.view viewWithTag:5];
-    
-    NSCompoundPredicate *filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter]];
-    
-    // We start the switch case value at 1 because we already have a default Predicate loaded
-    switch (segmentedControl.selectedSegmentIndex) {
-            // Favorites
-        case 1:
-        {
-            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, favoritesMeetingsFilter]];
-        }
-            break;
-            
-            // Facebook friends
-        case 2:
-        {
-            filterPredicates = [NSCompoundPredicate andPredicateWithSubpredicates:@[meetingsFilter, facebookFriendsFilter]];
-        }
-            break;
-        default:
-            break;
-    }
-    
-    return filterPredicates;
-}
 
 #pragma mark - Tableview configuration
 
@@ -1776,7 +1745,6 @@
     UILabel *emptyFacebookFriendsLabel = (UILabel*)[emptyFacebookFriendsLabelView viewWithTag:8];
     UIButton *fbSegCtrlBtn = (UIButton*)[emptyFacebookFriendsLabelView viewWithTag:12];
 
-    
     // User doesn't authorize shound to access his facebook friends who using the app
     if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
         emptyFacebookFriendsLabel.text = NSLocalizedString(@"facebook shound not granted", nil);
