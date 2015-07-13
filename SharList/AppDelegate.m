@@ -123,28 +123,28 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleBarAttributes];
     
     
-    DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
-    DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
+//    DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
+//    DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
+//    
+//    UINavigationController *detailsMeetingNavController = [[UINavigationController alloc]
+//                                                           initWithRootViewController:detailsMeetingViewController];
+//    CALayer *bottomBorder4 = [CALayer layer];
+//    bottomBorder4.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+//    bottomBorder4.borderWidth = 1;
+//    bottomBorder4.name = @"bottomBorderLayer";
+//    bottomBorder4.frame = bottomBorderFrame;
+//    [detailsMeetingNavController.navigationBar.layer addSublayer:bottomBorder4];
     
-    UINavigationController *detailsMeetingNavController = [[UINavigationController alloc]
-                                                           initWithRootViewController:detailsMeetingViewController];
-    CALayer *bottomBorder4 = [CALayer layer];
-    bottomBorder4.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
-    bottomBorder4.borderWidth = 1;
-    bottomBorder4.name = @"bottomBorderLayer";
-    bottomBorder4.frame = bottomBorderFrame;
-    [detailsMeetingNavController.navigationBar.layer addSublayer:bottomBorder4];
     
-    
-    UINavigationController *detailsMediaNavController = [[UINavigationController alloc]
-                                                         initWithRootViewController:detailsMediaViewController];
+//    UINavigationController *detailsMediaNavController = [[UINavigationController alloc]
+//                                                         initWithRootViewController:detailsMediaViewController];
     
     // http://devmonologue.com/ios/tutorials/uisplitviewcontroller-tutorial/
     // http://redartisan.com/2010/6/14/uisplitviewcontroller-views
-    self.splitDiscoveriesViewController = [SHDSplitViewController new];
-    self.splitDiscoveriesViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
-    self.splitDiscoveriesViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon2"];
-    self.splitDiscoveriesViewController.viewControllers = @[navControllerMeetingsList, detailsMeetingNavController];
+//    self.splitDiscoveriesViewController = [SHDSplitViewController new];
+//    self.splitDiscoveriesViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"meetings", nil)];
+//    self.splitDiscoveriesViewController.tabBarItem.image = [UIImage imageNamed:@"list-tab-icon2"];
+//    self.splitDiscoveriesViewController.viewControllers = @[navControllerMeetingsList, detailsMeetingNavController];
     
     //    self.splitUserListViewController = [SHDSplitViewController new];
     //    self.splitUserListViewController.title = [NSString sentenceCapitalizedString:NSLocalizedString(@"my list", nil)];
