@@ -269,7 +269,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 //    }
         
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, screenWidth * 0.9, 55)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, -10, screenWidth * 0.9, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
@@ -290,7 +290,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.frame = CGRectMake(0, CGRectGetMaxY(mediaTitleLabel.frame),
                                        screenWidth * 0.9, CGRectGetHeight(mediaTitleLabel.frame));
     mediaTitleLabel.center = CGPointMake(self.view.center.x, mediaTitleLabel.center.y);
-    
+
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
 
