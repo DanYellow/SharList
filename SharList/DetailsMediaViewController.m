@@ -380,6 +380,15 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     [self.view insertSubview:loadingIndicator atIndex:2];
     
+    PNCircleChart * circleChart = [[PNCircleChart alloc] initWithFrame:CGRectMake(0, 80.0, screenWidth, 150.0)
+                                                                 total:[NSNumber numberWithInt:100]
+                                                               current:[NSNumber numberWithInt:13]
+                                                             clockwise:YES];
+    [circleChart setStrokeColor:PNCloudWhite];
+    [circleChart strokeChart];
+    
+    [self.view insertSubview:circleChart atIndex:2];
+    
     // <----
     UIScreenEdgePanGestureRecognizer *leftEdgeGesture = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(showPoster)];
     leftEdgeGesture.edges = UIRectEdgeRight;

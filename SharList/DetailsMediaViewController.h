@@ -10,6 +10,7 @@
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <CoreGraphics/CoreGraphics.h>
 
 #import <Parse/Parse.h>
 
@@ -38,6 +39,7 @@
 
 #import "MediaCommentsViewController.h"
 
+#import "PNChart.h"
 
 
 
