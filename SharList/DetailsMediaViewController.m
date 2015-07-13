@@ -121,9 +121,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     // We create an offset to manage uisplitview
-    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
+//    NSUInteger offsetWidth = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
     
-    screenWidth = screenRect.size.width - offsetWidth;
+    screenWidth = screenRect.size.width;
     screenHeight = screenRect.size.height;
     
 //    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
@@ -269,7 +269,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 //        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 //    }
         
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, screenWidth - 22, 55)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, screenWidth * 0.9, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
@@ -287,6 +287,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
     mediaTitleLabel.tag = 4;
     [mediaTitleLabel sizeToFit];
+    mediaTitleLabel.frame = CGRectMake(0, CGRectGetMaxY(mediaTitleLabel.frame),
+                                       screenWidth * 0.9, CGRectGetHeight(mediaTitleLabel.frame));
+    mediaTitleLabel.center = CGPointMake(self.view.center.x, mediaTitleLabel.center.y);
     
     [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
     
@@ -312,9 +315,11 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
               }
               
               // If the name of the media change in the database, the user keep the last name in the db
-              if (responseObject[@"name"] != nil && ![self.mediaDatas[@"name"] isEqualToString:(NSString *)responseObject[@"name"]]) {
+              if (![self.mediaDatas[@"name"] isEqualToString:[responseObject valueForKeyPath:@"response.name"]]) {
                   [tempDict setObject:(NSString *)[responseObject valueForKeyPath:@"response.name"] forKey:@"name"];
                   self.mediaDatas = tempDict;
+//                  mediaTitleLabel.text = responseObject[@"response.name"];
+//                  [mediaTitleLabel sizeToFit];
               }
               
               [self displayBuyButtonForShops:[responseObject valueForKeyPath:@"response.storeLinks"]];
@@ -892,9 +897,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     [maskWithHole setFillRule:kCAFillRuleEvenOdd];
     [maskWithHole setFillColor:[[UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f] CGColor]];
     
-    NSUInteger offsetX = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
+//    NSUInteger offsetX = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
     
-    UIView *tutorialView = [[UIView alloc] initWithFrame:CGRectMake(offsetX, 0, screenWidth, screenHeight)];
+    UIView *tutorialView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
     tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.989f];
     tutorialView.layer.mask = maskWithHole;
     tutorialView.tag = 8;
@@ -1221,7 +1226,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     genresString = [genresString stringByAppendingString:[genresArray componentsJoinedByString:@", "]];
     
-    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, CGRectGetMaxY(mediaTitleLabel.frame) + 40, screenWidth - 30, 25)];
+    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, CGRectGetMaxY(mediaTitleLabel.frame) + 40, screenWidth * 0.9, 25)];
     mediaGenresLabel.translatesAutoresizingMaskIntoConstraints = NO;
     mediaGenresLabel.text = genresString;
     mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
@@ -1236,6 +1241,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaGenresLabel.layer.masksToBounds = NO;
     mediaGenresLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
     [mediaGenresLabel sizeToFit];
+    mediaGenresLabel.frame = CGRectMake((screenWidth - (screenWidth * 0.9)) / 2,
+                                        CGRectGetMinY(mediaGenresLabel.frame),
+                                        screenWidth * 0.9,
+                                        CGRectGetHeight(mediaGenresLabel.frame));
     mediaGenresLabel.tag = 11;
     mediaGenresLabel.alpha = (genresArray.count == 0) ? 0 : 1;
     [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
@@ -1243,7 +1252,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-    CGFloat mediaDescriptionWidthPercentage = 82.0;
+    CGFloat mediaDescriptionWidthPercentage = 90.0; // 82.0
     CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
     CGFloat mediaDescriptionY = CGRectGetMaxY(infoMediaViewLastView.frame) + 7;
 
@@ -1280,7 +1289,10 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     mediaDescription.delegate = self;
     mediaDescription.showsHorizontalScrollIndicator = NO;
     mediaDescription.showsVerticalScrollIndicator = NO;
-    mediaDescription.contentInset = UIEdgeInsetsMake(-10, 0, -10, 0);
+    mediaDescription.contentInset = UIEdgeInsetsMake(-10, -5, -10, 0);
+    mediaDescription.frame = CGRectMake((screenWidth - mediaDescriptionWidth) / 2, CGRectGetMinY(mediaDescription.frame), mediaDescriptionWidth, CGRectGetHeight(mediaDescription.frame));
+//    mediaDescription.center = CGPointMake(self.view.center.x, CGRectGetMaxY(mediaDescription.frame));
+    
     mediaDescription.textAlignment = NSTextAlignmentLeft;
     mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
@@ -1383,7 +1395,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     
     int lastEpisodeDateLabelY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 5;
     
-    UILabel *lastEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, lastEpisodeDateLabelY, screenWidth - 30, 25)];
+    UILabel *lastEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake((screenWidth - (screenWidth * 0.9)) / 2
+                                                                              , lastEpisodeDateLabelY, screenWidth * 0.9, 25)];
     
     lastEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
     // If an episode of this serie is release today we notify the user
@@ -1485,7 +1498,9 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
     
     UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - 45, -40, 40, 40);
+    
+    CGFloat multiplier = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 0.0703125 : 0.15;
+    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - (screenWidth * multiplier), -40, 40, 40);
     seeTrailerMediaBtn.trailerID = aTrailerID;
     [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailerMedia:) forControlEvents:UIControlEventTouchUpInside];
     [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];
@@ -1741,7 +1756,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     if ([sender isKindOfClass:[UIButton class]]) {
         UIBarButtonItem *barBtnItem = (UIBarButtonItem*)[self.navigationItem.rightBarButtonItems objectAtIndex:0];
         UIButton *addRemoveFromListBtn = (UIButton *)sender;
-        
+    
         barBtnItem.enabled = NO;
         addRemoveFromListBtn.enabled = NO;
         
