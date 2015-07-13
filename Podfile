@@ -17,6 +17,7 @@ target "SharList" do
 	#pod 'PromiseKit', '~> 2.0'
 	pod 'JDStatusBarNotification'
 	pod 'PNChart'
+	pod 'PromiseKit-AFNetworking'
 end
 
 target "SharListTests" do
