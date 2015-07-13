@@ -45,6 +45,8 @@
 
 @protocol UpdateUserTasteListDelegate;
 
+extern NSString * const BSCLIENTID;
+
 @interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate, UIGestureRecognizerDelegate, FBSDKSharingDelegate>
 {
     CGFloat screenWidth;
