@@ -1072,7 +1072,7 @@
     
     NSString *apiLink;
 
-    __block NSString *imgURL;
+    __block NSString *imgName;
     if ([model[@"type"] isEqualToString:@"movie"]) {
         apiLink = kJLTMDbMovie;
     } else {
@@ -1087,14 +1087,15 @@
         if(!error){
             if ([model[@"type"] isEqualToString:@"serie"] &&
                 [[responseObject valueForKeyPath:@"tv_results.poster_path"] count] != 0) {
-                    imgURL = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
+                    imgName = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
             } else {
                 if([responseObject[@"poster_path"] length] != 0) {
-                    imgURL = responseObject[@"poster_path"];
+                    imgName = responseObject[@"poster_path"];
                 }
             }
             
-            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396%@", imgURL];
+            NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w396" : @"w780";
+            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, imgName];
             
             [imgBackground setImageWithURL:
              [NSURL URLWithString:imgDistURL]
@@ -1198,15 +1199,9 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 52.0)];
     headerView.opaque = YES;
 
-
-    
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 52.0)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
-    
-    [label sizeToFit];
-    label.frame = CGRectMake(15.0, CGRectGetHeight(headerView.frame) - CGRectGetHeight(label.frame) - 10,
-                             screenWidth, CGRectGetHeight(label.frame));
     
     if (tableView == ((UITableViewController *) self.searchController.searchResultsController).tableView) {
         NSString *sectionTitleRaw = [[categoryList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
@@ -1220,9 +1215,9 @@
         NSString *sectionTitleRaw = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
         NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
         label.text = title;
-        
 //        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
         label.textColor = [UIColor colorWithRed:(21.0f/255.0f) green:(22.0f/255.0f) blue:(23.0f/255.0f) alpha:1];
+//        label.textColor = [UIColor blackColor];
         UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
         
         UIVisualEffectView *visualEffectView;
@@ -1231,6 +1226,11 @@
         
         [headerView addSubview:visualEffectView];
     }
+    
+    [label sizeToFit];
+    label.frame = CGRectMake(15.0, CGRectGetHeight(headerView.frame) - CGRectGetHeight(label.frame) - 10,
+                             screenWidth, CGRectGetHeight(label.frame));
+    
     [headerView addSubview:label];
     
     return headerView;
