@@ -232,7 +232,7 @@
     }
     
     tableFooterLastView = [[tableFooterView subviews] lastObject];
-    tableFooterView.frame = CGRectMake(0, 0, screenWidth, CGRectGetMaxY(tableFooterLastView.frame));
+    tableFooterView.frame = CGRectMake(0, 0, screenWidth, CGRectGetMaxY(tableFooterLastView.frame) + 30);
     tableFooterView.backgroundColor = [UIColor clearColor];
     
     //___________________
@@ -721,7 +721,7 @@
     
     NSString *apiLink;
     
-    __block NSString *imageName;
+    __block NSString *imgName;
     if ([model[@"type"] isEqualToString:@"movie"]) {
         apiLink = kJLTMDbMovie;
     } else {
@@ -734,13 +734,13 @@
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
             if ([model[@"type"] isEqualToString:@"serie"]) {
-                imageName = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
+                imgName = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
             } else {
-                imageName = responseObject[@"poster_path"];
+                imgName = responseObject[@"poster_path"];
             }
             
             NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w396" : @"w780";
-            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, imageName];
+            imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, imgName];
             
             [imgBackground setImageWithURL:
              [NSURL URLWithString:imgDistURL]
