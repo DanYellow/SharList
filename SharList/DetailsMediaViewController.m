@@ -732,6 +732,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     chartViewContainer.backgroundColor = [UIColor clearColor];
     chartViewContainer.opaque = NO;
     
+    // This view contain the chart and the label at the right size to be centered after
     UIView *chartView = [UIView new];
     chartView.backgroundColor = [UIColor clearColor];
     chartView.opaque = NO;
@@ -739,13 +740,21 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
     [manager.requestSerializer setValue:bsUserToken forHTTPHeaderField:@"X-BetaSeries-Token"];
-    [manager GET:@"https://api.betaseries.com/episodes/list"
-      parameters:@{@"showIMDBId": self.mediaDatas[@"imdbID"], @"client_id": BSCLIENTID}
+//    [manager GET:@"https://api.betaseries.com/episodes/list"
+//      parameters:@{@"showIMDBId": self.mediaDatas[@"imdbID"], @"client_id": BSCLIENTID}
+    [manager GET:@"https://api.betaseries.com/shows/display"
+      parameters:@{@"imdb_id" : self.mediaDatas[@"imdbID"], @"client_id" : BSCLIENTID}
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             NSUInteger nbTotalEpisodes = 0;
-             NSUInteger nbEpisodesRemaining = ([[responseObject valueForKey:@"shows"] count] > 0) ? [[responseObject valueForKeyPath:@"shows.remaining"][0] unsignedIntegerValue] : 0;
-             NSUInteger nbEpisodesSeen = nbTotalEpisodes - nbEpisodesRemaining;
-
+//             NSUInteger nbTotalEpisodes = 0;
+//             NSUInteger nbEpisodesRemaining = ([[responseObject valueForKey:@"shows"] count] > 0) ? [[responseObject valueForKeyPath:@"shows.remaining"][0] unsignedIntegerValue] : 0;
+//             NSUInteger nbEpisodesSeen = nbTotalEpisodes - nbEpisodesRemaining;
+             
+             
+             BOOL isAmongUserBSAccount = [[responseObject valueForKeyPath:@"show.in_account"] boolValue];
+             
+             NSUInteger nbTotalEpisodes = [[responseObject valueForKeyPath:@"show.episodes"] integerValue];
+             NSUInteger nbEpisodesRemaining = (isAmongUserBSAccount) ? [[responseObject valueForKeyPath:@"show.user.remaining"] integerValue] : nbTotalEpisodes;
+             NSUInteger nbEpisodesSeen = (nbTotalEpisodes - nbEpisodesRemaining);
              
              PNCircleChart *circleChart = [[PNCircleChart alloc]
                                            initWithFrame:CGRectMake(0, 0, 70.0, 70.0)
