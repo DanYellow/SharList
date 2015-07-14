@@ -963,7 +963,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E63C45D672D13D6A370E3582 /* Pods-SharList.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-1";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1001,8 +1001,6 @@
 					"-l\"Pods-SharList-MagicalRecord\"",
 					"-l\"Pods-SharList-PNChart\"",
 					"-l\"Pods-SharList-Parse\"",
-					"-l\"Pods-SharList-PromiseKit\"",
-					"-l\"Pods-SharList-PromiseKit-AFNetworking\"",
 					"-l\"Pods-SharList-SWTableViewCell\"",
 					"-l\"Pods-SharList-UICountingLabel\"",
 					"-l\"Pods-SharList-XCDYouTubeKit\"",
@@ -1067,7 +1065,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C3B6509700276B65733896C /* Pods-SharList.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-1";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1104,10 +1102,8 @@
 					"-l\"Pods-SharList-JDStatusBarNotification\"",
 					"-l\"Pods-SharList-JLTMDbClient\"",
 					"-l\"Pods-SharList-MagicalRecord\"",
-					"-l\"Pods-SharList-OMGHTTPURLRQ\"",
 					"-l\"Pods-SharList-PNChart\"",
 					"-l\"Pods-SharList-Parse\"",
-					"-l\"Pods-SharList-PromiseKit\"",
 					"-l\"Pods-SharList-SWTableViewCell\"",
 					"-l\"Pods-SharList-UICountingLabel\"",
 					"-l\"Pods-SharList-XCDYouTubeKit\"",

@@ -224,10 +224,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  OTHER DEALINGS IN THE SOFTWARE.
 
 
-## OMGHTTPURLRQ
-
-See README.markdown for full license text.
-
 ## PNChart
 
 The MIT License (MIT)
@@ -255,10 +251,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ## Parse
 
 See https://www.parse.com/about/terms
-
-## PromiseKit
-
-@see README
 
 ## SWTableViewCell
 

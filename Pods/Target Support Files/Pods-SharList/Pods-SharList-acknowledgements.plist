@@ -273,14 +273,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>See README.markdown for full license text.</string>
-			<key>Title</key>
-			<string>OMGHTTPURLRQ</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
 			<string>The MIT License (MIT)
 
 Copyright (c) 2013 Kevin
@@ -312,14 +304,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			<string>See https://www.parse.com/about/terms</string>
 			<key>Title</key>
 			<string>Parse</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
-			<string>@see README</string>
-			<key>Title</key>
-			<string>PromiseKit</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
