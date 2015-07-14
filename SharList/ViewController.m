@@ -1465,13 +1465,12 @@
     } else {
         FBSDKLoginManager *loginManager = [FBSDKLoginManager new];
         [loginManager logInWithReadPermissions:@[@"user_likes"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
-                            NSLog(@"error : %@", result);
-            if ([result.declinedPermissions containsObject:@"user_likes"]) {
-                // TODO: do not request permissions again immediately. Consider providing a NUX
-                // describing  why the app want this permission.
 
-            } else {
+            if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_likes"]) {
                 [self getUserLikesForSender:sender];
+            } else {
+                // If the use try to use his likes but refuse on the facebook app
+                sender.enabled = YES;
             }
             
         }];
@@ -1482,7 +1481,7 @@
 
 
 - (void) getUserLikesForSender:(UIButton*)sender
-{    
+{
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"facebook-synchronize.php/user/facebook/synchronize"];
 
     NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
