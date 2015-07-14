@@ -749,7 +749,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 //             NSUInteger nbEpisodesRemaining = ([[responseObject valueForKey:@"shows"] count] > 0) ? [[responseObject valueForKeyPath:@"shows.remaining"][0] unsignedIntegerValue] : 0;
 //             NSUInteger nbEpisodesSeen = nbTotalEpisodes - nbEpisodesRemaining;
              
-             
+             // If user remove an app from his list he lost the progress
              BOOL isAmongUserBSAccount = [[responseObject valueForKeyPath:@"show.in_account"] boolValue];
              
              NSUInteger nbTotalEpisodes = [[responseObject valueForKeyPath:@"show.episodes"] integerValue];
