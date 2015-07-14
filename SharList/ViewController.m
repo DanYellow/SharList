@@ -1472,12 +1472,9 @@
                 // If the use try to use his likes but refuse on the facebook app
                 sender.enabled = YES;
             }
-            
         }];
-        
     }
 }
-
 
 
 - (void) getUserLikesForSender:(UIButton*)sender

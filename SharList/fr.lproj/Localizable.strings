@@ -111,7 +111,7 @@
 "BSPasswordPlaceholder" = "Mot de passe";
 "Connection" = "Connexion";
 "Cancel" = "Annuler";
-"BSExplaination" = "La connexion à votre compte BetaSeries, vous permet d'ajouter une série à votre compte";
+"BSExplaination" = "La connexion à votre compte BetaSeries, vous permet d'améliorer l'experience de Shound";
 "Enable anonymous mode" = "Activer l'anonymat";
 "Enable anonymous mode message" = "En activant l'anonymat, vous ne pourrez plus voir les images de profil des utilisateurs découverts (Ils ne pourront pas voir la vôtre)";
 "OK reminder me later" = "OK. Rappelez-le moi la prochaine fois";

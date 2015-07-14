@@ -40,7 +40,7 @@
       "idiom" : "ipad",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
-      "filename" : "launchImg-iPad.png",
+      "filename" : "launch-screen-ipad.png",
       "scale" : "1x"
     },
     {
@@ -48,7 +48,7 @@
       "idiom" : "ipad",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
-      "filename" : "launchImg-iPad@2x.png",
+      "filename" : "launch-screen-ipad@2x.png",
       "scale" : "2x"
     }
   ],

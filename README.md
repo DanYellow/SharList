@@ -48,7 +48,9 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 
 ### v 1.2.1 - Not Released
 
-
+- Gestion de l'iPad
+- Correction de bugs
+- Filtrage de la liste d'un utilisateur rencontré
 
 
 # TODO
@@ -168,7 +170,11 @@ _ Nombre de films / séries retirées
 - Update d'un commentaire
 - Rencontrer tous ses amis facebook
 - Rencontrer X % de ses amis
-- Avoir plus de X % de ses amis qui aiment la même série / films que l'utilisateur'
+- Avoir plus de X % de ses amis qui aiment la même série / films que l'utilisateur
+- Avoir X % de progression dans une série
+
+
+Martine Aubry : Vous avez regardé plus de 35 heures d'épisodes. C'est la lutte
 
 ## Pods dependancies
 
