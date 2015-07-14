@@ -427,7 +427,7 @@
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
-    UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 24.0, 155.0, 48.0)];
+    UILabel *commonTasteCountPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(16.0, 10.0, 155.0, 48.0)];
     commonTasteCountPercentLabel.textColor = [UIColor whiteColor];
     commonTasteCountPercentLabel.backgroundColor = [UIColor clearColor];
     commonTasteCountPercentLabel.text = [self calcUserMetPercentMatch];
@@ -436,8 +436,8 @@
     [metUserFBView addSubview:commonTasteCountPercentLabel];
 
     
-    CGRect tasteMetUserMessageLabelFrame = CGRectMake(16.0,
-                                                      commonTasteCountPercentLabel.frame.size.height + commonTasteCountPercentLabel.frame.origin.y,
+    CGRect tasteMetUserMessageLabelFrame = CGRectMake(CGRectGetMinX(commonTasteCountPercentLabel.frame),
+                                                      CGRectGetMaxY(commonTasteCountPercentLabel.frame),
                                                       190.0f,
                                                       20.0);
     
@@ -806,7 +806,7 @@
 //    NSLog(@"%li", indexes.count);
     
     UIButton *emptyUserLikesBtn = (UIButton*)[self.view viewWithTag:10];
-    if (flatArray.count == 0) {
+    if (flatArray.count == 0 && segmentedControl.selectedSegmentIndex == 2) {
         emptyUserLikesBtn.hidden = NO;
     } else {
         emptyUserLikesBtn.hidden = YES;
