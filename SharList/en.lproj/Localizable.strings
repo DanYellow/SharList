@@ -80,7 +80,7 @@
 "warning message for update login issue" = "If you just update the app, please log out into the settings and reconnect";
 
 // DetailsMeetingsViewController
-"met %@ times" = "discovered %@ time(s)";
+"met %@ times" = "seen %@ time(s)";
 "pull to refresh fav" = "This discovery is now among your favs.\nYou can \"pull-to-refresh\" to see if this has been updated.";
 "nothing common" = "Discover! Nothing in common.";
 "things common" = "Things in common, but also to discover";

@@ -71,7 +71,8 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Ajouter une segmentation pour la fiche de découverte pour pouvoir filtrer la liste - **Done**
 - Inviter ses amis à découvrir de nouvelles choses si aucun d'eux apprécient un film ou une série - **Done**
 - Afficher les dernières recherches
-- Gérer l'iPad
+- Gérer l'iPad - **Done**
+- Ajouter le nombre de découvertes faites - **Done**
 
 
 ###### X.X.X
@@ -80,10 +81,12 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Créer une vue notifications (prioriété de la prochaine màj)
 - Le retour de Parse (prioriété de la prochaine màj)
 - Créer une vue profil (si présence de chat)
-- Ajouter le taux de progression d'une série si réponse favorable de BS avec PNChart
+- Ajouter le taux de progression d'une série si réponse favorable de BS avec PNChart - **Done**
 - Ajouter la publicité
 - Améliorer les miniatures des amis facebook sur les images
-- Inviter les amis facebook à découvrir la série "Faire découvrir à mes amis"
+- Inviter les amis facebook à découvrir la série "Faire découvrir à mes amis" - **Done**
+- Lorsque l'app sera plus populaire : proposer un bouton "faire découvrir à ses abonnés" aux utilisateurs ayant atteint un certain nombre d'abonnés
+
 
 
 

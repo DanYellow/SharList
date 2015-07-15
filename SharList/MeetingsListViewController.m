@@ -239,7 +239,7 @@
 //    userMeetingsListTableView.backgroundColor = [UIColor colorWithWhite:1 alpha:.5];
     discoveriesListTableView.tag = 1;
     discoveriesListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
-    discoveriesListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    discoveriesListTableView.tableFooterView = tableFooter;
     discoveriesListTableView.tableHeaderView = segmentedControlView;
     discoveriesListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
     
@@ -1295,6 +1295,8 @@
     // Vous n'avez pas rencontré de personnes
     UILabel *emptyMeetingsLabel = (UILabel*)[tableView viewWithTag:4];
     emptyMeetingsLabel.hidden = YES;
+    
+    tableView.tableFooterView.hidden = NO;
     if ([datas count] == 0) {
         // We hide the segmented control on page load
         // only if there is nothing among ALL meetings
@@ -1306,6 +1308,7 @@
             case 0:
             {
                 emptyMeetingsLabel.hidden = NO;
+                tableView.tableFooterView.hidden = YES;
             }
                 break;
                 
@@ -1313,12 +1316,14 @@
             case 1:
             {
                 emptyFavoritesLabel.hidden = NO;
+                tableView.tableFooterView.hidden = YES;
             }
                 break;
                 
             case 2:
             {
                 emptyFacebookFriendsLabelView.hidden = NO;
+                tableView.tableFooterView.hidden = YES;
             }
                 break;
             default:

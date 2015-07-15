@@ -45,7 +45,8 @@ typedef NS_ENUM (NSInteger, FollowingStatus) {
 }
 
 
-@property (nonatomic, strong) id metUserId;
+@property (strong, nonatomic) id metUserId;
+@property (strong, atomic) Discovery *userDiscovered;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateMeetingsListDelegate> delegate;
 @property (assign, nonatomic, getter=isDisplayedFromPush) BOOL isDisplayedFromPush; // Indicate if the view is push from notification

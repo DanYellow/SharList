@@ -128,12 +128,12 @@
     // User discovered is a facebook friend not discovered yet
     if ([Discovery MR_findFirstByAttribute:@"fbId"
                                  withValue:self.metUserId] == nil) {
-        userMet = [Discovery MR_createEntityInContext:[NSManagedObjectContext MR_context]];
-        userMet.fbId = [[self getFacebookFriendForFbId:self.metUserId] fbId];
-        userMet.likes = [[self getFacebookFriendForFbId:self.metUserId] likes];
-        userMet.numberOfDiscoveries = [[self getFacebookFriendForFbId:self.metUserId] numberOfDiscoveries];
+        self.userDiscovered = [Discovery MR_createEntityInContext:[NSManagedObjectContext MR_context]];
+        self.userDiscovered.fbId = [[self getFacebookFriendForFbId:self.metUserId] fbId];
+        self.userDiscovered.likes = [[self getFacebookFriendForFbId:self.metUserId] likes];
+        self.userDiscovered.numberOfDiscoveries = [[self getFacebookFriendForFbId:self.metUserId] numberOfDiscoveries];
     } else {
-        userMet = [Discovery MR_findFirstByAttribute:@"fbId"
+        self.userDiscovered = [Discovery MR_findFirstByAttribute:@"fbId"
                                            withValue:self.metUserId];
     }   
     
@@ -141,12 +141,12 @@
     formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
     
     
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]]) {
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]]) {
         
-        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [userMet fbId]]];
+        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [self.userDiscovered fbId]]];
         self.title = [[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
     } else {
-        self.title = [formatter stringFromDate:[userMet lastDiscovery]];
+        self.title = [formatter stringFromDate:[self.userDiscovered lastDiscovery]];
     }
 
     // We get the datas of current user to compare it to the current list
@@ -158,10 +158,10 @@
     }
     
     self.metUserLikesDictRef = [NSMutableDictionary new];
-    self.metUserLikesDictRef = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet likes]] mutableCopy];
+    self.metUserLikesDictRef = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userDiscovered likes]] mutableCopy];
     
     self.metUserLikesDict = [NSMutableDictionary new];
-    self.metUserLikesDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[userMet likes]] mutableCopy];
+    self.metUserLikesDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userDiscovered likes]] mutableCopy];
    
 //    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
     self.navigationController.navigationBar.backIndicatorImage = [UIImage imageNamed:@"list-tab-icon"];
@@ -173,7 +173,7 @@
 
     UIBarButtonItem *addMeetingToFavoriteBtnItem;
     // This discovery is not among user's favorites
-    if (![userMet isFavorite]) {
+    if (![self.userDiscovered isFavorite]) {
         addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
     } else {
         addMeetingToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAsFavorite:)];
@@ -199,7 +199,7 @@
     nbDiscoveriesLabel.opaque = YES;
     nbDiscoveriesLabel.backgroundColor = [UIColor clearColor];
     nbDiscoveriesLabel.font = [UIFont boldSystemFontOfSize:15];
-    nbDiscoveriesLabel.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [userMet numberOfDiscoveries]]];
+    nbDiscoveriesLabel.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"met %@ times", nil), [self.userDiscovered numberOfDiscoveries]]];
     [tableFooterView addSubview:nbDiscoveriesLabel];
     
     UIView *tableFooterLastView = [[tableFooterView subviews] lastObject];
@@ -241,7 +241,7 @@
     
 
     // If the user is a facebook friend so we display the button to take about this meeting on facebook
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]]) {
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]]) {
         [tableFooterView addSubview:shareShoundBtn];
     }
     
@@ -263,7 +263,7 @@
     userMetLikesTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     userMetLikesTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:userMetLikesTableView];
-    
+
     if ([userMetLikesTableView respondsToSelector:@selector(setSeparatorInset:)]) {
         [userMetLikesTableView setSeparatorInset:UIEdgeInsetsZero];
     }
@@ -306,7 +306,7 @@
     NSMutableArray *rightBarButtonItemsArray = [NSMutableArray new];
     [rightBarButtonItemsArray addObject:addMeetingToFavoriteBtnItem];
 
-    if ([userMet isFavorite]) {
+    if ([self.userDiscovered isFavorite]) {
         UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(updateCurrentUser)];
         
         [rightBarButtonItemsArray addObject:refreshBtn];
@@ -410,8 +410,8 @@
     // We don't display user picture for the following cases :
     // - Current user is anonymous AND user met is not his friend on facebook
     // - Current user is not anonymous, user met is anonymous AND not his friend on facebook
-    if (([datas[@"isAnonymous"] boolValue] == YES && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]]) ||
-        ([[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"] && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]])
+    if (([datas[@"isAnonymous"] boolValue] == YES && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]]) ||
+        ([[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"] && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]])
     ) {
         return;
     }
@@ -747,9 +747,6 @@
         
         NSData *likesRawData = [NSKeyedArchiver archivedDataWithRootObject:[serverResponse objectForKey:@"list"]];
         
-        
-        NSDictionary *userMetDict = @{@"fbId" : serverResponse[@"fbId"],
-                                  @"likes" : likesRawData};
         Discovery *facebookFriendNotDiscoveredYet = [Discovery MR_createEntityInContext:[NSManagedObjectContext MR_context]];
         facebookFriendNotDiscoveredYet.isFavorite = NO;
         facebookFriendNotDiscoveredYet.likes = likesRawData;
@@ -870,9 +867,6 @@
     if ([sectionElements isKindOfClass:[NSNull class]]) {
         return 0;
     }
-
-//    NSArray *indexes = [tableView indexPathsForVisibleRows];
-//    NSLog(@"%li", indexes.count);
     
     UIButton *emptyUserLikesBtn = (UIButton*)[self.view viewWithTag:10];
     if (flatArray.count == 0 && segmentedControl.selectedSegmentIndex == 2) {
@@ -1153,7 +1147,7 @@
     // Current list seen is added to user favs discovers
     if ([sender.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
         sender.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
-        [userMet setIsFavorite:YES];
+        [self.userDiscovered setIsFavorite:YES];
         
         UIBarButtonItem *refreshBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(updateCurrentUser)];
         
@@ -1172,7 +1166,7 @@
 //        }
     } else {
         sender.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
-        [userMet setIsFavorite:NO];
+        [self.userDiscovered setIsFavorite:NO];
         
         
         UIBarButtonItem *refreshBtn = [self.navigationItem.rightBarButtonItems objectAtIndex:1];

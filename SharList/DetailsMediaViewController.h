@@ -28,17 +28,20 @@
 //Models
 #import "Discovery.h"
 
+// Categories
 #import "UILabel+HeightToFit.h"
 #import "UIButton+TrailerID.h"
 #import "UIImage+ColorImage.h"
 #import "NSString+URLEncodeValue.m"
 
-#import "SettingsViewController.h"
-
 #import "PFPushManager.h"
 
+// Custom view controller
 #import "MediaCommentsViewController.h"
+#import "DetailsMeetingViewController.h"
+#import "SettingsViewController.h"
 
+// Vendors
 #import "PNChart.h"
 
 
