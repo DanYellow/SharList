@@ -77,6 +77,11 @@
     screenWidth = screenRect.size.width - offsetWidth;
     screenHeight = screenRect.size.height - offsetHeight;
     
+    // Contains globals datas of the project
+    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
+    // Build the array from the plist
+    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
+    
     // View init
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
@@ -91,7 +96,7 @@
     gradientBGView.colors = [NSArray arrayWithObjects:(id)[topGradientView CGColor], (id)[bottomGradientView CGColor], nil];
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
-    
+
 
     
     if (self.metUserId == nil) {
@@ -112,22 +117,38 @@
     
     userPreferences = [NSUserDefaults standardUserDefaults];
     
-    userMet = [Discovery MR_findFirstByAttribute:@"fbId"
-                                                  withValue:self.metUserId];
     
     
+    
+    
+//    if ([self isModal]) {
+//        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissModal)];
+//    }
+    
+    // User discovered is a facebook friend not discovered yet
+    if ([Discovery MR_findFirstByAttribute:@"fbId"
+                                 withValue:self.metUserId] == nil) {
+        userMet = [Discovery MR_createEntityInContext:[NSManagedObjectContext MR_context]];
+        userMet.fbId = [[self getFacebookFriendForFbId:self.metUserId] fbId];
+        userMet.likes = [[self getFacebookFriendForFbId:self.metUserId] likes];
+        userMet.numberOfDiscoveries = [[self getFacebookFriendForFbId:self.metUserId] numberOfDiscoveries];
+    } else {
+        userMet = [Discovery MR_findFirstByAttribute:@"fbId"
+                                           withValue:self.metUserId];
+    }   
     
     NSDateFormatter *formatter = [NSDateFormatter new];
     formatter.timeStyle = kCFDateFormatterShortStyle; //self.meetingDatas[@"userModel"]
     
     
     if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[userMet fbId]]) {
+        
         NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [userMet fbId]]];
         self.title = [[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
     } else {
         self.title = [formatter stringFromDate:[userMet lastDiscovery]];
     }
-    
+
     // We get the datas of current user to compare it to the current list
     Discovery *currentUser = [Discovery MR_findFirstByAttribute:@"fbId"
                                                       withValue:[userPreferences objectForKey:@"currentUserfbID"]];
@@ -147,16 +168,9 @@
     self.navigationController.navigationBar.backIndicatorTransitionMaskImage = [UIImage imageNamed:@"discover-tab-icon"];
 
     
-    // Contains globals datas of the project
-    NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
-    // Build the array from the plist
-    settingsDict = [[NSDictionary alloc] initWithContentsOfFile:settingsPlist];
-    
-    
 
     
-    
-    
+
     UIBarButtonItem *addMeetingToFavoriteBtnItem;
     // This discovery is not among user's favorites
     if (![userMet isFavorite]) {
@@ -308,6 +322,14 @@
     }
     
     self.navigationItem.rightBarButtonItems = rightBarButtonItemsArray;
+    
+    if ([self isModal]) {
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissModal)];
+        
+        [self.navigationItem.rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem *barBtn, NSUInteger index, BOOL *stop){
+            barBtn.enabled = NO;
+        }];
+    }
     
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:self.metUserId]) {
         [self updateCurrentUser];
@@ -595,7 +617,7 @@
         // There is some datas from the server
         if (![[NSJSONSerialization JSONObjectWithData:data options:0 error:nil] isKindOfClass:[NSNull class]]) {
             NSDictionary *allDatasFromServerDict = [[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil] objectForKey:@"response"];
-            
+
             // This user has really updated is data we udpdate locals datas
             if (![self.metUserLikesDictRef isEqualToDictionary:[[allDatasFromServerDict objectForKey:@"list"] mutableCopy] ]) {
                 // We update the current data from the server
@@ -693,6 +715,53 @@
     NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:commonTasteCountPercent]];
     
     return strNumber;
+}
+
+// - (Discovery*) getFacebookFriendForFbId:(NSString*)userfbID
+
+//- (void) getFacebookFriendForModel
+// - (Discovery*) getFacebookFriendForFbId:(NSString*)userfbID
+
+- (Discovery*) getFacebookFriendForFbId:(NSString*)userfbID
+{
+    
+    NSString *aURLString = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
+    aURLString = [aURLString stringByAppendingString:[NSString stringWithFormat:@"?fbiduser=%@", userfbID]];
+    
+    NSURL *aUrl = [NSURL URLWithString:aURLString];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+                                                       timeoutInterval:10.0];
+    
+    [request addValue:@"getServerDatasForFbID" forHTTPHeaderField:@"X-Shound"];
+    [request setHTTPMethod:@"GET"];
+    
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+   
+    NSData *data = [NSURLConnection sendSynchronousRequest:request
+                                         returningResponse:&response error:&error];
+    
+    if (error == nil) {
+        NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil][@"response"];
+        
+        NSData *likesRawData = [NSKeyedArchiver archivedDataWithRootObject:[serverResponse objectForKey:@"list"]];
+        
+        
+        NSDictionary *userMetDict = @{@"fbId" : serverResponse[@"fbId"],
+                                  @"likes" : likesRawData};
+        Discovery *facebookFriendNotDiscoveredYet = [Discovery MR_createEntityInContext:[NSManagedObjectContext MR_context]];
+        facebookFriendNotDiscoveredYet.isFavorite = NO;
+        facebookFriendNotDiscoveredYet.likes = likesRawData;
+        facebookFriendNotDiscoveredYet.fbId = serverResponse[@"fbId"];
+        facebookFriendNotDiscoveredYet.numberOfDiscoveries = [NSNumber numberWithInt:1];
+        
+        return facebookFriendNotDiscoveredYet;
+
+    } else {
+        NSLog(@"error : %@", error);
+        return nil;
+    }
 }
 
 - (void) getImageCellForData:(id)model aCell:(UITableViewCell*)cell
@@ -1211,6 +1280,17 @@
     
     [segmentedControl setSelectedSegmentIndex:1];
     [segmentedControl sendActionsForControlEvents:UIControlEventValueChanged];
+}
+
+// Indicate if the current view is a modal
+- (BOOL) isModal {
+    return self.presentingViewController.presentedViewController == self
+    || (self.navigationController != nil && self.navigationController.presentingViewController.presentedViewController == self.navigationController)
+    || [self.tabBarController.presentingViewController isKindOfClass:[UITabBarController class]];
+}
+
+- (void) dismissModal {
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - facebook sharing
