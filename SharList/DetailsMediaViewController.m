@@ -198,28 +198,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"delToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
     }
     
-    /*
-    // User has data of this type
-    if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] class] != [NSNull class]) {
-        // This media is not among user list
-        // Because imdbID's key is unique we check if this key is among user media list api key
-        // Like the we are not screwed if we change api or CoreData'model structure
-        if (![[[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
-            self.Added = NO;
-            // Media in the list
-            addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addToList"]  style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
-            
-        } else {
-            // Media not in the list
-            self.Added = YES;
-            addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"delToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
-        }
-    } else {
-        // Media in the list
-        self.Added = NO;
-        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
-    }*/
-
     if (![self connected]) {
         self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
     }
@@ -496,7 +474,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     addRemoveFromListBtn.center = CGPointMake(self.view.center.x, addRemoveFromListBtn.center.y);
     
-    [addRemoveFromListBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]]
+    [addRemoveFromListBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.25]]
                                     forState:UIControlStateHighlighted];
     [addRemoveFromListBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]]
                                     forState:UIControlStateDisabled];
@@ -506,7 +484,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     [addRemoveFromListBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
     [addRemoveFromListBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
     [addRemoveFromListBtn setTitle:txt forState:UIControlStateNormal];
-    addRemoveFromListBtn.backgroundColor = [UIColor clearColor];
+    addRemoveFromListBtn.backgroundColor = [UIColor colorWithWhite:.5 alpha:.15];
     addRemoveFromListBtn.layer.borderColor = [UIColor whiteColor].CGColor;
     addRemoveFromListBtn.layer.borderWidth = 2.0f;
     
@@ -807,7 +785,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     introduceMediaToFriendsBtn.center = CGPointMake(self.view.center.x, introduceMediaToFriendsBtn.center.y);
     
-    [introduceMediaToFriendsBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]]
+    [introduceMediaToFriendsBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.25]]
                                     forState:UIControlStateHighlighted];
     [introduceMediaToFriendsBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]]
                                     forState:UIControlStateDisabled];
@@ -820,7 +798,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
                                 forState:UIControlStateNormal];
     
     
-    introduceMediaToFriendsBtn.backgroundColor = [UIColor clearColor];
+    introduceMediaToFriendsBtn.backgroundColor = [UIColor colorWithWhite:.5 alpha:.15];
     introduceMediaToFriendsBtn.layer.borderColor = [UIColor whiteColor].CGColor;
     introduceMediaToFriendsBtn.layer.borderWidth = 2.0f;
     
@@ -1598,12 +1576,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     connectWithBSBtn.trailerID = BSUserToken;  // This is not a trailer but this extra property is useful
     connectWithBSBtn.center = CGPointMake(self.view.center.x, connectWithBSBtn.center.y);
     
-    [connectWithBSBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.15]] forState:UIControlStateHighlighted];
+    [connectWithBSBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.25]] forState:UIControlStateHighlighted];
     [connectWithBSBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.1 alpha:.5]] forState:UIControlStateDisabled];
     
     [connectWithBSBtn.titleLabel setTextAlignment: NSTextAlignmentCenter];
     [connectWithBSBtn.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0]];
-    connectWithBSBtn.backgroundColor = [UIColor clearColor];
+    connectWithBSBtn.backgroundColor = [UIColor colorWithWhite:.5 alpha:.15];
     connectWithBSBtn.layer.borderColor = [UIColor whiteColor].CGColor;
     connectWithBSBtn.layer.borderWidth = 2.0f;
     
@@ -1900,6 +1878,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         NSArray *firstEntryToCategory = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];
         [userTasteDict setObject:firstEntryToCategory forKey:[self.mediaDatas valueForKey:@"type"]];
     } else {
+        // We add the current media to user list
         NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] mutableCopy];
         [updatedUserTaste addObject:self.mediaDatas];
         
