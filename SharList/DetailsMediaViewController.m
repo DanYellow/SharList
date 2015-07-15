@@ -186,22 +186,39 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     UIBarButtonItem *addMediaToFavoriteBtnItem;
 
+    if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] class] != [NSNull class] &&
+        ![[[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
+        self.Added = NO;
+        // Media in the list
+        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addToList"]  style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+        
+    } else {
+        // Media not in the list
+        self.Added = YES;
+        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"delToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+    }
+    
+    /*
     // User has data of this type
     if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] class] != [NSNull class]) {
         // This media is not among user list
         // Because imdbID's key is unique we check if this key is among user media list api key
         // Like the we are not screwed if we change api or CoreData'model structure
         if (![[[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
-//            self.Added = NO;
-            addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+            self.Added = NO;
+            // Media in the list
+            addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addToList"]  style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+            
         } else {
+            // Media not in the list
             self.Added = YES;
-            addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+            addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"delToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
         }
     } else {
+        // Media in the list
         self.Added = NO;
-        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteUnselected"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
-    }
+        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+    }*/
 
     if (![self connected]) {
         self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
@@ -1830,12 +1847,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         barBtnItem.enabled = NO;
         addRemoveFromListBtn.enabled = NO;
         
-        if ([barBtnItem.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
-            barBtnItem.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        if ([barBtnItem.image isEqual:[UIImage imageNamed:@"addToList"]]) {
+            barBtnItem.image = [UIImage imageNamed:@"delToList"];
             [addRemoveFromListBtn setTitle:NSLocalizedString(@"RemoveToList", nil) forState:UIControlStateNormal];
             [self addMediaToUserList];
         } else {
-            barBtnItem.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
+            barBtnItem.image = [UIImage imageNamed:@"addToList"];
             [addRemoveFromListBtn setTitle:NSLocalizedString(@"AddToList", nil) forState:UIControlStateNormal];
             [self removeMediaToUserList];
         }
@@ -1846,12 +1863,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         barBtnItem.enabled = NO;
         addRemoveFromListBtn.enabled = NO;
         
-        if ([barBtnItem.image isEqual:[UIImage imageNamed:@"meetingFavoriteUnselected"]]) {
-            barBtnItem.image = [UIImage imageNamed:@"meetingFavoriteSelected"];
+        if ([barBtnItem.image isEqual:[UIImage imageNamed:@"addToList"]]) {
+            barBtnItem.image = [UIImage imageNamed:@"delToList"];
             [addRemoveFromListBtn setTitle:NSLocalizedString(@"RemoveToList", nil) forState:UIControlStateNormal];
             [self addMediaToUserList];
         } else {
-            barBtnItem.image = [UIImage imageNamed:@"meetingFavoriteUnselected"];
+            barBtnItem.image = [UIImage imageNamed:@"addToList"];
             [addRemoveFromListBtn setTitle:NSLocalizedString(@"AddToList", nil) forState:UIControlStateNormal];
             [self removeMediaToUserList];
         }
