@@ -569,7 +569,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         [facebookFriendsContainer addSubview:[self introduceMediaToFriends]];
         
         UIView *facebookFriendsContainerLastView = [[facebookFriendsContainer subviews] lastObject];
-        facebookFriendsContainerLastView.backgroundColor = [UIColor clearColor];
         facebookFriendsContainer.frame = CGRectMake(0, 0,
                                                     screenWidth, CGRectGetMaxY(facebookFriendsContainerLastView.frame));
         
