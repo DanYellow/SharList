@@ -270,7 +270,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 //        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 //    }
         
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, -10, screenWidth * 0.9, 55)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, screenWidth * 0.9, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
@@ -288,7 +288,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
     mediaTitleLabel.tag = 4;
     [mediaTitleLabel sizeToFit];
-    mediaTitleLabel.frame = CGRectMake(0, CGRectGetMaxY(mediaTitleLabel.frame),
+    mediaTitleLabel.frame = CGRectMake(0, CGRectGetMinY(mediaTitleLabel.frame),
                                        screenWidth * 0.9, CGRectGetHeight(mediaTitleLabel.frame));
     mediaTitleLabel.center = CGPointMake(self.view.center.x, mediaTitleLabel.center.y);
 
@@ -334,7 +334,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
               [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
               
               UIButton *messagesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-              [messagesBtn addTarget:self action:@selector(displayMessageForMediaWithId:) forControlEvents:UIControlEventTouchUpInside]; // numberMessages
+              [messagesBtn addTarget:self action:@selector(displayCommentsForMediaWithId:) forControlEvents:UIControlEventTouchUpInside]; // numberMessages
               [messagesBtn setTitle:[numberFormatter stringFromNumber:numberComments] forState:UIControlStateNormal];
               messagesBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
               [messagesBtn setImage:[[UIImage imageNamed:@"listMessagesNavIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
@@ -558,16 +558,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     }
     
     return @[];
-
-//    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-//        if (error) {
-//            
-//        } else {
-//            __block NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-//            callback((NSArray*) serverResponse[@"response"]);
-////            return serverResponse[@"response"];
-//        }
-//    }];
 }
 
 - (UIView*) displayFacebookFriends
@@ -611,9 +601,9 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     [facebookFriendsContainer addSubview:thumbsFriendsScrollView];
 
-    int offsetX = (5 * screenWidth) / 100;
+    const NSUInteger offsetX = (5 * screenWidth) / 100;
     const NSUInteger limitFriendsThumbs = 13;
-    CGFloat thumbFriendContainerSize = 70.0f;
+    const CGFloat thumbFriendContainerSize = 70.0f;
     
     [facebookFriendsList enumerateObjectsUsingBlock:^(NSDictionary *friend, NSUInteger idx, BOOL *stop) {
         if (idx == limitFriendsThumbs) {
@@ -650,10 +640,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         NSURL *facebookFriendImgProfile = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%.0f&height=%.0f", friend[@"id"], thumbFriendContainerSize, thumbFriendContainerSize]];
         
         UIButton *thumbFbFriendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [thumbFbFriendBtn addTarget:self action:@selector(seeFriendPatronym:) forControlEvents:UIControlEventTouchUpInside];
         thumbFbFriendBtn.frame = CGRectMake(offsetX + (idx * thumbFriendContainerSize) + (idx * 12), 0, thumbFriendContainerSize, thumbFriendContainerSize);
         thumbFbFriendBtn.backgroundColor = [UIColor clearColor];
-        
+        thumbFbFriendBtn.trailerID = friend[@"id"];
+        [thumbFbFriendBtn addTarget:self
+                             action:@selector(displayFacebookFriendList:)
+                   forControlEvents:UIControlEventTouchUpInside];
         
         UIImageView *thumbFbFriendImg = [[UIImageView alloc] initWithFrame:CGRectMake(0,
                                                                                           -(thumbFriendContainerSize/2),
@@ -666,35 +658,14 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         thumbFbFriendImg.layer.borderColor = [[UIColor colorWithWhite:1 alpha:.1] CGColor];
         thumbFbFriendImg.layer.borderWidth = 1.0f;
         thumbFbFriendImg.tag = 17;
-        
-        CALayer *overlayLayer = [CALayer layer];
-        overlayLayer.frame = thumbFbFriendImg.frame;
-        overlayLayer.opacity = 0;
-        overlayLayer.name = @"overlayLayerThumbFbFriendImg";
-        overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.8].CGColor;
-        [thumbFbFriendImg.layer insertSublayer:overlayLayer atIndex:1];
-        
-        UILabel *friendPatronymLabel = [UILabel new];
-        friendPatronymLabel.text = friend[@"first_name"];
-        friendPatronymLabel.tag = 18;
-        [friendPatronymLabel sizeToFit];
-        friendPatronymLabel.frame = CGRectMake(0, CGRectGetHeight(thumbFbFriendBtn.frame) - CGRectGetHeight(friendPatronymLabel.frame) + 50,
-                                 CGRectGetWidth(thumbFbFriendBtn.frame), CGRectGetHeight(friendPatronymLabel.frame));
-        friendPatronymLabel.textColor = [UIColor whiteColor];
-        friendPatronymLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
-        friendPatronymLabel.textAlignment = NSTextAlignmentCenter;
 
-        [UIView transitionFromView:thumbFbFriendImg toView:thumbFbFriendImg
-                          duration:1.0
-                           options:UIViewAnimationOptionTransitionFlipFromLeft
-                        completion:NULL];
+        
         
         [thumbFbFriendImg setImageWithURL:facebookFriendImgProfile
                          placeholderImage:nil];
         
         
         [thumbFbFriendBtn addSubview:thumbFbFriendImg];
-        [thumbFbFriendBtn addSubview:friendPatronymLabel];
         
         
         [thumbsFriendsScrollView addSubview:thumbFbFriendBtn];
@@ -837,47 +808,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     introduceMediaToFriendsBtn.layer.borderWidth = 2.0f;
     
     return introduceMediaToFriendsBtn;
-}
-
-
-- (void) seeFriendPatronym:(UIButton*)sender
-{
-    UIImageView *imgBtn = (UIImageView*)[sender viewWithTag:17];
-    UILabel *friendPatronymLabel = (UILabel*)[sender viewWithTag:18];
-    
-    CGFloat animDuration = .3;
-    CABasicAnimation *overlayAlphaAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
-
-    if ([[self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn] opacity] == 0) {
-        [self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn].opacity = 1;
-        
-        [UIView animateWithDuration:animDuration
-                              delay:0.0
-                            options: UIViewAnimationOptionCurveEaseOut
-                         animations:^{
-                             friendPatronymLabel.frame = CGRectMake(0, CGRectGetHeight(sender.frame) - CGRectGetHeight(friendPatronymLabel.frame) - 10,
-                                                                    CGRectGetWidth(sender.frame), CGRectGetHeight(friendPatronymLabel.frame));
-                         }
-                         completion:nil];
-    } else {
-        [self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn].opacity = 0;
-        
-        [UIView animateWithDuration:animDuration
-                              delay:0.0
-                            options: UIViewAnimationOptionCurveEaseOut
-                         animations:^{
-                             friendPatronymLabel.frame = CGRectMake(0, CGRectGetHeight(sender.frame) - CGRectGetHeight(friendPatronymLabel.frame) + 50,
-                                                                    CGRectGetWidth(sender.frame), CGRectGetHeight(friendPatronymLabel.frame));
-                         }
-                         completion:nil];
-    }
-    
-    overlayAlphaAnim.duration = animDuration;
-    overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
-    overlayAlphaAnim.fillMode = kCAFillModeForwards;
-    overlayAlphaAnim.removedOnCompletion = NO;
-    [[self myLayerWithName:@"overlayLayerThumbFbFriendImg" andParent:imgBtn] addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
-    
 }
 
 - (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
@@ -1166,20 +1096,29 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     if([storesList isKindOfClass:[NSNull class]]) return;
     if ([storesList count] == 0) return;
     
+    UIColor *btnBGColorNormalState = [UIColor whiteColor];
+    UIColor *btnBGColorNormalHighlight = [UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f];
+    
+    UIColor *titleColorNormalState = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
+    UIColor *titleColorHighlight = [UIColor colorWithRed:(22.0f/255.0f) green:(22.0f/255.0f) blue:(22.0f/255.0f) alpha:1.0f];
+    
     UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [buyButton addTarget:self action:@selector(showBuyScreen) forControlEvents:UIControlEventTouchUpInside]; //
     buyButton.tag = 7;
     [buyButton setTitle:[NSLocalizedString(@"buy", nil) uppercaseString] forState:UIControlStateNormal];
     buyButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:17.0f];
     buyButton.frame = CGRectMake(0, screenHeight + 50, screenWidth, 50);
-    buyButton.backgroundColor = [UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f];
-    [buyButton setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithRed:(22.0f/255.0f) green:(22.0f/255.0f) blue:(22.0f/255.0f) alpha:1.0f]] forState:UIControlStateHighlighted];
+    buyButton.backgroundColor = btnBGColorNormalState;
+    [buyButton setBackgroundImage:[UIImage imageWithColor:btnBGColorNormalHighlight]
+                         forState:UIControlStateHighlighted];
     
-    [buyButton setImage:[UIImage imageNamed:@"cart-icon"] forState:UIControlStateNormal];
+    [buyButton setImage:[[UIImage imageNamed:@"cart-icon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate ]
+               forState:UIControlStateNormal];
+    buyButton.tintColor = titleColorNormalState;
     [buyButton setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 10)];
-    [buyButton setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f]
+    [buyButton setTitleColor:titleColorHighlight
                     forState:UIControlStateHighlighted];
-    [buyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buyButton setTitleColor:titleColorNormalState forState:UIControlStateNormal];
 
     [self.view insertSubview:buyButton atIndex:42];
     // Display screen with all buttons to buy
@@ -1814,9 +1753,9 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
                      }];
 }
 
-#pragma mark - displayMessageForMediaWithId
+#pragma mark - viewcontroller called
 
-- (void) displayMessageForMediaWithId:(UIBarButtonItem*)sender
+- (void) displayCommentsForMediaWithId:(UIBarButtonItem*)sender
 {
     MediaCommentsViewController *mediaCommentsViewController = [MediaCommentsViewController new];
     mediaCommentsViewController.mediaId = self.mediaDatas[@"imdbID"];
@@ -1846,6 +1785,34 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mediaCommentsViewController];
     navigationController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    
+    [self.navigationController presentViewController:navigationController
+                                            animated:YES
+                                          completion:nil];
+}
+
+- (void) displayFacebookFriendList:(UIButton*)sender
+{
+    DetailsMeetingViewController *detailMeetingViewController = [DetailsMeetingViewController new];
+    detailMeetingViewController.metUserId = sender.trailerID;
+    
+    UIBarButtonItem *newBackButton =
+    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"close", nil)
+                                     style:UIBarButtonItemStylePlain
+                                    target:nil
+                                    action:nil];
+    [[self navigationItem] setBackBarButtonItem:newBackButton];
+    
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:detailMeetingViewController];
+    navigationController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    
+    CALayer *bottomBorder = [CALayer layer];
+    bottomBorder.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
+    bottomBorder.borderWidth = 1;
+    bottomBorder.name = @"bottomBorderLayer";
+    bottomBorder.frame = CGRectMake(0.0f, CGRectGetHeight(navigationController.navigationBar.frame),
+                                     CGRectGetWidth(navigationController.navigationBar.frame), 1.0f);
+    [navigationController.navigationBar.layer addSublayer:bottomBorder];
     
     [self.navigationController presentViewController:navigationController
                                             animated:YES
