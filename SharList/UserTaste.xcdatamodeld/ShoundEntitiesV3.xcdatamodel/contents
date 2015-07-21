@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14D136" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="CurrentUser" syncable="YES">
+        <attribute name="fbid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="likes" optional="YES" attributeType="Binary" syncable="YES"/>
+    </entity>
+    <entity name="Discovery" representedClassName="Discovery" syncable="YES">
+        <attribute name="dbId" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="fbId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isFacebookFriend" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isRandomDiscover" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="isSeen" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="lastDiscovery" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="likes" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="numberOfDiscoveries" optional="YES" attributeType="Integer 16" defaultValueString="1" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CurrentUser" positionX="-54" positionY="45" width="128" height="75"/>
+        <element name="Discovery" positionX="-63" positionY="-18" width="128" height="180"/>
+    </elements>
+</model>

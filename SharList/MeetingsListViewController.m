@@ -218,6 +218,7 @@
     [segmentedControl addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tag = 5;
+    segmentedControl.backgroundColor = [UIColor redColor];
     segmentedControl.center = CGPointMake(screenWidth/2, CGRectGetHeight(segmentedControlView.frame)/2);
     segmentedControl.tintColor = [UIColor whiteColor];
     
@@ -970,34 +971,6 @@
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.metUserId = selectedCell.model;
     detailsMeetingViewController.delegate = self;
-
-//    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ) {
-//        UISplitViewController *split = self.splitViewController;
-//        
-//        UINavigationController *detailMeetingNavController = [[UINavigationController alloc]
-//                                                         initWithRootViewController:detailsMeetingViewController];
-//
-//        split.viewControllers = @[self.navigationController, detailMeetingNavController];
-//        [self.tabBarController.tabBar setHidden:NO];
-//        
-//        CATransition *animation = [CATransition animation];
-//        [animation setType:kCATransitionFade];
-//        [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-//        [animation setFillMode:kCAFillModeBoth];
-//        [animation setDuration:.3];
-//        [[detailsMeetingViewController.view layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
-//        
-//        CGRect bottomBorderFrame = CGRectMake(0.0f, detailMeetingNavController.navigationBar.frame.size.height, detailMeetingNavController.navigationBar.frame.size.width, 1.0f);
-//        
-//        CALayer *bottomBorder4 = [CALayer layer];
-//        bottomBorder4.borderColor = [UIColor colorWithRed:(173.0/255.0f) green:(173.0f/255.0f) blue:(173.0f/255.0f) alpha:1.0f].CGColor;
-//        bottomBorder4.borderWidth = 1;
-//        bottomBorder4.name = @"bottomBorderLayer";
-//        bottomBorder4.frame = bottomBorderFrame;
-//        [detailMeetingNavController.navigationBar.layer addSublayer:bottomBorder4];
-//    } else {
-//        [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
-//    }
     
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
@@ -1111,6 +1084,12 @@
     
     cell.textLabel.text = textLabelString;
     cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[currentUserMet lastDiscovery]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+    
+    // If this discovery is new the user is notified
+    if (!currentUserMet.isSeen) {
+        cell.detailTextLabel.text = [cell.detailTextLabel.text stringByAppendingString:NSLocalizedString(@"new discovery" , nil)];
+    }
+    
     
     
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:[currentUserMet fbId]]) {
@@ -1585,6 +1564,7 @@
         oldUserDiscovered.fbId = randomUserfbId;
         oldUserDiscovered.lastDiscovery = discoveryDate; //[NSDate date];
         oldUserDiscovered.numberOfDiscoveries = [NSNumber numberWithInt:[oldUserDiscovered.numberOfDiscoveries intValue] + 1];
+        oldUserDiscovered.isSeen = NO;
         
         
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)

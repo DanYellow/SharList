@@ -195,6 +195,7 @@
 		1A63C5F81B56EC4C00344E32 /* delToList.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = delToList.png; sourceTree = "<group>"; };
 		1A63C5F91B56EC4C00344E32 /* delToList@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delToList@2x.png"; sourceTree = "<group>"; };
 		1A63C5FA1B56EC4C00344E32 /* delToList@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delToList@3x.png"; sourceTree = "<group>"; };
+		1A63C6011B56FDFD00344E32 /* ShoundEntitiesV3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ShoundEntitiesV3.xcdatamodel; sourceTree = "<group>"; };
 		1A655F441B3493CC00E98A9F /* DiscoveryPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiscoveryPolicy.h; sourceTree = "<group>"; };
 		1A655F451B3493CC00E98A9F /* DiscoveryPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiscoveryPolicy.m; sourceTree = "<group>"; };
 		1A655F4C1B3496D900E98A9F /* UserTasteToShoundEntityV2.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UserTasteToShoundEntityV2.xcmappingmodel; sourceTree = "<group>"; };
@@ -1243,11 +1244,12 @@
 		1A549EF51B24A02400B9305B /* UserTaste.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1A63C6011B56FDFD00344E32 /* ShoundEntitiesV3.xcdatamodel */,
 				1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */,
 				1A3926F81B33903400F38B11 /* ShoundEntitiesV2.xcdatamodel */,
 				1A549EF61B24A02400B9305B /* UserTaste.xcdatamodel */,
 			);
-			currentVersion = 1A3926F81B33903400F38B11 /* ShoundEntitiesV2.xcdatamodel */;
+			currentVersion = 1A63C6011B56FDFD00344E32 /* ShoundEntitiesV3.xcdatamodel */;
 			path = UserTaste.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

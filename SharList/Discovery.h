@@ -17,6 +17,7 @@
 @property (nonatomic, assign) BOOL isFacebookFriend;
 @property (nonatomic, assign) BOOL isFavorite;
 @property (nonatomic, assign) BOOL isRandomDiscover;
+@property (nonatomic, assign) BOOL isSeen;
 @property (nonatomic, retain) NSDate * lastDiscovery;
 @property (nonatomic, retain) NSNumber * numberOfDiscoveries;
 @property (nonatomic, retain) NSData * likes;

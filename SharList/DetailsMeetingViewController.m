@@ -134,7 +134,9 @@
         self.userDiscovered.numberOfDiscoveries = [[self getFacebookFriendForFbId:self.metUserId] numberOfDiscoveries];
     } else {
         self.userDiscovered = [Discovery MR_findFirstByAttribute:@"fbId"
-                                           withValue:self.metUserId];
+                                           withValue:self.metUserId inContext:[NSManagedObjectContext MR_defaultContext]];
+        self.userDiscovered.isSeen = YES;
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     }   
     
     NSDateFormatter *formatter = [NSDateFormatter new];

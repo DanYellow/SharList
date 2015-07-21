@@ -15,6 +15,7 @@
 @dynamic fbId;
 @dynamic isFacebookFriend;
 @dynamic isFavorite;
+@dynamic isSeen;
 @dynamic isRandomDiscover;
 @dynamic lastDiscovery;
 @dynamic numberOfDiscoveries;
