@@ -555,7 +555,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     return @[];
 }
 
-- (UIView*) displayFacebookFriends
+- (UIView*) displayFacebookFriendsWithMediaImg:(NSString*)trailerImage
 {
     UIView *facebookFriendsContainer = [UIView new];
     facebookFriendsContainer.backgroundColor = [UIColor clearColor];
@@ -566,7 +566,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     // So we add a button to talk about the movie / serie to the user friends
     if ([facebookFriendsList count] == 0) {
         
-        [facebookFriendsContainer addSubview:[self introduceMediaToFriends]];
+        [facebookFriendsContainer addSubview:[self introduceMediaToFriendsWithMediaImg:trailerImage]];
         
         UIView *facebookFriendsContainerLastView = [[facebookFriendsContainer subviews] lastObject];
         facebookFriendsContainer.frame = CGRectMake(0, 0,
@@ -691,97 +691,14 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     return facebookFriendsContainer;
 }
 
-- (UIView*) displayProgressWatchedEpisodesForToken:(NSString*)bsUserToken
-{
-    UIView *chartViewContainer = [UIView new];
-    chartViewContainer.backgroundColor = [UIColor clearColor];
-    chartViewContainer.opaque = NO;
-    
-    // This view contain the chart and the label at the right size to be centered after
-    UIView *chartView = [UIView new];
-    chartView.backgroundColor = [UIColor clearColor];
-    chartView.opaque = NO;
-    
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager.requestSerializer setValue:@"a6843502959f" forHTTPHeaderField:@"X-BetaSeries-Key"];
-    [manager.requestSerializer setValue:bsUserToken forHTTPHeaderField:@"X-BetaSeries-Token"];
-//    [manager GET:@"https://api.betaseries.com/episodes/list"
-//      parameters:@{@"showIMDBId": self.mediaDatas[@"imdbID"], @"client_id": BSCLIENTID}
-    [manager GET:@"https://api.betaseries.com/shows/display"
-      parameters:@{@"imdb_id" : self.mediaDatas[@"imdbID"], @"client_id" : BSCLIENTID}
-         success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//             NSUInteger nbTotalEpisodes = 0;
-//             NSUInteger nbEpisodesRemaining = ([[responseObject valueForKey:@"shows"] count] > 0) ? [[responseObject valueForKeyPath:@"shows.remaining"][0] unsignedIntegerValue] : 0;
-//             NSUInteger nbEpisodesSeen = nbTotalEpisodes - nbEpisodesRemaining;
-             
-             // If user remove an app from his list he lost the progress
-             BOOL isAmongUserBSAccount = [[responseObject valueForKeyPath:@"show.in_account"] boolValue];
-             
-             NSUInteger nbTotalEpisodes = [[responseObject valueForKeyPath:@"show.episodes"] integerValue];
-             NSUInteger nbEpisodesRemaining = (isAmongUserBSAccount) ? [[responseObject valueForKeyPath:@"show.user.remaining"] integerValue] : nbTotalEpisodes;
-             NSUInteger nbEpisodesSeen = (nbTotalEpisodes - nbEpisodesRemaining);
-             
-             PNCircleChart *circleChart = [[PNCircleChart alloc]
-                                           initWithFrame:CGRectMake(0, 0, 70.0, 70.0)
-                                           total:[NSNumber numberWithUnsignedInteger:nbTotalEpisodes]
-                                           current:[NSNumber numberWithUnsignedInteger:nbEpisodesSeen]
-                                           clockwise:YES];
-             circleChart.lineWidth = @3;
-             [circleChart setStrokeColor:PNCloudWhite];
-             [circleChart strokeChart];
-             circleChart.backgroundColor = [UIColor clearColor];
-             
-             [chartView addSubview:circleChart];
-             
-             
-             UILabel *progressMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(circleChart.frame) + 7, 0, screenWidth - 70, 60.0)];
-             progressMessageLabel.text = NSLocalizedString(@"of episodes watched", nil);
-             progressMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
-             progressMessageLabel.backgroundColor = [UIColor clearColor];
-             progressMessageLabel.textColor = [UIColor whiteColor];
-             progressMessageLabel.textAlignment = NSTextAlignmentLeft;
-             [progressMessageLabel sizeToFit];
-             progressMessageLabel.center = CGPointMake(progressMessageLabel.center.x, CGRectGetHeight(circleChart.frame)/2);
-             [chartView addSubview:progressMessageLabel];
-             
-             chartView.frame = CGRectMake(0, 0, CGRectGetMaxX(progressMessageLabel.frame), CGRectGetMaxY(circleChart.frame));
-             chartView.center = CGPointMake(screenWidth/2, chartView.center.y);
-             
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"contentForBSChart - Error: %@", error);
-//        NSLog(@"operation : %@", operation);
-    }];
-    
-
-    
-    
-
-    
-    
-    CGFloat layerWidth = (90 * screenWidth) / 100;
-    CGFloat layerX = (self.view.frame.size.width - layerWidth) / 2;
-    
-    CALayer *numberOfIterationAmongDiscoveriesLabelLayerT = [CALayer layer];
-    numberOfIterationAmongDiscoveriesLabelLayerT.frame = CGRectMake(layerX, -16.0f, layerWidth, 1.0);
-    numberOfIterationAmongDiscoveriesLabelLayerT.backgroundColor = [UIColor whiteColor].CGColor;
-    numberOfIterationAmongDiscoveriesLabelLayerT.anchorPoint = CGPointMake(0.5, 0.5);
-    [chartViewContainer.layer addSublayer:numberOfIterationAmongDiscoveriesLabelLayerT];
-    
-    [chartViewContainer addSubview:chartView];
-    
-    chartViewContainer.frame = chartView.frame;
-    
-    return chartViewContainer;
-}
-
-- (UIButton *) introduceMediaToFriends
+- (UIButton *) introduceMediaToFriendsWithMediaImg:(NSString*)trailerImage
 {
     UIButton *introduceMediaToFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     introduceMediaToFriendsBtn.tag = 20;
     [introduceMediaToFriendsBtn setFrame:CGRectMake(0, 0, (screenWidth * 90) / 100, 54)];
     [introduceMediaToFriendsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [introduceMediaToFriendsBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
-    
+    introduceMediaToFriendsBtn.trailerID = trailerImage;
     introduceMediaToFriendsBtn.center = CGPointMake(self.view.center.x, introduceMediaToFriendsBtn.center.y);
     
     [introduceMediaToFriendsBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.25]]
@@ -1200,7 +1117,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
 
     UIImageView *imgMedia = [UIImageView new];
-    
+
     // If the user is on iPad we load a bigger image
     NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w396" : @"w780";
     NSURL *imgMediaURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, data[@"poster_path"]]];
@@ -1319,29 +1236,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-    UIView *fbFriendsContainer = [self displayFacebookFriends];
+    UIView *fbFriendsContainer = [self displayFacebookFriendsWithMediaImg:data[@"poster_path"]];
     fbFriendsContainer.tag = 14;
     fbFriendsContainer.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
                                           CGRectGetWidth(fbFriendsContainer.frame),
                                           CGRectGetHeight(fbFriendsContainer.frame));
     [infoMediaView addSubview:fbFriendsContainer];
-    
-    
-    infoMediaViewLastView = [infoMediaView.subviews lastObject];
-    
-    // We display the betaseries button only if the user has his device language set to french
-    if ([[[NSLocale preferredLanguages] objectAtIndex:0] isEqualToString:@"fr"] && [self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
-    
-        NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
-        if (BSUserToken != nil || [BSUserToken isKindOfClass:[NSNull class]]) {
-            UIView *progressEpisodeWatched = [self displayProgressWatchedEpisodesForToken:BSUserToken];
-            progressEpisodeWatched.frame = CGRectMake(0,
-                                                      CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
-                                                      CGRectGetWidth(progressEpisodeWatched.frame),
-                                                      70);
-            [infoMediaView addSubview:progressEpisodeWatched];
-        }
-    }
     
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
@@ -2048,7 +1948,10 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     content.contentDescription = NSLocalizedString(@"FBLinkShareParams_introducemedia_desc", nil);
     // We use the url of the application or else Facebook tricks us
     content.contentURL = [NSURL URLWithString:@"http://www.shound.fr"];
-    content.imageURL = [NSURL URLWithString:@"http://shound.fr/shound_logo_fb.jpg"];
+    
+    // Sizes available : https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
+    NSString *imgMediaURLString = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", @"w92", sender.trailerID];
+    content.imageURL = [NSURL URLWithString:imgMediaURLString];
     
     [FBSDKShareDialog showFromViewController:self
                                  withContent:content

@@ -206,6 +206,9 @@
     
     self.discoveries = [NSMutableDictionary new];
     
+    UIView *tableViewHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 366)]; //284
+    tableViewHeader.backgroundColor = [UIColor clearColor];
+    
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
 //    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
     segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];

@@ -253,8 +253,7 @@
     
     //___________________
     // Uitableview of user selection (what user likes) initWithStyle:UITableViewStylePlain
-    UITableView *userMetLikesTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
-//    userSelectionTableView.frame = CGRectMake(0, 0, screenWidth, screenHeight + self.tabBarController.tabBar.frame.size.height);
+    UITableView *userMetLikesTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, CGRectGetHeight(self.view.frame)) style:UITableViewStylePlain];
     userMetLikesTableView.dataSource = self;
     userMetLikesTableView.delegate = self;
     userMetLikesTableView.backgroundColor = [UIColor clearColor];
@@ -481,7 +480,7 @@
                                       CGRectGetWidth(statsContainer.frame), CGRectGetHeight(statsContainer.frame));
     [metUserFBView addSubview:statsContainer];
     
-    UISegmentedControl *filterUserMetListSC = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"Alls", nil), NSLocalizedString(@"to discover", nil), NSLocalizedString(@"in common", nil)]];
+    UISegmentedControl *filterUserMetListSC = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"Alls", nil), NSLocalizedString(@"to discover", nil)]];
     filterUserMetListSC.frame = CGRectMake(10, 5, screenWidth - 20, 30);
     [filterUserMetListSC addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
     filterUserMetListSC.selectedSegmentIndex = 0;
@@ -851,12 +850,7 @@
             // to discover
         case 1:
             sectionElements = [metUserLikesForKey filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT imdbID IN %@", currentUserImdbID]];
-            break;
-            // in common
-        case 2:
-            sectionElements = [metUserLikesForKey filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"imdbID IN %@", currentUserImdbID]];
-            break;
-        
+            break;        
         default:
             break;
     }
