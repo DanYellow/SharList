@@ -14,6 +14,7 @@
 // We have to create two NSArray one to keep a reference of likes and a another one
 @property (nonatomic, copy) NSMutableDictionary *metUserLikesDictRef;
 @property (nonatomic, strong) NSMutableDictionary *metUserLikesDict;
+@property (nonatomic) CGFloat likesDiscoverPercent;
 
 @end
 
@@ -97,7 +98,7 @@
     [self.view.layer insertSublayer:gradientBGView atIndex:0];
     
 
-
+    NSLog(@"self.metUserId : %@", self.metUserId);
     
     if (self.metUserId == nil) {
         NSPredicate *meetingsFilter = [NSPredicate predicateWithFormat:@"fbId != %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
@@ -162,7 +163,7 @@
     
     self.metUserLikesDict = [NSMutableDictionary new];
     self.metUserLikesDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userDiscovered likes]] mutableCopy];
-   
+
 //    self.metUserTasteDict = [[self.metUserTasteDict allKeys] sortedArrayUsingSelector:@selector(compare:)];
     self.navigationController.navigationBar.backIndicatorImage = [UIImage imageNamed:@"list-tab-icon"];
     self.navigationController.navigationBar.backIndicatorTransitionMaskImage = [UIImage imageNamed:@"discover-tab-icon"];
@@ -204,25 +205,6 @@
     
     UIView *tableFooterLastView = [[tableFooterView subviews] lastObject];
     
-    UIButton *showToDiscoverTabBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    showToDiscoverTabBtn.frame = CGRectMake(0, CGRectGetMaxY(tableFooterLastView.frame) + 12, screenWidth, 30);
-    
-    [showToDiscoverTabBtn setTitle:NSLocalizedString(@"not in common but much discover", nil)
-                       forState:UIControlStateNormal];
-    [showToDiscoverTabBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [showToDiscoverTabBtn setTitleColor:[UIColor colorWithWhite:1 alpha:.6] forState:UIControlStateHighlighted];
-    
-    showToDiscoverTabBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
-    [showToDiscoverTabBtn sizeToFit];
-    showToDiscoverTabBtn.tag = 10;
-    [showToDiscoverTabBtn addTarget:self action:@selector(displayDiscoverTabTV:) forControlEvents:UIControlEventTouchUpInside];
-//    showToDiscoverTabBtn.frame = CGRectMake(CGRectGetMinX(showToDiscoverTabBtn.frame), CGRectGetMinY(showToDiscoverTabBtn.frame), screenWidth, CGRectGetHeight(showToDiscoverTabBtn.frame));
-    showToDiscoverTabBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-    showToDiscoverTabBtn.center = CGPointMake(screenWidth / 2, showToDiscoverTabBtn.center.y);
-    showToDiscoverTabBtn.backgroundColor = [UIColor clearColor];
-    [tableFooterView addSubview:showToDiscoverTabBtn];
-    
-    
     tableFooterLastView = [[tableFooterView subviews] lastObject];
     
     UIButton *shareShoundBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -262,7 +244,7 @@
     userMetLikesTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     userMetLikesTableView.contentInset = UIEdgeInsetsMake(0, 0, 16, 0);
     [self.view addSubview:userMetLikesTableView];
-
+   
     if ([userMetLikesTableView respondsToSelector:@selector(setSeparatorInset:)]) {
         [userMetLikesTableView setSeparatorInset:UIEdgeInsetsZero];
     }
@@ -493,7 +475,7 @@
     UISegmentedControl *filterUserMetListSC = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"to discover", nil), NSLocalizedString(@"Alls", nil)]];
     filterUserMetListSC.frame = CGRectMake(10, 5, screenWidth - 20, 30);
     [filterUserMetListSC addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
-    filterUserMetListSC.selectedSegmentIndex = 0;
+    filterUserMetListSC.selectedSegmentIndex = (self.likesDiscoverPercent == 0) ? 1 : 0;
     filterUserMetListSC.tag = 9;
     filterUserMetListSC.tintColor = [UIColor whiteColor];
     filterUserMetListSC.backgroundColor = [UIColor clearColor];
@@ -719,6 +701,7 @@
     // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
     commonTasteCountPercent = 1 - commonTasteCountPercent;
     
+    self.likesDiscoverPercent = commonTasteCountPercent;
     
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
@@ -942,7 +925,7 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    
+
     // Keys from NSDict is sorted alphabetically
     NSString *sectionTitle = [[[self.metUserLikesDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
                                                                           objectAtIndex:indexPath.section];

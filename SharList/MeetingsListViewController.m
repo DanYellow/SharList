@@ -223,7 +223,7 @@
     [segmentedControl addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tag = 5;
-    segmentedControl.backgroundColor = [UIColor redColor];
+    segmentedControl.backgroundColor = [UIColor clearColor];
     segmentedControl.center = CGPointMake(screenWidth/2, CGRectGetHeight(segmentedControlView.frame)/2);
     segmentedControl.tintColor = [UIColor whiteColor];
     
@@ -238,14 +238,16 @@
     NSNumber *countMeetings = [NSNumber numberWithInt:[[Discovery MR_numberOfEntities] intValue] - 1]; // We remove current user
     tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"%@ meetings", nil), countMeetings]];
     
-    UITableView *discoveriesListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - 49) style:UITableViewStylePlain];
+    CGSize tabBarSize = [[[self tabBarController] tabBar] bounds].size;
+    
+    
+    UITableView *discoveriesListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - tabBarSize.height) style:UITableViewStylePlain];
     discoveriesListTableView.dataSource = self;
     discoveriesListTableView.delegate = self;
     discoveriesListTableView.backgroundColor = [UIColor clearColor];
-//    userMeetingsListTableView.backgroundColor = [UIColor colorWithWhite:1 alpha:.5];
     discoveriesListTableView.tag = 1;
     discoveriesListTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    discoveriesListTableView.estimatedRowHeight = 200.0;
+    
     discoveriesListTableView.tableFooterView = tableFooter;
     discoveriesListTableView.tableHeaderView = segmentedControlView;
     discoveriesListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
@@ -287,7 +289,7 @@
     emptyFavoritesLabel.bounds = CGRectInset(emptyFavoritesLabel.frame, 0.0f, -10.0f);
     emptyFavoritesLabel.textAlignment = NSTextAlignmentCenter;
     emptyFavoritesLabel.tag = 3;
-    emptyFavoritesLabel.hidden = YES;
+    emptyFavoritesLabel.hidden = NO;
     emptyFavoritesLabel.backgroundColor = [UIColor clearColor];
     emptyFavoritesLabel.center = CGPointMake(screenWidth / 2, self.view.center.y - 60);
     [discoveriesListTableView addSubview:emptyFavoritesLabel];
@@ -884,22 +886,58 @@
 // Title of categories
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    CGFloat fontSize = 18.0f;
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 52.0)];
+    CGFloat fontSize = 17.0f;
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 37)];
     headerView.opaque = YES;
-    headerView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
+    headerView.backgroundColor = [UIColor clearColor];
+    
+
+
+    
+    CGFloat percentWidthContent = (300.0/screenWidth);
+    
+    CGRect bottomBorderFrame = CGRectMake( (screenWidth - (CGRectGetWidth(headerView.frame) * percentWidthContent)) / 2,
+                                          CGRectGetHeight(headerView.frame),
+                                          CGRectGetWidth(headerView.frame) * percentWidthContent,
+                                          1.0f);
+    
+//    UIVisualEffect *blurEffect;
+//    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+//    
+//    UIVisualEffectView *visualEffectView;
+//    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+//    visualEffectView.frame = CGRectMake((screenWidth - (CGRectGetWidth(headerView.frame) * percentWidthContent)) / 2,
+//                                        0, CGRectGetWidth(headerView.frame) * percentWidthContent,
+//                                        CGRectGetHeight(headerView.frame));
+//    
+//    [headerView addSubview:visualEffectView];
+    
+    CALayer *bottomBorder = [CALayer layer];
+    bottomBorder.borderColor = [UIColor whiteColor].CGColor;
+    bottomBorder.borderWidth = 1;
+    bottomBorder.name = @"bottomBorderLayer";
+    bottomBorder.frame = bottomBorderFrame;
+    [headerView.layer addSublayer:bottomBorder];
 
 
     NSString *title = [self.listOfDistinctsDay objectAtIndex:section];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0, screenWidth, 52.0)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,
+                                                               0,
+                                                               screenWidth,
+                                                               fontSize + 5)];
     label.font = [UIFont fontWithName:@"Helvetica-Light" size:fontSize];
     label.text = title;
+    label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
     label.textColor = [UIColor whiteColor];
-    [label sizeToFit];
-    label.frame = CGRectMake(15.0, CGRectGetHeight(headerView.frame) - CGRectGetHeight(label.frame) - 10,
-                             screenWidth, CGRectGetHeight(label.frame));
+    label.frame = CGRectMake(0,
+                             CGRectGetMaxY(headerView.frame) - CGRectGetMaxY(label.frame) - 5,
+                             screenWidth,
+                             fontSize + 5);
+    
+    
+//    [label sizeToFit];
     
 
     [headerView addSubview:label];
@@ -916,7 +954,7 @@
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
     } else {
-        return 52.0;
+        return 44.0;
     }
 }
 
@@ -976,6 +1014,8 @@
 {
     ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
 
+//    selectedCell.contentView.alpha = .75;
+    
     DetailsMeetingViewController *detailsMeetingViewController = [DetailsMeetingViewController new];
     detailsMeetingViewController.metUserId = selectedCell.model;
     detailsMeetingViewController.delegate = self;
@@ -998,11 +1038,10 @@
     
     SHDUserDiscovered *userDiscovered;
     
-
-    
     UILabel *mainLabel;
-    UIView *thumbsMediasView;
-    UIImageView *profileImage;
+    
+    SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:currentUserMet];
+    
     
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -1035,9 +1074,11 @@
 ////
 ////        NSLog(@"erere");
         
-        SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:currentUserMet];
         
-        [userDiscovered mediaThumbs:userDiscoveredDatas.mediasIds];
+
+        userDiscovered.center = CGPointMake(cell.center.x, userDiscovered.center.y);
+        
+        [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
         
         [cell.contentView addSubview:userDiscovered];
     } else {
@@ -1048,7 +1089,17 @@
         userDiscovered = (SHDUserDiscovered *)[cell.contentView viewWithTag:98];
     }
     
+    [userDiscovered setProfileImage:userDiscoveredDatas.fbid];
     
+    NSString *pictoString = @"";
+    if ([currentUserMet isRandomDiscover]) {
+        pictoString = @"randomMeetingIcon";
+    } else {
+        pictoString = @"locationMeetingIcon";
+    }
+    
+    userDiscovered.discoveryTypeIcon.image = [[UIImage imageNamed:pictoString] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    [userDiscovered setDiscoveryTime:[currentUserMet lastDiscovery]];
     
 //    NSLog(@"userDiscoveredDatas : %@", userDiscoveredDatas.mediasIds);
     
@@ -1259,7 +1310,7 @@
             userDiscovered.mediaThumbsContainer.alpha = 1;
         }];
         
-        [userDiscovered mediaThumbs:userDiscoveredDatas.mediasIds];
+        [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
     }
 }
 
@@ -1273,7 +1324,7 @@
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView
 {
-    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.15];
+    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.25];
 }
 
 - (void)scrollViewWillBeginDecelerating:(UITableView *)tableView
