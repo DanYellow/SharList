@@ -998,6 +998,8 @@
     
     SHDUserDiscovered *userDiscovered;
     
+
+    
     UILabel *mainLabel;
     UIView *thumbsMediasView;
     UIImageView *profileImage;
@@ -1010,43 +1012,52 @@
         cell.backgroundView = nil;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
+        userDiscovered = [[SHDUserDiscovered alloc] initWithDatas:currentUserMet];
         
-        userDiscovered = [SHDUserDiscovered new];
-        userDiscovered.center = CGPointMake(cell.center.x, userDiscovered.center.y);
-        
-        mainLabel = userDiscovered.label;
-        [userDiscovered addSubview:mainLabel];
-        
-        thumbsMediasView = userDiscovered.mediaThumbsContainer;
-        [userDiscovered addSubview:thumbsMediasView];
-        
-        profileImage = userDiscovered.profileImage;
-        [userDiscovered insertSubview:profileImage atIndex:0];
-        
-//        mainLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 220.0, 15.0)];
+        userDiscovered.tag = 98;
+       
+//        userDiscovered.center = CGPointMake(cell.center.x, userDiscovered.center.y);
 //        
-//        mainLabel.tag = 1;
-//        [[omeUIView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-//        mainLabel.font = [UIFont systemFontOfSize:14.0];
-//
-//        NSLog(@"erere");
+//        mainLabel = userDiscovered.label;
+//        [userDiscovered addSubview:mainLabel];
+//        
+//        thumbsMediasView = userDiscovered.mediaThumbsContainer;
+//        [userDiscovered addSubview:thumbsMediasView];
+//        
+//        profileImage = userDiscovered.profileImage;
+//        [userDiscovered insertSubview:profileImage atIndex:0];
+//        
+////        mainLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 220.0, 15.0)];
+////        
+////        mainLabel.tag = 1;
+////        [[omeUIView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+////        mainLabel.font = [UIFont systemFontOfSize:14.0];
+////
+////        NSLog(@"erere");
         [cell.contentView addSubview:userDiscovered];
     } else {
-        mainLabel = (UILabel *) [cell viewWithTag:SHDDiscoverTimeLabelTag];
-        thumbsMediasView = (UIView *) [cell viewWithTag:SHDDiscoverMediaThumbsTag];
-        
-        profileImage = (UIImageView *) [cell viewWithTag:SHDDiscoverProfileImgTag];
+//        mainLabel = (UILabel *) [cell viewWithTag:SHDDiscoverTimeLabelTag];
+//        thumbsMediasView = (UIView *) [cell viewWithTag:SHDDiscoverMediaThumbsTag];
+//        
+//        profileImage = (UIImageView *) [cell viewWithTag:SHDDiscoverProfileImgTag];
+        userDiscovered = (SHDUserDiscovered *)[cell.contentView viewWithTag:98];
     }
     
-    NSDictionary *userMetLikes = [NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]];
-    [self setMediaThumbs:userMetLikes];
+    SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:currentUserMet];
     
-    userDiscovered.userDiscovered = currentUserMet;
+    [userDiscovered mediaThumbs:userDiscoveredDatas.mediasIds];
     
-    [profileImage setImageWithURL:
-     [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", [currentUserMet fbId], (int)userDiscovered.frame.size.width, (int)userDiscovered.frame.size.height]]
-                               placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
+//    NSLog(@"userDiscoveredDatas : %@", userDiscoveredDatas.mediasIds);
     
+//    NSDictionary *userMetLikes = [NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]];
+//    [self setMediaThumbs:userMetLikes];
+//    
+//    userDiscovered.userDiscovered = currentUserMet;
+//    
+//    [profileImage setImageWithURL:
+//     [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", [currentUserMet fbId], (int)userDiscovered.frame.size.width, (int)userDiscovered.frame.size.height]]
+//                               placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
+//    
     
     
    

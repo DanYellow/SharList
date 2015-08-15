@@ -32,11 +32,12 @@ typedef NS_ENUM(NSUInteger, Tag) {
 
 //@property (strong, atomic) UILabel *label;
 
-//- (id) initWithDatas:(Discovery*)userDiscovered;
+- (id) initWithDatas:(Discovery*)userDiscovered;
 //- (void) setDatas:(Discovery *) userDiscovered;
 - (void) setStatistics:(CGFloat)percent;
 
-- (void) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
+//- (void) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
+- (void) mediaThumbs:(NSMutableArray*) mediasArray;
 //- (UIView*) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
 
 //- (void) setLabel:(UIColor *) borderColor;

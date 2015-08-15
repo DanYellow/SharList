@@ -419,13 +419,13 @@
     [metUserFBView insertSubview:metUserFBImgView atIndex:0];
     
 
-    UIVisualEffect *blurEffect;
-    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-    
-    UIVisualEffectView *visualEffectView;
-    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    visualEffectView.frame = metUserFBImgView.bounds;
-    [metUserFBImgView addSubview:visualEffectView];
+//    UIVisualEffect *blurEffect;
+//    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+//    
+//    UIVisualEffectView *visualEffectView;
+//    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+//    visualEffectView.frame = metUserFBImgView.bounds;
+//    [metUserFBImgView addSubview:visualEffectView];
     
 //    // We don't display user picture for the following cases :
 //    // - Current user is anonymous AND user met is not his friend on facebook

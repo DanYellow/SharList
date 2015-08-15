@@ -65,6 +65,7 @@
 		1A655F501B34986300E98A9F /* Discovery.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A655F4F1B34986300E98A9F /* Discovery.m */; };
 		1A66AA121B31DF3C001D92D7 /* NSDate+CupertinoYankee.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */; };
 		1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6744B01AAB4BB000FA610F /* PFPushManager.m */; };
+		1A68D5F31B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		1A91FDFE1B2341F600E8B5D7 /* FacebookSDKStrings.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE001B2341F600E8B5D7 /* FacebookSDKStrings.strings */; };
 		1A91FE071B2358A400E8B5D7 /* FacebookSDKStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE061B2358A400E8B5D7 /* FacebookSDKStrings.bundle */; };
@@ -211,6 +212,8 @@
 		1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+CupertinoYankee.m"; sourceTree = "<group>"; };
 		1A6744AF1AAB4BB000FA610F /* PFPushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFPushManager.h; sourceTree = "<group>"; };
 		1A6744B01AAB4BB000FA610F /* PFPushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFPushManager.m; sourceTree = "<group>"; };
+		1A68D5F11B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHDUserDiscoveredDatas.h; sourceTree = "<group>"; };
+		1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHDUserDiscoveredDatas.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
 		1A91FDFF1B2341F600E8B5D7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FacebookSDKStrings.strings; sourceTree = "<group>"; };
@@ -348,6 +351,7 @@
 				1AE9E7A81A2683770072EF91 /* DetailsMeetingViewController */,
 				1A3C22791A11303E005B31E4 /* DetailsMediaViewController */,
 				1A1515E01B0778C60083CCAD /* MediaCommentsViewController */,
+				1A68D5F01B7F7B8700FA2EB9 /* Controllers */,
 				1A7B09DC1A10DBCD00FA2766 /* CustomViews */,
 				1A076DDD1A102B0B00CD725A /* Images */,
 				1A9A63591A37A41B00E47234 /* AboutViewController */,
@@ -545,6 +549,15 @@
 				1A6744B01AAB4BB000FA610F /* PFPushManager.m */,
 			);
 			name = NSObjects;
+			sourceTree = "<group>";
+		};
+		1A68D5F01B7F7B8700FA2EB9 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				1A68D5F11B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.h */,
+				1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */,
+			);
+			name = Controllers;
 			sourceTree = "<group>";
 		};
 		1A7B09DC1A10DBCD00FA2766 /* CustomViews */ = {
@@ -820,6 +833,7 @@
 				1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */,
 				1A41C43D1B5E19850005034A /* ScrollViewDiscoveries.m in Sources */,
 				1A549EF71B24A02400B9305B /* UserTaste.xcdatamodeld in Sources */,
+				1A68D5F31B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m in Sources */,
 				1A024AB51A3A3EF20098F015 /* NSArray+Reverse.m in Sources */,
 				1A61F5101AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m in Sources */,
 				1A1D6E451A1099C00090C598 /* SettingsViewController.m in Sources */,

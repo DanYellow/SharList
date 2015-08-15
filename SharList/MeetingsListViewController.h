@@ -35,6 +35,8 @@
 #import "ConnectView.h"
 #import "SHDUserDiscovered.h"
 
+#import "SHDUserDiscoveredDatas.h"
+
 @interface MeetingsListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate, CLLocationManagerDelegate, FBSDKSharingDelegate>
 {
     CGFloat screenWidth;
