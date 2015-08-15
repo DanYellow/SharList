@@ -124,6 +124,8 @@
     
     self.tableViewAdded = NO;
     
+    
+    
     //Main screen display
 //    [self.view setBackgroundColor:[UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f]];
 //    
@@ -366,6 +368,11 @@
     [self.view addSubview:loadingIndicator];
     
     [self getCurrentUserLikes];
+    
+    Discovery *currentUser = [Discovery MR_findFirstByAttribute:@"fbId"
+                                                      withValue:@1387984218155378]; // 10204552293319006 1387984218155378 1390483754598025 @529340940537761
+    SHDUserDiscovered *userDiscovered = [[SHDUserDiscovered alloc] initWithDatas:currentUser];
+    [self.view addSubview:userDiscovered];
 }
 
 - (NSString*) displayTimeWithSecond:(NSInteger)seconds
@@ -992,7 +999,7 @@
         cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
         
         UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-        UIVisualEffectView * selectedBackgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        UIVisualEffectView *selectedBackgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
         selectedBackgroundView.frame = cell.contentView.bounds;
         
         cell.selectedBackgroundView = selectedBackgroundView;
@@ -1005,11 +1012,12 @@
         cell.textLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
     }
     
+
     
     [self getCurrentUserLikes];
     // Calc of the stats
     Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
-
+//        NSLog(@"%@", [currentUserMet fbId]);
     NSDictionary *userMetLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]] mutableCopy];
     
 
@@ -1040,6 +1048,7 @@
     NSString *textLabelString = @"";
     
     CGFloat notCommonLikesPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
+    
     if (isnan(notCommonLikesPercent)) {
         notCommonLikesPercent = 0.0f;
     }

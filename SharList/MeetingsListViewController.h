@@ -33,6 +33,7 @@
 
 // Views
 #import "ConnectView.h"
+#import "SHDUserDiscovered.h"
 
 @interface MeetingsListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, UpdateMeetingsListDelegate, CLLocationManagerDelegate, FBSDKSharingDelegate>
 {

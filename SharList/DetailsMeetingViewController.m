@@ -429,6 +429,15 @@
     metUserFBImgView.tag = 5;
     [metUserFBView insertSubview:metUserFBImgView atIndex:0];
     
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = metUserFBImgView.bounds;
+    [metUserFBImgView addSubview:visualEffectView];
+    
+    
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     gradientLayer.frame = metUserFBImgView.frame;
     [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
@@ -436,7 +445,7 @@
     UIColor *topGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
     UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
     gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
-    [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
+//    [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
 }
 
 - (void) displayMatchRateList
@@ -796,7 +805,7 @@
     }
     
     NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-    [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
+    [[JLTMDbClient sharedAPIInstance] setAPIKey:@THEMOVIEDBAPIKEY];
     
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
         if(!error){
