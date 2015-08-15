@@ -245,6 +245,7 @@
 //    userMeetingsListTableView.backgroundColor = [UIColor colorWithWhite:1 alpha:.5];
     discoveriesListTableView.tag = 1;
     discoveriesListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
+    discoveriesListTableView.estimatedRowHeight = 200.0;
     discoveriesListTableView.tableFooterView = tableFooter;
     discoveriesListTableView.tableHeaderView = segmentedControlView;
     discoveriesListTableView.contentInset = UIEdgeInsetsMake(0, 0, 18, 0);
@@ -369,10 +370,7 @@
     
     [self getCurrentUserLikes];
     
-    Discovery *currentUser = [Discovery MR_findFirstByAttribute:@"fbId"
-                                                      withValue:@1387984218155378]; // 10204552293319006 1387984218155378 1390483754598025 @529340940537761
-    SHDUserDiscovered *userDiscovered = [[SHDUserDiscovered alloc] initWithDatas:currentUser];
-    [self.view addSubview:userDiscovered];
+
 }
 
 - (NSString*) displayTimeWithSecond:(NSInteger)seconds
@@ -911,7 +909,7 @@
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 69.0;
+    return 200.0;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -992,168 +990,169 @@
     
     ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
+    Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
+    
+    SHDUserDiscovered *userDiscovered;
+    
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         
-        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
-        cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:11.0];
-        
-        UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-        UIVisualEffectView *selectedBackgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
-        selectedBackgroundView.frame = cell.contentView.bounds;
-        
-        cell.selectedBackgroundView = selectedBackgroundView;
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-
-        cell.indentationLevel = 1;
-        cell.backgroundColor = [UIColor colorWithWhite:1 alpha:.06];
-        
-        cell.detailTextLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
-        cell.textLabel.highlightedTextColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:1.0];
-    }
-    
-
-    
-    [self getCurrentUserLikes];
-    // Calc of the stats
-    Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
-//        NSLog(@"%@", [currentUserMet fbId]);
-    NSDictionary *userMetLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]] mutableCopy];
-    
-
-    NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
-    int commonTasteCount = 0;
-    int currentUserNumberItems = 0;
-    for (int i = 0; i < [[userMetLikes filterKeysForNullObj] count]; i++) {
-        NSString *key = [[userMetLikes filterKeysForNullObj] objectAtIndex:i];
-        if (![[currentUserTaste objectForKey:key] isEqual:[NSNull null]]) {
-            currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
-            
-            currentUserNumberItems += [[userMetLikes objectForKey:key] count];
-        }
-        
-        if (![[userMetLikes objectForKey:key] isEqual:[NSNull null]]) {
-            currentUserMetTasteSet = [NSMutableSet setWithArray:[[userMetLikes objectForKey:key] valueForKey:@"imdbID"]];
-        }
-        
-        [currentUserMetTasteSet intersectSet:currentUserTasteSet]; //this will give you only the obejcts that are in both sets
-        
-        NSArray* result = [currentUserMetTasteSet allObjects];
-        
-        commonTasteCount += result.count;
-    }
-    
-    
-    
-    NSString *textLabelString = @"";
-    
-    CGFloat notCommonLikesPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
-    
-    if (isnan(notCommonLikesPercent)) {
-        notCommonLikesPercent = 0.0f;
-    }
-    
-    // If the user has only 1% in common
-    if (notCommonLikesPercent == (float)1) {
-        notCommonLikesPercent = 1.0;
-    }
-    
-    // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
-    notCommonLikesPercent = 1 - notCommonLikesPercent;
-    
-    if (notCommonLikesPercent == 1) {
-        UIColor *noLikeCommonColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
-        cell.detailTextLabel.textColor = noLikeCommonColor;
-        cell.textLabel.textColor = noLikeCommonColor;
-        textLabelString = NSLocalizedString(@"nothing common", nil);
-    } else {
-        NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
-        [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
-        
-        if (notCommonLikesPercent == 0) {
-            textLabelString = NSLocalizedString(@"everything in common list", nil);
-            
-            UIColor *invisibleCellColor = [UIColor colorWithRed:(43.0/255.0)
-                                                     green:(97.0/255.0)
-                                                      blue:(122.0/255.0) alpha:1.0f];
-            
-            cell.textLabel.textColor = invisibleCellColor;
-            cell.detailTextLabel.textColor = invisibleCellColor;
-        } else {
-            NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:notCommonLikesPercent]];
-            textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ not in common", nil), strNumber];
-            
-            cell.textLabel.textColor = [UIColor whiteColor];
-            cell.detailTextLabel.textColor = [UIColor whiteColor];
-        }
-    }
-    
-
-    NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
-    cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
-  
-    cell.model = [currentUserMet fbId];
-    
-    cell.textLabel.text = textLabelString;
-    cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[currentUserMet lastDiscovery]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
-    
-    // If this discovery is new the user is notified
-    if (!currentUserMet.isSeen) {
-        cell.detailTextLabel.text = [cell.detailTextLabel.text stringByAppendingString:NSLocalizedString(@"new discovery" , nil)];
-    }
-    
-    
-    
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:[currentUserMet fbId]]) {
-        NSString *indicateFavUpdatedString = @" - ";
-        indicateFavUpdatedString = [indicateFavUpdatedString stringByAppendingString:NSLocalizedString(@"updated", nil)];
-        cell.detailTextLabel.text = [cell.detailTextLabel.text stringByAppendingString:indicateFavUpdatedString];
-        
-        cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:11.0];
-        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
-    }
-    
-
-    
-    // If the user is a facebook friend so we display his facebook profile image
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[currentUserMet fbId]]) {
-        [self getImageCellForData:[currentUserMet fbId]
-                            aCell:cell];
-        
-        cell.imageView.image = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
-                                                                                     forDarkBG:NO];
-//        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
-//                                                                                                forDarkBG:YES];
-        if ([currentUserMet isRandomDiscover]) {
-            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
-                                                                                     forDarkBG:YES
-                                                                                thingsInCommon:notCommonLikesPercent];
-        } else {
-            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon"
-                           forDarkBG:YES
-                      thingsInCommon:notCommonLikesPercent];
-        }
-        
-        cell.imageView.backgroundColor = [UIColor clearColor];
-        cell.imageView.opaque = YES;
-        cell.imageView.tag = indexPath.row;
-    } else {
-        if ([currentUserMet isRandomDiscover]) {
-            cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
-                                                                          forDarkBG:NO
-                                                                     thingsInCommon:notCommonLikesPercent];
-            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
-                                                                                     forDarkBG:YES
-                                                                                thingsInCommon:notCommonLikesPercent];
-        } else {
-            cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:NO thingsInCommon:notCommonLikesPercent];
-            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:YES thingsInCommon:notCommonLikesPercent];
-        }
-
+        cell.backgroundColor = [UIColor clearColor];
         cell.backgroundView = nil;
-        cell.imageView.backgroundColor = [UIColor clearColor];
-        cell.imageView.layer.cornerRadius = 20.0f;
+        
+        userDiscovered = [[SHDUserDiscovered alloc] initWithDatas:currentUserMet];
+        [cell.contentView addSubview:userDiscovered];
     }
+    
+    userDiscovered.userDiscovered = currentUserMet;
+    
+    
+    
+//    [Discovery MR_findFirstByAttribute:@"fbId"
+//                                                      withValue:@10206263558692270]; // 10204552293319006 1387984218155378 1390483754598025 @529340940537761 10206263558692270
+    
+
+    
+//    [self getCurrentUserLikes];
+    // Calc of the stats
+
+////        NSLog(@"%@", [currentUserMet fbId]);
+//    NSDictionary *userMetLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]] mutableCopy];
+//    
+//
+//    NSMutableSet *currentUserTasteSet, *currentUserMetTasteSet;
+//    int commonTasteCount = 0;
+//    int currentUserNumberItems = 0;
+//    for (int i = 0; i < [[userMetLikes filterKeysForNullObj] count]; i++) {
+//        NSString *key = [[userMetLikes filterKeysForNullObj] objectAtIndex:i];
+//        if (![[currentUserTaste objectForKey:key] isEqual:[NSNull null]]) {
+//            currentUserTasteSet = [NSMutableSet setWithArray:[[currentUserTaste objectForKey:key] valueForKey:@"imdbID"]];
+//            
+//            currentUserNumberItems += [[userMetLikes objectForKey:key] count];
+//        }
+//        
+//        if (![[userMetLikes objectForKey:key] isEqual:[NSNull null]]) {
+//            currentUserMetTasteSet = [NSMutableSet setWithArray:[[userMetLikes objectForKey:key] valueForKey:@"imdbID"]];
+//        }
+//        
+//        [currentUserMetTasteSet intersectSet:currentUserTasteSet]; //this will give you only the obejcts that are in both sets
+//        
+//        NSArray* result = [currentUserMetTasteSet allObjects];
+//        
+//        commonTasteCount += result.count;
+//    }
+//    
+//    
+//    
+//    NSString *textLabelString = @"";
+//    
+//    CGFloat notCommonLikesPercent = ((float)commonTasteCount / (float)currentUserNumberItems);
+//    
+//    if (isnan(notCommonLikesPercent)) {
+//        notCommonLikesPercent = 0.0f;
+//    }
+//    
+//    // If the user has only 1% in common
+//    if (notCommonLikesPercent == (float)1) {
+//        notCommonLikesPercent = 1.0;
+//    }
+//    
+//    // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
+//    notCommonLikesPercent = 1 - notCommonLikesPercent;
+//    
+//    if (notCommonLikesPercent == 1) {
+//        UIColor *noLikeCommonColor = [UIColor colorWithRed:(228.0/255.0) green:(207.0/255.0) blue:(186.0/255.0) alpha:1.0];
+//        cell.detailTextLabel.textColor = noLikeCommonColor;
+//        cell.textLabel.textColor = noLikeCommonColor;
+//        textLabelString = NSLocalizedString(@"nothing common", nil);
+//    } else {
+//        NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
+//        [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
+//        
+//        if (notCommonLikesPercent == 0) {
+//            textLabelString = NSLocalizedString(@"everything in common list", nil);
+//            
+//            UIColor *invisibleCellColor = [UIColor colorWithRed:(43.0/255.0)
+//                                                     green:(97.0/255.0)
+//                                                      blue:(122.0/255.0) alpha:1.0f];
+//            
+//            cell.textLabel.textColor = invisibleCellColor;
+//            cell.detailTextLabel.textColor = invisibleCellColor;
+//        } else {
+//            NSString *strNumber = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:notCommonLikesPercent]];
+//            textLabelString = [NSString stringWithFormat:NSLocalizedString(@"%@ not in common", nil), strNumber];
+//            
+//            cell.textLabel.textColor = [UIColor whiteColor];
+//            cell.detailTextLabel.textColor = [UIColor whiteColor];
+//        }
+//    }
+//    
+//
+//    NSDateFormatter *cellDateFormatter = [NSDateFormatter new];
+//    cellDateFormatter.timeStyle = kCFDateFormatterShortStyle; // HH:MM:SS
+//  
+    cell.model = [currentUserMet fbId];
+//
+//    cell.textLabel.text = textLabelString;
+//    cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Met at %@", nil), [cellDateFormatter stringFromDate:[currentUserMet lastDiscovery]]]; //[[NSNumber numberWithInteger:commonTasteCount] stringValue];
+//    
+//    // If this discovery is new the user is notified
+//    if (!currentUserMet.isSeen) {
+//        cell.detailTextLabel.text = [cell.detailTextLabel.text stringByAppendingString:NSLocalizedString(@"new discovery" , nil)];
+//    }
+//    
+//    
+//    
+//    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"favsIDUpdatedList"] containsObject:[currentUserMet fbId]]) {
+//        NSString *indicateFavUpdatedString = @" - ";
+//        indicateFavUpdatedString = [indicateFavUpdatedString stringByAppendingString:NSLocalizedString(@"updated", nil)];
+//        cell.detailTextLabel.text = [cell.detailTextLabel.text stringByAppendingString:indicateFavUpdatedString];
+//        
+//        cell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:11.0];
+//        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
+//    }
+//    
+//
+//    
+//    // If the user is a facebook friend so we display his facebook profile image
+//    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[currentUserMet fbId]]) {
+//        [self getImageCellForData:[currentUserMet fbId]
+//                            aCell:cell];
+//        
+//        cell.imageView.image = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
+//                                                                                     forDarkBG:NO];
+////        cell.imageView.highlightedImage = [MeetingsListViewController imageFromFacebookFriendInitialForId:[currentUserMet fbId]
+////                                                                                                forDarkBG:YES];
+//        if ([currentUserMet isRandomDiscover]) {
+//            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
+//                                                                                     forDarkBG:YES
+//                                                                                thingsInCommon:notCommonLikesPercent];
+//        } else {
+//            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon"
+//                           forDarkBG:YES
+//                      thingsInCommon:notCommonLikesPercent];
+//        }
+//        
+//        cell.imageView.backgroundColor = [UIColor clearColor];
+//        cell.imageView.opaque = YES;
+//        cell.imageView.tag = indexPath.row;
+//    } else {
+//        if ([currentUserMet isRandomDiscover]) {
+//            cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
+//                                                                          forDarkBG:NO
+//                                                                     thingsInCommon:notCommonLikesPercent];
+//            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"randomMeetingIcon"
+//                                                                                     forDarkBG:YES
+//                                                                                thingsInCommon:notCommonLikesPercent];
+//        } else {
+//            cell.imageView.image = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:NO thingsInCommon:notCommonLikesPercent];
+//            cell.imageView.highlightedImage = [MeetingsListViewController imageForCellWithName:@"locationMeetingIcon" forDarkBG:YES thingsInCommon:notCommonLikesPercent];
+//        }
+//
+//        cell.backgroundView = nil;
+//        cell.imageView.backgroundColor = [UIColor clearColor];
+//        cell.imageView.layer.cornerRadius = 20.0f;
+//    }
     
     cell.imageView.tag = 1000;
     

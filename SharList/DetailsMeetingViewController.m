@@ -112,6 +112,7 @@
         }
     }
     
+    NSLog(@"self.metUserId : %@", self.metUserId);
     
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     
@@ -408,15 +409,6 @@
     [self displayUserFollowersForNumber: datas[@"followersCount"]];
     
     
-    // We don't display user picture for the following cases :
-    // - Current user is anonymous AND user met is not his friend on facebook
-    // - Current user is not anonymous, user met is anonymous AND not his friend on facebook
-    if (([datas[@"isAnonymous"] boolValue] == YES && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]]) ||
-        ([[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"] && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]])
-    ) {
-        return;
-    }
-    
     NSUInteger intWidthScreen = screenWidth;
     NSUInteger heightImg = ceilf(intWidthScreen / GOLDENRATIO) + 50;
     
@@ -429,6 +421,7 @@
     metUserFBImgView.tag = 5;
     [metUserFBView insertSubview:metUserFBImgView atIndex:0];
     
+
     UIVisualEffect *blurEffect;
     blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     
@@ -437,15 +430,26 @@
     visualEffectView.frame = metUserFBImgView.bounds;
     [metUserFBImgView addSubview:visualEffectView];
     
+//    // We don't display user picture for the following cases :
+//    // - Current user is anonymous AND user met is not his friend on facebook
+//    // - Current user is not anonymous, user met is anonymous AND not his friend on facebook
+//    if (([datas[@"isAnonymous"] boolValue] == YES && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]]) ||
+//        ([[NSUserDefaults standardUserDefaults] boolForKey:@"anonModeEnabled"] && ![[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]])
+//        ) {
+//        
+//    } else {
+//        CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+//        gradientLayer.frame = metUserFBImgView.frame;
+//        [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
+//        [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
+//        UIColor *topGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
+//        UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
+//        gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
+//        [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
+//    }
+//    
     
-    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.frame = metUserFBImgView.frame;
-    [gradientLayer setStartPoint:CGPointMake(-0.05, 0.5)];
-    [gradientLayer setEndPoint:CGPointMake(1.0, 0.5)];
-    UIColor *topGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
-    UIColor *bottomGradientView = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.80];
-    gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
-//    [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
+    
 }
 
 - (void) displayMatchRateList

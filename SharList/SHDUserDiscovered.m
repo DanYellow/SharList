@@ -39,7 +39,7 @@
 //    self.center = CGPointMake((CGRectGetWidth(self.superview.frame) - CGRectGetWidth(self.frame)) / 2, self.center.y);
     
     [self setStatistics:[self calcPercentToDiscover]];
-    [self showUserThumbs:@[@3, @3, @3, @4]];
+    [self showUserThumbs];
     
     UIImageView *userDiscoveredFbProfileImg = [[UIImageView alloc] initWithFrame:self.frame];
     userDiscoveredFbProfileImg.contentMode = UIViewContentModeScaleAspectFill;
@@ -50,11 +50,19 @@
                   placeholderImage:[UIImage imageNamed:@"TrianglesBG"]]; //10204498235807141
     [self insertSubview:userDiscoveredFbProfileImg atIndex:0];
     
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = userDiscoveredFbProfileImg.bounds;
+    [userDiscoveredFbProfileImg addSubview:visualEffectView];
+    
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = userDiscoveredFbProfileImg.frame;
     overlayLayer.name = @"overlayLayerImgMedia";
     overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.66].CGColor;
-    [userDiscoveredFbProfileImg.layer insertSublayer:overlayLayer atIndex:0];
+//    [userDiscoveredFbProfileImg.layer insertSublayer:overlayLayer atIndex:0];
     
     // remove after
     self.frame = CGRectMake(10, 10, screenWidth * percentWidthContent, (screenWidth * percentWidthContent) / 1.612903226);
@@ -72,13 +80,19 @@
     UIView *infosView = [[UIView alloc] initWithFrame:CGRectMake(CGRectGetMaxX(discoveryTypeIcon.frame) + 5, 8, 0, 0)];
     infosView.backgroundColor = [UIColor clearColor];
     [self addSubview:infosView];
+    
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]]) {
+        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [self.userDiscovered fbId]]];
+        
+        UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
+        nameLabel.text = [[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
+        nameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14.0f];
+        nameLabel.textColor = [UIColor whiteColor];
+        [nameLabel sizeToFit];
+        [infosView addSubview:nameLabel];
+    }
 
-    UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-    nameLabel.text = @"Dan'Yellow";
-    nameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14.0f];
-    nameLabel.textColor = [UIColor whiteColor];
-    [nameLabel sizeToFit];
-//    [infosView addSubview:nameLabel];
+
     
     NSDateFormatter *discoveryDateFormatter = [NSDateFormatter new];
     discoveryDateFormatter.timeStyle = kCFDateFormatterShortStyle;
@@ -133,19 +147,21 @@
                                           CGRectGetHeight(percentStringLabel.frame));
     
     
-    UILabel *newDiscoverLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(percentStringLabel.frame), 40, 40)];
-    newDiscoverLabel.backgroundColor = [UIColor clearColor];
-    newDiscoverLabel.layer.cornerRadius = 2.0f;
-    newDiscoverLabel.clipsToBounds = YES;
-    newDiscoverLabel.text = NSLocalizedString(@"new discovery", nil);
-    newDiscoverLabel.textAlignment = NSTextAlignmentCenter;
-    newDiscoverLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
-    [newDiscoverLabel sizeToFit];
-    newDiscoverLabel.textColor = [UIColor whiteColor];
-    [self addSubview:newDiscoverLabel];
+    if (!self.currentUser.isSeen) {
+        UILabel *newDiscoverLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(percentStringLabel.frame), 40, 40)];
+        newDiscoverLabel.backgroundColor = [UIColor clearColor];
+        newDiscoverLabel.layer.cornerRadius = 2.0f;
+        newDiscoverLabel.clipsToBounds = YES;
+        newDiscoverLabel.text = NSLocalizedString(@"new discovery", nil);
+        newDiscoverLabel.textAlignment = NSTextAlignmentCenter;
+        newDiscoverLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+        [newDiscoverLabel sizeToFit];
+        newDiscoverLabel.textColor = [UIColor whiteColor];
+        [self addSubview:newDiscoverLabel];
+    }
 }
 
-- (void) showUserThumbs:(NSArray*)thumbsArray
+- (void) showUserThumbs
 {
     CGFloat thumbsMediasViewPercent = (158.0/372.0);
 
@@ -166,9 +182,9 @@
     
     
     NSMutableArray *linearizeDiscoveredUserLikes = [NSMutableArray new];
+    // We linearize the likes datas of obth users it will be easier for the next operations
     for (NSString *keyName in [self.discoveredUserLikes filterKeysForNullObj]) {
         [linearizeDiscoveredUserLikes addObjectsFromArray:[[self.discoveredUserLikes objectForKey:keyName] valueForKey:@"imdbID"]];
-
     }
     
     NSMutableArray *linearizeCurrentUserLikes = [NSMutableArray new];
@@ -176,20 +192,35 @@
         [linearizeCurrentUserLikes addObjectsFromArray:[[self.currentUserLikes objectForKey:keyName] valueForKey:@"imdbID"]];
     }
     
+    // We want only the datas which are not in current user list of likes
     NSMutableArray *toDiscoverMediaArray = [NSMutableArray arrayWithArray:linearizeDiscoveredUserLikes];
     [toDiscoverMediaArray removeObjectsInArray:linearizeCurrentUserLikes];
     
     NSUInteger limitThumbs = 4;
-    for (NSUInteger idx = linearizeDiscoveredUserLikes.count; idx < limitThumbs && idx < linearizeDiscoveredUserLikes.count; idx++) {
-        NSUInteger randomIndex = arc4random() % [linearizeDiscoveredUserLikes count];
+    NSUInteger randomIndex = 0;
+    
+    // We wants now datas in common with current user
+    // We wants to fill the array
+    [linearizeDiscoveredUserLikes removeObjectsInArray:toDiscoverMediaArray];
+    for (NSUInteger idx = 0; idx < limitThumbs && idx < linearizeDiscoveredUserLikes.count; idx++) {
+        if (linearizeDiscoveredUserLikes.count >= 9) {
+            randomIndex = arc4random() % [linearizeDiscoveredUserLikes count];
+        } else {
+            randomIndex = idx;
+        }
+
         [toDiscoverMediaArray addObject:[linearizeDiscoveredUserLikes objectAtIndex:randomIndex]];
     }
+    
+    // We remove duplicate
+    NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:toDiscoverMediaArray];
+    toDiscoverMediaArray = [[orderedSet array] mutableCopy];
     
     __block NSString *imgName;
     __block NSString *imgDistURL;
     NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w92" : @"w185";
     
-    for (int idx = 0; idx < 4; idx++) {
+    for (int idx = 0; idx < toDiscoverMediaArray.count; idx++) {
         UIImageView *thumbMedia = [[UIImageView alloc] initWithFrame:CGRectMake(thumbMediaMarginWidth + (idx * thumbMediaWidth) + (idx * thumbMediaMarginWidth2), thumbMediaMarginWidth, thumbMediaWidth, thumbMediaWidth)];
         thumbMedia.backgroundColor = [UIColor blackColor];
         
@@ -201,8 +232,6 @@
         [[JLTMDbClient sharedAPIInstance] setAPIKey:@THEMOVIEDBAPIKEY];
         
         NSString *mediaImdbID = [toDiscoverMediaArray objectAtIndex:idx];
-        
-        
         
         [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:@{@"id": mediaImdbID, @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
             if(!error){
@@ -223,16 +252,6 @@
         
         [thumbsMediasView addSubview:thumbMedia];
     }
-    
-//    [linearizeCurrentUserLikes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-//        UIView *thumbMedia = [[UIView alloc] initWithFrame:CGRectMake(thumbMediaMarginWidth + (idx * thumbMediaWidth) + (idx * thumbMediaMarginWidth2), thumbMediaMarginWidth, thumbMediaWidth, thumbMediaWidth)];
-//        thumbMedia.backgroundColor = [UIColor blackColor];
-//
-//        thumbMedia.layer.cornerRadius = 5.0f;
-//        thumbMedia.layer.masksToBounds = YES;
-//        
-//        [thumbsMediasView addSubview:thumbMedia];
-//    }];
     
     [self addSubview:thumbsMediasView];
 }
