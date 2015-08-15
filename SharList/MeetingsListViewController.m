@@ -983,6 +983,10 @@
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
 
+- (void) setMediaThumbs:(NSDictionary*)userDiscoveredMedias
+{
+    NSLog(@"userDiscoveredMedias : %@", userDiscoveredMedias);
+}
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -996,6 +1000,7 @@
     
     UILabel *mainLabel;
     UIView *thumbsMediasView;
+    UIImageView *profileImage;
     
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -1015,6 +1020,8 @@
         thumbsMediasView = userDiscovered.mediaThumbsContainer;
         [userDiscovered addSubview:thumbsMediasView];
         
+        profileImage = userDiscovered.profileImage;
+        [userDiscovered insertSubview:profileImage atIndex:0];
         
 //        mainLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 220.0, 15.0)];
 //        
@@ -1022,21 +1029,32 @@
 //        [[omeUIView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 //        mainLabel.font = [UIFont systemFontOfSize:14.0];
 //
+//        NSLog(@"erere");
         [cell.contentView addSubview:userDiscovered];
     } else {
         mainLabel = (UILabel *) [cell viewWithTag:SHDDiscoverTimeLabelTag];
         thumbsMediasView = (UIView *) [cell viewWithTag:SHDDiscoverMediaThumbsTag];
+        
+        profileImage = (UIImageView *) [cell viewWithTag:SHDDiscoverProfileImgTag];
     }
+    
+    NSDictionary *userMetLikes = [NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]];
+    [self setMediaThumbs:userMetLikes];
     
     userDiscovered.userDiscovered = currentUserMet;
     
+    [profileImage setImageWithURL:
+     [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", [currentUserMet fbId], (int)userDiscovered.frame.size.width, (int)userDiscovered.frame.size.height]]
+                               placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
     
-     NSDictionary *userMetLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]] mutableCopy];
+    
+    
    
     
 //    [userDiscovered setMediaThumbs:userMetLikes];
     
-    NSLog(@"%@, %@", [userDiscovered setMediaThumbs:userMetLikes], currentUserMet.fbId);
+    
+//    NSLog(@"%@, %@", @"rere", userMetLikes);
     
 
     mainLabel.text = currentUserMet.fbId;

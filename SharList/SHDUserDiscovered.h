@@ -20,7 +20,8 @@
 
 typedef NS_ENUM(NSUInteger, Tag) {
     SHDDiscoverTimeLabelTag = 1,
-    SHDDiscoverMediaThumbsTag = 2
+    SHDDiscoverMediaThumbsTag = 2,
+    SHDDiscoverProfileImgTag = 3
 };
 
 @property (strong, atomic) Discovery *userDiscovered;
@@ -35,12 +36,13 @@ typedef NS_ENUM(NSUInteger, Tag) {
 //- (void) setDatas:(Discovery *) userDiscovered;
 - (void) setStatistics:(CGFloat)percent;
 
-//- (void) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
-- (UIView*) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
+- (void) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
+//- (UIView*) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
 
 //- (void) setLabel:(UIColor *) borderColor;
 - (UILabel*) label;
 - (UIView*) mediaThumbs;
 - (UIView*) mediaThumbsContainer;
+- (UIImageView*) profileImage;
 
 @end

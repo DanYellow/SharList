@@ -62,28 +62,7 @@
     //    [self setStatistics:[self calcPercentToDiscover]];
     //
     //
-    //    UIImageView *userDiscoveredFbProfileImg = [[UIImageView alloc] initWithFrame:self.initFrame];
-    //    userDiscoveredFbProfileImg.contentMode = UIViewContentModeScaleAspectFill;
-    //    userDiscoveredFbProfileImg.clipsToBounds = YES;
-    //
-    //    [userDiscoveredFbProfileImg setImageWithURL:
-    //     [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", [userDiscovered fbId], (int)self.initFrame.size.width, (int)self.initFrame.size.height]]
-    //                  placeholderImage:[UIImage imageNamed:@"TrianglesBG"]]; //10204498235807141
-    //    [self insertSubview:userDiscoveredFbProfileImg atIndex:0];
-    //
-    //    UIVisualEffect *blurEffect;
-    //    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-    //
-    //    UIVisualEffectView *visualEffectView;
-    //    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    //    visualEffectView.frame = userDiscoveredFbProfileImg.bounds;
-    //    [userDiscoveredFbProfileImg addSubview:visualEffectView];
-    //
-    //    CALayer *overlayLayer = [CALayer layer];
-    //    overlayLayer.frame = userDiscoveredFbProfileImg.frame;
-    //    overlayLayer.name = @"overlayLayerImgMedia";
-    //    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.66].CGColor;
-    ////    [userDiscoveredFbProfileImg.layer insertSublayer:overlayLayer atIndex:0];
+
     //
     //    // remove after
     //    self.initFrame = CGRectMake(10, 10, screenWidth * percentWidthContent, (screenWidth * percentWidthContent) / 1.612903226);
@@ -278,99 +257,103 @@
 //    return thumbsMediasView;
 //}
 
-- (UIView*) setMediaThumbs:(NSDictionary*)userDiscoveredMedias{
+- (void) setMediaThumbs:(NSDictionary*)userDiscoveredMedias
+{
     NSLog(@"userDiscoveredMedias : %@", userDiscoveredMedias);
-    UIView *thumbsMediasView = [[UIView alloc] initWithFrame:CGRectZero];
+//    UIView *thumbsMediasView = [[UIView alloc] initWithFrame:CGRectZero];
+//    
+//    CGFloat thumbMediaPercent = (143.0/600.0);
+//    CGFloat thumbMediaWidth = thumbMediaPercent * CGRectGetWidth(self.initFrame);
+//    
+//    CGFloat thumbMediaMarginWidth = (7.0/600.0)  * CGRectGetWidth(self.initFrame);
+//    CGFloat thumbMediaMarginWidth2 = (5.0/600.0)  * CGRectGetWidth(self.initFrame);
+//    
+//    NSMutableArray *linearizeDiscoveredUserLikes = [NSMutableArray new];
+//    // We linearize the likes datas of obth users it will be easier for the next operations
+//    for (NSString *keyName in [userDiscoveredMedias filterKeysForNullObj]) {
+//        [linearizeDiscoveredUserLikes addObjectsFromArray:[[userDiscoveredMedias objectForKey:keyName] valueForKey:@"imdbID"]];
+//    }
+//    
+//    NSMutableArray *linearizeCurrentUserLikes = [NSMutableArray new];
+//    for (NSString *keyName in [self.currentUserLikes filterKeysForNullObj]) {
+//        [linearizeCurrentUserLikes addObjectsFromArray:[[self.currentUserLikes objectForKey:keyName] valueForKey:@"imdbID"]];
+//    }
+//    
+//    // We want only the datas which are not in current user list of likes
+//    NSMutableArray *toDiscoverMediaArray = [NSMutableArray arrayWithArray:linearizeDiscoveredUserLikes];
+//    [toDiscoverMediaArray removeObjectsInArray:linearizeCurrentUserLikes];
+//    
+//    NSUInteger limitThumbs = 4;
+//    NSUInteger randomIndex = 0;
+//    
+//    // We wants now datas in common with current user
+//    // We wants to fill the array
+//    [linearizeDiscoveredUserLikes removeObjectsInArray:toDiscoverMediaArray];
+//    for (NSUInteger idx = 0; idx < limitThumbs && idx < linearizeDiscoveredUserLikes.count; idx++) {
+//        if (linearizeDiscoveredUserLikes.count >= 9) {
+//            randomIndex = arc4random() % [linearizeDiscoveredUserLikes count];
+//        } else {
+//            randomIndex = idx;
+//        }
+//        
+//        [toDiscoverMediaArray addObject:[linearizeDiscoveredUserLikes objectAtIndex:randomIndex]];
+//    }
+//    
+//    // We remove duplicate
+//    NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:toDiscoverMediaArray];
+//    toDiscoverMediaArray = [[orderedSet array] mutableCopy];
+//    
+//    __block NSString *imgName;
+//    __block NSString *imgDistURL;
+//    NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w92" : @"w185";
+//    
+//    for (int idx = 0; idx < toDiscoverMediaArray.count; idx++) {
+//        if (idx >= 4) {
+//            break;
+//        }
+//        
+//        UIImageView *thumbMedia = [[UIImageView alloc] initWithFrame:CGRectMake(thumbMediaMarginWidth + (idx * thumbMediaWidth) + (idx * thumbMediaMarginWidth2), thumbMediaMarginWidth, thumbMediaWidth, thumbMediaWidth)];
+//        thumbMedia.backgroundColor = [UIColor blackColor];
+//        
+//        thumbMedia.layer.cornerRadius = 5.0f;
+//        thumbMedia.layer.masksToBounds = YES;
+//        thumbMedia.contentMode = UIViewContentModeScaleAspectFill;
+//        
+//        NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+//        [[JLTMDbClient sharedAPIInstance] setAPIKey:@THEMOVIEDBAPIKEY];
+//        
+//        NSString *mediaImdbID = [toDiscoverMediaArray objectAtIndex:idx];
+//        
+//        [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:@{@"id": mediaImdbID, @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
+//            if(!error){
+//                if ([responseObject[@"movie_results"] count] > 0) {
+//                    imgName = [responseObject valueForKeyPath:@"movie_results.poster_path"][0];
+//                } else if ([responseObject[@"tv_results"] count] > 0) {
+//                    imgName = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
+//                } else {
+//                    return;
+//                }
+//                
+//                imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, imgName];
+//                [thumbMedia setImageWithURL:
+//                 [NSURL URLWithString:imgDistURL]
+//                           placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
+//            }
+//        }];
+//        
+//        [thumbsMediasView addSubview:thumbMedia];
+//    }
+//    
+//    UIView *thumbsMediasLastView = [[thumbsMediasView subviews] lastObject];
+//    thumbsMediasView.frame = CGRectMake(0, 0,
+//                                        CGRectGetWidth(thumbsMediasLastView.frame),
+//                                        CGRectGetHeight(thumbsMediasLastView.frame));
     
-    CGFloat thumbMediaPercent = (143.0/600.0);
-    CGFloat thumbMediaWidth = thumbMediaPercent * CGRectGetWidth(self.initFrame);
     
-    CGFloat thumbMediaMarginWidth = (7.0/600.0)  * CGRectGetWidth(self.initFrame);
-    CGFloat thumbMediaMarginWidth2 = (5.0/600.0)  * CGRectGetWidth(self.initFrame);
+    UIView *all = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
+    all.backgroundColor = [UIColor redColor];
     
-    NSMutableArray *linearizeDiscoveredUserLikes = [NSMutableArray new];
-    // We linearize the likes datas of obth users it will be easier for the next operations
-    for (NSString *keyName in [userDiscoveredMedias filterKeysForNullObj]) {
-        [linearizeDiscoveredUserLikes addObjectsFromArray:[[userDiscoveredMedias objectForKey:keyName] valueForKey:@"imdbID"]];
-    }
-    
-    NSMutableArray *linearizeCurrentUserLikes = [NSMutableArray new];
-    for (NSString *keyName in [self.currentUserLikes filterKeysForNullObj]) {
-        [linearizeCurrentUserLikes addObjectsFromArray:[[self.currentUserLikes objectForKey:keyName] valueForKey:@"imdbID"]];
-    }
-    
-    // We want only the datas which are not in current user list of likes
-    NSMutableArray *toDiscoverMediaArray = [NSMutableArray arrayWithArray:linearizeDiscoveredUserLikes];
-    [toDiscoverMediaArray removeObjectsInArray:linearizeCurrentUserLikes];
-    
-    NSUInteger limitThumbs = 4;
-    NSUInteger randomIndex = 0;
-    
-    // We wants now datas in common with current user
-    // We wants to fill the array
-    [linearizeDiscoveredUserLikes removeObjectsInArray:toDiscoverMediaArray];
-    for (NSUInteger idx = 0; idx < limitThumbs && idx < linearizeDiscoveredUserLikes.count; idx++) {
-        if (linearizeDiscoveredUserLikes.count >= 9) {
-            randomIndex = arc4random() % [linearizeDiscoveredUserLikes count];
-        } else {
-            randomIndex = idx;
-        }
-        
-        [toDiscoverMediaArray addObject:[linearizeDiscoveredUserLikes objectAtIndex:randomIndex]];
-    }
-    
-    // We remove duplicate
-    NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:toDiscoverMediaArray];
-    toDiscoverMediaArray = [[orderedSet array] mutableCopy];
-    
-    __block NSString *imgName;
-    __block NSString *imgDistURL;
-    NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w92" : @"w185";
-    
-    for (int idx = 0; idx < toDiscoverMediaArray.count; idx++) {
-        if (idx >= 4) {
-            break;
-        }
-        
-        UIImageView *thumbMedia = [[UIImageView alloc] initWithFrame:CGRectMake(thumbMediaMarginWidth + (idx * thumbMediaWidth) + (idx * thumbMediaMarginWidth2), thumbMediaMarginWidth, thumbMediaWidth, thumbMediaWidth)];
-        thumbMedia.backgroundColor = [UIColor blackColor];
-        
-        thumbMedia.layer.cornerRadius = 5.0f;
-        thumbMedia.layer.masksToBounds = YES;
-        thumbMedia.contentMode = UIViewContentModeScaleAspectFill;
-        
-        NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-        [[JLTMDbClient sharedAPIInstance] setAPIKey:@THEMOVIEDBAPIKEY];
-        
-        NSString *mediaImdbID = [toDiscoverMediaArray objectAtIndex:idx];
-        
-        [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:@{@"id": mediaImdbID, @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
-            if(!error){
-                if ([responseObject[@"movie_results"] count] > 0) {
-                    imgName = [responseObject valueForKeyPath:@"movie_results.poster_path"][0];
-                } else if ([responseObject[@"tv_results"] count] > 0) {
-                    imgName = [responseObject valueForKeyPath:@"tv_results.poster_path"][0];
-                } else {
-                    return;
-                }
-                
-                imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, imgName];
-                [thumbMedia setImageWithURL:
-                 [NSURL URLWithString:imgDistURL]
-                           placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
-            }
-        }];
-        
-        [thumbsMediasView addSubview:thumbMedia];
-    }
-    
-    UIView *thumbsMediasLastView = [[thumbsMediasView subviews] lastObject];
-    thumbsMediasView.frame = CGRectMake(0, 0,
-                                        CGRectGetWidth(thumbsMediasLastView.frame),
-                                        CGRectGetHeight(thumbsMediasLastView.frame));
-    
-    
-    return thumbsMediasView;
+//    return all;
 //    NSLog(@"%i", [[thumbsMediasView subviews] count]);
 //    [self addSubview:thumbsMediasView];
 }
@@ -431,6 +414,36 @@
     label.tag = SHDDiscoverTimeLabelTag;
     
     return label;
+}
+
+- (UIImageView*) profileImage {
+    UIImageView *userDiscoveredFbProfileImg = [[UIImageView alloc] initWithFrame:self.initFrame];
+    userDiscoveredFbProfileImg.contentMode = UIViewContentModeScaleAspectFill;
+    userDiscoveredFbProfileImg.clipsToBounds = YES;
+    userDiscoveredFbProfileImg.tag = SHDDiscoverProfileImgTag;
+    
+    NSLog(@"rerere");
+    
+//    [userDiscoveredFbProfileImg setImageWithURL:
+//     [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", [self.userDiscovered fbId], (int)self.initFrame.size.width, (int)self.initFrame.size.height]]
+//                               placeholderImage:[UIImage imageNamed:@"TrianglesBG"]]; //10204498235807141
+//    [self insertSubview:userDiscoveredFbProfileImg atIndex:0];
+    
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = userDiscoveredFbProfileImg.bounds;
+//    [userDiscoveredFbProfileImg addSubview:visualEffectView];
+    
+    CALayer *overlayLayer = [CALayer layer];
+    overlayLayer.frame = userDiscoveredFbProfileImg.frame;
+    overlayLayer.name = @"overlayLayerImgMedia";
+    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.66].CGColor;
+//    [userDiscoveredFbProfileImg.layer insertSublayer:overlayLayer atIndex:0];
+    
+    return userDiscoveredFbProfileImg;
 }
 
 - (UIView*) mediaThumbsContainer {
