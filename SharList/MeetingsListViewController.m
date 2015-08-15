@@ -1099,7 +1099,10 @@
     }
     
     userDiscovered.discoveryTypeIcon.image = [[UIImage imageNamed:pictoString] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    [userDiscovered setDiscoveryTime:[currentUserMet lastDiscovery]];
+    [userDiscovered setDiscoveryTime:currentUserMet.lastDiscovery];
+    [userDiscovered setUserDiscoveredName:currentUserMet.fbId];
+    
+    [userDiscovered setStatistics:[userDiscoveredDatas percentToDiscover]];
     
 //    NSLog(@"userDiscoveredDatas : %@", userDiscoveredDatas.mediasIds);
     

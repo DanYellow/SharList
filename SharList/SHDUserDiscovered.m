@@ -11,6 +11,9 @@
 @interface SHDUserDiscovered()
 
 @property (nonatomic) CGRect initFrame;
+@property (strong, atomic) UILabel *percentStringLabel;
+@property (strong, atomic) UILabel *percentStringDescLabel;
+@property (strong, atomic) UILabel *facebookFriendNameLabel;
 
 @end
 
@@ -101,29 +104,36 @@
     infosView.backgroundColor = [UIColor clearColor];
     [self addSubview:infosView];
     
-    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:[self.userDiscovered fbId]]) {
-        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [self.userDiscovered fbId]]];
-        
-        UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-        nameLabel.text = [[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
-        nameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14.0f];
-        nameLabel.textColor = [UIColor whiteColor];
-        [nameLabel sizeToFit];
-        [infosView addSubview:nameLabel];
-    }
-  
 
-    
-    UIView *infosViewLastView = [infosView.subviews lastObject];
-    
+   
     
     self.discoveryTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
     
     self.discoveryTimeLabel.textColor = [UIColor whiteColor];
+    self.discoveryTimeLabel.text = @"new";
+    [self.discoveryTimeLabel sizeToFit];
     self.discoveryTimeLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
     
-    self.discoveryTimeLabel.frame = CGRectMake(0, CGRectGetMaxY(infosViewLastView.frame), CGRectGetWidth(self.discoveryTimeLabel.frame), CGRectGetHeight(self.discoveryTimeLabel.frame));
+    self.discoveryTimeLabel.frame = CGRectMake(0, 0, CGRectGetWidth(self.discoveryTimeLabel.frame), CGRectGetHeight(self.discoveryTimeLabel.frame));
     [infosView addSubview:self.discoveryTimeLabel];
+    
+    
+    
+    self.facebookFriendNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    
+    self.facebookFriendNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14.0f];
+    self.facebookFriendNameLabel.textColor = [UIColor whiteColor];
+    self.facebookFriendNameLabel.text = @"Install Gentoo";
+    self.facebookFriendNameLabel.hidden = YES;
+    [self.facebookFriendNameLabel sizeToFit];
+    self.facebookFriendNameLabel.frame = CGRectMake(0, CGRectGetMaxY(self.facebookFriendNameLabel.frame) - 3, CGRectGetWidth(self.facebookFriendNameLabel.frame), CGRectGetHeight(self.facebookFriendNameLabel.frame));
+    [infosView addSubview:self.facebookFriendNameLabel];
+    
+    UIView *infosViewLastView = [infosView.subviews lastObject];
+    infosView.frame = CGRectMake(CGRectGetMinX(infosView.frame) + 5, 8, CGRectGetMaxX(infosViewLastView.frame), CGRectGetMaxY(infosViewLastView.frame));
+    infosView.center = CGPointMake(infosView.center.x, self.discoveryTypeIcon.center.y);
+    
+    [self displayExtraInfos];
     
     return self;
 }
@@ -137,14 +147,46 @@
     [self.discoveryTimeLabel sizeToFit];
 }
 
+- (void) setUserDiscoveredName:(NSString*)fbid
+{
+    if ([[[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"] containsObject:fbid]) {
+        
+        NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", fbid]];
+        self.facebookFriendNameLabel.text = [[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
+        self.facebookFriendNameLabel.hidden = NO;
+    } else {
+        self.facebookFriendNameLabel.hidden = YES;
+    }
+}
+
 - (void) displayExtraInfos
 {
     CGFloat percentStringLabelPercentY = (130.0/372.0); //143
-    UILabel *percentStringLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.initFrame) * percentStringLabelPercentY, 300, 120)];
-    percentStringLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:20.0f];
-    percentStringLabel.textColor = [UIColor whiteColor];
-    percentStringLabel.backgroundColor = [UIColor clearColor];
-    [self addSubview:percentStringLabel];
+    self.percentStringLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.initFrame) * percentStringLabelPercentY, 300, 120)];
+    self.percentStringLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:20.0f];
+    self.percentStringLabel.textColor = [UIColor whiteColor];
+    self.percentStringLabel.text = @"42 %";
+    [self.percentStringLabel sizeToFit];
+    self.percentStringLabel.hidden = YES;
+    self.percentStringLabel.backgroundColor = [UIColor clearColor];
+    [self addSubview:self.percentStringLabel];
+    
+    self.percentStringDescLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    self.percentStringDescLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+    self.percentStringDescLabel.textColor = [UIColor whiteColor];
+    self.percentStringDescLabel.text = @"de la liste à découvrir";
+    [self.percentStringDescLabel sizeToFit];
+    self.percentStringDescLabel.backgroundColor = [UIColor clearColor];
+    self.percentStringDescLabel.frame = CGRectMake(CGRectGetMaxX(self.initFrame) - CGRectGetWidth(self.percentStringDescLabel.frame) - 10,
+                                              CGRectGetMaxY(self.percentStringLabel.frame) - 0,
+                                              CGRectGetWidth(self.percentStringDescLabel.frame),
+                                              CGRectGetHeight(self.percentStringDescLabel.frame));
+    [self addSubview:self.percentStringDescLabel];
+    
+    self.percentStringLabel.frame = CGRectMake(CGRectGetMinX(self.percentStringDescLabel.frame),
+                                          CGRectGetMinY(self.percentStringLabel.frame),
+                                          CGRectGetWidth(self.percentStringLabel.frame),
+                                          CGRectGetHeight(self.percentStringLabel.frame));
 }
 
 - (void) setStatistics:(CGFloat)percent
@@ -153,38 +195,13 @@
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
     
     NSString *percentString = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:percent]];
-    
-    CGFloat percentStringLabelPercentY = (130.0/372.0); //143
-    
-    UILabel *percentStringLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(self.frame) * percentStringLabelPercentY, 300, 120)];
-    percentStringLabel.text = percentString;
-    percentStringLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:20.0f];
-    percentStringLabel.textColor = [UIColor whiteColor];
-    percentStringLabel.backgroundColor = [UIColor clearColor];
-    [percentStringLabel sizeToFit];
-    [self addSubview:percentStringLabel];
-    
-    UILabel *percentStringDescLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 120)];
-    percentStringDescLabel.text = percentString;
-    percentStringDescLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
-    percentStringDescLabel.textColor = [UIColor whiteColor];
-    percentStringDescLabel.text = @"de la liste à découvrir";
-    [percentStringDescLabel sizeToFit];
-    percentStringDescLabel.backgroundColor = [UIColor clearColor];
-    percentStringDescLabel.frame = CGRectMake(CGRectGetMaxX(self.frame) - CGRectGetWidth(percentStringDescLabel.frame) - 10,
-                                              CGRectGetMaxY(percentStringLabel.frame) - 0,
-                                              CGRectGetWidth(percentStringDescLabel.frame),
-                                              CGRectGetHeight(percentStringDescLabel.frame));
-    [self addSubview:percentStringDescLabel];
-    
-    percentStringLabel.frame = CGRectMake(CGRectGetMinX(percentStringDescLabel.frame),
-                                          CGRectGetMinY(percentStringLabel.frame),
-                                          CGRectGetWidth(percentStringLabel.frame),
-                                          CGRectGetHeight(percentStringLabel.frame));
-    
+
+    self.percentStringLabel.text = percentString;
+    self.percentStringLabel.hidden = NO;
+    [self.percentStringLabel sizeToFit];
     
     if (!self.userDiscovered.isSeen) {
-        UILabel *newDiscoverLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(percentStringLabel.frame), 40, 40)];
+        UILabel *newDiscoverLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.percentStringLabel.frame), 40, 40)];
         newDiscoverLabel.backgroundColor = [UIColor clearColor];
         newDiscoverLabel.layer.cornerRadius = 2.0f;
         newDiscoverLabel.clipsToBounds = YES;

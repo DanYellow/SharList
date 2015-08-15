@@ -47,5 +47,6 @@ typedef NS_ENUM(NSUInteger, Tag) {
 - (UIImageView*) profileImage;
 - (void) setProfileImage:(NSString*)fbId;
 - (void) setDiscoveryTime:(NSDate*)discoveryTime;
+- (void) setUserDiscoveredName:(NSString*)fbid;
 
 @end
