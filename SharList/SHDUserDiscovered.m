@@ -42,12 +42,6 @@
     self.layer.masksToBounds = YES;
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
-    
-    //    self.center = CGPointMake((CGRectGetWidth(self.superview.frame) - CGRectGetWidth(self.frame)) / 2, self.center.y);
-    
-//    [self setStatistics:[self calcPercentToDiscover]];
-//    [self showUserThumbs];
-    
     CGFloat thumbsMediasViewPercent = (158.0/372.0);
     
     UIView *thumbsMediasContainerView = [[UIView alloc] initWithFrame:
@@ -60,6 +54,31 @@
     thumbsMediasContainerView.tag = SHDDiscoverMediaThumbsTag;
 //
     [self addSubview:thumbsMediasContainerView];
+    
+    
+    CGFloat thumbMediaPercent = (143.0/600.0);
+    CGFloat thumbMediaWidth = thumbMediaPercent * CGRectGetWidth(self.frame);
+    
+    CGFloat thumbMediaMarginWidth = (7.0/600.0)  * CGRectGetWidth(self.frame);
+    CGFloat thumbMediaMarginWidth2 = (5.0/600.0)  * CGRectGetWidth(self.frame);
+    
+    for (int idx = 0; idx < 4; idx++) {
+        if (idx >= 4) {
+            break;
+        }
+        
+        UIImageView *thumbMedia = [[UIImageView alloc] initWithFrame:CGRectMake(thumbMediaMarginWidth + (idx * thumbMediaWidth) + (idx * thumbMediaMarginWidth2), thumbMediaMarginWidth, thumbMediaWidth, thumbMediaWidth)];
+        thumbMedia.backgroundColor = [UIColor blackColor];
+        thumbMedia.tag = 100 + idx;
+        
+        thumbMedia.layer.cornerRadius = 5.0f;
+        thumbMedia.layer.masksToBounds = YES;
+        thumbMedia.contentMode = UIViewContentModeScaleAspectFill;
+        
+        [thumbsMediasContainerView addSubview:thumbMedia];
+    }
+    
+    
 //
 //    UIImageView *userDiscoveredFbProfileImg = [[UIImageView alloc] initWithFrame:self.initFrame];
 //    userDiscoveredFbProfileImg.contentMode = UIViewContentModeScaleAspectFill;
@@ -183,11 +202,12 @@
 
 - (void) mediaThumbs:(NSMutableArray*) mediasArray
 {
-    CGFloat thumbMediaPercent = (143.0/600.0);
-    CGFloat thumbMediaWidth = thumbMediaPercent * CGRectGetWidth(self.frame);
-    
-    CGFloat thumbMediaMarginWidth = (7.0/600.0)  * CGRectGetWidth(self.frame);
-    CGFloat thumbMediaMarginWidth2 = (5.0/600.0)  * CGRectGetWidth(self.frame);
+//    return;
+//    CGFloat thumbMediaPercent = (143.0/600.0);
+//    CGFloat thumbMediaWidth = thumbMediaPercent * CGRectGetWidth(self.frame);
+//    
+//    CGFloat thumbMediaMarginWidth = (7.0/600.0)  * CGRectGetWidth(self.frame);
+//    CGFloat thumbMediaMarginWidth2 = (5.0/600.0)  * CGRectGetWidth(self.frame);
     
     __block NSString *imgName;
     __block NSString *imgDistURL;
@@ -195,19 +215,14 @@
     
     UIView *thumbsMediasContainerView = [self viewWithTag:SHDDiscoverMediaThumbsTag];
     
-//    [[thumbsMediasContainerView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview) withObject:@NO];
-    
     for (int idx = 0; idx < mediasArray.count; idx++) {
+        UIImageView *thumbMedia = (UIImageView*) [thumbsMediasContainerView viewWithTag:100+idx];
+        
         if (idx >= 4) {
             break;
         }
         
-        UIImageView *thumbMedia = [[UIImageView alloc] initWithFrame:CGRectMake(thumbMediaMarginWidth + (idx * thumbMediaWidth) + (idx * thumbMediaMarginWidth2), thumbMediaMarginWidth, thumbMediaWidth, thumbMediaWidth)];
-        thumbMedia.backgroundColor = [UIColor blackColor];
-        
-        thumbMedia.layer.cornerRadius = 5.0f;
-        thumbMedia.layer.masksToBounds = YES;
-        thumbMedia.contentMode = UIViewContentModeScaleAspectFill;
+        thumbMedia.hidden = NO;
         
         NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
         [[JLTMDbClient sharedAPIInstance] setAPIKey:@THEMOVIEDBAPIKEY];
@@ -223,6 +238,7 @@
                 } else {
                     return;
                 }
+
                 
                 imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, imgName];
                 [thumbMedia setImageWithURL:
@@ -230,9 +246,16 @@
                            placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
             }
         }];
-        
-        [thumbsMediasContainerView addSubview:thumbMedia];
     }
+    
+    for (NSUInteger i = mediasArray.count; i < 4; i++) {
+        UIImageView *thumbMedia = (UIImageView*) [thumbsMediasContainerView viewWithTag:100+i];
+        thumbMedia.hidden = YES;
+    }
+}
+
+- (UIView*) mediaThumbsContainer {
+    return [self viewWithTag:SHDDiscoverMediaThumbsTag];
 }
 
 @end

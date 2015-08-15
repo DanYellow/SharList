@@ -108,11 +108,12 @@
         
         [toDiscoverMediaArray addObject:[linearizeDiscoveredUserLikes objectAtIndex:randomIndex]];
     }
+
     
     // We remove duplicate
     NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:toDiscoverMediaArray];
     toDiscoverMediaArray = [[orderedSet array] mutableCopy];
-
+    
     return toDiscoverMediaArray;
 }
 
