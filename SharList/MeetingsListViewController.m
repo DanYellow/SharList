@@ -994,18 +994,57 @@
     
     SHDUserDiscovered *userDiscovered;
     
+    UILabel *mainLabel;
+    UIView *thumbsMediasView;
+    
     if (cell == nil) {
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                                  reuseIdentifier:CellIdentifier];
         
         cell.backgroundColor = [UIColor clearColor];
         cell.backgroundView = nil;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        userDiscovered = [[SHDUserDiscovered alloc] initWithDatas:currentUserMet];
+        
+        userDiscovered = [SHDUserDiscovered new];
+        userDiscovered.center = CGPointMake(cell.center.x, userDiscovered.center.y);
+        
+        mainLabel = userDiscovered.label;
+        [userDiscovered addSubview:mainLabel];
+        
+        thumbsMediasView = userDiscovered.mediaThumbsContainer;
+        [userDiscovered addSubview:thumbsMediasView];
+        
+        
+//        mainLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 220.0, 15.0)];
+//        
+//        mainLabel.tag = 1;
+//        [[omeUIView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+//        mainLabel.font = [UIFont systemFontOfSize:14.0];
+//
         [cell.contentView addSubview:userDiscovered];
+    } else {
+        mainLabel = (UILabel *) [cell viewWithTag:SHDDiscoverTimeLabelTag];
+        thumbsMediasView = (UIView *) [cell viewWithTag:SHDDiscoverMediaThumbsTag];
     }
     
     userDiscovered.userDiscovered = currentUserMet;
     
+    
+     NSDictionary *userMetLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[currentUserMet likes]] mutableCopy];
+   
+    
+//    [userDiscovered setMediaThumbs:userMetLikes];
+    
+    NSLog(@"%@, %@", [userDiscovered setMediaThumbs:userMetLikes], currentUserMet.fbId);
+    
+
+    mainLabel.text = currentUserMet.fbId;
+    
+    
+    // http://stackoverflow.com/questions/3490433/how-should-i-addsubview-to-cell-contentview
+    //https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TableView_iPhone/TableViewCells/TableViewCells.html
+
     
     
 //    [Discovery MR_findFirstByAttribute:@"fbId"

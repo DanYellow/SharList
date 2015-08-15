@@ -111,13 +111,10 @@
             return;
         }
     }
-    
-    NSLog(@"self.metUserId : %@", self.metUserId);
-    
+
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     
     userPreferences = [NSUserDefaults standardUserDefaults];
-    
     
     
     
@@ -493,7 +490,7 @@
                                       CGRectGetWidth(statsContainer.frame), CGRectGetHeight(statsContainer.frame));
     [metUserFBView addSubview:statsContainer];
     
-    UISegmentedControl *filterUserMetListSC = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"Alls", nil), NSLocalizedString(@"to discover", nil)]];
+    UISegmentedControl *filterUserMetListSC = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"to discover", nil), NSLocalizedString(@"Alls", nil)]];
     filterUserMetListSC.frame = CGRectMake(10, 5, screenWidth - 20, 30);
     [filterUserMetListSC addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
     filterUserMetListSC.selectedSegmentIndex = 0;
@@ -856,13 +853,13 @@
     NSArray *metUserLikesForKey = self.metUserLikesDictRef[sectionTitle];
 
     switch (segmentedControl.selectedSegmentIndex) {
-            // Everything
+             // to discover
         case 0:
-            sectionElements = metUserLikesForKey;
-            break;
-            // to discover
-        case 1:
             sectionElements = [metUserLikesForKey filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT imdbID IN %@", currentUserImdbID]];
+            break;
+            // Everything
+        case 1:
+            sectionElements = metUserLikesForKey;
             break;        
         default:
             break;

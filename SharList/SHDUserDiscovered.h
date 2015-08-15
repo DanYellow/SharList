@@ -18,12 +18,29 @@
 
 @interface SHDUserDiscovered : UIView
 
+typedef NS_ENUM(NSUInteger, Tag) {
+    SHDDiscoverTimeLabelTag = 1,
+    SHDDiscoverMediaThumbsTag = 2
+};
+
 @property (strong, atomic) Discovery *userDiscovered;
 @property (strong, atomic) Discovery *currentUser;
 
 @property (strong, atomic) NSDictionary *currentUserLikes;
 @property (strong, atomic) NSDictionary *discoveredUserLikes;
 
-- (id) initWithDatas:(Discovery*)userDiscovered;
+//@property (strong, atomic) UILabel *label;
+
+//- (id) initWithDatas:(Discovery*)userDiscovered;
+//- (void) setDatas:(Discovery *) userDiscovered;
+- (void) setStatistics:(CGFloat)percent;
+
+//- (void) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
+- (UIView*) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
+
+//- (void) setLabel:(UIColor *) borderColor;
+- (UILabel*) label;
+- (UIView*) mediaThumbs;
+- (UIView*) mediaThumbsContainer;
 
 @end
