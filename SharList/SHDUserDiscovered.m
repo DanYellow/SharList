@@ -49,7 +49,7 @@
     
     CGFloat thumbsMediasViewPercent = (158.0/372.0);
     
-    UIView *thumbsMediasContainerView = [[UIView alloc] initWithFrame:
+    UIScrollView *thumbsMediasContainerView = [[UIScrollView alloc] initWithFrame:
                                 CGRectMake(0,
                                            0,
                                            CGRectGetWidth(self.initFrame),
@@ -82,6 +82,9 @@
         
         [thumbsMediasContainerView addSubview:thumbMedia];
     }
+    
+    UIView *thumbsMediasContainerLastView = [thumbsMediasContainerView.subviews lastObject];
+    thumbsMediasContainerView.contentSize = CGSizeMake(CGRectGetMaxX(thumbsMediasContainerLastView.frame), CGRectGetHeight(thumbsMediasContainerLastView.frame));
     
 
     UIImageView *userDiscoveredFbProfileImg = [[UIImageView alloc] initWithFrame:self.initFrame];
