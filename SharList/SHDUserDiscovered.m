@@ -73,7 +73,7 @@
         }
         
         UIImageView *thumbMedia = [[UIImageView alloc] initWithFrame:CGRectMake(thumbMediaMarginWidth + (idx * thumbMediaWidth) + (idx * thumbMediaMarginWidth2), thumbMediaMarginWidth, thumbMediaWidth, thumbMediaWidth)];
-        thumbMedia.backgroundColor = [UIColor blackColor];
+        thumbMedia.backgroundColor = [UIColor clearColor];
         thumbMedia.tag = 100 + idx;
         
         thumbMedia.layer.cornerRadius = 5.0f;
@@ -242,7 +242,7 @@
     
     __block NSString *imgName;
     __block NSString *imgDistURL;
-    NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w92" : @"w185";
+    NSString *imgSize = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? @"w92" : @"w154";
     
     UIView *thumbsMediasContainerView = (UIView*)[self viewWithTag:SHDDiscoverMediaThumbsTag];
     

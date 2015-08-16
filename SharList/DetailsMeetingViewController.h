@@ -19,6 +19,8 @@
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"
 
+#import "ProfileHeaderView.h"
+
 //#import "MeetingsListViewController.h"
 
 #import "NSString+SentenceCapitalizedString.h"

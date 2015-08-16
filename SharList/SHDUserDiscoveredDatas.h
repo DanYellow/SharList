@@ -22,7 +22,7 @@
 @property (strong, atomic) NSDictionary *currentUserLikes;
 @property (strong, atomic) NSDictionary *discoveredUserLikes;
 
-
+@property (nonatomic, assign) BOOL isSameUser;
 
 - (CGFloat) percentToDiscover;
 - (NSMutableArray*) mediasIds;

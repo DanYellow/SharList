@@ -12,13 +12,14 @@
 
 - (instancetype) initWithDiscoveredUser:(Discovery *) userDiscovered
 {
-
     self = [super init];
     if ( !self ) return nil;
     
     self.currentUser = [Discovery MR_findFirstByAttribute:@"fbId"
                                                 withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
     self.userDiscovered = userDiscovered;
+    
+    self.isSameUser = ([self.currentUser.fbId isEqualToString:self.userDiscovered.fbId]) ? YES : NO;
     
     self.currentUserLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.currentUser likes]] mutableCopy];
     self.discoveredUserLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userDiscovered likes]] mutableCopy];
@@ -68,10 +69,7 @@
     // substract 1 cause NSNumberFormatter for percent waits a value between (0 and 1)
     notCommonLikesPercent = 1 - notCommonLikesPercent;
     
-    //    if (notCommonLikesPercent == 0) {
-    //        self.alpha = .7;
-    //    }
-    
+
     return notCommonLikesPercent;
 }
 
@@ -92,22 +90,32 @@
     NSMutableArray *toDiscoverMediaArray = [NSMutableArray arrayWithArray:linearizeDiscoveredUserLikes];
     [toDiscoverMediaArray removeObjectsInArray:linearizeCurrentUserLikes];
     
-    NSUInteger limitThumbs = 4;
     NSUInteger randomIndex = 0;
+    if (toDiscoverMediaArray.count < 4) {
+        NSUInteger limitThumbs = 4;
     
-    // We wants now datas in common with current user
-    // We wants to fill the array
-    [linearizeDiscoveredUserLikes removeObjectsInArray:toDiscoverMediaArray];
-    
-    for (NSUInteger idx = 0; idx < limitThumbs && idx < linearizeDiscoveredUserLikes.count; idx++) {
-        if (linearizeDiscoveredUserLikes.count >= 9) {
-            randomIndex = arc4random() % [linearizeDiscoveredUserLikes count];
-        } else {
-            randomIndex = idx;
-        }
+        // We wants now datas in common with current user
+        // We wants to fill the array, at max 4 datas
+        [linearizeDiscoveredUserLikes removeObjectsInArray:toDiscoverMediaArray];
         
-        [toDiscoverMediaArray addObject:[linearizeDiscoveredUserLikes objectAtIndex:randomIndex]];
+        // This loop is used only to fill the thumbs array if there is not enough entries
+        for (NSUInteger idx = 0; idx < limitThumbs && idx < linearizeDiscoveredUserLikes.count; idx++) {
+            if (linearizeDiscoveredUserLikes.count >= 9) {
+                randomIndex = arc4random() % [linearizeDiscoveredUserLikes count];
+            } else {
+                randomIndex = idx;
+            }
+            
+            [toDiscoverMediaArray addObject:[linearizeDiscoveredUserLikes objectAtIndex:randomIndex]];
+        }
+    } else {
+        // Every time, the datas are shuffle
+        for (NSUInteger idx = 0; idx < toDiscoverMediaArray.count; idx++) {
+            randomIndex = arc4random() % toDiscoverMediaArray.count;
+            [toDiscoverMediaArray exchangeObjectAtIndex:idx withObjectAtIndex:randomIndex];
+        }
     }
+
 
     
     // We remove duplicate
