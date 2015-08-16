@@ -389,7 +389,7 @@
     
     
     NSUInteger intWidthScreen = screenWidth;
-    NSUInteger heightImg = ceilf(intWidthScreen / GOLDENRATIO) + 50;
+    NSUInteger heightImg = CGRectGetHeight(metUserFBView.frame);
     
     NSString *fbMetUserString = self.metUserId;
     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,(unsigned long)intWidthScreen, (unsigned long)heightImg];
@@ -401,13 +401,13 @@
     [metUserFBView insertSubview:metUserFBImgView atIndex:0];
     
 
-//    UIVisualEffect *blurEffect;
-//    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-//    
-//    UIVisualEffectView *visualEffectView;
-//    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-//    visualEffectView.frame = metUserFBImgView.bounds;
-//    [metUserFBImgView addSubview:visualEffectView];
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = metUserFBImgView.bounds;
+    [metUserFBImgView addSubview:visualEffectView];
     
 //    // We don't display user picture for the following cases :
 //    // - Current user is anonymous AND user met is not his friend on facebook
@@ -426,18 +426,82 @@
 //        gradientLayer.colors = @[(id)[topGradientView CGColor], (id)[bottomGradientView CGColor]];
 //        [metUserFBImgView.layer insertSublayer:gradientLayer atIndex:0];
 //    }
-//    
+//
+}
+
+- (UIView*) displayProfileHeader
+{
+    UIView *profileHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight * .1919014085)];
+    profileHeaderView.backgroundColor = [UIColor clearColor];
+    
+    UIImageView *profileImageView = [[UIImageView alloc] initWithFrame:CGRectMake(12, 20, 62, 62)];
+    profileImageView.contentMode = UIViewContentModeScaleAspectFit;
+    profileImageView.backgroundColor = [UIColor clearColor];
+    profileImageView.clipsToBounds = YES;
+    profileImageView.layer.masksToBounds = YES;
+    
+    profileImageView.layer.borderWidth = 2.0f;
+    profileImageView.layer.borderColor = [UIColor whiteColor].CGColor;
+    profileImageView.layer.cornerRadius = 31;
+    
+    NSUInteger sizeImage = (int)CGRectGetHeight(profileImageView.frame) * 2;
+    
+    NSString *fbMetUserString = self.metUserId;
+    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,sizeImage, sizeImage];
+    
+    [profileImageView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
+    [profileHeaderView addSubview:profileImageView];
+    
+    UIView *labelsContainer = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(profileImageView.frame) + 10, CGRectGetMinY(profileImageView.frame) + 6, 0, 0)];
+    labelsContainer.backgroundColor = [UIColor clearColor];
+    [profileHeaderView addSubview:labelsContainer];
     
     
+    NSMutableAttributedString *statsAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"%@ to discover", nil), @"42 %"] attributes:nil];
+    NSRange percentRange = [[statsAttrString string] rangeOfString:@"42 %"];
+    [statsAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:21.0] range:NSMakeRange(percentRange.location, percentRange.length)];
+    
+    UILabel *statsLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    statsLabel.textColor = [UIColor whiteColor];
+    statsLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0f];
+    statsLabel.attributedText = statsAttrString;
+    [statsLabel sizeToFit];
+    [labelsContainer addSubview:statsLabel];
+    
+    
+    UIView *labelsContainerLastView = [labelsContainer.subviews lastObject];
+    
+    NSString *lastMediaAdded = @"The Man In the High Castle";
+    NSMutableAttributedString *lastEntryDiscoverAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"last element added %@", nil), lastMediaAdded] attributes:nil];
+    NSRange lastEntryRange = [[lastEntryDiscoverAttrString string] rangeOfString:lastMediaAdded];
+    [lastEntryDiscoverAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0] range:NSMakeRange(lastEntryRange.location, lastEntryRange.length)];
+    
+    UILabel *lastEntryDiscover = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(labelsContainerLastView.frame), 0, 0)];
+    lastEntryDiscover.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+    lastEntryDiscover.attributedText = lastEntryDiscoverAttrString;
+    lastEntryDiscover.textColor = [UIColor whiteColor];
+    lastEntryDiscover.numberOfLines = 2;
+    [lastEntryDiscover sizeToFit];
+    lastEntryDiscover.backgroundColor = [UIColor clearColor];
+    
+    NSUInteger maxWidthLastEntryDiscoverLabel = (int)screenWidth - ((int)CGRectGetMinX(labelsContainer.frame) - 40);
+    CGSize size = [lastEntryDiscover.attributedText boundingRectWithSize:CGSizeMake(maxWidthLastEntryDiscoverLabel, 60) options:NSStringDrawingUsesLineFragmentOrigin context:nil].size;
+    lastEntryDiscover.frame = CGRectMake(0, CGRectGetMinY(lastEntryDiscover.frame), size.width, size.height);
+    
+    [labelsContainer addSubview:lastEntryDiscover];
+    
+    return profileHeaderView;
 }
 
 - (void) displayMatchRateList
 {
     UITableView *userMetLikesTableView = (UITableView*)[self.view viewWithTag:1];
     
-    UIView *metUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, ceilf(screenWidth / GOLDENRATIO) + 50)];
-    metUserFBView.backgroundColor = [UIColor clearColor];
-    metUserFBView.tag = 4;
+    UIView *profileHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenWidth*0.6625)];
+    profileHeaderView.backgroundColor = [UIColor clearColor];
+    profileHeaderView.tag = 4;
+    
+    [profileHeaderView addSubview:[self displayProfileHeader]];
 
     NSNumberFormatter *percentageFormatter = [NSNumberFormatter new];
     [percentageFormatter setNumberStyle:NSNumberFormatterPercentStyle];
@@ -448,7 +512,7 @@
     commonTasteCountPercentLabel.text = [self calcUserMetPercentMatch];
     commonTasteCountPercentLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:52.0f];
 
-    [metUserFBView addSubview:commonTasteCountPercentLabel];
+//    [metUserFBView addSubview:commonTasteCountPercentLabel];
 
     
     CGRect tasteMetUserMessageLabelFrame = CGRectMake(CGRectGetMinX(commonTasteCountPercentLabel.frame),
@@ -462,38 +526,46 @@
     tasteMetUserMessageLabel.text = NSLocalizedString(@"not in common", nil);
     tasteMetUserMessageLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
 
-    [metUserFBView addSubview:tasteMetUserMessageLabel];
+//    [metUserFBView addSubview:tasteMetUserMessageLabel];
     
 //    userSelectionTableView.tableHeaderView = metUserFBView;
     
     
     UIView *statsContainer = [self displayMetUserStats];
-    statsContainer.frame = CGRectMake(0, metUserFBView.frame.size.height - (75 + 45),
+    statsContainer.frame = CGRectMake(0, profileHeaderView.frame.size.height - (75 + 45),
                                       CGRectGetWidth(statsContainer.frame), CGRectGetHeight(statsContainer.frame));
-    [metUserFBView addSubview:statsContainer];
+    [profileHeaderView addSubview:statsContainer];
     
-    UISegmentedControl *filterUserMetListSC = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"to discover", nil), NSLocalizedString(@"Alls", nil)]];
-    filterUserMetListSC.frame = CGRectMake(10, 5, screenWidth - 20, 30);
-    [filterUserMetListSC addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
-    filterUserMetListSC.selectedSegmentIndex = (self.likesDiscoverPercent == 0) ? 1 : 0;
-    filterUserMetListSC.tag = 9;
-    filterUserMetListSC.tintColor = [UIColor whiteColor];
-    filterUserMetListSC.backgroundColor = [UIColor clearColor];
+    UIView *filterDiscoverLikesContainer = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(profileHeaderView.frame) - 42.0, screenWidth, 42.0)];
+    filterDiscoverLikesContainer.backgroundColor = [UIColor colorWithRed:(17.0/255.0)
+                                                                   green:(27.0/255.0)
+                                                                    blue:(38.0/255.0) alpha:.55];
+    filterDiscoverLikesContainer.opaque = YES;
+    [profileHeaderView addSubview:filterDiscoverLikesContainer];
     
-    UIView *metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
+    UISegmentedControl *filterDiscoverLikes = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"to discover", nil), NSLocalizedString(@"Alls", nil)]];
+    filterDiscoverLikes.frame = CGRectMake(0, 0, screenWidth - 20, 30);
+    filterDiscoverLikes.center = CGPointMake(filterDiscoverLikesContainer.center.x, CGRectGetHeight(filterDiscoverLikesContainer.frame) / 2);
+    [filterDiscoverLikes addTarget:self action:@selector(filterTableview:) forControlEvents: UIControlEventValueChanged];
+    // If the user met has all his list in the current user we start at step two
+    filterDiscoverLikes.selectedSegmentIndex = (self.likesDiscoverPercent == 0) ? 1 : 0;
+    filterDiscoverLikes.tag = 9;
+    filterDiscoverLikes.tintColor = [UIColor whiteColor];
+    filterDiscoverLikes.backgroundColor = [UIColor clearColor];
+    [filterDiscoverLikesContainer addSubview:filterDiscoverLikes];
+    
+//    UIView *metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
 
-    filterUserMetListSC.frame = CGRectMake(10, CGRectGetMaxY(statsContainer.frame) + 10, screenWidth - 20, 30);
+//    filterUserMetListSC.frame = CGRectMake(10, CGRectGetMaxY(statsContainer.frame) + 10, screenWidth - 20, 30);
     
-    [metUserFBView addSubview:filterUserMetListSC];
-    
-    metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
+//    metUserFBViewLastView = [[userMetLikesTableView subviews] lastObject];
     
 //    userMetLikesTableView.backgroundView = emptyUserLikesBtn;
     
     
     [userMetLikesTableView setContentOffset:CGPointMake(0, 0)]; //metUserFBView.bounds.size.height
     
-    userMetLikesTableView.tableHeaderView = metUserFBView;
+    userMetLikesTableView.tableHeaderView = profileHeaderView;
 }
 
 /*
@@ -879,6 +951,7 @@
     CGFloat fontSize = 16.0f;
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 52.0)];
     headerView.opaque = YES;
+    headerView.alpha = 0;
     
     //    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.85f];
     //    headerView.backgroundColor = [UIColor clearColor];

@@ -99,6 +99,8 @@
 // DetailsMeetingViewController
 "in common" = "In common";
 "to discover" = "To discover";
+"%@ to discover" = "%@ likes to discover!";
+"last element added %@" = "Last element added : %@";
 
 // When user met a friend
 "Talk about this discover" = "Talk about this discover";

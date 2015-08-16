@@ -131,6 +131,8 @@
 "Talk about this discover" = "Parler de cette découverte";
 "Alls" = "Tout";
 "not in common but much discover" = "Rien en commun mais tant à découvrir";
+"%@ to discover" = "%@ de la liste à découvrir";
+"last element added %@" = "Dernier média ajouté : %@";
 
 
 // DetailsMediaViewController
