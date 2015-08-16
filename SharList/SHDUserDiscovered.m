@@ -14,6 +14,8 @@
 @property (strong, atomic) UILabel *percentStringLabel;
 @property (strong, atomic) UILabel *percentStringDescLabel;
 @property (strong, atomic) UILabel *facebookFriendNameLabel;
+@property (strong, atomic) UILabel *discoverNewLabel;
+@property (strong, atomic) UIImageView *favoriteIconIV;
 
 @end
 
@@ -91,7 +93,7 @@
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = userDiscoveredFbProfileImg.frame;
     overlayLayer.name = @"overlayLayerImgMedia";
-    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.75].CGColor;
+    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.85].CGColor;
     [userDiscoveredFbProfileImg.layer insertSublayer:overlayLayer atIndex:0];
     
     self.discoveryTypeIcon = [[UIImageView alloc] initWithFrame:CGRectMake(8, 8, 40, 40)];
@@ -105,10 +107,8 @@
     [self addSubview:infosView];
     
 
-   
     
     self.discoveryTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-    
     self.discoveryTimeLabel.textColor = [UIColor whiteColor];
     self.discoveryTimeLabel.text = @"new";
     [self.discoveryTimeLabel sizeToFit];
@@ -187,6 +187,25 @@
                                           CGRectGetMinY(self.percentStringLabel.frame),
                                           CGRectGetWidth(self.percentStringLabel.frame),
                                           CGRectGetHeight(self.percentStringLabel.frame));
+    
+    self.discoverNewLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.percentStringLabel.frame), 40, 40)];
+    self.discoverNewLabel.backgroundColor = [UIColor clearColor];
+    self.discoverNewLabel.layer.cornerRadius = 2.0f;
+    self.discoverNewLabel.clipsToBounds = YES;
+    self.discoverNewLabel.text = NSLocalizedString(@"new discovery", nil);
+    self.discoverNewLabel.textAlignment = NSTextAlignmentCenter;
+    self.discoverNewLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
+    [self.discoverNewLabel sizeToFit];
+    self.discoverNewLabel.hidden = YES;
+    self.discoverNewLabel.textColor = [UIColor whiteColor];
+    [self addSubview:self.discoverNewLabel];
+    
+    self.favoriteIconIV = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"meetingFavoriteSelected"]];
+    self.favoriteIconIV.frame = CGRectMake(CGRectGetMaxX(self.initFrame) - 30,
+                                           CGRectGetMinY(self.discoveryTypeIcon.frame),
+                                           17, 17);
+    self.favoriteIconIV.hidden = YES;
+    [self addSubview:self.favoriteIconIV];
 }
 
 - (void) setStatistics:(CGFloat)percent
@@ -199,19 +218,14 @@
     self.percentStringLabel.text = percentString;
     self.percentStringLabel.hidden = NO;
     [self.percentStringLabel sizeToFit];
-    
-    if (!self.userDiscovered.isSeen) {
-        UILabel *newDiscoverLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.percentStringLabel.frame), 40, 40)];
-        newDiscoverLabel.backgroundColor = [UIColor clearColor];
-        newDiscoverLabel.layer.cornerRadius = 2.0f;
-        newDiscoverLabel.clipsToBounds = YES;
-        newDiscoverLabel.text = NSLocalizedString(@"new discovery", nil);
-        newDiscoverLabel.textAlignment = NSTextAlignmentCenter;
-        newDiscoverLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0f];
-        [newDiscoverLabel sizeToFit];
-        newDiscoverLabel.textColor = [UIColor whiteColor];
-        [self addSubview:newDiscoverLabel];
-    }
+}
+
+- (void) newDiscoverManager:(BOOL)isSeen {
+    self.discoverNewLabel.hidden = isSeen;
+}
+
+- (void) favoriteDiscoverManager:(BOOL)isFavorite {
+    self.favoriteIconIV.hidden = !isFavorite;
 }
 
 - (void) setMediaThumbs:(NSMutableArray*) mediasArray

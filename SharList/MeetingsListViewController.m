@@ -41,6 +41,7 @@
     // Animate background of cell selected on press back button
     UITableView *tableView = (UITableView*)[self.view viewWithTag:1];
     NSIndexPath *tableSelection = [tableView indexPathForSelectedRow];
+    [[tableView cellForRowAtIndexPath:tableSelection] contentView].alpha = 1.0f;
     [tableView deselectRowAtIndexPath:tableSelection animated:YES];
     
     [[self navigationController] tabBarItem].badgeValue = nil;
@@ -212,8 +213,7 @@
     tableViewHeader.backgroundColor = [UIColor clearColor];
     
     UIView *segmentedControlView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
-//    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:1.0f];
-    segmentedControlView.backgroundColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.35f];
+    segmentedControlView.backgroundColor = [UIColor clearColor];
     segmentedControlView.opaque = NO;
     segmentedControlView.tag = 2;
     
@@ -1010,6 +1010,14 @@
     return [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex:section]] count];
 }
 
+//- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
+//    selectedCell.contentView.alpha = .75;
+//    
+//    return YES;
+//}
+
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
     ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
@@ -1098,11 +1106,14 @@
         pictoString = @"locationMeetingIcon";
     }
     
+    
     userDiscovered.discoveryTypeIcon.image = [[UIImage imageNamed:pictoString] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
     [userDiscovered setDiscoveryTime:currentUserMet.lastDiscovery];
     [userDiscovered setUserDiscoveredName:currentUserMet.fbId];
-    
     [userDiscovered setStatistics:[userDiscoveredDatas percentToDiscover]];
+    [userDiscovered newDiscoverManager:currentUserMet.isSeen];
+    [userDiscovered favoriteDiscoverManager:currentUserMet.isFavorite];
     
 //    NSLog(@"userDiscoveredDatas : %@", userDiscoveredDatas.mediasIds);
     
@@ -1301,6 +1312,8 @@
 - (void) loadCellsMediasThumbsForTableView:(UITableView *) tableView
 {
     for (UITableViewCell *aCell in [tableView visibleCells]) {
+        aCell.alpha = 1;
+        
         NSIndexPath *aCellIndexPath = [tableView indexPathForCell:aCell];
         
         Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: aCellIndexPath.section]] objectAtIndex:aCellIndexPath.row];
@@ -1347,6 +1360,7 @@
 {
     //use this for row u want to prevent to deSelect
     [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    NSLog(@"rer");
 }
 
 
@@ -1750,7 +1764,7 @@
         oldUserDiscovered.fbId = randomUserfbId;
         oldUserDiscovered.lastDiscovery = discoveryDate; //[NSDate date];
         oldUserDiscovered.numberOfDiscoveries = [NSNumber numberWithInt:[oldUserDiscovered.numberOfDiscoveries intValue] + 1];
-        oldUserDiscovered.isSeen = NO;
+        oldUserDiscovered.isSeen = YES;
         
         
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"geoLocEnabled"] == YES)

@@ -157,7 +157,7 @@
 
 // MediaCommentsViewController
 "yyyy/MM/dd at HH:mm" = "yyyy/MM/dd at HH:mm";
-"WSQuote" = "Hell is empty And \n the devils are here";
+"WSQuote" = "\"Hell is empty And \n the devils are here\"";
 "hell" = "enfer";
 "devils " = "devils";
 "comment friend %@" = "%@'s comment";

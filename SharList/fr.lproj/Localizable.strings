@@ -174,7 +174,7 @@
 
 // MediaCommentsViewController
 "yyyy/MM/dd at HH:mm" = "dd/MM/yyyy à HH:mm";
-"WSQuote" = "L'enfer est vide,\n tous les démons sont ici";
+"WSQuote" = "\"L'enfer est vide,\n tous les démons sont ici\"";
 "hell" = "enfer";
 "devils" = "démons";
 "comment friend %@" = "Le commentaire de %@";

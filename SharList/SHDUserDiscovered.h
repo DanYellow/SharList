@@ -44,9 +44,10 @@ typedef NS_ENUM(NSUInteger, Tag) {
 //- (UIView*) setMediaThumbs:(NSDictionary*)userDiscoveredMedias;
 
 - (UIView*) mediaThumbsContainer;
-- (UIImageView*) profileImage;
 - (void) setProfileImage:(NSString*)fbId;
 - (void) setDiscoveryTime:(NSDate*)discoveryTime;
 - (void) setUserDiscoveredName:(NSString*)fbid;
+- (void) newDiscoverManager:(BOOL)isSeen;
+- (void) favoriteDiscoverManager:(BOOL)isFavorite;
 
 @end
