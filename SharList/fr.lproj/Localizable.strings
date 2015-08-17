@@ -92,7 +92,7 @@
 "geolocatedMeetingExplained" = "Géolocalisées\nIdéales quand on est à l'étranger";
 "random" = "Aléatoires";
 "randomMeetingExplained" = "Aléatoires\nPour ceux qui n'ont pas peur de l'inconnu";
-"notefacebook" = "Note : Si une icône est remplacée par des initiales, vous avez découvert un(e) ami(e) facebook !\n Note 2 : Vous ne pouvez faire une découverte que toutes les heures.";
+"notefacebook" = "Note : Vous ne pouvez faire une découverte que toutes les heures.";
 
 
 "warning message for update login issue" = "Vous venez de mettre à jour l'application ? Merci ! \n\n Mais pour profiter des nouveautés veuillez vous déconnecter dans les paramètres puis vous reconnecter";

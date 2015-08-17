@@ -49,7 +49,7 @@ UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDeleg
 
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) UITableViewController *searchResultsController;
-@property (strong, nonatomic) Discovery *userTaste;
+@property (strong, nonatomic) Discovery *user;
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 

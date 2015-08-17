@@ -15,6 +15,7 @@
 
 @property (nonatomic) CGFloat screenWidth;
 @property (nonatomic) CGFloat screenHeight;
+@property (nonatomic) NSUInteger bottomOffset;
 
 
 @end
@@ -32,6 +33,8 @@
     self.screenHeight = screenRect.size.height;
     
     CGFloat percent = (userDatas.isSameUser) ? (348.0/1136.0) : (423.0/1136.0);
+    
+    self.bottomOffset = (userDatas.isSameUser) ? 0 : 5;
     self.frame = CGRectMake(0, 0, self.screenWidth, self.screenHeight * percent); //455
     
     self.backgroundColor = [UIColor clearColor];
@@ -51,7 +54,15 @@
     [manager.requestSerializer setValue:@"hello" forHTTPHeaderField:@"X-Shound"];
     
     NSString *urlAPI = [[settingsDict valueForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user"];
-    NSDictionary *apiParams = @{@"fbiduser" : self.userDatas.fbid};
+    
+    
+    
+    NSString *currentUserId = self.userDatas.fbid;
+    if (self.userDatas.fbid == nil) {
+        currentUserId = [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"];
+    }
+    
+    NSDictionary *apiParams = @{@"fbiduser" : currentUserId};
     
     [manager GET:urlAPI
       parameters:apiParams
@@ -68,7 +79,7 @@
     
     
     UIView *statsContainer = [self displayButtons];
-    statsContainer.frame = CGRectMake(0, CGRectGetMaxY(self.profileHeaderView.frame) - 5,
+    statsContainer.frame = CGRectMake(0, CGRectGetMaxY(self.profileHeaderView.frame) - self.bottomOffset,
                                       CGRectGetWidth(statsContainer.frame), CGRectGetHeight(statsContainer.frame));
     [self addSubview:statsContainer];
     
@@ -134,7 +145,16 @@
     UILabel *statsLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     statsLabel.textColor = [UIColor whiteColor];
     statsLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0f];
-    statsLabel.attributedText = statsAttrString;
+    if (!self.userDatas.isSameUser) {
+        statsLabel.attributedText = statsAttrString;
+    } else {
+        statsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:21.0];
+//        statsLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"];
+        
+        statsLabel.text = self.userDatas.lastMediaAdded;
+
+    }
+    
     [statsLabel sizeToFit];
     [labelsContainer addSubview:statsLabel];
     
@@ -221,12 +241,19 @@
 {
     float widthViews = self.screenWidth * 0.5;
     
+    
+    
     UIButton *followersLabelContainerBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.frame.size.width - widthViews,
-                                                                                      CGRectGetMaxY(self.profileHeaderView.frame) - 5,
+                                                                                      CGRectGetMaxY(self.profileHeaderView.frame) - self.bottomOffset,
                                                                                       widthViews, 64)];
     followersLabelContainerBtn.backgroundColor = [UIColor colorWithRed:(17.0/255.0)
                                                                  green:(27.0/255.0)
                                                                   blue:(28.0/255.0) alpha:.55];
+    followersLabelContainerBtn.alpha = 0;
+    [UIView animateWithDuration:0.25 animations:^{
+        followersLabelContainerBtn.alpha = 1;
+    }];
+    
     
     UILabel *followersTitle = [[UILabel alloc] initWithFrame:CGRectZero];
     followersTitle.textColor = [UIColor whiteColor];

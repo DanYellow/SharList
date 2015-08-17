@@ -124,6 +124,15 @@
 //        NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {}];
     
+    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:nil]
+     startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+         if (!error) {
+             NSString *userPatronym = [[[result[@"first_name"] stringByAppendingString:@" "] stringByAppendingString:[result[@"last_name"] substringToIndex:1]] stringByAppendingString:@"."];
+             
+             [[NSUserDefaults standardUserDefaults] setObject:userPatronym forKey:@"userPatronym"];
+         }
+     }];
+    
     // We save the user's friends using application (and accepts this feature) for later
     if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
         [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?fields=first_name,last_name" parameters:nil]
@@ -145,7 +154,20 @@
         [self readyToStart];
     }
     
-
+    // We create a local model
+    Discovery *isNewUser = [Discovery MR_findFirstByAttribute:@"fbId"
+                                                    withValue:[FBSDKAccessToken currentAccessToken].userID];
+    
+    // This is the first time for user
+    if (isNewUser == nil) {
+        Discovery *userTaste = [Discovery MR_createEntity];
+        
+        userTaste.likes = nil;
+        userTaste.lastDiscovery = [NSDate new];
+        userTaste.fbId = [FBSDKAccessToken currentAccessToken].userID;
+        userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    }
 }
 
 - (void) readyToStart

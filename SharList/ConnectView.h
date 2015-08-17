@@ -13,6 +13,8 @@
 
 #import "AFNetworking.h"
 
+#import "Discovery.h"
+
 
 @interface ConnectView : UIView <FBSDKLoginButtonDelegate>
 {

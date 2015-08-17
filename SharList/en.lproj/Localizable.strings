@@ -76,7 +76,7 @@
 "geolocatedMeetingExplained" = "Geolocated\nPerfect when you're in foreign country";
 "random" = "Random";
 "randomMeetingExplained" = "Random\nThe unknown does not scare you";
-"notefacebook" = "Note: If an icon is replaced by initials, you discovered a facebook friend!\n Note 2: You can make a discovery only every hours.";
+"notefacebook" = "Note: You can make a discovery only every hours.";
 "%@ time remaining before next" = "%@ \nbefore discovering new things";
 
 "warning message for update login issue" = "If you just update the app, please log out into the settings and reconnect";

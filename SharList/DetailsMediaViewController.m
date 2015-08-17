@@ -1772,6 +1772,8 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 
 - (void) addMediaToUserList
 {
+    NSLog(@"[NSDate date] : %@", [NSDate date]);
+//    [self.mediaDatas setObject:[NSDate date] forKey:@"AddedAt"];
     // If the value of the key is nil so we create an new NSArray that contains the first elmt of the category
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] == [NSNull null]) {
         NSArray *firstEntryToCategory = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];

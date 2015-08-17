@@ -135,6 +135,7 @@
     userTasteListTableView.delegate = self;
     userTasteListTableView.backgroundColor = [UIColor clearColor];
     userTasteListTableView.tag = 4;
+    userTasteListTableView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     userTasteListTableView.separatorColor = [UIColor colorWithRed:(174.0/255.0f) green:(174.0/255.0f) blue:(174.0/255.0f) alpha:1.0f];
     userTasteListTableView.contentInset = UIEdgeInsetsMake(0, 0, self.tabBarController.tabBar.frame.size.height + 15, 0); //self.bottomLayoutGuide.length
     userTasteListTableView.hidden = YES;
@@ -451,7 +452,12 @@
         [statContainer insertSubview:statCount atIndex:10];
     }
     
-    userTasteListTableView.tableHeaderView = currentUserFBView;
+    SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:self.user];
+    ProfileHeaderView *profileView = [[ProfileHeaderView alloc] initWithDatas:userDiscoveredDatas];
+    
+    
+    userTasteListTableView.tableHeaderView = profileView;
+    [self.view insertSubview:profileView.bgImageProfile belowSubview:userTasteListTableView]; // Background image with user fb profile
     [userTasteListTableView setContentOffset:CGPointMake(0, 0)];
 
     [self displayUserFollowers];
@@ -658,7 +664,7 @@
 - (void) userConnectionForFbID:(NSNumber*)userfbID
 {
     // We retrieve user taste if it exists in local
-    self.userTaste = [Discovery MR_findFirstByAttribute:@"fbId"
+    self.user = [Discovery MR_findFirstByAttribute:@"fbId"
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                        [NSNull null], @"book",
@@ -668,17 +674,18 @@
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
     userTasteListTableView.hidden = YES;
     
-    if (self.userTaste) {
-        // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
-        if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste likes]] != nil) {
-            userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userTaste likes]] mutableCopy];
-        }
-        [self displayUserTasteList];
-//        NSLog(@"fetch local datas");
-    } else {
-        [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
-//        NSLog(@"fetch server datas");
-    }
+    [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
+//    if (self.user) {
+//        // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
+//        if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.user likes]] != nil) {
+//            userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.user likes]] mutableCopy];
+//        }
+//        [self displayUserTasteList];
+////        NSLog(@"fetch local datas");
+//    } else {
+//        [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
+////        NSLog(@"fetch server datas");
+//    }
     
     
     // Update location from server
@@ -1426,24 +1433,12 @@
 //            NSLog(@"no user datas");
         }
 
-        Discovery *isNewUser = [Discovery MR_findFirstByAttribute:@"fbId"
+        Discovery *userModel = [Discovery MR_findFirstByAttribute:@"fbId"
                                                         withValue:[userPreferences objectForKey:@"currentUserfbID"]];
-    
-        // This is the first time for user
-        if (isNewUser == nil) {
-            Discovery *userTaste = [Discovery MR_createEntity];
-            
-            NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
-            userTaste.likes = arrayData;
-            userTaste.lastDiscovery = [NSDate new];
-//            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-//            f.numberStyle = NSNumberFormatterDecimalStyle;
-//            NSNumber *currentFbIduser = [f numberFromString:[userPreferences objectForKey:@"currentUserfbID"]];
-            userTaste.fbId = [userPreferences objectForKey:@"currentUserfbID"];
-            userTaste.isFavorite = NO; //User cannot favorite himself (by the way it's impossible technically)
-            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-            [self displayUserTasteList];
-        }
+        NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
+        userModel.likes = arrayData;
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        [self displayUserTasteList];
     }
 }
 

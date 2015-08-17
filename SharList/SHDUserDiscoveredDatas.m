@@ -125,6 +125,25 @@
     return toDiscoverMediaArray;
 }
 
+// Returns the last media added by the user, if there is not (old user), put the first of the list
+- (NSString*) lastMediaAdded
+{
+    NSMutableArray *userMediasList = [NSMutableArray new];
+    for (NSString *keyName in [self.discoveredUserLikes filterKeysForNullObj]) {
+        [userMediasList addObjectsFromArray:[self.discoveredUserLikes objectForKey:keyName]];
+    }
+    
+    
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"AddedAt" ascending:YES];
+    NSArray *sortedCategory = [userMediasList sortedArrayUsingDescriptors:@[descriptor]];
+    
+    
+    
+    NSLog(@"userMediasList : %@", [[sortedCategory firstObject] objectForKey:@"name"]);
+    
+    return self.userDiscovered.fbId;
+}
+
 - (NSString*) fbid
 {
     return self.userDiscovered.fbId;

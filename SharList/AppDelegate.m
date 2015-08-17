@@ -249,13 +249,22 @@
         [navControllerMeetingsList tabBarItem].badgeValue = [NSString stringWithFormat: @"%ld", (long)[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     }
     
+    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:nil]
+     startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+         if (!error) {
+             NSString *userPatronym = [[[result[@"first_name"] stringByAppendingString:@" "] stringByAppendingString:[result[@"last_name"] substringToIndex:1]] stringByAppendingString:@"."];
+             
+             [[NSUserDefaults standardUserDefaults] setObject:userPatronym forKey:@"userPatronym"];
+         }
+     }];
+    
     // Every time user relauch app we check his friends
     if ([[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
         [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?fields=first_name,last_name" parameters:nil]
          startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
              if (!error) {
                  NSArray* facebookFriends;
-                 
+                 NSLog(@"result : %@", result);
                  if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
                      facebookFriends = @[];
                  } else {
