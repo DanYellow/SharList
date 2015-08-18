@@ -1,1 +1,1 @@
-../../../Parse/Parse/PFPurchase.h
+../../../Parse/Parse.framework/Headers/PFPurchase.h

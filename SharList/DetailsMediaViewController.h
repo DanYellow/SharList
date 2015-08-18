@@ -34,7 +34,7 @@
 #import "UIImage+ColorImage.h"
 #import "NSString+URLEncodeValue.m"
 
-//#import "PFPushManager.h"
+#import "PFPushManager.h"
 
 // Custom view controller
 #import "MediaCommentsViewController.h"
@@ -64,7 +64,7 @@ extern NSString * const BSCLIENTID;
     
     UIActivityIndicatorView *loadingIndicator;
     
-//    PFPushManager *pfPushManager;
+    PFPushManager *pfPushManager;
 }
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;

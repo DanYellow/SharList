@@ -1,1 +1,1 @@
-../../../Parse/Parse/PFSubclassing.h
+../../../Parse/Parse.framework/Headers/PFSubclassing.h

@@ -1,1 +1,1 @@
-../../../Parse/Parse/PFRelation.h
+../../../Parse/Parse.framework/Headers/PFRelation.h

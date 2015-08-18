@@ -264,6 +264,7 @@
          startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
              if (!error) {
                  NSArray* facebookFriends;
+                 NSLog(@"result : %@", result);
                  if ([[result valueForKeyPath:@"data"] isEqual:[NSNull null]]) {
                      facebookFriends = @[];
                  } else {

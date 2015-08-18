@@ -1,1 +1,1 @@
-../../../Parse/Parse/PFAnalytics.h
+../../../Parse/Parse.framework/Headers/PFAnalytics.h

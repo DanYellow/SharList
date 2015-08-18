@@ -20,12 +20,12 @@ PODS:
   - AFNetworking/UIKit (2.5.4):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-  - Bolts (1.2.0):
-    - Bolts/AppLinks (= 1.2.0)
-    - Bolts/Tasks (= 1.2.0)
-  - Bolts/AppLinks (1.2.0):
+  - Bolts (1.1.5):
+    - Bolts/AppLinks (= 1.1.5)
+    - Bolts/Tasks (= 1.1.5)
+  - Bolts/AppLinks (1.1.5):
     - Bolts/Tasks
-  - Bolts/Tasks (1.2.0)
+  - Bolts/Tasks (1.1.5)
   - CRGradientNavigationBar (0.3.2)
   - FBSDKCoreKit (4.5.1):
     - Bolts (~> 1.1)
@@ -44,8 +44,8 @@ PODS:
   - JLTMDbClient (0.2.0):
     - AFNetworking (~> 2.0)
   - MagicalRecord (2.3.0)
-  - Parse (1.8.0):
-    - Bolts/Tasks (>= 1.2.0)
+  - Parse (1.6.0):
+    - Bolts (~> 1.1.3)
   - SWTableViewCell (0.3.6)
   - Underscore.m (0.2.1)
   - XCDYouTubeKit (2.1.0)
@@ -59,14 +59,14 @@ DEPENDENCIES:
   - JDStatusBarNotification
   - JLTMDbClient (= 0.2)
   - MagicalRecord (~> 2.2)
-  - Parse (~> 1.6)
+  - Parse (= 1.6)
   - SWTableViewCell (= 0.3.6)
   - Underscore.m (~> 0.2)
   - XCDYouTubeKit (= 2.1)
 
 SPEC CHECKSUMS:
   AFNetworking: 05edc0ac4c4c8cf57bcf4b84be5b0744b6d8e71e
-  Bolts: d176cb1e0012175589e389a9db49b85e27787576
+  Bolts: aac24961496d504aa56fc267cde95162a71bac39
   CRGradientNavigationBar: ee6fa0398e3d64af32a792b63336e094bb55402e
   FBSDKCoreKit: f335eaf6865e1e1597dee1debfb533045500da47
   FBSDKLoginKit: 225cc9a388a92916ee3f3bb14422017b6e44b65b
@@ -74,7 +74,7 @@ SPEC CHECKSUMS:
   JDStatusBarNotification: a36d09ccbb047217572b074a61e7ca10dddc5f0a
   JLTMDbClient: 8671de81ed599acc66a8cb05f48e058ba361f651
   MagicalRecord: 89eb7d7ead39fb37f01c3d010665ee94d17f8dba
-  Parse: 6ea05adb378fbfd6f8726ab67ef74330d96fc903
+  Parse: 049e2ce21644e2ffa61534dc6ce51b38e3e03846
   SWTableViewCell: db853264181dbb5ae936b561a730bc7cc8d9d4ab
   Underscore.m: b86ca364d60509a39eb9c7886443c063b793aaba
   XCDYouTubeKit: 19b6493f494d2a7726cf3acbebdc4b521d2ca934

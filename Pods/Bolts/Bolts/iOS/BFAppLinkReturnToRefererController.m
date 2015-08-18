@@ -16,7 +16,8 @@
 
 static const CFTimeInterval kBFViewAnimationDuration = 0.25f;
 
-@implementation BFAppLinkReturnToRefererController {
+@implementation BFAppLinkReturnToRefererController
+{
     UINavigationController *_navigationController;
     BFAppLinkReturnToRefererView *_view;
 }
@@ -122,7 +123,7 @@ static const CFTimeInterval kBFViewAnimationDuration = 0.25f;
 #pragma mark - Private
 
 - (void)statusBarFrameWillChange:(NSNotification *)notification {
-    NSValue *rectValue = [[notification userInfo] valueForKey:UIApplicationStatusBarFrameUserInfoKey];
+    NSValue* rectValue = [[notification userInfo] valueForKey:UIApplicationStatusBarFrameUserInfoKey];
     CGRect newFrame;
     [rectValue getValue:&newFrame];
 
@@ -137,7 +138,7 @@ static const CFTimeInterval kBFViewAnimationDuration = 0.25f;
 }
 
 - (void)statusBarFrameDidChange:(NSNotification *)notification {
-    NSValue *rectValue = [[notification userInfo] valueForKey:UIApplicationStatusBarFrameUserInfoKey];
+    NSValue* rectValue = [[notification userInfo] valueForKey:UIApplicationStatusBarFrameUserInfoKey];
     CGRect newFrame;
     [rectValue getValue:&newFrame];
 
@@ -168,7 +169,8 @@ static const CFTimeInterval kBFViewAnimationDuration = 0.25f;
     [self updateNavigationBarY:CGRectGetHeight(_view.bounds)];
 }
 
-- (void)updateNavigationBarY:(CGFloat)y {
+- (void)updateNavigationBarY:(CGFloat)y
+{
     UINavigationBar *navigationBar = _navigationController.navigationBar;
     CGRect navigationBarFrame = navigationBar.frame;
     CGFloat oldContainerViewY = CGRectGetMaxY(navigationBarFrame);
@@ -226,5 +228,6 @@ static const CFTimeInterval kBFViewAnimationDuration = 0.25f;
         }
     }
 }
+
 
 @end

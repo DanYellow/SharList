@@ -1216,9 +1216,7 @@
         label.textColor = [UIColor blackColor];
         headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.37];
     } else {
-        
         NSString *sectionTitleRaw = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:section];
-        NSLog(@"sectionTitleRaw : %@", sectionTitleRaw);
         NSString *title = [NSLocalizedString(sectionTitleRaw, nil) uppercaseString];
         label.text = title;
 //        headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:.9f];
