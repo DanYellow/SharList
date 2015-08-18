@@ -18,6 +18,7 @@
 		1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC31A0FE20900CD725A /* Images.xcassets */; };
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EB7771A994BEE000EA307 /* NSString+MD5.m */; };
+		1A1095BD1B83E1ED00983A1E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AB9775D1A2BC69200F41313 /* Localizable.strings */; };
 		1A1251CC1ADDBEC500EA0506 /* refreshBarItem.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */; };
 		1A1515E31B077A590083CCAD /* MediaCommentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1515E21B077A590083CCAD /* MediaCommentsViewController.m */; };
 		1A1515E71B07D1FE0083CCAD /* newMessageBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1515E41B07D1FE0083CCAD /* newMessageBtn.png */; };
@@ -65,7 +66,6 @@
 		1A655F4D1B3496D900E98A9F /* UserTasteToShoundEntityV2.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 1A655F4C1B3496D900E98A9F /* UserTasteToShoundEntityV2.xcmappingmodel */; };
 		1A655F501B34986300E98A9F /* Discovery.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A655F4F1B34986300E98A9F /* Discovery.m */; };
 		1A66AA121B31DF3C001D92D7 /* NSDate+CupertinoYankee.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */; };
-		1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6744B01AAB4BB000FA610F /* PFPushManager.m */; };
 		1A68D5F31B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		1A91FDFE1B2341F600E8B5D7 /* FacebookSDKStrings.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE001B2341F600E8B5D7 /* FacebookSDKStrings.strings */; };
@@ -89,7 +89,6 @@
 		1AA186751AA2FF3000606F80 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA186741AA2FF3000606F80 /* SystemConfiguration.framework */; };
 		1AA186771AA2FF4000606F80 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA186761AA2FF4000606F80 /* libz.dylib */; };
 		1AA186791AA2FF4600606F80 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA186781AA2FF4600606F80 /* libsqlite3.dylib */; };
-		1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AB9775D1A2BC69200F41313 /* Localizable.strings */; };
 		1ACDC9041A23D3AA0032B857 /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* Settings.plist */; };
 		1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */; };
 		1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */; };
@@ -146,6 +145,7 @@
 		1A076DD21A0FE20900CD725A /* SharListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharListTests.m; sourceTree = "<group>"; };
 		1A0EB7761A994BEE000EA307 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
 		1A0EB7771A994BEE000EA307 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
+		1A1095BB1B83D1C600983A1E /* libPods-SharList-Parse.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-SharList-Parse.a"; path = "Pods/build/Debug-iphoneos/libPods-SharList-Parse.a"; sourceTree = "<group>"; };
 		1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = refreshBarItem.png; sourceTree = "<group>"; };
 		1A1515E11B077A590083CCAD /* MediaCommentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCommentsViewController.h; sourceTree = "<group>"; };
 		1A1515E21B077A590083CCAD /* MediaCommentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaCommentsViewController.m; sourceTree = "<group>"; };
@@ -213,8 +213,6 @@
 		1A655F4F1B34986300E98A9F /* Discovery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Discovery.m; sourceTree = "<group>"; };
 		1A66AA101B31DF3C001D92D7 /* NSDate+CupertinoYankee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+CupertinoYankee.h"; sourceTree = "<group>"; };
 		1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+CupertinoYankee.m"; sourceTree = "<group>"; };
-		1A6744AF1AAB4BB000FA610F /* PFPushManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFPushManager.h; sourceTree = "<group>"; };
-		1A6744B01AAB4BB000FA610F /* PFPushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFPushManager.m; sourceTree = "<group>"; };
 		1A68D5F11B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHDUserDiscoveredDatas.h; sourceTree = "<group>"; };
 		1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHDUserDiscoveredDatas.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
@@ -348,7 +346,6 @@
 			children = (
 				1A076DBA1A0FE20900CD725A /* AppDelegate.h */,
 				1A076DBB1A0FE20900CD725A /* AppDelegate.m */,
-				1A6744AE1AAB4B6F00FA610F /* NSObjects */,
 				1A0EFAAD1A32736700FEA01D /* Categories */,
 				1ACDC9081A23E6780032B857 /* MeetingsListViewController */,
 				1AE9E7A81A2683770072EF91 /* DetailsMeetingViewController */,
@@ -545,15 +542,6 @@
 			name = CoreData;
 			sourceTree = "<group>";
 		};
-		1A6744AE1AAB4B6F00FA610F /* NSObjects */ = {
-			isa = PBXGroup;
-			children = (
-				1A6744AF1AAB4BB000FA610F /* PFPushManager.h */,
-				1A6744B01AAB4BB000FA610F /* PFPushManager.m */,
-			);
-			name = NSObjects;
-			sourceTree = "<group>";
-		};
 		1A68D5F01B7F7B8700FA2EB9 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -610,6 +598,7 @@
 		58C2B6CA8DD147B7BE564C25 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A1095BB1B83D1C600983A1E /* libPods-SharList-Parse.a */,
 				1AA186781AA2FF4600606F80 /* libsqlite3.dylib */,
 				1AA186761AA2FF4000606F80 /* libz.dylib */,
 				1AA186741AA2FF3000606F80 /* SystemConfiguration.framework */,
@@ -740,8 +729,8 @@
 				1A16F6571A458482000BC4AB /* list-tab-icon2@2x.png in Resources */,
 				1AFE13751A32EEAB006F2366 /* meetingFavoriteSelected@3x.png in Resources */,
 				1A63C5FD1B56EC4C00344E32 /* addToList@3x.png in Resources */,
-				1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */,
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
+				1A1095BD1B83E1ED00983A1E /* Localizable.strings in Resources */,
 				1A63C5FF1B56EC4C00344E32 /* delToList@2x.png in Resources */,
 				1A63C5FE1B56EC4C00344E32 /* delToList.png in Resources */,
 				1AFE13761A32EEAB006F2366 /* meetingFavoriteUnselected@3x.png in Resources */,
@@ -851,7 +840,6 @@
 				1A076DBC1A0FE20900CD725A /* AppDelegate.m in Sources */,
 				1AEB8BEC1A3636FA004A94C1 /* UILabel+HeightToFit.m in Sources */,
 				1A024AB81A3A52DC0098F015 /* AboutViewController.m in Sources */,
-				1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */,
 				1A5682A81AE19809007D6D93 /* UIImage+ColorImage.m in Sources */,
 				1A1515E31B077A590083CCAD /* MediaCommentsViewController.m in Sources */,
 				1A5F82DA1B7E75FE006459BA /* SHDUserDiscovered.m in Sources */,
@@ -1015,6 +1003,7 @@
 				GCC_PREFIX_HEADER = SharList/PrefixHeader.pch;
 				INFOPLIST_FILE = SharList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-Wl,-U,_JSContextGetGlobalObject",
@@ -1032,7 +1021,6 @@
 					"-Wl,-U,_JSValueIsString",
 					"-Wl,-U,_JSValueMakeString",
 					"-Wl,-U,_JSValueToStringCopy",
-					"-l\"Parse\"",
 					"-l\"Pods-SharList-AFNetworking\"",
 					"-l\"Pods-SharList-Bolts\"",
 					"-l\"Pods-SharList-CRGradientNavigationBar\"",
@@ -1042,10 +1030,7 @@
 					"-l\"Pods-SharList-JDStatusBarNotification\"",
 					"-l\"Pods-SharList-JLTMDbClient\"",
 					"-l\"Pods-SharList-MagicalRecord\"",
-					"-l\"Pods-SharList-PNChart\"",
-					"-l\"Pods-SharList-Parse\"",
 					"-l\"Pods-SharList-SWTableViewCell\"",
-					"-l\"Pods-SharList-UICountingLabel\"",
 					"-l\"Pods-SharList-XCDYouTubeKit\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
@@ -1117,6 +1102,7 @@
 				GCC_PREFIX_HEADER = SharList/PrefixHeader.pch;
 				INFOPLIST_FILE = SharList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1135,7 +1121,6 @@
 					"-Wl,-U,_JSValueIsString",
 					"-Wl,-U,_JSValueMakeString",
 					"-Wl,-U,_JSValueToStringCopy",
-					"-l\"Parse\"",
 					"-l\"Pods-SharList-AFNetworking\"",
 					"-l\"Pods-SharList-Bolts\"",
 					"-l\"Pods-SharList-CRGradientNavigationBar\"",
@@ -1145,10 +1130,7 @@
 					"-l\"Pods-SharList-JDStatusBarNotification\"",
 					"-l\"Pods-SharList-JLTMDbClient\"",
 					"-l\"Pods-SharList-MagicalRecord\"",
-					"-l\"Pods-SharList-PNChart\"",
-					"-l\"Pods-SharList-Parse\"",
 					"-l\"Pods-SharList-SWTableViewCell\"",
-					"-l\"Pods-SharList-UICountingLabel\"",
 					"-l\"Pods-SharList-XCDYouTubeKit\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",

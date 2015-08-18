@@ -989,8 +989,13 @@
     
     [self manageEmptyViewForDatas:meetings andAtableView:tableView];
     
+    
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
+    // 2015-08-18 07:31:35 +0000
+    NSString *formatString = [NSDateFormatter dateFormatFromTemplate:@"yyyy-MM-dd hh:mm:ss.sss" options:0
+                                                              locale:[NSLocale currentLocale]];
+    NSLog(@"%@, %@", [meetings valueForKey:@"lastDiscovery"], formatString);
+    dateFormatter.dateFormat = formatString;//NSLocalizedString(@"yyyy/MM/dd", nil);
     [dateFormatter setLocale:[NSLocale currentLocale]];
     
     NSString *dateString = [self.listOfDistinctsDay objectAtIndex:section];
