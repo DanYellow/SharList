@@ -238,10 +238,7 @@
     NSNumber *countMeetings = [NSNumber numberWithInt:[[Discovery MR_numberOfEntities] intValue] - 1]; // We remove current user
     self.tableFooter.text = [NSString sentenceCapitalizedString:[NSString stringWithFormat:NSLocalizedString(@"%@ meetings", nil), countMeetings]];
     
-    CGSize tabBarSize = [[[self tabBarController] tabBar] bounds].size;
-    
-    
-    UITableView *discoveriesListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - tabBarSize.height) style:UITableViewStylePlain];
+    UITableView *discoveriesListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
     discoveriesListTableView.dataSource = self;
     discoveriesListTableView.delegate = self;
     discoveriesListTableView.backgroundColor = [UIColor clearColor];
@@ -1096,7 +1093,7 @@
 - (void) scrollViewDidEndDragging:(UITableView *)tableView willDecelerate:(BOOL)decelerate
 {
     if (!decelerate) {
-        [self loadCellsMediasThumbsForTableView:tableView];
+//        [self loadCellsMediasThumbsForTableView:tableView];
     }
 }
 
@@ -1137,7 +1134,7 @@
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView
 {
-    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.25];
+//    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.25];
 }
 
 - (void)scrollViewWillBeginDecelerating:(UITableView *)tableView
@@ -1157,7 +1154,6 @@
 {
     //use this for row u want to prevent to deSelect
     [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-    NSLog(@"rer");
 }
 
 

@@ -12,6 +12,10 @@
 
 #import "NSDictionary+FilterKeysForNullObj.h"
 
+#import "Underscore.h"
+#define _ Underscore
+
+
 @interface SHDUserDiscoveredDatas : NSObject
 
 - (instancetype) initWithDiscoveredUser:(Discovery *) userDiscovered;

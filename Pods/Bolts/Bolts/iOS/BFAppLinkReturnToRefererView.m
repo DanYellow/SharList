@@ -31,7 +31,8 @@ static const CGFloat BFCloseButtonHeight = 12.0;
 
 @end
 
-@implementation BFAppLinkReturnToRefererView {
+@implementation BFAppLinkReturnToRefererView
+{
     BOOL _explicitlyHidden;
 }
 
@@ -59,7 +60,7 @@ static const CGFloat BFCloseButtonHeight = 12.0;
     _includeStatusBarInSize = BFIncludeStatusBarInSizeIOS7AndLater;
 
     // iOS 7 system blue color
-    self.backgroundColor = [UIColor colorWithRed:0.0 green:122.0 / 255.0 blue:1.0 alpha:1.0];
+    self.backgroundColor = [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0];
     self.textColor = [UIColor whiteColor];
     self.clipsToBounds = YES;
 
@@ -148,7 +149,7 @@ static const CGFloat BFCloseButtonHeight = 12.0;
         case BFIncludeStatusBarInSizeAlways:
             include = NO;
             break;
-        case BFIncludeStatusBarInSizeIOS7AndLater: {
+        case BFIncludeStatusBarInSizeIOS7AndLater:{
             float systemVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
             include = (systemVersion >= 7.0);
             break;
@@ -186,7 +187,8 @@ static const CGFloat BFCloseButtonHeight = 12.0;
     [self invalidateIntrinsicContentSize];
 }
 
-- (void)setClosed:(BOOL)closed {
+- (void)setClosed:(BOOL)closed
+{
     if (_closed != closed) {
         _closed = closed;
         [self updateHidden];
@@ -258,7 +260,7 @@ static const CGFloat BFCloseButtonHeight = 12.0;
     [_delegate returnToRefererViewDidTapInsideCloseButton:self];
 }
 
-- (void)onTapInside:(UIGestureRecognizer *)sender {
+- (void)onTapInside:(UIGestureRecognizer*)sender {
     [_delegate returnToRefererViewDidTapInsideLink:self link:_refererAppLink];
 }
 

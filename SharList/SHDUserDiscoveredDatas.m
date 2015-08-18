@@ -133,16 +133,26 @@
         [userMediasList addObjectsFromArray:[self.discoveredUserLikes objectForKey:keyName]];
     }
     
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     
-    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"AddedAt" ascending:YES];
-    NSArray *sortedCategory = [userMediasList sortedArrayUsingDescriptors:@[descriptor]];
+
+    USArrayWrapper *tweets = _.array(userMediasList).map(^NSDate*(NSDictionary *media) {
+        return  [dateFormatter dateFromString:[media valueForKey:@"addedAt"]];
+    });
+    
+    NSLog(@"userMediasList : %@, %@", tweets, userMediasList);
+    
+//    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"AddedAt" ascending:YES];
+//    NSArray *sortedCategory = [userMediasList sortedArrayUsingDescriptors:@[descriptor]];
+    
+//    NSLog(@"userMediasList : %@", [[sortedCategory firstObject] objectForKey:@"name"]);
     
     
-    
-    NSLog(@"userMediasList : %@", [[sortedCategory firstObject] objectForKey:@"name"]);
     
     return self.userDiscovered.fbId;
 }
+
 
 - (NSString*) fbid
 {

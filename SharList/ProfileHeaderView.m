@@ -160,6 +160,7 @@
     
     NSString *lastMediaAdded = @"Breaking Bad of Sillicon Valley";
     NSMutableAttributedString *lastEntryDiscoverAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"last element added %@", nil), lastMediaAdded] attributes:nil];
+    [self.userDatas lastMediaAdded];
     NSRange lastEntryRange = [[lastEntryDiscoverAttrString string] rangeOfString:lastMediaAdded];
     [lastEntryDiscoverAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0] range:NSMakeRange(lastEntryRange.location, lastEntryRange.length)];
     

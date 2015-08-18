@@ -110,7 +110,7 @@ static NSDate * ExpirationDate(NSURL *streamURL)
 				return nil;
 			}
 			NSString *signature = [playerScript unscrambleSignature:scrambledSignature];
-			if (playerScript && scrambledSignature && !signature)
+			if (playerScript && !signature)
 				continue;
 			
 			NSString *urlString = stream[@"url"];

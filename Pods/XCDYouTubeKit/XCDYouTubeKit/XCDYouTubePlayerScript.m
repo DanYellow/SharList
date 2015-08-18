@@ -33,18 +33,12 @@
 	
 	_context = JSGlobalContextCreate(NULL);
 	
-	for (NSString *propertyPath in @[ @"window.navigator", @"document", @"navigator" ])
+	for (NSString *propertyName in @[ @"window", @"document" ])
 	{
-		JSObjectRef object = JSContextGetGlobalObject(_context);
-		for (NSString *propertyName in [propertyPath componentsSeparatedByString:@"."])
-		{
-			JSStringRef propertyNameRef = JSStringCreateWithCFString((__bridge CFStringRef)propertyName);
-			JSObjectRef defaultObject = JSObjectMake(_context, NULL, NULL);
-			JSObjectSetProperty(_context, object, propertyNameRef, defaultObject, 0, NULL);
-			JSStringRelease(propertyNameRef);
-			
-			object = defaultObject;
-		}
+		JSStringRef propertyNameRef = JSStringCreateWithCFString((__bridge CFStringRef)propertyName);
+		JSValueRef dummyValueRef = JSValueMakeString(_context, propertyNameRef); // can be anything but undefined or null
+		JSObjectSetProperty(_context, JSContextGetGlobalObject(_context), propertyNameRef, dummyValueRef, 0, NULL);
+		JSStringRelease(propertyNameRef);
 	}
 	
 	JSStringRef scriptRef = JSStringCreateWithCFString((__bridge CFStringRef)script);

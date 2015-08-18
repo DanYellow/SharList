@@ -41,11 +41,6 @@
 #import "DetailsMeetingViewController.h"
 #import "SettingsViewController.h"
 
-// Vendors
-#import "PNChart.h"
-
-
-
 @protocol UpdateUserTasteListDelegate;
 
 extern NSString * const BSCLIENTID;
