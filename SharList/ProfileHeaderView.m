@@ -149,10 +149,7 @@
         statsLabel.attributedText = statsAttrString;
     } else {
         statsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:21.0];
-//        statsLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"];
-        
-        statsLabel.text = self.userDatas.lastMediaAdded;
-
+        statsLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"];
     }
     
     [statsLabel sizeToFit];
