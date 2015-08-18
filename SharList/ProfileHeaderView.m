@@ -149,9 +149,9 @@
         statsLabel.attributedText = statsAttrString;
     } else {
         statsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:21.0];
-//        statsLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"];
-        
-        statsLabel.text = self.userDatas.lastMediaAdded;
+        statsLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"];
+        NSLog(@"statsLabel.text : %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"]);
+//        statsLabel.text = self.userDatas.lastMediaAdded;
 
     }
     
@@ -161,9 +161,9 @@
     // Last entry
     UIView *labelsContainerLastView = [labelsContainer.subviews lastObject];
     
-    NSString *lastMediaAdded = @"Breaking Bad of Sillicon Valley";
+    NSString *lastMediaAdded = self.userDatas.lastMediaAdded;
     NSMutableAttributedString *lastEntryDiscoverAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"last element added %@", nil), lastMediaAdded] attributes:nil];
-    [self.userDatas lastMediaAdded];
+
     NSRange lastEntryRange = [[lastEntryDiscoverAttrString string] rangeOfString:lastMediaAdded];
     [lastEntryDiscoverAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0] range:NSMakeRange(lastEntryRange.location, lastEntryRange.length)];
     
