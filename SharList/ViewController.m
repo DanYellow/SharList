@@ -130,7 +130,7 @@
     
 
     // Uitableview of user selection (what user likes)
-    UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.tabBarController.tabBar.bounds)) style:UITableViewStylePlain];
+    UITableView *userTasteListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
     userTasteListTableView.dataSource = self;
     userTasteListTableView.delegate = self;
     userTasteListTableView.backgroundColor = [UIColor clearColor];
@@ -674,18 +674,18 @@
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
     userTasteListTableView.hidden = YES;
     
-    [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
-//    if (self.user) {
-//        // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
-//        if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.user likes]] != nil) {
-//            userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.user likes]] mutableCopy];
-//        }
-//        [self displayUserTasteList];
-////        NSLog(@"fetch local datas");
-//    } else {
-//        [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
-////        NSLog(@"fetch server datas");
-//    }
+//    [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
+    if (self.user.likes != nil) {
+        // then put it into the NSDictionary of "taste" only if the dict is not nil (really nil)
+        if ([NSKeyedUnarchiver unarchiveObjectWithData:[self.user likes]] != nil) {
+            userTasteDict = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.user likes]] mutableCopy];
+        }
+        [self displayUserTasteList];
+//        NSLog(@"fetch local datas");
+    } else {
+        [self getServerDatasForFbID:[userPreferences objectForKey:@"currentUserfbID"] isUpdate:NO];
+//        NSLog(@"fetch server datas");
+    }
     
     
     // Update location from server
@@ -908,6 +908,8 @@
         title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
         imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
         
+        
+        
         if (cell == nil) {
             CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
             
@@ -921,17 +923,16 @@
             
             cell.delegate = self;
             // For "Classic mode" we want a cell's background more opaque
-            cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.35];; //[UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
+            cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.35]; //[UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
             
             // We hide this part to get easily datas
             cell.textLabel.frame = cellFrame;
             
             cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
             cell.textLabel.textColor = [UIColor whiteColor];
-            cell.alpha = .3f;
+//            cell.backgroundView.alpha = .3f;
             
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.indentationLevel = 1;
         }
         
         cell.model = [rowsOfSection objectAtIndex:indexPath.row];
@@ -942,11 +943,9 @@
             cell.detailTextLabel.text = @"";
         }
         
-        if (imdbID != nil) {
-            [self getImageCellForData:[rowsOfSection objectAtIndex:indexPath.row] aCell:cell];
-        }
-    
-
+        if ([cell.model valueForKey:@"imdbID"] != nil)
+            [self getImageCellForData:cell.model aCell:cell];
+        
         cell.textLabel.text = title;
 
     }
@@ -1089,6 +1088,10 @@
     NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
     [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
     
+//    [UIView animateWithDuration:0.25 animations:^{
+//        imgBackground.alpha = .1;
+//    }];
+    
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:@{@"id": model[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
 
         if(!error){
@@ -1108,12 +1111,6 @@
              [NSURL URLWithString:imgDistURL]
                           placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
             [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
-            
-            [UIView transitionWithView:cell
-                              duration:.15f
-                               options:UIViewAnimationOptionTransitionCrossDissolve
-                            animations:^{cell.alpha = 1;}
-                            completion:NULL];
         }
     }];
 }
@@ -1703,11 +1700,48 @@
 
 #pragma mark - Delegate methods
 
-// When the user starts to scroll we hide the keyboard
-- (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
+
+- (void) scrollViewWillBeginDragging:(UITableView *)tableView
 {
-    [self.searchController.searchBar resignFirstResponder];
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        // When the user starts to scroll we hide the keyboard
+        [self.searchController.searchBar resignFirstResponder];
+    }
 }
+
+//- (void)scrollViewDidEndDecelerating:(UITableView *)tableView
+//{
+//    [self loadImagesForTableView:tableView];
+//}
+//
+//- (void) scrollViewDidEndDragging:(UITableView *)tableView willDecelerate:(BOOL)decelerate
+//{
+//    if (!decelerate) {
+//        [self loadImagesForTableView:tableView];
+//    }
+//}
+//
+//- (void) loadImagesForTableView:(UITableView *)tableView
+//{
+//    for (ShareListMediaTableViewCell *aCell in [tableView visibleCells]) {
+//        
+//        if ([aCell.model valueForKey:@"imdbID"] == nil)
+//            continue;
+//        [self getImageCellForData:aCell.model aCell:aCell];
+//    }
+//}
+//
+//- (void) unloadCellsMediasThumbsForTableView:(UITableView *) tableView
+//{
+//    for (UITableViewCell *aCell in [tableView visibleCells]) {
+//        aCell.backgroundView.alpha = .25;
+//    }
+//}
+//
+//- (void)scrollViewWillBeginDecelerating:(UITableView *)tableView
+//{
+//    [self unloadCellsMediasThumbsForTableView:tableView];
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

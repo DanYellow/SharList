@@ -592,11 +592,9 @@
                           placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
             [imgBackground.layer insertSublayer:gradientLayer atIndex:0];
             
-            [UIView transitionWithView:cell
-                              duration:.15f
-                               options:UIViewAnimationOptionTransitionCrossDissolve
-                            animations:^{cell.alpha = 1;}
-                            completion:NULL];
+            [UIView animateWithDuration:0.25 animations:^{
+                cell.backgroundView.alpha = 1;
+            }];
         }
     }];
 }
@@ -724,6 +722,8 @@
     title = [rowsOfSection objectAtIndex:indexPath.row][@"name"];
     imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
     
+    
+    
     if (cell == nil) {
         cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         cell.backgroundColor = [UIColor clearColor];
@@ -740,9 +740,9 @@
         UIView *bgColorView = [UIView new];
         [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
         [cell setSelectedBackgroundView:bgColorView];
-        
-        cell.alpha = .3f;
     }
+    
+    cell.model = [rowsOfSection objectAtIndex:indexPath.row];
     
     if (![currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
         if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
@@ -752,11 +752,8 @@
         }
     }
     
-    cell.model = [rowsOfSection objectAtIndex:indexPath.row];
-    
-    if (imdbID != nil) {
+    if ([cell.model valueForKey:@"imdbID"] != nil)
         [self getImageCellForData:cell.model aCell:cell];
-    }
     
     if ([[rowsOfSection objectAtIndex:indexPath.row][@"type"] isEqualToString:@"serie"]) {
         [self getLastNextReleaseSerieEpisodeForCell:cell];
@@ -829,6 +826,46 @@
         }
     }];
 }
+
+//- (void)scrollViewDidEndDecelerating:(UITableView *)tableView
+//{
+//    [self loadImagesForTableView:tableView];
+//}
+//
+//- (void) scrollViewDidEndDragging:(UITableView *)tableView willDecelerate:(BOOL)decelerate
+//{
+//    if (!decelerate) {
+//        [self loadImagesForTableView:tableView];
+//    }
+//}
+//
+//- (void) loadImagesForTableView:(UITableView *)tableView
+//{
+//    for (ShareListMediaTableViewCell *aCell in [tableView visibleCells]) {
+//        
+//        if ([aCell.model valueForKey:@"imdbID"] == nil)
+//            continue;
+//        [self getImageCellForData:aCell.model aCell:aCell];
+//    }
+//    
+//}
+//
+//- (void) unloadCellsMediasThumbsForTableView:(UITableView *) tableView
+//{
+//    for (UITableViewCell *aCell in [tableView visibleCells]) {
+//        aCell.backgroundView.alpha = .25;
+//    }
+//}
+//
+//- (void)scrollViewWillBeginDragging:(UITableView *)tableView
+//{
+//    [self unloadCellsMediasThumbsForTableView:tableView];
+//}
+//
+//- (void)scrollViewWillBeginDecelerating:(UITableView *)tableView
+//{
+//    [self unloadCellsMediasThumbsForTableView:tableView];
+//}
 
 
 - (void) displayLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell date:(NSDate*)aDate andSeasonForEpisode:(NSString*)aEpisodeString
