@@ -126,7 +126,7 @@
 }
 
 // Returns the last media added by the user, if there is not (old user), put the first of the list
-- (NSString*) lastMediaAdded
+- (NSMutableDictionary*) lastMediaAdded
 {
     NSMutableArray *userMediasList = [NSMutableArray new];
     for (NSString *keyName in [self.discoveredUserLikes filterKeysForNullObj]) {
@@ -136,21 +136,29 @@
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     
+    NSArray *userMediasListWithDate = _.array(userMediasList)
+        .reject(^BOOL (NSDictionary *media) {
+            return ![media valueForKey:@"addedAt"];
+        })
+        .map(^NSDictionary*(NSDictionary *media) {
+            if ([[media valueForKey:@"addedAt"] isKindOfClass:[NSDate class]]) {
+                return media;
+            }
+            [media setValue:[dateFormatter dateFromString:[media valueForKey:@"addedAt"]] forKey:@"addedAt"];
+            return media;
+    }).unwrap;
+    
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"addedAt" ascending:NO];
+    NSArray *userMediasListOrdered = [userMediasListWithDate sortedArrayUsingDescriptors:@[descriptor]];
 
-    USArrayWrapper *tweets = _.array(userMediasList).map(^NSDate*(NSDictionary *media) {
-        return  [dateFormatter dateFromString:[media valueForKey:@"addedAt"]];
-    });
+    NSMutableDictionary *lastElAdded = [NSMutableDictionary new];
+    if ([userMediasListOrdered.firstObject valueForKey:@"name"] == nil) {
+        lastElAdded = userMediasList.firstObject;
+    } else {
+        lastElAdded = userMediasListOrdered.firstObject;
+    }
     
-    NSLog(@"userMediasList : %@, %@", tweets, userMediasList);
-    
-//    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"AddedAt" ascending:YES];
-//    NSArray *sortedCategory = [userMediasList sortedArrayUsingDescriptors:@[descriptor]];
-    
-//    NSLog(@"userMediasList : %@", [[sortedCategory firstObject] objectForKey:@"name"]);
-    
-    
-    
-    return self.userDiscovered.fbId;
+    return lastElAdded;
 }
 
 

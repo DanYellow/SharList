@@ -31,7 +31,7 @@
 - (CGFloat) percentToDiscover;
 - (NSMutableArray*) mediasIds;
 - (NSString*) fbid;
-- (NSString*) lastMediaAdded;
+- (NSMutableDictionary*) lastMediaAdded;
 
 
 @end

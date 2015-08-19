@@ -454,6 +454,7 @@
     
     SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:self.user];
     ProfileHeaderView *profileView = [[ProfileHeaderView alloc] initWithDatas:userDiscoveredDatas];
+    profileView.delegate = self;
     
     
     userTasteListTableView.tableHeaderView = profileView;
@@ -536,23 +537,6 @@
 - (void) isFinished {
 //    NSLog(@"isFinished");
 }
-
-- (void) scrollToSectionWithNumber:(UIButton*)sender {
-    
-    NSInteger aSectionNumber = sender.tag;
-    
-    // If the category selected (movie, serie, what ever) doesn't exist nothing happen
-    if ([userTasteDict[[[userTasteDict filterKeysForNullObj] objectAtIndex:aSectionNumber]] count] == 0) {
-        return;
-    }
-    
-    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
-    [userTasteListTableView scrollToRowAtIndexPath:indexPath
-                                  atScrollPosition:UITableViewScrollPositionTop
-                                          animated:YES];
-}
-
 
 
 - (void) fetchUserDatas
@@ -1708,6 +1692,39 @@
         [self.searchController.searchBar resignFirstResponder];
     }
 }
+
+- (void) scrollToSectionWithNumber:(UIButton*)sender
+{
+    NSInteger aSectionNumber = sender.tag;
+    // If the category selected (movie, serie, what ever) doesn't exist nothing happen
+    if ([userTasteDict[[[userTasteDict filterKeysForNullObj] objectAtIndex:aSectionNumber]] count] == 0) {
+        return;
+    }
+    
+    UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
+    [userTasteListTableView scrollToRowAtIndexPath:indexPath
+                                  atScrollPosition:UITableViewScrollPositionTop
+                                          animated:YES];
+}
+
+- (void) openLastElementPage:(UIButton*)sender
+{
+    NSObject *object = sender.media;
+    
+    DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
+    detailsMediaViewController.mediaDatas = object;
+    detailsMediaViewController.delegate = self;
+    detailsMediaViewController.title = sender.media[@"name"];
+    //    // Trick for weird issue about present view and pushview
+    detailsMediaViewController.tabBarController.tabBar.hidden = YES;
+    
+    [self disappearsSearchBar];
+    [self.searchController setActive:NO];
+    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
+}
+
+
 
 //- (void)scrollViewDidEndDecelerating:(UITableView *)tableView
 //{

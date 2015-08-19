@@ -27,7 +27,7 @@
 #import "NSString+URLEncodeValue.m"
 
 @interface ViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
-UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate, CLLocationManagerDelegate, UISplitViewControllerDelegate>
+UISearchControllerDelegate, UISearchResultsUpdating, UINavigationControllerDelegate, UISearchBarDelegate, NSURLConnectionDelegate, SWTableViewCellDelegate, UpdateUserTasteListDelegate, CLLocationManagerDelegate, UISplitViewControllerDelegate, ProfileHeaderViewDelegate>
 {    
     CGFloat screenWidth;
     CGFloat screenHeight;

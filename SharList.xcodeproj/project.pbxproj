@@ -18,6 +18,7 @@
 		1A076DC41A0FE20900CD725A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A076DC31A0FE20900CD725A /* Images.xcassets */; };
 		1A076DD31A0FE20900CD725A /* SharListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A076DD21A0FE20900CD725A /* SharListTests.m */; };
 		1A0EB7781A994BEE000EA307 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EB7771A994BEE000EA307 /* NSString+MD5.m */; };
+		1A1095C01B83E67600983A1E /* Localizable.strings in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1AB9775D1A2BC69200F41313 /* Localizable.strings */; };
 		1A1251CC1ADDBEC500EA0506 /* refreshBarItem.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1251CB1ADDBEC500EA0506 /* refreshBarItem.png */; };
 		1A1515E31B077A590083CCAD /* MediaCommentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1515E21B077A590083CCAD /* MediaCommentsViewController.m */; };
 		1A1515E71B07D1FE0083CCAD /* newMessageBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1515E41B07D1FE0083CCAD /* newMessageBtn.png */; };
@@ -68,6 +69,7 @@
 		1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6744B01AAB4BB000FA610F /* PFPushManager.m */; };
 		1A68D5F31B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
+		1A8045BC1B85086100523835 /* UIButton+Media.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8045BB1B85086100523835 /* UIButton+Media.m */; };
 		1A91FDFE1B2341F600E8B5D7 /* FacebookSDKStrings.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE001B2341F600E8B5D7 /* FacebookSDKStrings.strings */; };
 		1A91FE071B2358A400E8B5D7 /* FacebookSDKStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE061B2358A400E8B5D7 /* FacebookSDKStrings.bundle */; };
 		1A95470D1A29E3A0002AC281 /* lens-icon-message.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A95470A1A29E3A0002AC281 /* lens-icon-message.png */; };
@@ -122,6 +124,19 @@
 			remoteInfo = SharList;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1A1095BF1B83E65400983A1E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				1A1095C01B83E67600983A1E /* Localizable.strings in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1A0014EB1A157C0F003430E9 /* CCARadialGradientLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCARadialGradientLayer.h; sourceTree = "<group>"; };
@@ -219,6 +234,8 @@
 		1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHDUserDiscoveredDatas.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
+		1A8045BA1B85086100523835 /* UIButton+Media.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Media.h"; sourceTree = "<group>"; };
+		1A8045BB1B85086100523835 /* UIButton+Media.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Media.m"; sourceTree = "<group>"; };
 		1A91FDFF1B2341F600E8B5D7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/FacebookSDKStrings.strings; sourceTree = "<group>"; };
 		1A91FE011B2341FB00E8B5D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/FacebookSDKStrings.strings; sourceTree = "<group>"; };
 		1A91FE061B2358A400E8B5D7 /* FacebookSDKStrings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FacebookSDKStrings.bundle; sourceTree = "<group>"; };
@@ -476,6 +493,8 @@
 				1A1BE6101B06869C00B813CD /* NSString+URLEncodeValue.m */,
 				1AF4745A1A4DD424003ED4AF /* UIButton+TrailerID.h */,
 				1AF4745B1A4DD424003ED4AF /* UIButton+TrailerID.m */,
+				1A8045BA1B85086100523835 /* UIButton+Media.h */,
+				1A8045BB1B85086100523835 /* UIButton+Media.m */,
 				1A9666441A312302006969A7 /* NSString+SentenceCapitalizedString.h */,
 				1A9666451A312302006969A7 /* NSString+SentenceCapitalizedString.m */,
 				1AEB8BEA1A3636FA004A94C1 /* UILabel+HeightToFit.h */,
@@ -648,6 +667,7 @@
 				1A076DB01A0FE20900CD725A /* Frameworks */,
 				1A076DB11A0FE20900CD725A /* Resources */,
 				A8623CDFE21A40F2A2C07E54 /* Copy Pods Resources */,
+				1A1095BF1B83E65400983A1E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -832,6 +852,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A8045BC1B85086100523835 /* UIButton+Media.m in Sources */,
 				1A655F501B34986300E98A9F /* Discovery.m in Sources */,
 				1A1BE6111B06869C00B813CD /* NSString+URLEncodeValue.m in Sources */,
 				1AF4745C1A4DD424003ED4AF /* UIButton+TrailerID.m in Sources */,
@@ -1032,7 +1053,6 @@
 					"-Wl,-U,_JSValueIsString",
 					"-Wl,-U,_JSValueMakeString",
 					"-Wl,-U,_JSValueToStringCopy",
-					"-l\"Parse\"",
 					"-l\"Pods-SharList-AFNetworking\"",
 					"-l\"Pods-SharList-Bolts\"",
 					"-l\"Pods-SharList-CRGradientNavigationBar\"",
@@ -1135,7 +1155,6 @@
 					"-Wl,-U,_JSValueIsString",
 					"-Wl,-U,_JSValueMakeString",
 					"-Wl,-U,_JSValueToStringCopy",
-					"-l\"Parse\"",
 					"-l\"Pods-SharList-AFNetworking\"",
 					"-l\"Pods-SharList-Bolts\"",
 					"-l\"Pods-SharList-CRGradientNavigationBar\"",

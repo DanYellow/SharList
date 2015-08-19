@@ -236,6 +236,7 @@
     
     SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:self.userDiscovered];
     ProfileHeaderView *profile = [[ProfileHeaderView alloc] initWithDatas:userDiscoveredDatas];
+    profile.delegate = self;
     
     
     UIView *filterDiscoverLikesContainer = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(profile.frame) - 42.0, screenWidth, 42.0)];
@@ -320,23 +321,6 @@
     }
 }
 
-- (void) scrollToSectionWithNumber:(UIButton*)sender {
-    
-    NSInteger aSectionNumber = sender.tag;
-
-    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
-    
-    // If the category selected (movie, serie, what ever) doesn't exist nothing happen
-    if ([self.metUserLikesDict[[[self.metUserLikesDict filterKeysForNullObj] objectAtIndex:aSectionNumber]] count] == 0) {
-        return;
-    }
-    
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
-
-    [userSelectionTableView scrollToRowAtIndexPath:indexPath
-                                  atScrollPosition:UITableViewScrollPositionTop
-                                          animated:YES];
-}
 
 - (BOOL) connected
 {
@@ -1096,6 +1080,36 @@
 
 - (void) dismissModal {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - delegate
+- (void) scrollToSectionWithNumber:(UIButton*)sender {
+    
+    NSInteger aSectionNumber = sender.tag;
+    
+    UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
+    
+    // If the category selected (movie, serie, what ever) doesn't exist nothing happen
+    if ([self.metUserLikesDict[[[self.metUserLikesDict filterKeysForNullObj] objectAtIndex:aSectionNumber]] count] == 0) {
+        return;
+    }
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:aSectionNumber];
+    
+    [userSelectionTableView scrollToRowAtIndexPath:indexPath
+                                  atScrollPosition:UITableViewScrollPositionTop
+                                          animated:YES];
+}
+
+- (void) openLastElementPage:(UIButton*)sender
+{
+    NSObject *object = sender.media;
+    
+    DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
+    detailsMediaViewController.mediaDatas = object;
+    detailsMediaViewController.title = sender.media[@"name"];
+    
+    [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 
 #pragma mark - facebook sharing

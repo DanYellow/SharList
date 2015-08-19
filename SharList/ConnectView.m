@@ -124,7 +124,7 @@
 //        NSLog(@"responseObject: %@", responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {}];
     
-    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:nil]
+    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=first_name,last_name" parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {
              NSString *userPatronym = [[[result[@"first_name"] stringByAppendingString:@" "] stringByAppendingString:[result[@"last_name"] substringToIndex:1]] stringByAppendingString:@"."];

@@ -33,7 +33,7 @@ typedef NS_ENUM (NSInteger, FollowingStatus) {
     Follow = 1
 };
 
-@interface DetailsMeetingViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, FBSDKSharingDelegate>
+@interface DetailsMeetingViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, NSURLConnectionDelegate, FBSDKSharingDelegate, ProfileHeaderViewDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;

@@ -164,12 +164,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     self.userTaste = [Discovery MR_findFirstByAttribute:@"fbId"
                                               withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-    userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                     [NSNull null], @"book",
-                     [NSNull null], @"movie",
-                     [NSNull null], @"serie",
-                     nil];
-    
+    userTasteDict = [NSMutableDictionary new];
     
     // This statement is hre for prevent empty user list
     // Because it corrupt the NSMutableDictionary
@@ -1777,7 +1772,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     gmtDateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     
     [self.mediaDatas setObject:[gmtDateFormatter stringFromDate: [NSDate date]] forKey:@"addedAt"];
-    
+    NSLog(@"self.mediaDatas : %@", self.mediaDatas);
     // If the value of the key is nil so we create an new NSArray that contains the first elmt of the category
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] == [NSNull null]) {
         NSArray *firstEntryToCategory = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];
@@ -1864,8 +1859,8 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 
 - (void) synchronizeUserListWithServer
 {
-#warning update before submit
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathLocal"] stringByAppendingString:@"user.php/user/list"];
+#warning update before submit apiPathV2 apiPathLocal
+    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
     
     NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"list": [self updateTasteForServer]};
 

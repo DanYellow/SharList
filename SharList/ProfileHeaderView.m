@@ -36,6 +36,7 @@
     
     self.bottomOffset = (userDatas.isSameUser) ? 0 : 5;
     self.frame = CGRectMake(0, 0, self.screenWidth, self.screenHeight * percent); //455
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     self.backgroundColor = [UIColor clearColor];
     self.userDatas = userDatas;
@@ -129,6 +130,7 @@
     
     // Labels
     UIView *labelsContainer = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(profileImageView.frame) + 10, CGRectGetMinY(profileImageView.frame) + 3, 0, 0)];
+    labelsContainer.userInteractionEnabled = YES;
     labelsContainer.backgroundColor = [UIColor clearColor];
     [self.profileHeaderView addSubview:labelsContainer];
     
@@ -150,9 +152,6 @@
     } else {
         statsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:21.0];
         statsLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"];
-        NSLog(@"statsLabel.text : %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"]);
-//        statsLabel.text = self.userDatas.lastMediaAdded;
-
     }
     
     [statsLabel sizeToFit];
@@ -161,10 +160,11 @@
     // Last entry
     UIView *labelsContainerLastView = [labelsContainer.subviews lastObject];
     
-    NSString *lastMediaAdded = self.userDatas.lastMediaAdded;
-    NSMutableAttributedString *lastEntryDiscoverAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"last element added %@", nil), lastMediaAdded] attributes:nil];
+    NSMutableDictionary *lastMediaAdded = self.userDatas.lastMediaAdded; // @"Breaking Bad of Silicon Valley";
+    NSString *lastMediaAddedName = lastMediaAdded[@"name"];
+    NSMutableAttributedString *lastEntryDiscoverAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"last element added %@", nil), lastMediaAddedName] attributes:nil];
 
-    NSRange lastEntryRange = [[lastEntryDiscoverAttrString string] rangeOfString:lastMediaAdded];
+    NSRange lastEntryRange = [[lastEntryDiscoverAttrString string] rangeOfString:lastMediaAddedName];
     [lastEntryDiscoverAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0] range:NSMakeRange(lastEntryRange.location, lastEntryRange.length)];
     
     
@@ -180,9 +180,36 @@
     [lastEntryDiscover sizeToFit];
     lastEntryDiscover.backgroundColor = [UIColor clearColor];
     
-    lastEntryDiscover.frame = CGRectMake(0, CGRectGetMinY(lastEntryDiscover.frame), maxWidthLastEntryDiscoverLabel, CGRectGetHeight(lastEntryDiscover.frame));
+    UIButton *lastEntryDiscoverBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    lastEntryDiscoverBtn.frame = CGRectMake(0, CGRectGetMaxY(labelsContainerLastView.frame),
+                                            maxWidthLastEntryDiscoverLabel, 0);
+    [lastEntryDiscoverBtn setAttributedTitle:lastEntryDiscoverAttrString forState:UIControlStateNormal];
+    lastEntryDiscoverBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0f];
+    lastEntryDiscoverBtn.titleLabel.textColor = [UIColor whiteColor];
+    lastEntryDiscoverBtn.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    lastEntryDiscoverBtn.titleLabel.numberOfLines = 0;
+    lastEntryDiscoverBtn.titleLabel.textAlignment = NSTextAlignmentLeft;
+    [lastEntryDiscoverBtn.titleLabel sizeToFit];
+    [lastEntryDiscoverBtn sizeToFit];
+    lastEntryDiscoverBtn.userInteractionEnabled = YES;
+    lastEntryDiscoverBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+    lastEntryDiscoverBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+    lastEntryDiscoverBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+//    [lastEntryDiscoverBtn setBackgroundImage:[UIImage imageWithColor:[UIColor redColor]] forState:UIControlStateNormal];
+    [lastEntryDiscoverBtn addTarget:self action:@selector(openLastElementPage:) forControlEvents:UIControlEventTouchUpInside];
+
+    [lastEntryDiscoverBtn addTarget:self action:@selector(highlightLabel:) forControlEvents:UIControlEventTouchDown];
+    [lastEntryDiscoverBtn addTarget:self action:@selector(unHighlightLabel:) forControlEvents:UIControlEventTouchUpInside];
+    [lastEntryDiscoverBtn addTarget:self action:@selector(unHighlightLabel:) forControlEvents:UIControlEventTouchUpOutside];
+
+    lastEntryDiscoverBtn.media = self.userDatas.lastMediaAdded;
+
+    lastEntryDiscoverBtn.frame = CGRectMake(0, CGRectGetMinY(lastEntryDiscoverBtn.frame), maxWidthLastEntryDiscoverLabel, CGRectGetHeight(lastEntryDiscoverBtn.frame));
     
-    [labelsContainer addSubview:lastEntryDiscover];
+    [labelsContainer addSubview:lastEntryDiscoverBtn];
+    
+    labelsContainerLastView = [labelsContainer.subviews lastObject];
+    labelsContainer.frame = CGRectMake(CGRectGetMinX(labelsContainer.frame), CGRectGetMinY(labelsContainer.frame), CGRectGetMaxX(labelsContainerLastView.frame), CGRectGetMaxY(labelsContainerLastView.frame));
 }
 
 - (UIView*) displayButtons
@@ -193,8 +220,10 @@
     UIView *statsContainer = [[UIView alloc] initWithFrame:CGRectZero];
     statsContainer.backgroundColor = [UIColor clearColor];
     
-    for (int i = 0; i < [[self.userDatas.discoveredUserLikes filterKeysForNullObj] count]; i++) {
-        NSString *dictKey = [[self.userDatas.discoveredUserLikes filterKeysForNullObj] objectAtIndex:i];
+    NSArray *categories = [[self.userDatas.discoveredUserLikes filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    
+    for (int i = 0; i < [categories count]; i++) {
+        NSString *dictKey = [categories objectAtIndex:i];
         NSString *title = [NSLocalizedString(dictKey, nil) uppercaseString];
         
         
@@ -203,11 +232,14 @@
                                                widthViews, 64);
         
         
-        UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
+        UIButton *statContainer = [UIButton buttonWithType:UIButtonTypeCustom];
+        statContainer.frame = statContainerFrame;
         statContainer.backgroundColor = [UIColor colorWithRed:(17.0/255.0) green:(27.0/255.0) blue:(28.0/255.0) alpha:.55];
         statContainer.tag = i;
-        
-//        [statContainer addTarget:self action:@selector(scrollToSectionWithNumber:) forControlEvents:UIControlEventTouchUpInside];
+        [statContainer addTarget:self action:@selector(nbElementsForSectionSelected:) forControlEvents:UIControlEventTouchUpInside];
+        [statContainer addTarget:self action:@selector(highlightBtnContainer:) forControlEvents:UIControlEventTouchDown];
+        [statContainer addTarget:self action:@selector(unHighlightBtnContainer:) forControlEvents:UIControlEventTouchUpOutside];
+        [statContainer addTarget:self action:@selector(unHighlightBtnContainer:) forControlEvents:UIControlEventTouchUpInside];
         [statsContainer addSubview:statContainer];
         
         UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(offsetBtnElements, 0, widthViews, 35.0)];
@@ -234,6 +266,18 @@
         
         [statContainer addSubview:statTitle];
     }
+
+    UIView *statsContainerLastView = [statsContainer.subviews lastObject];
+    statsContainer.frame = CGRectMake(CGRectGetMinX(statsContainer.frame), CGRectGetMinY(statsContainer.frame), CGRectGetMaxX(statsContainerLastView.frame), CGRectGetMaxY(statsContainerLastView.frame));
+    statsContainerLastView.userInteractionEnabled = YES;
+    
+    CGRect bottomBorderFrame = CGRectMake(0.0f, 0, CGRectGetWidth(self.frame), 1.0f);
+    
+    CALayer *bottomBorder = [CALayer layer];
+    bottomBorder.borderColor = [UIColor colorWithRed:(17.0/255.0f) green:(27.0f/255.0f) blue:(38.0f/255.0f) alpha:.1f].CGColor;
+    bottomBorder.borderWidth = 1;
+    bottomBorder.frame = bottomBorderFrame;
+    [statsContainer.layer addSublayer:bottomBorder];
     
     return statsContainer;
 }
@@ -296,6 +340,47 @@
     [followersLabelContainerBtn addSubview:numberFollowersLabel];
     
     [self addSubview:followersLabelContainerBtn];
+}
+
+/* Delegate */
+
+- (void) nbElementsForSectionSelected:(UIButton*)sender
+{
+    if (self.delegate != nil) {
+        [self.delegate scrollToSectionWithNumber:sender];
+    }
+}
+
+- (void) openLastElementPage:(UIButton*)sender
+{
+    if (self.delegate != nil) {
+        [self.delegate openLastElementPage:sender];
+    }
+}
+
+/* Events */
+
+- (void) highlightLabel:(UIButton*)sender
+{
+    sender.titleLabel.textColor = [UIColor colorWithRed:(208.0/255.0) green:(208.0/255.0)
+                                                   blue:(208.0/255.0) alpha:1.0];
+}
+
+- (void) unHighlightLabel:(UIButton*)sender
+{
+    sender.titleLabel.textColor = [UIColor whiteColor];
+}
+
+
+- (void) highlightBtnContainer:(UIButton*)sender
+{
+//    sender.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.1];
+    sender.backgroundColor = [UIColor colorWithRed:(17.0/255.0) green:(27.0/255.0) blue:(28.0/255.0) alpha:.75];
+}
+
+- (void) unHighlightBtnContainer:(UIButton*)sender
+{
+    sender.backgroundColor = [UIColor colorWithRed:(17.0/255.0) green:(27.0/255.0) blue:(28.0/255.0) alpha:.55];
 }
 
 @end
