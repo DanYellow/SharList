@@ -51,6 +51,10 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Gestion de l'iPad
 - Correction de bugs
 - Filtrage de la liste d'un utilisateur rencontré
+- Amélioration de la vue "Découverte"
+- Changement du design
+
+- Highlight Slider - Mise en avant de contenus
 
 
 # TODO
