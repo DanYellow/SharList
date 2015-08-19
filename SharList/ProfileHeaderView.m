@@ -17,6 +17,8 @@
 @property (nonatomic) CGFloat screenHeight;
 @property (nonatomic) NSUInteger bottomOffset;
 
+@property (strong, atomic) UIImageView *profileImageView;
+
 
 @end
 
@@ -71,6 +73,14 @@
              
              if (!responseObject[@"error"]) {
                  // gentoo
+                 // self.profileImageView
+                 
+//                 NSNumber *isAnonymous = (NSNumber*)responseObject[@"isAnonymous"];
+//                 NSLog(@"%@", responseObject);
+                 if ([[responseObject valueForKeyPath:@"response.isAnonymous"] boolValue] && !self.userDatas.isSameUser) {
+                     self.profileImageView.image = nil;
+                 }
+                 
                  [self displayFollowers:[responseObject valueForKeyPath:@"response.followersCount"]];
              }
              
@@ -109,27 +119,27 @@
 - (void) displayProfile
 {
     // Profile Image
-    UIImageView *profileImageView = [[UIImageView alloc] initWithFrame:CGRectMake(12, 20, 62, 62)];
-    profileImageView.contentMode = UIViewContentModeScaleAspectFit;
-    profileImageView.backgroundColor = [UIColor clearColor];
-    profileImageView.clipsToBounds = YES;
-    profileImageView.layer.masksToBounds = YES;
+    self.profileImageView = [[UIImageView alloc] initWithFrame:CGRectMake(12, 20, 62, 62)];
+    self.profileImageView.contentMode = UIViewContentModeScaleAspectFit;
+    self.profileImageView.backgroundColor = [UIColor clearColor];
+    self.profileImageView.clipsToBounds = YES;
+    self.profileImageView.layer.masksToBounds = YES;
     
-    profileImageView.layer.borderWidth = 2.0f;
-    profileImageView.layer.borderColor = [UIColor whiteColor].CGColor;
-    profileImageView.layer.cornerRadius = 31;
+    self.profileImageView.layer.borderWidth = 2.0f;
+    self.profileImageView.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.profileImageView.layer.cornerRadius = 31;
     
     
-    NSUInteger sizeImage = (int)CGRectGetHeight(profileImageView.frame) * 2;
+    NSUInteger sizeImage = (int)CGRectGetHeight(self.profileImageView.frame) * 2;
     
     NSString *fbMetUserString = self.userDatas.fbid;
     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,sizeImage, sizeImage];
     
-    [profileImageView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
-    [self.profileHeaderView addSubview:profileImageView];
+    [self.profileImageView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
+    [self.profileHeaderView addSubview:self.profileImageView];
     
     // Labels
-    UIView *labelsContainer = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(profileImageView.frame) + 10, CGRectGetMinY(profileImageView.frame) + 3, 0, 0)];
+    UIView *labelsContainer = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.profileImageView.frame) + 10, CGRectGetMinY(self.profileImageView.frame) + 3, 0, 0)];
     labelsContainer.userInteractionEnabled = YES;
     labelsContainer.backgroundColor = [UIColor clearColor];
     [self.profileHeaderView addSubview:labelsContainer];
