@@ -246,6 +246,8 @@
     
     UIView *thumbsMediasContainerView = (UIView*)[self viewWithTag:SHDDiscoverMediaThumbsTag];
     
+    dispatch_group_t finishLoadThumbs = dispatch_group_create();
+    
     for (int idx = 0; idx < mediasArray.count; idx++) {
         UIImageView *thumbMedia = (UIImageView*) [thumbsMediasContainerView viewWithTag:100+idx];
         
@@ -260,6 +262,7 @@
         
         NSString *mediaImdbID = [mediasArray objectAtIndex:idx];
         
+        dispatch_group_enter(finishLoadThumbs);
         [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:@{@"id": mediaImdbID, @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
             if(!error){
                 if ([responseObject[@"movie_results"] count] > 0) {
@@ -270,8 +273,11 @@
                     return;
                 }
 
+                // Kind of promise
+                dispatch_group_leave(finishLoadThumbs);
                 
                 imgDistURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", imgSize, imgName];
+                
                 [thumbMedia setImageWithURL:
                  [NSURL URLWithString:imgDistURL]
                            placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
@@ -283,6 +289,13 @@
         UIImageView *thumbMedia = (UIImageView*) [thumbsMediasContainerView viewWithTag:100+i];
         thumbMedia.hidden = YES;
     }
+    
+    dispatch_group_notify(finishLoadThumbs, dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:0.25 animations:^{
+            thumbsMediasContainerView.alpha = 1;
+        }];
+
+    });
 }
 
 - (UIView*) mediaThumbsContainer {

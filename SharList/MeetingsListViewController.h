@@ -57,6 +57,7 @@
 @property (nonatomic, retain) NSTimer *timerRefreshBtn;
 @property (nonatomic, assign, getter=isTableViewAdded) BOOL tableViewAdded;
 @property (nonatomic, retain) UILabel *tableFooter;
+@property (nonatomic, assign) CGPoint tableViewLastPosition; //last
 
 //@property (strong, nonatomic) UISplitViewController *splitViewController;
 

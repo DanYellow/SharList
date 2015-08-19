@@ -1029,10 +1029,6 @@
     [self.navigationController pushViewController:detailsMeetingViewController animated:YES];
 }
 
-- (void) setMediaThumbs:(NSDictionary*)userDiscoveredMedias
-{
-    NSLog(@"userDiscoveredMedias : %@", userDiscoveredMedias);
-}
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -1097,10 +1093,16 @@
     }
 }
 
-// Big scrolling
+// Big scrolling release
 - (void)scrollViewDidEndDecelerating:(UITableView *)tableView
 {
     [self loadCellsMediasThumbsForTableView:tableView];
+//    NSUInteger deltaScroll = abs((int)self.tableViewLastPosition.y - (int)tableView.contentOffset.y);
+//    if (deltaScroll > screenHeight) {
+//        [self loadCellsMediasThumbsForTableView:tableView];
+//    } else {
+//        [self displayVisibleCells:tableView];
+//    }
 }
 
 - (void) loadCellsMediasThumbsForTableView:(UITableView *) tableView
@@ -1115,14 +1117,25 @@
         
         SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
         userDiscovered.mediaThumbsContainer.hidden = NO;
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
+        });
         
-        [UIView animateWithDuration:0.25 animations:^{
-            userDiscovered.mediaThumbsContainer.alpha = 1;
-        }];
-        
-        [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
     }
 }
+
+// Only shows visible cells if the delta is too short
+//- (void) displayVisibleCells:(UITableView *) tableView
+//{
+//    for (UITableViewCell *aCell in [tableView visibleCells]) {
+//        SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
+//        userDiscovered.mediaThumbsContainer.hidden = NO;
+//        [UIView animateWithDuration:0.25 animations:^{
+//            userDiscovered.mediaThumbsContainer.alpha = 1;
+//        }];
+//    }
+//}
 
 - (void) unloadCellsMediasThumbsForTableView:(UITableView *) tableView andOpacity:(CGFloat)opacity
 {
@@ -1134,11 +1147,13 @@
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView
 {
-//    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.25];
+//    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.25]; self.tableViewLastPosition
 }
 
+// Big scroll
 - (void)scrollViewWillBeginDecelerating:(UITableView *)tableView
 {
+    self.tableViewLastPosition = tableView.contentOffset;
     [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.05];
 }
 

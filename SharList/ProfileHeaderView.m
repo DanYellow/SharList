@@ -72,11 +72,6 @@
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
              
              if (!responseObject[@"error"]) {
-                 // gentoo
-                 // self.profileImageView
-                 
-//                 NSNumber *isAnonymous = (NSNumber*)responseObject[@"isAnonymous"];
-//                 NSLog(@"%@", responseObject);
                  if ([[responseObject valueForKeyPath:@"response.isAnonymous"] boolValue] && !self.userDatas.isSameUser) {
                      self.profileImageView.image = nil;
                  }
