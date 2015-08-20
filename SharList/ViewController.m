@@ -390,7 +390,7 @@
 {
     UITableView *userTasteListTableView = (UITableView*)[self.view viewWithTag:4];
     
-    // This part hides by default the tableheader of the view if 
+    // This part hides by default the tableheader of the view if there is no entries in the array
     BOOL willShowTableHeader = NO;
     for (int i = 0; i < userTasteListTableView.numberOfSections; i++) {
         if ([userTasteListTableView.dataSource tableView:userTasteListTableView numberOfRowsInSection:i] != 0) {
@@ -399,57 +399,6 @@
     }
     if (!willShowTableHeader) {
         return;
-    }
-    
-    int tagRange = 10000;
-    float widthViews = 99.0f;
-    
-    UIView *currentUserFBView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, ceilf(screenWidth / GOLDENRATIO))];
-    currentUserFBView.backgroundColor = [UIColor clearColor];
-    currentUserFBView.tag = 10;
-    
-    
-    for (int i = 0; i < [[userTasteDict filterKeysForNullObj] count]; i++) {
-        NSString *title = [NSLocalizedString([[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i], nil) uppercaseString];
-        
-        CALayer *rightBorder = [CALayer layer];
-        rightBorder.frame = CGRectMake(widthViews, 0.0f, 1.0, 75.0f);
-        rightBorder.backgroundColor = [UIColor whiteColor].CGColor;
-        
-        CGRect statContainerFrame = CGRectMake(0 + (95 * i),
-                                               currentUserFBView.frame.size.height - 75,
-                                               widthViews, 70);
-        
-        UIButton *statContainer = [[UIButton alloc] initWithFrame:statContainerFrame];
-        statContainer.backgroundColor = [UIColor clearColor];
-        statContainer.tag = i; // We add one because the first section of a tableview is the header
-        
-        [statContainer addTarget:self action:@selector(scrollToSectionWithNumber:) forControlEvents:UIControlEventTouchUpInside];
-        
-        [currentUserFBView addSubview:statContainer];
-        
-        if ( i != ([[userTasteDict filterKeysForNullObj] count] - 1)) {
-            [statContainer.layer addSublayer:rightBorder];
-        }
-        
-        UILabel *statTitle = [[UILabel alloc] initWithFrame:CGRectMake(12, -5, widthViews, 30)];
-        statTitle.textColor = [UIColor whiteColor];
-        statTitle.backgroundColor = [UIColor clearColor];
-        statTitle.text = title;
-        statTitle.font = [UIFont fontWithName:@"HelveticaNeue-Regular" size:17.0f];
-        [statContainer addSubview:statTitle];
-        
-        UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(12, statContainer.frame.size.height - 34, widthViews, 35.0)];
-        statCount.textColor = [UIColor whiteColor];
-        statCount.backgroundColor = [UIColor clearColor];
-        statCount.tag = tagRange + i;
-        statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:45.0f];
-        
-        NSString *statCountNumber = [[NSNumber numberWithInteger:[[userTasteDict objectForKey:[[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] objectAtIndex:i]] count]] stringValue];
-        
-        statCount.text = statCountNumber;
-        
-        [statContainer insertSubview:statCount atIndex:10];
     }
     
     SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:self.user];
@@ -461,10 +410,6 @@
     [self.view insertSubview:profileView.bgImageProfile belowSubview:userTasteListTableView]; // Background image with user fb profile
     [userTasteListTableView setContentOffset:CGPointMake(0, 0)];
 
-    [self displayUserFollowers];
-    [self displayCurrentUserfbImgProfile];
-    
-    
     UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 80)];
     
     UIButton *getUserFacebookLikesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -513,29 +458,6 @@
     UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
     effectView.frame = currentUserFBImgView.bounds;
     [currentUserFBImgView addSubview:effectView];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
-{
-    if ([keyPath isEqualToString:@"image"]) {
-        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbImageData"]) {
-            NSData *imgUserfbData = UIImageJPEGRepresentation([object image], .5);
-            [[NSUserDefaults standardUserDefaults] setObject:imgUserfbData forKey:@"currentUserfbImageData"];
-        }
-        
-        @try {
-            [object removeObserver:self forKeyPath:NSStringFromSelector(@selector(isFinished))];
-        }
-        @catch (NSException * __unused exception) {}
-    }
-}
-
-
-- (void) isFinished {
-//    NSLog(@"isFinished");
 }
 
 

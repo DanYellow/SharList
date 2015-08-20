@@ -74,6 +74,13 @@
              if (!responseObject[@"error"]) {
                  if ([[responseObject valueForKeyPath:@"response.isAnonymous"] boolValue] && !self.userDatas.isSameUser) {
                      self.profileImageView.image = nil;
+                 } else if ((![[responseObject valueForKeyPath:@"response.isAnonymous"] boolValue] && !self.userDatas.isSameUser) || self.userDatas.isSameUser) {
+                     NSUInteger sizeImage = (int)CGRectGetHeight(self.profileImageView.frame) * 2;
+                     
+                     NSString *fbMetUserString = self.userDatas.fbid;
+                     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,sizeImage, sizeImage];
+                     
+                     [self.profileImageView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
                  }
                  
                  [self displayFollowers:[responseObject valueForKeyPath:@"response.followersCount"]];
@@ -123,14 +130,7 @@
     self.profileImageView.layer.borderWidth = 2.0f;
     self.profileImageView.layer.borderColor = [UIColor whiteColor].CGColor;
     self.profileImageView.layer.cornerRadius = 31;
-    
-    
-    NSUInteger sizeImage = (int)CGRectGetHeight(self.profileImageView.frame) * 2;
-    
-    NSString *fbMetUserString = self.userDatas.fbid;
-    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,sizeImage, sizeImage];
-    
-    [self.profileImageView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
+
     [self.profileHeaderView addSubview:self.profileImageView];
     
     // Labels

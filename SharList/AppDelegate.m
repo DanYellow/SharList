@@ -253,7 +253,7 @@
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {
              NSString *userPatronym = [[[result[@"first_name"] stringByAppendingString:@" "] stringByAppendingString:[result[@"last_name"] substringToIndex:1]] stringByAppendingString:@"."];
-             NSLog(@"userPatronym : %@", userPatronym);
+
              [[NSUserDefaults standardUserDefaults] setObject:userPatronym forKey:@"userPatronym"];
          }
      }];
