@@ -34,6 +34,8 @@
 #import "UIImage+ColorImage.h"
 #import "NSString+URLEncodeValue.m"
 
+// Controller
+#import "SHDMediaDatas.h"
 #import "PFPushManager.h"
 
 // Custom view controller
@@ -41,11 +43,12 @@
 #import "DetailsMeetingViewController.h"
 #import "SettingsViewController.h"
 
+
 @protocol UpdateUserTasteListDelegate;
 
 extern NSString * const BSCLIENTID;
 
-@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate, UIGestureRecognizerDelegate, FBSDKSharingDelegate>
+@interface DetailsMediaViewController : UIViewController <UITextViewDelegate, UICollisionBehaviorDelegate, NSURLConnectionDelegate, UIGestureRecognizerDelegate, FBSDKSharingDelegate, SHDMediaDatasDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -66,6 +69,12 @@ extern NSString * const BSCLIENTID;
     
     PFPushManager *pfPushManager;
 }
+
+typedef NS_ENUM(NSUInteger, DMVTag) {
+    DMVInfoContainerTag = 21,
+    DMVAmongDiscoveriesLabelTag = 13
+};
+
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
 @property (nonatomic, assign, getter=isAdded) BOOL Added; // Indicate if the current media is among user list

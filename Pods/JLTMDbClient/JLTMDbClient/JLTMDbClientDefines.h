@@ -41,6 +41,7 @@ static NSString * const kJLTMDbMovieImages = @"movie/{id}/images";
 static NSString * const kJLTMDbMovieKeywords = @"movie/{id}/keywords";
 static NSString * const kJLTMDbMovieReleases = @"movie/{id}/releases";
 static NSString * const kJLTMDbMovieTrailers = @"movie/{id}/trailers";
+static NSString * const kJLTMDbMovieVideos = @"movie/{id}/videos";
 static NSString * const kJLTMDbMovieTranslations = @"movie/{id}/translations";
 static NSString * const kJLTMDbMovieSimilar = @"movie/{id}/similar_movies";
 static NSString * const kJLTMDbMovieReviews = @"movie/{id}/reviews";
@@ -86,7 +87,7 @@ static NSString * const kJLTMDbSearchCompany = @"search/company";
 //Documentation: http://docs.themoviedb.apiary.io/#tv
 static NSString * const kJLTMDbTV = @"tv/{id}"; //Custom
 static NSString * const kJLTMDbTVExternalIds = @"tv/{id}/external_ids"; //Custom
-static NSString * const kJLTMDbTVTrailers = @"tv/{id}/videos"; //Custom
+static NSString * const kJLTMDbTVVideos = @"tv/{id}/videos"; //Custom
 static NSString * const kJLTMDbTVSeasons = @"tv/{id}/season/{season_number}";
 
 static NSString * const kJLTMDbFind = @"find/{id}"; //Custom

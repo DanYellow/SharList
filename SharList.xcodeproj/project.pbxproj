@@ -53,6 +53,7 @@
 		1A4953D41A1EBB9500A0C232 /* StoreButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4953D31A1EBB9500A0C232 /* StoreButton.m */; };
 		1A549EF71B24A02400B9305B /* UserTaste.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A549EF51B24A02400B9305B /* UserTaste.xcdatamodeld */; };
 		1A5682A81AE19809007D6D93 /* UIImage+ColorImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5682A71AE19809007D6D93 /* UIImage+ColorImage.m */; };
+		1A593DCB1B8797780046AAD6 /* SHDMediaDatas.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A593DCA1B8797780046AAD6 /* SHDMediaDatas.m */; };
 		1A5F82DA1B7E75FE006459BA /* SHDUserDiscovered.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5F82D91B7E75FE006459BA /* SHDUserDiscovered.m */; };
 		1A60F6C41B811FAB002F026E /* ProfileHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A60F6C31B811FAB002F026E /* ProfileHeaderView.m */; };
 		1A61F5101AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A61F50F1AA7537F00D1785F /* NSDictionary+FilterKeysForNullObj.m */; };
@@ -208,6 +209,8 @@
 		1A549EFA1B24A44100B9305B /* ShoundEntitiesV1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ShoundEntitiesV1.xcdatamodel; sourceTree = "<group>"; };
 		1A5682A61AE19809007D6D93 /* UIImage+ColorImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ColorImage.h"; sourceTree = "<group>"; };
 		1A5682A71AE19809007D6D93 /* UIImage+ColorImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ColorImage.m"; sourceTree = "<group>"; };
+		1A593DC91B8797780046AAD6 /* SHDMediaDatas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHDMediaDatas.h; sourceTree = "<group>"; };
+		1A593DCA1B8797780046AAD6 /* SHDMediaDatas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHDMediaDatas.m; sourceTree = "<group>"; };
 		1A5F82D81B7E75FE006459BA /* SHDUserDiscovered.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHDUserDiscovered.h; sourceTree = "<group>"; };
 		1A5F82D91B7E75FE006459BA /* SHDUserDiscovered.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHDUserDiscovered.m; sourceTree = "<group>"; };
 		1A60F6C21B811FAB002F026E /* ProfileHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileHeaderView.h; sourceTree = "<group>"; };
@@ -578,6 +581,8 @@
 			children = (
 				1A68D5F11B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.h */,
 				1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */,
+				1A593DC91B8797780046AAD6 /* SHDMediaDatas.h */,
+				1A593DCA1B8797780046AAD6 /* SHDMediaDatas.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -886,6 +891,7 @@
 				1A076DB91A0FE20900CD725A /* main.m in Sources */,
 				1AE9E7A71A2683700072EF91 /* DetailsMeetingViewController.m in Sources */,
 				1A4953D41A1EBB9500A0C232 /* StoreButton.m in Sources */,
+				1A593DCB1B8797780046AAD6 /* SHDMediaDatas.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

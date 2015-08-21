@@ -129,8 +129,8 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
 //    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
     
-
-    
+    SHDMediaDatas *mediaDatasController = [[SHDMediaDatas alloc] initWithMedia:self.mediaDatas];
+    mediaDatasController.delegate = self;
 
     // Contains globals datas of the project
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
@@ -153,14 +153,11 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         return;
     }
     
-    UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 60, screenWidth, screenHeight)];
-    infoMediaView.backgroundColor = [UIColor clearColor];
-    infoMediaView.opaque = NO;
-    infoMediaView.hidden = NO;
-    infoMediaView.tag = 2;
-    infoMediaView.showsVerticalScrollIndicator = YES;
-    infoMediaView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
-
+    
+    UIView *infoMediaContainer = [[UIView alloc] initWithFrame:self.view.frame];
+    infoMediaContainer.backgroundColor = [UIColor clearColor];
+    infoMediaContainer.tag = DMVInfoContainerTag;
+    [self.view insertSubview:infoMediaContainer atIndex:10];
     
     self.userTaste = [Discovery MR_findFirstByAttribute:@"fbId"
                                               withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
@@ -215,12 +212,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         trailerApiLink = kJLTMDbMovieTrailers;
     } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ([self.mediaDatas[@"themoviedbID"] isEqualToString:@""] || ![self.mediaDatas objectForKey:@"themoviedbID"] || [[self.mediaDatas objectForKey:@"themoviedbID"] isEqualToString:@"(null)"])) {
         apiLink = kJLTMDbFind;
-        trailerApiLink = kJLTMDbTVTrailers;
+//        trailerApiLink = kJLTMDbTVTrailers;
         queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"};
     } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ![self.mediaDatas[@"themoviedbID"] isEqualToString:@""]  && [self.mediaDatas objectForKey:@"themoviedbID"]) {
         apiLink = kJLTMDbTV;
         queryParams =  @{@"id": self.mediaDatas[@"themoviedbID"], @"language": userLanguage};
-        trailerApiLink = kJLTMDbTVTrailers;
+//        trailerApiLink = kJLTMDbTVTrailers;
     } else {
         return;
     }
@@ -241,14 +238,14 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
             } else {
                 // It's a movie
                 [self setMediaViewForData:responseObject];
-                [[JLTMDbClient sharedAPIInstance] GET:trailerApiLink withParameters:@{@"id": self.mediaDatas[@"imdbID"]} andResponseBlock:^(id responseObject, NSError *error) {
-                    if ([responseObject valueForKeyPath:@"youtube.source"] != nil && [[responseObject valueForKeyPath:@"youtube.source"] count] > 0) {
-                        trailerID = [responseObject valueForKeyPath:@"youtube.source"][0];
-                        if (![trailerID isEqualToString:@""]) {
-                            [self displayTrailerButtonForId:trailerID];
-                        }
-                    }
-                }];
+//                [[JLTMDbClient sharedAPIInstance] GET:trailerApiLink withParameters:@{@"id": self.mediaDatas[@"imdbID"]} andResponseBlock:^(id responseObject, NSError *error) {
+//                    if ([responseObject valueForKeyPath:@"youtube.source"] != nil && [[responseObject valueForKeyPath:@"youtube.source"] count] > 0) {
+//                        trailerID = [responseObject valueForKeyPath:@"youtube.source"][0];
+//                        if (![trailerID isEqualToString:@""]) {
+////                            [self displayTrailerButtonForId:trailerID];
+//                        }
+//                    }
+//                }];
             }
         } else {
             [self noInternetConnexionAlert];
@@ -260,19 +257,19 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 //        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 //    }
         
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, screenWidth * 0.9, 55)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, screenHeight * (230.0/1136.0), screenWidth * 0.9, 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
-    mediaTitleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-    mediaTitleLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-    mediaTitleLabel.layer.shadowRadius = 2.5;
-    mediaTitleLabel.layer.shadowOpacity = 0.75;
+//    mediaTitleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+//    mediaTitleLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+//    mediaTitleLabel.layer.shadowRadius = 2.5;
+//    mediaTitleLabel.layer.shadowOpacity = 0.75;
     mediaTitleLabel.clipsToBounds = NO;
     mediaTitleLabel.layer.masksToBounds = NO;
     mediaTitleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     mediaTitleLabel.numberOfLines = 0;
-    mediaTitleLabel.backgroundColor = [UIColor clearColor];
+    mediaTitleLabel.backgroundColor = [UIColor redColor];
     mediaTitleLabel.opaque = NO;
     mediaTitleLabel.alpha = .85f;
     mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
@@ -282,10 +279,19 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
                                        screenWidth * 0.9, CGRectGetHeight(mediaTitleLabel.frame));
     mediaTitleLabel.center = CGPointMake(self.view.center.x, mediaTitleLabel.center.y);
 
-    [infoMediaView insertSubview:mediaTitleLabel atIndex:9];
+    [infoMediaContainer addSubview:mediaTitleLabel];
     
+    UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(mediaTitleLabel.frame), screenWidth, screenHeight - CGRectGetMaxY(mediaTitleLabel.frame))]; //CGRectGetMaxY(mediaTitleLabel.frame)
+    infoMediaView.backgroundColor = [UIColor clearColor];
+    infoMediaView.opaque = NO;
+    infoMediaView.hidden = NO;
+    infoMediaView.tag = 2;
+    infoMediaView.showsVerticalScrollIndicator = YES;
+    infoMediaView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
+    infoMediaView.contentInset = UIEdgeInsetsZero;
+//    [self.view insertSubview:infoMediaView atIndex:1];
+    [infoMediaContainer addSubview:infoMediaView];
 
-    // SHOUND API
     
     // This NSDict will be used to set id to local media
     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
@@ -347,7 +353,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     }];
     
 
-    [self.view insertSubview:infoMediaView atIndex:1];
+    
     
     if (![self connected]) {
         UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
@@ -356,7 +362,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         nbIterationAmongDiscoveries.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
                                                        CGRectGetWidth(nbIterationAmongDiscoveries.frame),
                                                        CGRectGetHeight(nbIterationAmongDiscoveries.frame));
-        [infoMediaView addSubview:nbIterationAmongDiscoveries];
+//        [infoMediaView addSubview:nbIterationAmongDiscoveries];
 //        [self displayNumberOfIterationsAmongDiscoveriesForView:infoMediaView];
     }
     
@@ -404,15 +410,15 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     // This label shows the number of iteration of the card currently shown among user's discoverties
     UILabel *numberOfIterationAmongDiscoveriesLabel = [UILabel new];
-    numberOfIterationAmongDiscoveriesLabel.tag = 13;
+    numberOfIterationAmongDiscoveriesLabel.tag = DMVAmongDiscoveriesLabelTag;
     
 //    UIView *facebookFriendsContainer = (UITextView*)[aContainerView viewWithTag:14];
 //    CGFloat mediaDescriptionHeight = CGRectGetMaxY(facebookFriendsContainer.frame) + 30;
     
 //    CGFloat numberOfIterationAmongDiscoveriesLabelY = ([self connected]) ? mediaDescriptionHeight : screenHeight - 83;
     
-    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(0, 0, screenWidth, 20);
-    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
+    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake((screenWidth - (screenWidth * 0.9)), 0, screenWidth * 0.9, 20);
+    numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
     
     CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
     
@@ -421,8 +427,8 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     }
     
     
-    NSString *serieOrMovieString = ([self.mediaDatas[@"type"] isEqualToString:@"serie"]) ? NSLocalizedString(@"serieU", nil) : NSLocalizedString(@"movieU", nil);
-    NSString *presentString = ([self.mediaDatas[@"type"] isEqualToString:@"serie"]) ? NSLocalizedString(@"Presentf", nil) : NSLocalizedString(@"Presentm", nil);
+    NSString *serieOrMovieString = @"";
+    NSString *presentString = NSLocalizedString(@"Presentm", nil);
     
     
     if (iterationAmongDiscoveriesPercent == 0) {
@@ -434,27 +440,18 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         
         NSString *percentApparition = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:iterationAmongDiscoveriesPercent]];
         
-        NSMutableAttributedString *NbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"%@ %@ Present of %@ discoveries", nil), serieOrMovieString, presentString, percentApparition] attributes:nil];
+        NSMutableAttributedString *NbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"Present of %@ discoveries", nil), percentApparition] attributes:nil];
         
         NSRange hellStringRange = [[NbrDiscoveriesAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), percentApparition]];
         
-        [NbrDiscoveriesAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
+        [NbrDiscoveriesAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:14.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
         
         numberOfIterationAmongDiscoveriesLabel.attributedText = NbrDiscoveriesAttrString;
     }
     
     numberOfIterationAmongDiscoveriesLabel.textColor = [UIColor whiteColor];
-    numberOfIterationAmongDiscoveriesLabel.textAlignment = NSTextAlignmentCenter;
-    
-    CGFloat layerWidth = (90 * screenWidth) / 100;
-    CGFloat layerX = (self.view.frame.size.width - layerWidth) / 2;
-
-    CALayer *numberOfIterationAmongDiscoveriesLabelLayerT = [CALayer layer];
-    numberOfIterationAmongDiscoveriesLabelLayerT.frame = CGRectMake(layerX, -16.0f, layerWidth, 1.0);
-    numberOfIterationAmongDiscoveriesLabelLayerT.backgroundColor = [UIColor whiteColor].CGColor;
-    numberOfIterationAmongDiscoveriesLabelLayerT.anchorPoint = CGPointMake(0.5, 0.5);
-    [numberOfIterationAmongDiscoveriesLabel.layer addSublayer:numberOfIterationAmongDiscoveriesLabelLayerT];
-
+    numberOfIterationAmongDiscoveriesLabel.textAlignment = NSTextAlignmentLeft;
+    numberOfIterationAmongDiscoveriesLabel.center = CGPointMake(self.view.center.x, numberOfIterationAmongDiscoveriesLabel.center.y);
     
     return numberOfIterationAmongDiscoveriesLabel;
 }
@@ -725,20 +722,20 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     // Retrieve trailer
     __block NSString *trailerID = @"";
-    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
-        // We check if there is a video called "trailer"
-        // if yes we take it
-        // else we take the first video
-        if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
-            trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
-        } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
-            trailerID = [responseObject valueForKeyPath:@"results.key"][0];
-        }
-        
-        if (![trailerID isEqualToString:@""]) {
-            [self displayTrailerButtonForId:trailerID];
-        }
-    }];
+//    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
+//        // We check if there is a video called "trailer"
+//        // if yes we take it
+//        // else we take the first video
+//        if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
+//            trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
+//        } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
+//            trailerID = [responseObject valueForKeyPath:@"results.key"][0];
+//        }
+//        
+//        if (![trailerID isEqualToString:@""]) {
+//            [self displayTrailerButtonForId:trailerID];
+//        }
+//    }];
     
     // Get the date of the next episode
     NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
@@ -855,6 +852,10 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     [endTutorial setTitleColor:[UIColor colorWithWhite:1.0 alpha:.50] forState:UIControlStateHighlighted];
     endTutorial.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
     [tutorialView addSubview:endTutorial];
+}
+
+- (void) datasAreReady {
+    NSLog(@"ready to begin");
 }
 
 #pragma mark - buying part
@@ -1124,7 +1125,8 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     imgMedia.clipsToBounds = YES;
     imgMedia.alpha = 0;
     imgMedia.tag = 6;
-    [self.view insertSubview:imgMedia belowSubview:infoMediaView];
+//    [self.view insertSubview:imgMedia belowSubview:infoMediaView];
+    [self.view insertSubview:imgMedia atIndex:1];
     
 
     CALayer *overlayLayer = [CALayer layer];
@@ -1154,7 +1156,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     genresString = [genresString stringByAppendingString:[genresArray componentsJoinedByString:@", "]];
     
-    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, CGRectGetMaxY(mediaTitleLabel.frame) + 40, screenWidth * 0.9, 25)];
+    UILabel *mediaGenresLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, screenWidth * 0.9, 25)];
     mediaGenresLabel.translatesAutoresizingMaskIntoConstraints = NO;
     mediaGenresLabel.text = genresString;
     mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
@@ -1175,7 +1177,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
                                         CGRectGetHeight(mediaGenresLabel.frame));
     mediaGenresLabel.tag = 11;
     mediaGenresLabel.alpha = (genresArray.count == 0) ? 0 : 1;
-    [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
+//    [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
     
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
@@ -1226,7 +1228,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     mediaDescription.alpha = 0;
     mediaDescription.tag = 12;
     
-    [infoMediaView addSubview:mediaDescription];
+//    [infoMediaView addSubview:mediaDescription];
     
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
@@ -1241,14 +1243,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-    UILabel *nbIterationAmongDiscoveries = [self displayNumberOfIterationsAmongDiscoveries];
-    // This variable is here to manage the case where there is no facebook friends
-    NSUInteger fbFriendsContainerPosY = (fbFriendsContainer.frame.size.height == 0) ? CGRectGetMaxY(fbFriendsContainer.frame) : CGRectGetMaxY(infoMediaViewLastView.frame) + 30;
-    
-    nbIterationAmongDiscoveries.frame = CGRectMake(0, fbFriendsContainerPosY,
-                                                   CGRectGetWidth(nbIterationAmongDiscoveries.frame),
-                                                   CGRectGetHeight(nbIterationAmongDiscoveries.frame));
-    [infoMediaView addSubview:nbIterationAmongDiscoveries];
+
 
 
 
@@ -1263,7 +1258,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
                                                    CGRectGetWidth(addRemoveFromListBtn.frame),
                                                    CGRectGetHeight(addRemoveFromListBtn.frame));
     addRemoveFromListBtn.center = CGPointMake(self.view.center.x, addRemoveFromListBtn.center.y);
-    [infoMediaView addSubview:addRemoveFromListBtn];
+//    [infoMediaView addSubview:addRemoveFromListBtn];
     
     
     
@@ -1281,7 +1276,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
             connectWithBSBtn.center = CGPointMake(self.view.center.x, connectWithBSBtn.center.y);
             
             
-            [infoMediaView addSubview:connectWithBSBtn];
+//            [infoMediaView addSubview:connectWithBSBtn];
         }
     }
     
@@ -1322,32 +1317,47 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     UILabel *mediaTitleLabel = (UILabel*)[infoMediaView viewWithTag:4];
     
-    int lastEpisodeDateLabelY = mediaTitleLabel.frame.origin.y + mediaTitleLabel.frame.size.height - 5;
+    int lastEpisodeDateLabelY = 0;
     
-    UILabel *lastEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake((screenWidth - (screenWidth * 0.9)) / 2
+    UILabel *nextEpisodeDateLabel = [[UILabel alloc] initWithFrame:CGRectMake((screenWidth - (screenWidth * 0.9)) / 2
                                                                               , lastEpisodeDateLabelY, screenWidth * 0.9, 25)];
     
-    lastEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
+    nextEpisodeDateLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
     // If an episode of this serie is release today we notify the user
-    lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), NSLocalizedString(@"release today", @"aujourd'hui !")] : lastEpisodeDateLabel.text;
+    nextEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), NSLocalizedString(@"release today", @"aujourd'hui !")] : nextEpisodeDateLabel.text;
     // If an episode of this serie is release tomorrow we notify the user
-    lastEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : lastEpisodeDateLabel.text;
+    nextEpisodeDateLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : nextEpisodeDateLabel.text;
     
     if ([aDate timeIntervalSinceNow] > 0 || [[NSCalendar currentCalendar] isDateInToday:aDate] || [[NSCalendar currentCalendar] isDateInTomorrow:aDate]) {
-        lastEpisodeDateLabel.text = [lastEpisodeDateLabel.text stringByAppendingString:[NSString stringWithFormat:@" • %@", aEpisodeString]];
+        nextEpisodeDateLabel.text = [nextEpisodeDateLabel.text stringByAppendingString:[NSString stringWithFormat:@" • %@", aEpisodeString]];
     }
 
-    lastEpisodeDateLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
-    lastEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;
-    lastEpisodeDateLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-    lastEpisodeDateLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-    lastEpisodeDateLabel.layer.shadowRadius = 2.5;
-    lastEpisodeDateLabel.layer.shadowOpacity = 0.75;
-    lastEpisodeDateLabel.backgroundColor = [UIColor clearColor];
-    lastEpisodeDateLabel.layer.masksToBounds = NO;
-    lastEpisodeDateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0];
+    nextEpisodeDateLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
+    nextEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;
+    nextEpisodeDateLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
+    nextEpisodeDateLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    nextEpisodeDateLabel.layer.shadowRadius = 2.5;
+    nextEpisodeDateLabel.layer.shadowOpacity = 0.75;
+    nextEpisodeDateLabel.backgroundColor = [UIColor clearColor];
+    nextEpisodeDateLabel.layer.masksToBounds = NO;
+    nextEpisodeDateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0];
     
-    [infoMediaView addSubview:lastEpisodeDateLabel];
+    [infoMediaView addSubview:nextEpisodeDateLabel];
+    
+    UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    infoMediaViewLastView.frame = CGRectMake(CGRectGetMinX(infoMediaViewLastView.frame),
+                                     CGRectGetMinY(infoMediaViewLastView.frame) + 16,
+                                     CGRectGetWidth(infoMediaViewLastView.frame),
+                                     CGRectGetHeight(infoMediaViewLastView.frame));
+    infoMediaViewLastView.backgroundColor = [UIColor redColor];
+    
+    UILabel *nbIterationAmongDiscoveries = [self displayNumberOfIterationsAmongDiscoveries];
+    
+    nbIterationAmongDiscoveries.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame),
+                                                   CGRectGetWidth(nbIterationAmongDiscoveries.frame),
+                                                   CGRectGetHeight(nbIterationAmongDiscoveries.frame));
+    nbIterationAmongDiscoveries.center = CGPointMake(self.view.center.x, nbIterationAmongDiscoveries.center.y);
+    [infoMediaView addSubview:nbIterationAmongDiscoveries];
 }
 
 #pragma mark - Custom Events
@@ -1363,8 +1373,8 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 0;
     
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    infoMediaView.alpha = 0;
+    UIView *infoMediaContainer = (UIView*)[self.view viewWithTag:DMVInfoContainerTag];
+    infoMediaContainer.alpha = 0;
     
     UIImageView *imgMedia = (UIImageView*)[self.view viewWithTag:6];
     imgMedia.contentMode = UIViewContentModeScaleAspectFit;
@@ -1398,8 +1408,8 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
     [self myLayerWithName:@"selfviewGradient" andParent:self.view].opacity = 1;
     
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    infoMediaView.alpha = 1;
+    UIView *infoMediaContainer = (UIView*)[self.view viewWithTag:DMVInfoContainerTag];
+    infoMediaContainer.alpha = 1;
     
     UIImageView *imgMedia = (UIImageView*)[self.view viewWithTag:6];
     imgMedia.contentMode = UIViewContentModeScaleAspectFill;
@@ -1429,17 +1439,22 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     
     CGFloat multiplier = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 0.0703125 : 0.15;
-    seeTrailerMediaBtn.frame = CGRectMake(screenWidth - (screenWidth * multiplier), -40, 40, 40);
+    seeTrailerMediaBtn.frame = CGRectMake(0, 0, screenWidth * (574.0/640.0), 60);
     seeTrailerMediaBtn.trailerID = aTrailerID;
-    [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailerMedia:) forControlEvents:UIControlEventTouchUpInside];
+    [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailer:) forControlEvents:UIControlEventTouchUpInside];
     [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];
-    [seeTrailerMediaBtn setImage:[[UIImage imageNamed:@"trailer-icon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [seeTrailerMediaBtn setTitle:NSLocalizedString(@"see trailer", nil) forState:UIControlStateNormal];
+    seeTrailerMediaBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
+    seeTrailerMediaBtn.titleLabel.textColor = [UIColor whiteColor];
     seeTrailerMediaBtn.backgroundColor = [UIColor clearColor];
+    seeTrailerMediaBtn.center = CGPointMake(self.view.center.x, seeTrailerMediaBtn.center.y);
+    
+//    seeTrailerMediaBtn.backgroundColor = [UIColor clearColor];
     seeTrailerMediaBtn.opaque = YES;
-    [infoMediaView addSubview:seeTrailerMediaBtn];
+//    [infoMediaView addSubview:seeTrailerMediaBtn];
 }
 
-- (void) seeTrailerMedia:(UIButton*)sender
+- (void) seeTrailer:(UIButton*)sender
 {
     // Display the youtube video in the app
     XCDYouTubeVideoPlayerViewController *videoPlayerViewController = [[XCDYouTubeVideoPlayerViewController alloc] initWithVideoIdentifier:sender.trailerID];
@@ -1859,7 +1874,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 
 - (void) synchronizeUserListWithServer
 {
-#warning update before submit apiPathV2 apiPathLocal
+    //#warning update before submit apiPathV2 apiPathLocal
     NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"user.php/user/list"];
     
     NSDictionary *parameters = @{@"fbiduser": [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"], @"list": [self updateTasteForServer]};

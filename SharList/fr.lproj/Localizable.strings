@@ -157,6 +157,7 @@
 "RemoveToList" = "Retirer de la liste";
 "To introduce friends" = "Faire découvrir à mes amis";
 "of episodes watched" = "des épisodes regardés";
+"see trailer" = "Voir le trailer";
 
 // Store names :
 "amazonBR" = "amazon Blu-ray";
@@ -166,9 +167,8 @@
 "fnac" = "fnac";
 
 
-"Presentf" = "présente";
-"Presentm" = "présent";
-"%@ %@ Present of %@ discoveries" = "%@ %@ dans %@ de vos découvertes";
+"Presentm" = "Présent";
+"Present of %@ discoveries" = "Présent dans %@ de vos découvertes";
 "Present in following friends list" = "Présent dans la liste de :";
 "p %@ discoveries" = "%@ de vos découvertes"; // <- For NSMutableString
 "%@ %@ in no discovery" = "%@ %@ dans aucune découverte";

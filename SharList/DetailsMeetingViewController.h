@@ -57,10 +57,7 @@ typedef NS_ENUM (NSInteger, FollowingStatus) {
 
 - (void) showTutorial;
 - (void) addAsFavorite:(UIBarButtonItem*)sender;
-- (void) displayMetUserfbImgProfileForDatas:(NSDictionary*)datas;
-- (UIView*) displayMetUserStats;
 - (void) updateCurrentUser;
-- (void) scrollToSectionWithNumber:(UIButton*)sender;
 
 
 @end

@@ -150,9 +150,8 @@
 "fnac" = "fnac";
 
 
-"Presentf" = "present";
-"Presentm" = "present";
-"%@ %@ Present of %@ discoveries" = "%@ %@ in %@ of your discoveries";
+"Presentm" = "Present";
+"Present of %@ discoveries" = "Present in %@ of your discoveries";
 "Present in following friends list" = "In the list of following friends:";
 "p %@ discoveries" = "%@ of your discoveries";
 "Present in no discovery" = "Present in no discovery";
