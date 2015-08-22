@@ -1049,11 +1049,8 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
         userDiscovered = [[SHDUserDiscovered alloc] initWithDatas:currentUserMet];
-        
         userDiscovered.tag = 98;
 
-        
-        userDiscovered.backgroundColor = [UIColor redColor];
         [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
         [cell.contentView addSubview:userDiscovered];
     } else {
