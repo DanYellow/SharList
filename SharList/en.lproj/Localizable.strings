@@ -140,7 +140,8 @@
 "AddToList" = "Add to list";
 "RemoveToList" = "Remove from list";
 "To introduce friends" = "Introduce to my friends";
-"of episodes watched" = "of episodes watched";
+"see trailer" = "See trailer";
+"no trailer" = "Trailer not available";
 
 // Store names :
 "amazonBR" = "amazon Blu-ray";

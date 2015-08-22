@@ -22,6 +22,11 @@
 @interface SHDMediaDatas : NSObject
 
 @property (strong, atomic) NSMutableDictionary *mediaDatas;
+@property (strong, atomic) NSString *imdbId;
+@property (strong, atomic) NSString *type; // movie or serie
+
+@property (strong, atomic) NSDate *nextEpisodeDate;
+@property (strong, atomic) NSString *nextEpisodeRef; // S01E04 e.g.
 
 - (instancetype) initWithMedia:(NSDictionary *)media;
 @property (nonatomic, weak) id<SHDMediaDatasDelegate> delegate;

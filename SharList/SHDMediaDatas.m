@@ -11,9 +11,9 @@
 
 @interface SHDMediaDatas()
 
-@property (strong, atomic) NSString *type; // movie or serie
+
 @property (strong, atomic) NSString *trailerAPILink;
-@property (strong, atomic) NSString *imdbId;
+
 @property (strong, atomic) NSDictionary *settingsDict;
 
 @end
@@ -98,7 +98,7 @@ dispatch_group_t dFinishLoadDatas;
                 NSDictionary *movieObj = @{
                         @"id": responseObject[@"id"],
                         @"original_name": responseObject[@"original_title"],
-                        @"title": responseObject[@"title"],
+                        @"name": responseObject[@"title"],
                         @"genres": responseObject[@"genres"],
                         @"poster_path": responseObject[@"poster_path"],
                         @"description": responseObject[@"overview"],
@@ -187,11 +187,13 @@ dispatch_group_t dFinishLoadDatas;
                 }
             }
         }
-        
-        NSDate *dateForNextEpisode = (closestDate != nil) ? closestDate : nullDate;
+       
+        self.nextEpisodeDate = (closestDate != nil) ? closestDate : nullDate;
         // Hey, hey, hey... coding everyday
-
-        [self.mediaDatas setObject:dateForNextEpisode forKey:@"next_episode_date"];
+        self.nextEpisodeRef = [NSString stringWithFormat:@"S%02iE%02li", [tvSeasonQueryParams[@"season_number"] intValue], episodeNumber];
+        
+        [self.mediaDatas setObject:self.nextEpisodeDate forKey:@"next_episode_date"];
+        [self.mediaDatas setObject:self.nextEpisodeRef forKey:@"next_episode_ref"];
         dispatch_group_leave(dFinishLoadDatas);
     }];
 }

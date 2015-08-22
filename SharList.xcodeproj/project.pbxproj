@@ -69,6 +69,7 @@
 		1A66AA121B31DF3C001D92D7 /* NSDate+CupertinoYankee.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A66AA111B31DF3C001D92D7 /* NSDate+CupertinoYankee.m */; };
 		1A6744B11AAB4BB000FA610F /* PFPushManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6744B01AAB4BB000FA610F /* PFPushManager.m */; };
 		1A68D5F31B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */; };
+		1A724B971B885B2800C2F2E1 /* SHDCollapseTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A724B961B885B2800C2F2E1 /* SHDCollapseTextView.m */; };
 		1A7B09DF1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */; };
 		1A8045BC1B85086100523835 /* UIButton+Media.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8045BB1B85086100523835 /* UIButton+Media.m */; };
 		1A91FDFE1B2341F600E8B5D7 /* FacebookSDKStrings.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A91FE001B2341F600E8B5D7 /* FacebookSDKStrings.strings */; };
@@ -235,6 +236,8 @@
 		1A6744B01AAB4BB000FA610F /* PFPushManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFPushManager.m; sourceTree = "<group>"; };
 		1A68D5F11B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHDUserDiscoveredDatas.h; sourceTree = "<group>"; };
 		1A68D5F21B7F7BD800FA2EB9 /* SHDUserDiscoveredDatas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHDUserDiscoveredDatas.m; sourceTree = "<group>"; };
+		1A724B951B885B2800C2F2E1 /* SHDCollapseTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHDCollapseTextView.h; sourceTree = "<group>"; };
+		1A724B961B885B2800C2F2E1 /* SHDCollapseTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHDCollapseTextView.m; sourceTree = "<group>"; };
 		1A7B09DD1A10DBFB00FA2766 /* ShareListMediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareListMediaTableViewCell.h; sourceTree = "<group>"; };
 		1A7B09DE1A10DBFB00FA2766 /* ShareListMediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShareListMediaTableViewCell.m; sourceTree = "<group>"; };
 		1A8045BA1B85086100523835 /* UIButton+Media.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Media.h"; sourceTree = "<group>"; };
@@ -600,6 +603,8 @@
 				1A5F82D91B7E75FE006459BA /* SHDUserDiscovered.m */,
 				1A60F6C21B811FAB002F026E /* ProfileHeaderView.h */,
 				1A60F6C31B811FAB002F026E /* ProfileHeaderView.m */,
+				1A724B951B885B2800C2F2E1 /* SHDCollapseTextView.h */,
+				1A724B961B885B2800C2F2E1 /* SHDCollapseTextView.m */,
 			);
 			name = CustomViews;
 			sourceTree = "<group>";
@@ -859,6 +864,7 @@
 			files = (
 				1A8045BC1B85086100523835 /* UIButton+Media.m in Sources */,
 				1A655F501B34986300E98A9F /* Discovery.m in Sources */,
+				1A724B971B885B2800C2F2E1 /* SHDCollapseTextView.m in Sources */,
 				1A1BE6111B06869C00B813CD /* NSString+URLEncodeValue.m in Sources */,
 				1AF4745C1A4DD424003ED4AF /* UIButton+TrailerID.m in Sources */,
 				1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */,

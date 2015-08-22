@@ -12,6 +12,10 @@
 @interface DetailsMediaViewController ()
 
 @property (strong, nonatomic) Discovery *userTaste;
+@property (strong, nonatomic) SHDMediaDatas *mediaDatasController;
+@property (strong, nonatomic) UIBarButtonItem *addMediaToFavoriteBtnItem;
+@property (strong, nonatomic) UIView *infoMediaContainer;
+@property (strong, atomic) UIView *scrollViewLastView;
 
 @end
 
@@ -77,7 +81,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"detailsMediaTutorial"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"detailsMediaTutorial"];
         [self showTutorial];
-    }    
+    }
 
     // We just want the title of the uiviewcontroller
     self.navigationItem.titleView = [UIView new];
@@ -129,8 +133,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
 //    pfPushManager = [[PFPushManager alloc] initForType:UpdateList];
     
-    SHDMediaDatas *mediaDatasController = [[SHDMediaDatas alloc] initWithMedia:self.mediaDatas];
-    mediaDatasController.delegate = self;
+    
 
     // Contains globals datas of the project
     NSString *settingsPlist = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"plist"];
@@ -153,11 +156,13 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         return;
     }
     
+    self.mediaDatasController = [[SHDMediaDatas alloc] initWithMedia:self.mediaDatas];
+    self.mediaDatasController.delegate = self;
     
-    UIView *infoMediaContainer = [[UIView alloc] initWithFrame:self.view.frame];
-    infoMediaContainer.backgroundColor = [UIColor clearColor];
-    infoMediaContainer.tag = DMVInfoContainerTag;
-    [self.view insertSubview:infoMediaContainer atIndex:10];
+    self.infoMediaContainer = [[UIView alloc] initWithFrame:self.view.frame];
+    self.infoMediaContainer.backgroundColor = [UIColor clearColor];
+    self.infoMediaContainer.tag = DMVInfoContainerTag;
+    [self.view insertSubview:self.infoMediaContainer atIndex:10];
     
     self.userTaste = [Discovery MR_findFirstByAttribute:@"fbId"
                                               withValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
@@ -176,184 +181,61 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = YES;
     
-    UIBarButtonItem *addMediaToFavoriteBtnItem;
-
-    if ([[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] class] != [NSNull class] &&
-        ![[[userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
+   
+    if ([[userTasteDict objectForKey:self.mediaDatasController.type] class] != [NSNull class] &&
+        ![[[userTasteDict objectForKey:self.mediaDatasController.type] valueForKey:@"imdbID"] containsObject:self.mediaDatasController.imdbId]) {
         self.Added = NO;
         // Media in the list
-        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addToList"]  style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+        self.addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addToList"]  style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
         
     } else {
         // Media not in the list
         self.Added = YES;
-        addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"delToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
+        self.addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"delToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
     }
     
     if (![self connected]) {
-        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
-    }
-    
-
-    [[JLTMDbClient sharedAPIInstance] setAPIKey:@"f09cf27014943c8114e504bf5fbd352b"];
-    
-    NSString *apiLink, *trailerApiLink;
-    NSDictionary *queryParams;
-    NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-    __block NSString *trailerID = @"";
-
-    // Tricky part
-    // We used now themoviedb
-    // But database still have ids from imdb and only movie in themoviedb uses them
-    // and I don't have time / want now to fill the db w/ themoviedb's id
-    if ([self.mediaDatas[@"type"] isEqualToString:@"movie"]) {
-        apiLink = kJLTMDbMovie;
-        queryParams = @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage};
-        trailerApiLink = kJLTMDbMovieTrailers;
-    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ([self.mediaDatas[@"themoviedbID"] isEqualToString:@""] || ![self.mediaDatas objectForKey:@"themoviedbID"] || [[self.mediaDatas objectForKey:@"themoviedbID"] isEqualToString:@"(null)"])) {
-        apiLink = kJLTMDbFind;
-//        trailerApiLink = kJLTMDbTVTrailers;
-        queryParams =  @{@"id": self.mediaDatas[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"};
-    } else if ([self.mediaDatas[@"type"] isEqualToString:@"serie"] && ![self.mediaDatas[@"themoviedbID"] isEqualToString:@""]  && [self.mediaDatas objectForKey:@"themoviedbID"]) {
-        apiLink = kJLTMDbTV;
-        queryParams =  @{@"id": self.mediaDatas[@"themoviedbID"], @"language": userLanguage};
-//        trailerApiLink = kJLTMDbTVTrailers;
-    } else {
-        return;
+        self.navigationItem.rightBarButtonItems = @[self.addMediaToFavoriteBtnItem];
     }
 
-    [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
-        if(!error){
-            // We made a second query for tv show to get datas with imdb id
-            if (responseObject[@"tv_results"] != nil && [responseObject[@"tv_results"] count] != 0) {
-                NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0], @"language": userLanguage};
-                [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
-                    if(!error){
-                        [self setMediaViewForData:responseObject];
-                    }
-                }];
-            // It's a serie directly from themoviedbapi
-            } else if ([responseObject objectForKey:@"number_of_seasons"] != nil) {
-                [self setMediaViewForData:responseObject];
-            } else {
-                // It's a movie
-                [self setMediaViewForData:responseObject];
-//                [[JLTMDbClient sharedAPIInstance] GET:trailerApiLink withParameters:@{@"id": self.mediaDatas[@"imdbID"]} andResponseBlock:^(id responseObject, NSError *error) {
-//                    if ([responseObject valueForKeyPath:@"youtube.source"] != nil && [[responseObject valueForKeyPath:@"youtube.source"] count] > 0) {
-//                        trailerID = [responseObject valueForKeyPath:@"youtube.source"][0];
-//                        if (![trailerID isEqualToString:@""]) {
-////                            [self displayTrailerButtonForId:trailerID];
-//                        }
-//                    }
-//                }];
-            }
-        } else {
-            [self noInternetConnexionAlert];
-        }
-    }];
+    
+//    [self noInternetConnexionAlert];
 
     // If the user is not connected to Internet it can still add a card to his account
 //    if (![self connected]) {
 //        self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem];
 //    }
         
-    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, screenHeight * (230.0/1136.0), screenWidth * 0.9, 55)];
+    UILabel *mediaTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, screenHeight * (230.0/1136.0),
+                                                                         screenWidth * (574.0/640.0), 55)];
     mediaTitleLabel.text = self.mediaDatas[@"name"];
     mediaTitleLabel.textColor = [UIColor whiteColor];
     mediaTitleLabel.textAlignment = NSTextAlignmentLeft;
-//    mediaTitleLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-//    mediaTitleLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-//    mediaTitleLabel.layer.shadowRadius = 2.5;
-//    mediaTitleLabel.layer.shadowOpacity = 0.75;
     mediaTitleLabel.clipsToBounds = NO;
     mediaTitleLabel.layer.masksToBounds = NO;
     mediaTitleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     mediaTitleLabel.numberOfLines = 0;
-    mediaTitleLabel.backgroundColor = [UIColor redColor];
+    mediaTitleLabel.backgroundColor = [UIColor clearColor];
     mediaTitleLabel.opaque = NO;
     mediaTitleLabel.alpha = .85f;
     mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
-    mediaTitleLabel.tag = 4;
+    mediaTitleLabel.tag = DMVMediaTitleTag;
     [mediaTitleLabel sizeToFit];
     mediaTitleLabel.frame = CGRectMake(0, CGRectGetMinY(mediaTitleLabel.frame),
-                                       screenWidth * 0.9, CGRectGetHeight(mediaTitleLabel.frame));
+                                       screenWidth * (574.0/640.0), CGRectGetHeight(mediaTitleLabel.frame));
     mediaTitleLabel.center = CGPointMake(self.view.center.x, mediaTitleLabel.center.y);
 
-    [infoMediaContainer addSubview:mediaTitleLabel];
+    [self.infoMediaContainer addSubview:mediaTitleLabel];
     
-    UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(mediaTitleLabel.frame), screenWidth, screenHeight - CGRectGetMaxY(mediaTitleLabel.frame))]; //CGRectGetMaxY(mediaTitleLabel.frame)
+    UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(mediaTitleLabel.frame), screenWidth, screenHeight - CGRectGetMaxY(mediaTitleLabel.frame) + 10)]; //CGRectGetMaxY(mediaTitleLabel.frame)
     infoMediaView.backgroundColor = [UIColor clearColor];
     infoMediaView.opaque = NO;
     infoMediaView.hidden = NO;
     infoMediaView.tag = 2;
     infoMediaView.showsVerticalScrollIndicator = YES;
     infoMediaView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
-    infoMediaView.contentInset = UIEdgeInsetsZero;
-//    [self.view insertSubview:infoMediaView atIndex:1];
-    [infoMediaContainer addSubview:infoMediaView];
+    [self.infoMediaContainer addSubview:infoMediaView];
 
-    
-    // This NSDict will be used to set id to local media
-    NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
-    NSString *shoundAPIPath = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/beta"];
-    
-    NSDictionary *parameters = @{@"imdbId": self.mediaDatas[@"imdbID"]};
-
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.securityPolicy.allowInvalidCertificates = YES;
-//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
-    [manager.requestSerializer setValue:@"mince" forHTTPHeaderField:@"X-Shound"];
-    
-    [manager GET:shoundAPIPath parameters:parameters
-          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              if (!self.mediaDatas[@"id"]) {
-                  [tempDict setObject:(NSString *)[responseObject valueForKeyPath:@"response.id"] forKey:@"id"];
-                  self.mediaDatas = tempDict;
-              }
-              
-              // If the name of the media change in the database, the user keep the last name in the db
-              if (![self.mediaDatas[@"name"] isEqualToString:[responseObject valueForKeyPath:@"response.name"]]) {
-                  [tempDict setObject:(NSString *)[responseObject valueForKeyPath:@"response.name"] forKey:@"name"];
-                  self.mediaDatas = tempDict;
-//                  mediaTitleLabel.text = responseObject[@"response.name"];
-//                  [mediaTitleLabel sizeToFit];
-              }
-              
-              [self displayBuyButtonForShops:[responseObject valueForKeyPath:@"response.storeLinks"]];
-              
-              
-              NSNumber *numberComments = [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.commentsCount"] integerValue]];
-
-              self.numberOfComments = numberComments;
-              
-              NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
-              [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
-              
-              UIButton *messagesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-              [messagesBtn addTarget:self action:@selector(displayCommentsForMediaWithId:) forControlEvents:UIControlEventTouchUpInside]; // numberMessages
-              [messagesBtn setTitle:[numberFormatter stringFromNumber:numberComments] forState:UIControlStateNormal];
-              messagesBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
-              [messagesBtn setImage:[[UIImage imageNamed:@"listMessagesNavIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
-                           forState:UIControlStateNormal];
-              messagesBtn.frame = CGRectMake(0, 0, 55, 24);
-              messagesBtn.backgroundColor = [UIColor clearColor];
-              [messagesBtn.imageView setContentMode:UIViewContentModeScaleAspectFit];
-              [messagesBtn setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f] forState:UIControlStateHighlighted];
-              messagesBtn.imageEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.titleLabel.frame.size.width,
-                                                             0, messagesBtn.imageView.frame.size.width);
-              messagesBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.imageView.frame.size.width + 10, 0, 0);
-              messagesBtn.titleLabel.textAlignment = NSTextAlignmentRight;
-              messagesBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
-              
-              UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithCustomView:messagesBtn];
-              
-              self.navigationItem.rightBarButtonItems = @[addMediaToFavoriteBtnItem, messagesBarBtn];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"error viewDidLoad - : %@", error);
-    }];
-    
-
-    
     
     if (![self connected]) {
         UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
@@ -389,47 +271,23 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     [self.view addGestureRecognizer:rightGesture];
 }
 
-
-
 - (UILabel*) displayNumberOfIterationsAmongDiscoveries
 {
-    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId != %@",
-                                          [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
-    NSArray *meetings = [Discovery MR_findAllSortedBy:@"lastDiscovery" ascending:NO withPredicate:facebookFriendsFilter];
-    
-    NSUInteger numberOfApparitionAmongDiscoveries = 0;
-    for (Discovery *discovery in meetings) {
-        NSDictionary *userTaste = [[NSKeyedUnarchiver unarchiveObjectWithData:[discovery likes]] mutableCopy];
-        id userTasteForType = [userTaste objectForKey:[self.mediaDatas valueForKey:@"type"]];
-        if (![[userTasteForType valueForKey:@"imdbID"] isEqual:[NSNull null]]) {
-            if ([[userTasteForType valueForKey:@"imdbID"] containsObject:self.mediaDatas[@"imdbID"]]) {
-                numberOfApparitionAmongDiscoveries++;
-            }
-        }
-    }
-    
     // This label shows the number of iteration of the card currently shown among user's discoverties
     UILabel *numberOfIterationAmongDiscoveriesLabel = [UILabel new];
     numberOfIterationAmongDiscoveriesLabel.tag = DMVAmongDiscoveriesLabelTag;
-    
-//    UIView *facebookFriendsContainer = (UITextView*)[aContainerView viewWithTag:14];
-//    CGFloat mediaDescriptionHeight = CGRectGetMaxY(facebookFriendsContainer.frame) + 30;
-    
-//    CGFloat numberOfIterationAmongDiscoveriesLabelY = ([self connected]) ? mediaDescriptionHeight : screenHeight - 83;
-    
-    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake((screenWidth - (screenWidth * 0.9)), 0, screenWidth * 0.9, 20);
+
+    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake((screenWidth - (screenWidth * 0.9)), 0, screenWidth * (574.0/640.0), 20);
     numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
     
-    CGFloat iterationAmongDiscoveriesPercent = ((float)numberOfApparitionAmongDiscoveries / (float)meetings.count);
+    CGFloat iterationAmongDiscoveriesPercent = [self.mediaDatasController.mediaDatas[@"nb_iterations"] floatValue];
     
     if (isnan(iterationAmongDiscoveriesPercent) || isinf(iterationAmongDiscoveriesPercent)) {
         iterationAmongDiscoveriesPercent = 0.0f;
     }
     
-    
     NSString *serieOrMovieString = @"";
     NSString *presentString = NSLocalizedString(@"Presentm", nil);
-    
     
     if (iterationAmongDiscoveriesPercent == 0) {
         NSString *localizeKey = @"%@ %@ in no discovery";
@@ -493,72 +351,19 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     return addRemoveFromListBtn;
 }
 
-- (NSArray*) fetchFacebookFriendsForMedia
-{
-    if (![[FBSDKAccessToken currentAccessToken] hasGranted:@"user_friends"]) {
-        return @[];
-    }
-    
-    // We retrieve the list of facebook friends
-//    NSPredicate *facebookFriendsFilter = [NSPredicate predicateWithFormat:@"fbId IN %@", [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"]];
-    NSArray *facebookFriends = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] valueForKey:@"id"];
 
-//    NSPredicate *facebookFrienddbIdFilter = [NSPredicate predicateWithFormat:@"dbId != 0"];
-//    NSArray *facebookFriends = [[Discovery MR_findAllWithPredicate:facebookFriendsFilter] valueForKey:@"fbId"];
-    
-    NSString *paramsString = @"";
-    NSMutableArray *paramsArray = [NSMutableArray new];
-    for (NSString *friendId in facebookFriends) {
-        [paramsArray addObject:[NSString stringWithFormat:@"friends[]=%@", friendId]];
-    }
-    
-    paramsString = [paramsArray componentsJoinedByString:@"&"];
-    paramsString = [paramsString stringByAppendingString:[NSString stringWithFormat:@"&imdbId=%@", self.mediaDatas[@"imdbID"]]];
-
-
-    NSString *urlString = [[settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/friends?"];
-    urlString = [urlString stringByAppendingString:paramsString];
-    
-
-    NSURL *aUrl = [NSURL URLWithString:urlString];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:aUrl
-                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:9.0];
-    [request setValue:@"discover" forHTTPHeaderField:@"X-Shound"];
-    [request setHTTPMethod:@"GET"];
-    
-    
-    NSURLResponse *response = nil;
-    NSError *error = nil;
-    
-    NSData *data = [NSURLConnection sendSynchronousRequest:request
-                          returningResponse:&response error:&error];
-    
-    if (error == nil) {
-        NSMutableDictionary *serverResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        NSPredicate *facebookFriendsForMedia = [NSPredicate predicateWithFormat:@"id IN %@", [serverResponse[@"response"] valueForKey:@"fbId" ]];
-        NSArray *facebookFriends = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"]  filteredArrayUsingPredicate:facebookFriendsForMedia];
-
-        return facebookFriends;
-    } else {
-        return @[];
-    }
-    
-    return @[];
-}
-
-- (UIView*) displayFacebookFriendsWithMediaImg:(NSString*)trailerImage
+- (UIView*) displayFacebookFriends
 {
     UIView *facebookFriendsContainer = [UIView new];
     facebookFriendsContainer.backgroundColor = [UIColor clearColor];
     
-    NSArray *facebookFriendsList = [self fetchFacebookFriendsForMedia];
-    
+    NSArray *facebookFriendsList = self.mediaDatasController.mediaDatas[@"media_facebook_friends"];
+
     // None of user facebook friends has this media among his list
     // So we add a button to talk about the movie / serie to the user friends
     if ([facebookFriendsList count] == 0) {
         
-        [facebookFriendsContainer addSubview:[self introduceMediaToFriendsWithMediaImg:trailerImage]];
+        [facebookFriendsContainer addSubview:[self introduceMediaToFriendsWithMediaImdbId:self.mediaDatasController.imdbId]];
         
         UIView *facebookFriendsContainerLastView = [[facebookFriendsContainer subviews] lastObject];
         facebookFriendsContainer.frame = CGRectMake(0, 0,
@@ -591,7 +396,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     const NSUInteger limitFriendsThumbs = 13;
     const CGFloat thumbFriendContainerSize = 70.0f;
     
-    [facebookFriendsList enumerateObjectsUsingBlock:^(NSDictionary *friend, NSUInteger idx, BOOL *stop) {
+    [facebookFriendsList enumerateObjectsUsingBlock:^(NSString *fbId, NSUInteger idx, BOOL *stop) {
         if (idx == limitFriendsThumbs) {
             UIView *moreFriendsIndicator = [[UIView alloc] initWithFrame:CGRectMake(offsetX + (idx * thumbFriendContainerSize) + (idx * 12),
                                                                                          0,
@@ -623,12 +428,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
             return;
         }
         
-        NSURL *facebookFriendImgProfile = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%.0f&height=%.0f", friend[@"id"], thumbFriendContainerSize, thumbFriendContainerSize]];
+        NSURL *facebookFriendImgProfile = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%.0f&height=%.0f", fbId, thumbFriendContainerSize, thumbFriendContainerSize]];
         
         UIButton *thumbFbFriendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         thumbFbFriendBtn.frame = CGRectMake(offsetX + (idx * thumbFriendContainerSize) + (idx * 12), 0, thumbFriendContainerSize, thumbFriendContainerSize);
         thumbFbFriendBtn.backgroundColor = [UIColor clearColor];
-        thumbFbFriendBtn.trailerID = friend[@"id"];
+        thumbFbFriendBtn.trailerID = fbId;
         [thumbFbFriendBtn addTarget:self
                              action:@selector(displayFacebookFriendList:)
                    forControlEvents:UIControlEventTouchUpInside];
@@ -675,22 +480,22 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     CGFloat layerX = (self.view.frame.size.width - layerWidth) / 2;
     
     CALayer *numberOfIterationAmongDiscoveriesLabelLayerT = [CALayer layer];
-    numberOfIterationAmongDiscoveriesLabelLayerT.frame = CGRectMake(layerX, -16.0f, layerWidth, 1.0);
-    numberOfIterationAmongDiscoveriesLabelLayerT.backgroundColor = [UIColor whiteColor].CGColor;
+    numberOfIterationAmongDiscoveriesLabelLayerT.frame = CGRectMake(layerX, -8.0f, layerWidth, 1.0);
+    numberOfIterationAmongDiscoveriesLabelLayerT.backgroundColor = [UIColor colorWithWhite:1 alpha:.05].CGColor;
     numberOfIterationAmongDiscoveriesLabelLayerT.anchorPoint = CGPointMake(0.5, 0.5);
     [facebookFriendsContainer.layer addSublayer:numberOfIterationAmongDiscoveriesLabelLayerT];
 
     return facebookFriendsContainer;
 }
 
-- (UIButton *) introduceMediaToFriendsWithMediaImg:(NSString*)trailerImage
+- (UIButton *) introduceMediaToFriendsWithMediaImdbId:(NSString*)imdbId
 {
     UIButton *introduceMediaToFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     introduceMediaToFriendsBtn.tag = 20;
     [introduceMediaToFriendsBtn setFrame:CGRectMake(0, 0, (screenWidth * 90) / 100, 54)];
     [introduceMediaToFriendsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [introduceMediaToFriendsBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
-    introduceMediaToFriendsBtn.trailerID = trailerImage;
+    introduceMediaToFriendsBtn.trailerID = imdbId;
     introduceMediaToFriendsBtn.center = CGPointMake(self.view.center.x, introduceMediaToFriendsBtn.center.y);
     
     [introduceMediaToFriendsBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:.5 alpha:.25]]
@@ -713,80 +518,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     return introduceMediaToFriendsBtn;
 }
 
-- (void) getTrailerAndNextEpisodeDateForResponse:(NSDictionary*)responseObject
-{
-
-    if ([responseObject valueForKeyPath:@"id"] == nil) {
-        return;
-    }
-    
-    // Retrieve trailer
-    __block NSString *trailerID = @"";
-//    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVTrailers withParameters:@{@"id": [responseObject valueForKeyPath:@"id"]} andResponseBlock:^(id responseObject, NSError *error) {
-//        // We check if there is a video called "trailer"
-//        // if yes we take it
-//        // else we take the first video
-//        if ([[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] != nil && [[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]].count > 0 ) {
-//            trailerID = [[[responseObject valueForKeyPath:@"results"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"type == %@", @"Trailer"]] valueForKeyPath:@"key"][0];
-//        } else if([[responseObject valueForKeyPath:@"results"] count] > 0) {
-//            trailerID = [responseObject valueForKeyPath:@"results.key"][0];
-//        }
-//        
-//        if (![trailerID isEqualToString:@""]) {
-//            [self displayTrailerButtonForId:trailerID];
-//        }
-//    }];
-    
-    // Get the date of the next episode
-    NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
-                                          @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
-    
-    NSString *lastAirEpisode = (NSString*)[responseObject valueForKeyPath:@"last_air_date"];
-    
-    if ([lastAirEpisode isKindOfClass:[NSNull class]]) {
-        return;
-    }
-    
-    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = @"yyyy-MM-dd";
-    NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];
-    
-    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVSeasons withParameters:tvSeasonQueryParams andResponseBlock:^(id responseObject, NSError *error) {
-        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-        dateFormatter.dateFormat = @"yyyy-MM-dd";
-        
-        NSDate *closestDate = nil;
-        
-        int episodeNumber = 0;
-        for (NSDictionary* episode in responseObject[@"episodes"]) {
-            if ([episode objectForKey:@"air_date"] != (id)[NSNull null]) {
-                NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
-                
-                NSDate *episodeDate = [dateFormatter dateFromString:dateString];
-                episodeNumber++;
-                if([episodeDate timeIntervalSinceNow] < -100000) {
-                    continue;
-                }
-                
-                // If the the date is today so we break the loop
-                if ([[NSCalendar currentCalendar] isDateInToday:episodeDate] || !closestDate) {
-                    closestDate = episodeDate;
-                    break;
-                }
-                
-                if([episodeDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
-                    closestDate = episodeDate;
-                }
-            }
-        }
-
-        NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
-        
-        [self displayLabelForNextOrLastEpisodeForDate:dateForEpisode
-                                  andSeasonForEpisode:[NSString stringWithFormat:@"S%02iE%02i", [tvSeasonQueryParams[@"season_number"] intValue], episodeNumber]];
-
-    }];
-}
 
 #pragma mark - Tutorial
 
@@ -811,16 +542,25 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     [maskWithHole setPath:[maskPath CGPath]];
     [maskWithHole setFillRule:kCAFillRuleEvenOdd];
-    [maskWithHole setFillColor:[[UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f] CGColor]];
+//    [maskWithHole setFillColor:[[UIColor colorWithRed:(33.0f/255.0f) green:(33.0f/255.0f) blue:(33.0f/255.0f) alpha:1.0f] CGColor]];
     
 //    NSUInteger offsetX = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? self.splitViewController.primaryColumnWidth : 0;
     
+    UIVisualEffect *blurEffect;
+    blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    
+    UIVisualEffectView *visualEffectView;
+    visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    visualEffectView.frame = self.view.frame;
+    
     UIView *tutorialView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight)];
-    tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.989f];
+//    tutorialView.backgroundColor = [UIColor colorWithRed:(18.0/255.0f) green:(33.0f/255.0f) blue:(49.0f/255.0f) alpha:.989f];
     tutorialView.layer.mask = maskWithHole;
     tutorialView.tag = 8;
     tutorialView.alpha = .25;
     tutorialView.opaque = NO;
+    [tutorialView addSubview:visualEffectView];
+    
     [[[UIApplication sharedApplication] keyWindow] addSubview:tutorialView];
     
     [UIView animateWithDuration:0.35 delay:0.0
@@ -854,8 +594,49 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     [tutorialView addSubview:endTutorial];
 }
 
-- (void) datasAreReady {
-    NSLog(@"ready to begin");
+- (void) datasAreReady
+{
+    [self setNavigationItems];
+    [self updateTitleLabel];
+    [self.mediaDatas setObject:self.mediaDatasController.mediaDatas[@"name"] forKey:@"name"];
+    [self displayBuyButtonForShops:self.mediaDatasController.mediaDatas[@"store_links"]];
+    
+    [self setMediaViewForDatas:self.mediaDatasController.mediaDatas];
+}
+
+- (void) setNavigationItems
+{
+    NSNumber *numberComments = [NSNumber numberWithInteger:[self.mediaDatasController.mediaDatas[@"comments_count"] integerValue]];
+    
+    NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
+    [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
+    
+    UIButton *messagesBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [messagesBtn addTarget:self action:@selector(displayCommentsForMediaWithId:) forControlEvents:UIControlEventTouchUpInside]; // numberMessages
+    [messagesBtn setTitle:[numberFormatter stringFromNumber:numberComments] forState:UIControlStateNormal];
+    messagesBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0f];
+    [messagesBtn setImage:[[UIImage imageNamed:@"listMessagesNavIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
+                 forState:UIControlStateNormal];
+    messagesBtn.frame = CGRectMake(0, 0, 55, 24);
+    messagesBtn.backgroundColor = [UIColor clearColor];
+    [messagesBtn.imageView setContentMode:UIViewContentModeScaleAspectFit];
+    [messagesBtn setTitleColor:[UIColor colorWithRed:(114.0/255.0) green:(117.0/255.0) blue:(121.0/255.0) alpha:1.0f] forState:UIControlStateHighlighted];
+    messagesBtn.imageEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.titleLabel.frame.size.width,
+                                                   0, messagesBtn.imageView.frame.size.width);
+    messagesBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -messagesBtn.imageView.frame.size.width + 10, 0, 0);
+    messagesBtn.titleLabel.textAlignment = NSTextAlignmentRight;
+    messagesBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+    
+    UIBarButtonItem *messagesBarBtn = [[UIBarButtonItem alloc] initWithCustomView:messagesBtn];
+    
+    self.navigationItem.rightBarButtonItems = @[self.addMediaToFavoriteBtnItem, messagesBarBtn];
+}
+
+- (void) updateTitleLabel
+{
+    // This part set the name localised of the media
+    UILabel *mediaTitleLabel = (UILabel*)[self.infoMediaContainer viewWithTag:DMVMediaTitleTag];
+    mediaTitleLabel.text = self.mediaDatasController.mediaDatas[@"name"];
 }
 
 #pragma mark - buying part
@@ -997,8 +778,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 // It displays the button 'buy' at the bottom of the screen
 - (void) displayBuyButtonForShops:(NSDictionary*)storesList
 {
-    
-    
     // There is no links to stores
     if([storesList isKindOfClass:[NSNull class]]) return;
     if ([storesList count] == 0) return;
@@ -1031,20 +810,16 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     // Display screen with all buttons to buy
     [self buyScreenForStores:storesList];
 
-
     [UIView animateWithDuration:0.4 delay:0.0
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          buyButton.frame = CGRectSetPos( buyButton.frame, 0, screenHeight - 50 );
                      }
-                     completion:^(BOOL completion){
-                         
-                     }];
+                     completion:nil];
 }
 
 - (UIScrollView*) displayButtonsForStores:(NSDictionary*)storesList
 {
-
     UIScrollView *storesBtnsContainer = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 200, screenWidth, 42)];
     storesBtnsContainer.backgroundColor = [UIColor clearColor];
     storesBtnsContainer.showsHorizontalScrollIndicator = NO;
@@ -1103,14 +878,10 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     return storesBtnsContainer;
 }
 
-- (void) setMediaViewForData:(NSDictionary*)data
+- (void) setMediaViewForDatas:(NSDictionary*)data
 {
-    if ([self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
-        [self getTrailerAndNextEpisodeDateForResponse:data];
-    }
-    
-    
-    UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
+    UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:DMVInfosMediaTag];
+    infoMediaView.backgroundColor = [UIColor clearColor];
 
     UIImageView *imgMedia = [UIImageView new];
 
@@ -1142,15 +913,40 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     overlayAlphaAnim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
     [overlayLayer addAnimation:overlayAlphaAnim forKey:@"overlayAnimation"];
 
-
-    UILabel *mediaTitleLabel = (UILabel*)[self.view viewWithTag:4];
+    if ([self.mediaDatasController.type isEqualToString:@"serie"]) {
+        UILabel *nextEpisodeDateLabel = [self displayLabelForNextEpisode:self.mediaDatasController.nextEpisodeDate
+                                                               andSeason:self.mediaDatasController.nextEpisodeRef];
+//        if (![nextEpisodeDateLabel.text isEqualToString:@""])
+        [infoMediaView addSubview:nextEpisodeDateLabel];
+    }
     
     UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
+    NSUInteger nbItsPosY = ([self.mediaDatasController.type isEqualToString:@"serie"]) ? CGRectGetMaxY(infoMediaViewLastView.frame) : 0;
+    nbItsPosY += 12;
+
+    UILabel *numberOfIterationAmongDiscoveriesLabel = [self displayNumberOfIterationsAmongDiscoveries];
+    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(CGRectGetMinX(numberOfIterationAmongDiscoveriesLabel.frame),
+                                                              nbItsPosY,
+                                                              CGRectGetWidth(numberOfIterationAmongDiscoveriesLabel.frame),
+                                                              CGRectGetHeight(numberOfIterationAmongDiscoveriesLabel.frame));
+    [infoMediaView addSubview:numberOfIterationAmongDiscoveriesLabel];
+    
+    infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    
+    UIButton *trailerBtn = [self displayTrailerButton];
+    trailerBtn.frame = CGRectMake(CGRectGetMinX(trailerBtn.frame),
+                                                              CGRectGetMaxY(infoMediaViewLastView.frame) + 18,
+                                                              CGRectGetWidth(trailerBtn.frame),
+                                                              CGRectGetHeight(trailerBtn.frame));
+    [infoMediaView addSubview:trailerBtn];
+
+    infoMediaViewLastView = [infoMediaView.subviews lastObject];
+
     NSString *genresString = NSLocalizedString(@"Genres", nil);
     
     NSMutableArray *genresArray = [NSMutableArray new];
-    for (id genre in data[@"genres"]) {
+    for (id genre in self.mediaDatasController.mediaDatas[@"genres"]) {
         [genresArray addObject:genre[@"name"]];
     }
     
@@ -1161,10 +957,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     mediaGenresLabel.text = genresString;
     mediaGenresLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
     mediaGenresLabel.textAlignment = NSTextAlignmentLeft;
-    mediaGenresLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-    mediaGenresLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-    mediaGenresLabel.layer.shadowRadius = 2.5;
-    mediaGenresLabel.layer.shadowOpacity = 0.75;
     mediaGenresLabel.clipsToBounds = NO;
     mediaGenresLabel.numberOfLines = 0;
     mediaGenresLabel.backgroundColor = [UIColor clearColor];
@@ -1172,70 +964,64 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     mediaGenresLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12.0];
     [mediaGenresLabel sizeToFit];
     mediaGenresLabel.frame = CGRectMake((screenWidth - (screenWidth * 0.9)) / 2,
-                                        CGRectGetMinY(mediaGenresLabel.frame),
+                                        CGRectGetMaxY(infoMediaViewLastView.frame) + 14,
                                         screenWidth * 0.9,
                                         CGRectGetHeight(mediaGenresLabel.frame));
     mediaGenresLabel.tag = 11;
     mediaGenresLabel.alpha = (genresArray.count == 0) ? 0 : 1;
-//    [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
+    [infoMediaView insertSubview:mediaGenresLabel atIndex:10];
     
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
     CGFloat mediaDescriptionWidthPercentage = 90.0; // 82.0
-    CGFloat mediaDescriptionWidth = roundf((screenWidth * mediaDescriptionWidthPercentage) / 100);
+    CGFloat mediaDescriptionWidth = roundf(screenWidth * (574.0/640.0));
     CGFloat mediaDescriptionY = CGRectGetMaxY(infoMediaViewLastView.frame) + 7;
-
-    UITextView *mediaDescription = [[UITextView alloc] initWithFrame:CGRectMake(11, mediaDescriptionY, mediaDescriptionWidth, 0)];
     
-    if (data[@"overview"] == [NSNull null] || [data[@"overview"] isEqualToString:@""]) {
+    
+    NSString *descriptionText = @"";
+    if ([data[@"description"] isEqual:[NSNull null]] || [data[@"description"] isEqualToString:@""]) {
         // the movie db does not provide description for this media
-        mediaDescription.text = NSLocalizedString(@"nodescription", nil);
+        descriptionText = NSLocalizedString(@"nodescription", nil);
     } else {
-        mediaDescription.text = [data[@"overview"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        descriptionText = [data[@"description"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
-    
-    // http://www.amazon.fr/gp/product/B00RTG7894?ie=UTF8&camp=1642&creativeASIN=B00RTG7894&linkCode=xm2&tag=shound-21
-    
-//    http://www.amazon.fr/Breaking-Bad-Int%C3%A9grale-%C3%89dition-Collector/dp/B00FZ6JX5C/?_encoding=UTF8&camp=1642&creative=6746&linkCode=ur2&qid=1435001328&s=dvd&sr=1-1&tag=shound-21
-    
-    
-    mediaDescription.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
-    if (mediaDescription.contentSize.height > mediaDescription.frame.size.height) {
-        int fontIncrement = 1;
-        while (mediaDescription.contentSize.height > mediaDescription.frame.size.height) {
-            mediaDescription.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
-            fontIncrement++;
-        }
-    }
-    
-    mediaDescription.scrollEnabled = NO;
-    [mediaDescription sizeToFit];
+
+    SHDCollapseTextView *mediaDescription = [[SHDCollapseTextView alloc] initWithFrame:CGRectMake((screenWidth - mediaDescriptionWidth) / 2, mediaDescriptionY, mediaDescriptionWidth, 92)
+                                                                                  text:descriptionText
+                                                                               andFont:[UIFont fontWithName:@"HelveticaNeue" size:14.0]];
     [mediaDescription layoutIfNeeded];
     mediaDescription.translatesAutoresizingMaskIntoConstraints = NO;
     mediaDescription.textColor = [UIColor whiteColor];
     mediaDescription.editable = NO;
     mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
+//    mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.showsHorizontalScrollIndicator = NO;
     mediaDescription.showsVerticalScrollIndicator = NO;
-    mediaDescription.contentInset = UIEdgeInsetsMake(-10, -5, -10, 0);
-    mediaDescription.frame = CGRectMake((screenWidth - mediaDescriptionWidth) / 2, CGRectGetMinY(mediaDescription.frame), mediaDescriptionWidth, CGRectGetHeight(mediaDescription.frame));
-//    mediaDescription.center = CGPointMake(self.view.center.x, CGRectGetMaxY(mediaDescription.frame));
+    mediaDescription.contentInset = UIEdgeInsetsMake(-10, -5, -100, 0);
+    mediaDescription.center = CGPointMake(self.view.center.x, mediaDescription.center.y);
     
     mediaDescription.textAlignment = NSTextAlignmentLeft;
-    mediaDescription.backgroundColor = [UIColor clearColor];
     mediaDescription.alpha = 0;
-    mediaDescription.tag = 12;
-    
-//    [infoMediaView addSubview:mediaDescription];
+    mediaDescription.tag = DMVMediaDescriptionTag;
+    [infoMediaView addSubview:mediaDescription];
     
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-    UIView *fbFriendsContainer = [self displayFacebookFriendsWithMediaImg:data[@"poster_path"]];
+    UIButton *collapseBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    collapseBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame), 40, 40);
+    collapseBtn.backgroundColor = [UIColor redColor];
+    [collapseBtn addTarget:self action:@selector(collapseExpandDesc) forControlEvents:UIControlEventTouchUpInside];
+    [infoMediaView addSubview:collapseBtn];
+    
+    
+    infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    
+    UIView *fbFriendsContainer = [self displayFacebookFriends];
     fbFriendsContainer.tag = 14;
-    fbFriendsContainer.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
+    fbFriendsContainer.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame),
                                           CGRectGetWidth(fbFriendsContainer.frame),
                                           CGRectGetHeight(fbFriendsContainer.frame));
     [infoMediaView addSubview:fbFriendsContainer];
@@ -1243,11 +1029,9 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-
-
-
-
     
+    
+
     // Btn add / remove from list
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
@@ -1258,12 +1042,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
                                                    CGRectGetWidth(addRemoveFromListBtn.frame),
                                                    CGRectGetHeight(addRemoveFromListBtn.frame));
     addRemoveFromListBtn.center = CGPointMake(self.view.center.x, addRemoveFromListBtn.center.y);
-//    [infoMediaView addSubview:addRemoveFromListBtn];
+    [infoMediaView addSubview:addRemoveFromListBtn];
     
     
     
     // We display the betaseries button only if the user has his device language set to french
-    if ([[[NSLocale preferredLanguages] objectAtIndex:0] isEqualToString:@"fr"] && [self.mediaDatas[@"type"] isEqualToString:@"serie"]) {
+    if ([[[NSLocale preferredLanguages] objectAtIndex:0] isEqualToString:@"fr"] && [self.mediaDatasController.type isEqualToString:@"serie"]) {
         NSString *BSUserToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"BSUserToken"];
         if (BSUserToken != nil || [BSUserToken isKindOfClass:[NSNull class]]) {
             
@@ -1276,7 +1060,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
             connectWithBSBtn.center = CGPointMake(self.view.center.x, connectWithBSBtn.center.y);
             
             
-//            [infoMediaView addSubview:connectWithBSBtn];
+            [infoMediaView addSubview:connectWithBSBtn];
         }
     }
     
@@ -1284,12 +1068,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
 
-    
+    NSUInteger infoMediaViewOffset = ([self.mediaDatasController.mediaDatas[@"store_links"] isEqual:[NSNull null]]) ? 10 : 60;
     infoMediaView.frame = CGRectMake(infoMediaView.frame.origin.x,
                                      CGRectGetMinY(infoMediaView.frame),
                                      CGRectGetWidth(infoMediaView.frame),
-                                     CGRectGetHeight(infoMediaView.frame) - 60);
-    
+                                     CGRectGetHeight(infoMediaView.frame) - infoMediaViewOffset);
+    self.scrollViewLastView = infoMediaViewLastView;
     infoMediaView.contentSize = CGSizeMake(screenWidth, CGRectGetMaxY(infoMediaViewLastView.frame) + 30);
     
     [UIView animateWithDuration:0.3 delay:0.0
@@ -1304,7 +1088,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     [loadingIndicator stopAnimating];
 }
 
-- (void) displayLabelForNextOrLastEpisodeForDate:(NSDate*)aDate andSeasonForEpisode:(NSString*)aEpisodeString
+- (UILabel*) displayLabelForNextEpisode:(NSDate*)aDate andSeason:(NSString*)aEpisodeString
 {
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.timeStyle = NSDateFormatterNoStyle;
@@ -1312,10 +1096,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     dateFormatter.dateStyle = NSDateFormatterShortStyle;
     
     NSString *lastAirEpisodeDateString = [dateFormatter stringFromDate:aDate];
-    
-    UIView *infoMediaView = (UIView*)[self.view viewWithTag:2];
-    
-    UILabel *mediaTitleLabel = (UILabel*)[infoMediaView viewWithTag:4];
     
     int lastEpisodeDateLabelY = 0;
     
@@ -1330,34 +1110,21 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     if ([aDate timeIntervalSinceNow] > 0 || [[NSCalendar currentCalendar] isDateInToday:aDate] || [[NSCalendar currentCalendar] isDateInTomorrow:aDate]) {
         nextEpisodeDateLabel.text = [nextEpisodeDateLabel.text stringByAppendingString:[NSString stringWithFormat:@" • %@", aEpisodeString]];
+    } else {
+        nextEpisodeDateLabel.text = @"";
     }
 
     nextEpisodeDateLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
     nextEpisodeDateLabel.textAlignment = NSTextAlignmentLeft;
-    nextEpisodeDateLabel.layer.shadowColor = [[UIColor blackColor] CGColor];
-    nextEpisodeDateLabel.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-    nextEpisodeDateLabel.layer.shadowRadius = 2.5;
-    nextEpisodeDateLabel.layer.shadowOpacity = 0.75;
     nextEpisodeDateLabel.backgroundColor = [UIColor clearColor];
     nextEpisodeDateLabel.layer.masksToBounds = NO;
     nextEpisodeDateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0];
+    [nextEpisodeDateLabel sizeToFit];
+    nextEpisodeDateLabel.frame = CGRectMake((screenWidth - (screenWidth * 0.9)) / 2, 0,
+                                            screenWidth * 0.9, CGRectGetHeight(nextEpisodeDateLabel.frame));
     
-    [infoMediaView addSubview:nextEpisodeDateLabel];
     
-    UIView *infoMediaViewLastView = [infoMediaView.subviews lastObject];
-    infoMediaViewLastView.frame = CGRectMake(CGRectGetMinX(infoMediaViewLastView.frame),
-                                     CGRectGetMinY(infoMediaViewLastView.frame) + 16,
-                                     CGRectGetWidth(infoMediaViewLastView.frame),
-                                     CGRectGetHeight(infoMediaViewLastView.frame));
-    infoMediaViewLastView.backgroundColor = [UIColor redColor];
-    
-    UILabel *nbIterationAmongDiscoveries = [self displayNumberOfIterationsAmongDiscoveries];
-    
-    nbIterationAmongDiscoveries.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame),
-                                                   CGRectGetWidth(nbIterationAmongDiscoveries.frame),
-                                                   CGRectGetHeight(nbIterationAmongDiscoveries.frame));
-    nbIterationAmongDiscoveries.center = CGPointMake(self.view.center.x, nbIterationAmongDiscoveries.center.y);
-    [infoMediaView addSubview:nbIterationAmongDiscoveries];
+    return nextEpisodeDateLabel;
 }
 
 #pragma mark - Custom Events
@@ -1432,26 +1199,82 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
                      completion:nil];
 }
 
-- (void) displayTrailerButtonForId:(NSString*)aTrailerID
+- (void) collapseExpandDesc
 {
-    UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:2];
+    UIScrollView *infoMediaView = (UIScrollView*)[self.view viewWithTag:DMVInfosMediaTag];
     
+    SHDCollapseTextView *mediaDescription = (SHDCollapseTextView*)[self.view viewWithTag:DMVMediaDescriptionTag];
+
+    CGFloat belowViewsYOffset, mediaDescriptionHeight;
+    if (mediaDescription.isExpanded) {
+        belowViewsYOffset = (-mediaDescription.height + CGRectGetMinY(infoMediaView.frame));
+        mediaDescriptionHeight = -mediaDescription.expandedHeight;
+    } else {
+        belowViewsYOffset = (mediaDescription.height - CGRectGetMinY(infoMediaView.frame));
+        mediaDescriptionHeight = mediaDescription.expandedHeight;
+    }
+    
+    mediaDescription.frame = CGRectMake(CGRectGetMinX(mediaDescription.frame), CGRectGetMinY(mediaDescription.frame),
+                                        CGRectGetWidth(mediaDescription.frame), CGRectGetHeight(mediaDescription.frame) + mediaDescriptionHeight);
+    
+    NSUInteger mediaIndex = [infoMediaView.subviews indexOfObject:mediaDescription] + 1;
+    NSUInteger maxMediaIndex = [infoMediaView.subviews count] - mediaIndex;
+    
+    NSArray *belowViews = [infoMediaView.subviews subarrayWithRange:NSMakeRange(mediaIndex, maxMediaIndex)];
+    
+    for (UIView *view in belowViews) {
+        CGFloat viewX = CGRectGetMinX(view.frame);
+        CGFloat viewY = CGRectGetMinY(view.frame) + belowViewsYOffset;
+        CGFloat viewWidth = CGRectGetWidth(view.frame);
+        CGFloat viewHeight = CGRectGetHeight(view.frame);
+        
+        view.frame = CGRectMake(viewX, viewY, viewWidth, viewHeight);
+    }
+    
+//    UIView *infoMediaViewLastView = [infoMediaView.subviews objectAtIndex:[infoMediaView.subviews count] - 2];
+
+    infoMediaView.contentSize = CGSizeMake(screenWidth, CGRectGetMaxY(self.scrollViewLastView.frame) + 40);
+    mediaDescription.isExpanded = !mediaDescription.isExpanded;
+}
+
+- (UIButton*) displayTrailerButton
+{
     UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     
     CGFloat multiplier = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 0.0703125 : 0.15;
     seeTrailerMediaBtn.frame = CGRectMake(0, 0, screenWidth * (574.0/640.0), 60);
-    seeTrailerMediaBtn.trailerID = aTrailerID;
+
     [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailer:) forControlEvents:UIControlEventTouchUpInside];
     [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];
-    [seeTrailerMediaBtn setTitle:NSLocalizedString(@"see trailer", nil) forState:UIControlStateNormal];
+
+    if ([self.mediaDatasController.mediaDatas[@"yt_id"] length] == 0) {
+        seeTrailerMediaBtn.enabled = NO;
+        [seeTrailerMediaBtn setTitle:NSLocalizedString(@"no trailer", nil) forState:UIControlStateNormal];
+        seeTrailerMediaBtn.titleLabel.textColor = [UIColor colorWithWhite:1 alpha:.5];
+        seeTrailerMediaBtn.layer.borderColor = [UIColor colorWithWhite:1 alpha:.3].CGColor;
+    } else {
+        seeTrailerMediaBtn.enabled = YES;
+        [seeTrailerMediaBtn setTitle:NSLocalizedString(@"see trailer", nil) forState:UIControlStateNormal];
+        [seeTrailerMediaBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:1 alpha:.05]] forState:UIControlStateHighlighted];
+        seeTrailerMediaBtn.trailerID = self.mediaDatasController.mediaDatas[@"yt_id"];
+        seeTrailerMediaBtn.titleLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
+        seeTrailerMediaBtn.layer.borderColor = [UIColor colorWithWhite:1 alpha:1].CGColor;
+    }
+    
     seeTrailerMediaBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
     seeTrailerMediaBtn.titleLabel.textColor = [UIColor whiteColor];
     seeTrailerMediaBtn.backgroundColor = [UIColor clearColor];
     seeTrailerMediaBtn.center = CGPointMake(self.view.center.x, seeTrailerMediaBtn.center.y);
     
+    
+    seeTrailerMediaBtn.layer.borderWidth = 2.0f;
+    seeTrailerMediaBtn.layer.cornerRadius = 5.0f;
+    
+    
 //    seeTrailerMediaBtn.backgroundColor = [UIColor clearColor];
     seeTrailerMediaBtn.opaque = YES;
 //    [infoMediaView addSubview:seeTrailerMediaBtn];
+    return seeTrailerMediaBtn;
 }
 
 - (void) seeTrailer:(UIButton*)sender
@@ -1641,7 +1464,6 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 
 - (void) hideTutorial
 {
-    
     self.navigationItem.hidesBackButton = NO;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
@@ -1787,7 +1609,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     gmtDateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
     
     [self.mediaDatas setObject:[gmtDateFormatter stringFromDate: [NSDate date]] forKey:@"addedAt"];
-    NSLog(@"self.mediaDatas : %@", self.mediaDatas);
+//    NSLog(@"self.mediaDatas : %@", self.mediaDatas);
     // If the value of the key is nil so we create an new NSArray that contains the first elmt of the category
     if ([userTasteDict objectForKey:[self.mediaDatas valueForKey:@"type"]] == [NSNull null]) {
         NSArray *firstEntryToCategory = [[NSArray alloc] initWithObjects:self.mediaDatas, nil];

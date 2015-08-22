@@ -24,6 +24,7 @@
 
 //Custom views
 #import "StoreButton.h"
+#import "SHDCollapseTextView.h"
 
 //Models
 #import "Discovery.h"
@@ -71,8 +72,11 @@ extern NSString * const BSCLIENTID;
 }
 
 typedef NS_ENUM(NSUInteger, DMVTag) {
+    DMVInfosMediaTag = 2,
+    DMVMediaTitleTag = 4,
     DMVInfoContainerTag = 21,
-    DMVAmongDiscoveriesLabelTag = 13
+    DMVAmongDiscoveriesLabelTag = 13,
+    DMVMediaDescriptionTag = 12
 };
 
 
@@ -99,7 +103,6 @@ typedef NS_ENUM(NSUInteger, DMVTag) {
 
 - (void) addPhysics;
 - (void) saveMediaUpdateForAdding:(BOOL)isAdding;
-- (void) displayTrailerButtonForId:(NSString*)aTrailerID;
 - (void) seeTrailerMedia:(UIButton*)sender;
 - (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView;
 - (void) noInternetConnexionAlert;
