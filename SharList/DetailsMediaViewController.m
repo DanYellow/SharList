@@ -1251,28 +1251,33 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 
     [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailer:) forControlEvents:UIControlEventTouchUpInside];
     [seeTrailerMediaBtn setTintColor:[UIColor whiteColor]];
+    [seeTrailerMediaBtn setImage:[UIImage imageNamed:@"play_trailer_icon"]
+                        forState:UIControlStateNormal];
+    [seeTrailerMediaBtn setImageEdgeInsets:UIEdgeInsetsMake(5, 0, 5, 24)];
+    [seeTrailerMediaBtn setTitleColor:[UIColor colorWithWhite:1 alpha:1] forState:UIControlStateNormal];
+    [seeTrailerMediaBtn setTitleColor:[UIColor colorWithWhite:1 alpha:.5] forState:UIControlStateHighlighted];
 
     if ([self.mediaDatasController.mediaDatas[@"yt_id"] length] == 0) {
         seeTrailerMediaBtn.enabled = NO;
         [seeTrailerMediaBtn setTitle:NSLocalizedString(@"no trailer", nil) forState:UIControlStateNormal];
-        seeTrailerMediaBtn.titleLabel.textColor = [UIColor colorWithWhite:1 alpha:.5];
         seeTrailerMediaBtn.layer.borderColor = [UIColor colorWithWhite:1 alpha:.3].CGColor;
+        [seeTrailerMediaBtn setTitleColor:[UIColor colorWithWhite:1 alpha:.5] forState:UIControlStateDisabled];
     } else {
         seeTrailerMediaBtn.enabled = YES;
         [seeTrailerMediaBtn setTitle:NSLocalizedString(@"see trailer", nil) forState:UIControlStateNormal];
-        [seeTrailerMediaBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:1 alpha:.05]] forState:UIControlStateHighlighted];
+//        [seeTrailerMediaBtn setBackgroundImage:[UIImage imageWithColor:[UIColor colorWithWhite:1 alpha:.05]] forState:UIControlStateHighlighted];
         seeTrailerMediaBtn.trailerID = self.mediaDatasController.mediaDatas[@"yt_id"];
-        seeTrailerMediaBtn.titleLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
+//        seeTrailerMediaBtn.titleLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
         seeTrailerMediaBtn.layer.borderColor = [UIColor colorWithWhite:1 alpha:1].CGColor;
     }
     
-    seeTrailerMediaBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
+    seeTrailerMediaBtn.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0];
     seeTrailerMediaBtn.titleLabel.textColor = [UIColor whiteColor];
     seeTrailerMediaBtn.backgroundColor = [UIColor clearColor];
     seeTrailerMediaBtn.center = CGPointMake(self.view.center.x, seeTrailerMediaBtn.center.y);
     
     
-    seeTrailerMediaBtn.layer.borderWidth = 2.0f;
+//    seeTrailerMediaBtn.layer.borderWidth = 2.0f;
     seeTrailerMediaBtn.layer.cornerRadius = 5.0f;
     
     
