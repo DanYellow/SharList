@@ -36,7 +36,7 @@
     
     CGFloat origHeight = CGRectGetHeight(self.frame);
     [self sizeToFit];
-    self.expandedHeight = CGRectGetHeight(self.frame) - origHeight;
+    self.expandedHeight = CGRectGetHeight(self.frame) - origHeight + 100;
     self.height = CGRectGetHeight(self.frame) + 40;
     self.frame = aFrame;
 

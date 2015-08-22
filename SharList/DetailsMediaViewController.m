@@ -598,9 +598,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 {
     [self setNavigationItems];
     [self updateTitleLabel];
-    [self.mediaDatas setObject:self.mediaDatasController.mediaDatas[@"name"] forKey:@"name"];
-    [self displayBuyButtonForShops:self.mediaDatasController.mediaDatas[@"store_links"]];
     
+    NSMutableDictionary *tempDictionary = [[NSMutableDictionary alloc] initWithDictionary:self.mediaDatas];
+    [tempDictionary setObject:self.mediaDatasController.mediaDatas[@"name"] forKey:@"name"];
+    
+    self.mediaDatas = tempDictionary;
+    [self displayBuyButtonForShops:self.mediaDatasController.mediaDatas[@"store_links"]];
     [self setMediaViewForDatas:self.mediaDatasController.mediaDatas];
 }
 
@@ -1010,12 +1013,14 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-    UIButton *collapseBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    collapseBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame), 40, 40);
-    collapseBtn.backgroundColor = [UIColor redColor];
-    collapseBtn.center = CGPointMake(infoMediaView.center.x, collapseBtn.center.y);
-    [collapseBtn addTarget:self action:@selector(collapseExpandDesc) forControlEvents:UIControlEventTouchUpInside];
-    [infoMediaView addSubview:collapseBtn];
+    UIButton *collapseExpandBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    collapseExpandBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame), 40, 40);
+    collapseExpandBtn.backgroundColor = [UIColor clearColor];
+    collapseExpandBtn.tag = DMVExColBtn;
+    [collapseExpandBtn setImage:[UIImage imageNamed:@"expand_text_icon"] forState:UIControlStateNormal];
+    collapseExpandBtn.center = CGPointMake(infoMediaView.center.x, collapseExpandBtn.center.y);
+    [collapseExpandBtn addTarget:self action:@selector(collapseExpandDesc) forControlEvents:UIControlEventTouchUpInside];
+    [infoMediaView addSubview:collapseExpandBtn];
     
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
@@ -1240,6 +1245,13 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 
     infoMediaView.contentSize = CGSizeMake(screenWidth, CGRectGetMaxY(self.scrollViewLastView.frame) + 40);
     mediaDescription.isExpanded = !mediaDescription.isExpanded;
+    
+    UIButton *collapseExpandBtn = (UIButton*)[self.view viewWithTag:DMVExColBtn];
+    if (!mediaDescription.isExpanded) {
+        [collapseExpandBtn setImage:[UIImage imageNamed:@"expand_text_icon"] forState:UIControlStateNormal];
+    } else {
+        [collapseExpandBtn setImage:[UIImage imageNamed:@"collapse_text_icon"] forState:UIControlStateNormal];
+    }
 }
 
 - (UIButton*) displayTrailerButton

@@ -1147,7 +1147,7 @@
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView
 {
-//    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.25]; self.tableViewLastPosition
+//    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.25];
 }
 
 // Big scroll

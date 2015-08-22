@@ -75,6 +75,7 @@ typedef NS_ENUM(NSUInteger, DMVTag) {
     DMVInfosMediaTag = 2,
     DMVMediaTitleTag = 4,
     DMVInfoContainerTag = 21,
+    DMVExColBtn = 22,
     DMVAmongDiscoveriesLabelTag = 13,
     DMVMediaDescriptionTag = 12
 };
@@ -103,7 +104,6 @@ typedef NS_ENUM(NSUInteger, DMVTag) {
 
 - (void) addPhysics;
 - (void) saveMediaUpdateForAdding:(BOOL)isAdding;
-- (void) seeTrailerMedia:(UIButton*)sender;
 - (CALayer *) myLayerWithName:(NSString*)myLayerName andParent:(UIView*)aParentView;
 - (void) noInternetConnexionAlert;
 - (void) showTutorial;
