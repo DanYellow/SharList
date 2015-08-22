@@ -979,7 +979,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-    CGFloat mediaDescriptionWidthPercentage = 90.0; // 82.0
+//    CGFloat mediaDescriptionWidthPercentage = 90.0; // 82.0
     CGFloat mediaDescriptionWidth = roundf(screenWidth * (574.0/640.0));
     CGFloat mediaDescriptionY = CGRectGetMaxY(infoMediaViewLastView.frame) + 7;
     
@@ -1263,7 +1263,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 {
     UIButton *seeTrailerMediaBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     
-    CGFloat multiplier = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 0.0703125 : 0.15;
+//    CGFloat multiplier = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 0.0703125 : 0.15;
     seeTrailerMediaBtn.frame = CGRectMake(0, 0, screenWidth * (574.0/640.0), 60);
 
     [seeTrailerMediaBtn addTarget:self action:@selector(seeTrailer:) forControlEvents:UIControlEventTouchUpInside];

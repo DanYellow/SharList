@@ -78,7 +78,7 @@
                      NSUInteger sizeImage = (int)CGRectGetHeight(self.profileImageView.frame) * 2;
                      
                      NSString *fbMetUserString = self.userDatas.fbid;
-                     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,sizeImage, sizeImage];
+                     NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,(unsigned long)sizeImage, (unsigned long)sizeImage];
                      
                      [self.profileImageView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
                  }
@@ -258,7 +258,7 @@
         
         // COntains the number of Series / Movies
         NSUInteger nbElementsForCat = [[self.userDatas.discoveredUserLikes objectForKey:dictKey] count];
-        statCount.text = [NSString stringWithFormat: @"%li", nbElementsForCat];
+        statCount.text = [NSString stringWithFormat: @"%li", (unsigned long)nbElementsForCat];
         [statCount sizeToFit];
         [statContainer insertSubview:statCount atIndex:10];
         

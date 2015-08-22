@@ -190,7 +190,7 @@ dispatch_group_t dFinishLoadDatas;
        
         self.nextEpisodeDate = (closestDate != nil) ? closestDate : nullDate;
         // Hey, hey, hey... coding everyday
-        self.nextEpisodeRef = [NSString stringWithFormat:@"S%02iE%02li", [tvSeasonQueryParams[@"season_number"] intValue], episodeNumber];
+        self.nextEpisodeRef = [NSString stringWithFormat:@"S%02iE%02li", [tvSeasonQueryParams[@"season_number"] intValue], (unsigned long)episodeNumber];
         
         [self.mediaDatas setObject:self.nextEpisodeDate forKey:@"next_episode_date"];
         [self.mediaDatas setObject:self.nextEpisodeRef forKey:@"next_episode_ref"];

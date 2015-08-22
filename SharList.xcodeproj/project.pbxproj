@@ -102,7 +102,6 @@
 		1AA186751AA2FF3000606F80 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA186741AA2FF3000606F80 /* SystemConfiguration.framework */; };
 		1AA186771AA2FF4000606F80 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA186761AA2FF4000606F80 /* libz.dylib */; };
 		1AA186791AA2FF4600606F80 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA186781AA2FF4600606F80 /* libsqlite3.dylib */; };
-		1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AB9775D1A2BC69200F41313 /* Localizable.strings */; };
 		1ACDC9041A23D3AA0032B857 /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1ACDC9031A23D3AA0032B857 /* Settings.plist */; };
 		1ACDC9071A23E6720032B857 /* MeetingsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDC9061A23E6720032B857 /* MeetingsListViewController.m */; };
 		1AE0E1AE1A294071002B4829 /* TrianglesBG@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE0E1AD1A294071002B4829 /* TrianglesBG@2x.png */; };
@@ -794,7 +793,6 @@
 				1AFE13751A32EEAB006F2366 /* meetingFavoriteSelected@3x.png in Resources */,
 				1A63C5FD1B56EC4C00344E32 /* addToList@3x.png in Resources */,
 				1A724BAC1B88CA1D00C2F2E1 /* collapse_text_icon@3x.png in Resources */,
-				1AB9775B1A2BC69200F41313 /* Localizable.strings in Resources */,
 				1A076DC21A0FE20900CD725A /* Main.storyboard in Resources */,
 				1A63C5FF1B56EC4C00344E32 /* delToList@2x.png in Resources */,
 				1A63C5FE1B56EC4C00344E32 /* delToList.png in Resources */,
