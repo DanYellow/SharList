@@ -344,7 +344,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     CALayer *connectWithBSBtnLayerT = [CALayer layer];
     connectWithBSBtnLayerT.frame = CGRectMake(layerX, -15.0f, layerWidth, 1.0);
-    connectWithBSBtnLayerT.backgroundColor = [UIColor whiteColor].CGColor;
+    connectWithBSBtnLayerT.backgroundColor = [UIColor colorWithWhite:1 alpha:.05].CGColor;
     connectWithBSBtnLayerT.anchorPoint = CGPointMake(0.5, 0.5);
     [addRemoveFromListBtn.layer addSublayer:connectWithBSBtnLayerT];
     
@@ -491,7 +491,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 - (UIButton *) introduceMediaToFriendsWithMediaImdbId:(NSString*)imdbId
 {
     UIButton *introduceMediaToFriendsBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    introduceMediaToFriendsBtn.tag = 20;
+//    introduceMediaToFriendsBtn.tag = 20;
     [introduceMediaToFriendsBtn setFrame:CGRectMake(0, 0, (screenWidth * 90) / 100, 54)];
     [introduceMediaToFriendsBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [introduceMediaToFriendsBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
@@ -1013,6 +1013,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     UIButton *collapseBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     collapseBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame), 40, 40);
     collapseBtn.backgroundColor = [UIColor redColor];
+    collapseBtn.center = CGPointMake(infoMediaView.center.x, collapseBtn.center.y);
     [collapseBtn addTarget:self action:@selector(collapseExpandDesc) forControlEvents:UIControlEventTouchUpInside];
     [infoMediaView addSubview:collapseBtn];
     
@@ -1021,7 +1022,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     UIView *fbFriendsContainer = [self displayFacebookFriends];
     fbFriendsContainer.tag = 14;
-    fbFriendsContainer.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame),
+    fbFriendsContainer.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 14,
                                           CGRectGetWidth(fbFriendsContainer.frame),
                                           CGRectGetHeight(fbFriendsContainer.frame));
     [infoMediaView addSubview:fbFriendsContainer];
@@ -1228,7 +1229,11 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         CGFloat viewWidth = CGRectGetWidth(view.frame);
         CGFloat viewHeight = CGRectGetHeight(view.frame);
         
-        view.frame = CGRectMake(viewX, viewY, viewWidth, viewHeight);
+        
+        [UIView animateWithDuration:0.25 animations:^{
+            view.frame = CGRectMake(viewX, viewY, viewWidth, viewHeight);
+        }];
+
     }
     
 //    UIView *infoMediaViewLastView = [infoMediaView.subviews objectAtIndex:[infoMediaView.subviews count] - 2];
@@ -1789,7 +1794,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     content.contentURL = [NSURL URLWithString:@"http://www.shound.fr"];
     
     // Sizes available : https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
-    NSString *imgMediaURLString = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", @"w92", sender.trailerID];
+    NSString *imgMediaURLString = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", @"w92", self.mediaDatasController.mediaDatas[@"poster_path"]];
     content.imageURL = [NSURL URLWithString:imgMediaURLString];
     
     [FBSDKShareDialog showFromViewController:self
