@@ -38,14 +38,18 @@
     self.currentUserLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.currentUser likes]] mutableCopy];
     self.discoveredUserLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userDiscovered likes]] mutableCopy];
     
-    CGFloat percentWidthContent = (300.0/screenWidth);
-    
-    self.frame = CGRectMake(0, 0, screenWidth * percentWidthContent, (screenWidth * percentWidthContent) / 1.612903226);
+    CGFloat percentWidthContent = (600.0/640.0);
+    CGFloat posX = (screenWidth - (screenWidth * percentWidthContent)) / 2;
+
+    self.frame = CGRectMake(0, 0,
+                            screenWidth * percentWidthContent, (screenWidth * percentWidthContent) / 1.612903226);
     self.initFrame = self.frame;
+    self.frame = CGRectMake(posX, 0,
+                            screenWidth * percentWidthContent, (screenWidth * percentWidthContent) / 1.612903226);
+    
     self.backgroundColor = [UIColor whiteColor];
     self.layer.cornerRadius = 5.0f;
     self.layer.masksToBounds = YES;
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     CGFloat thumbsMediasViewPercent = (158.0/372.0);
     
@@ -94,7 +98,7 @@
     [self insertSubview:userDiscoveredFbProfileImg atIndex:0];
 
     CALayer *overlayLayer = [CALayer layer];
-    overlayLayer.frame = userDiscoveredFbProfileImg.frame;
+    overlayLayer.frame = userDiscoveredFbProfileImg.bounds;
     overlayLayer.name = @"overlayLayerImgMedia";
     overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.85].CGColor;
     [userDiscoveredFbProfileImg.layer insertSublayer:overlayLayer atIndex:0];
@@ -263,7 +267,9 @@
         NSString *mediaImdbID = [mediasArray objectAtIndex:idx];
         
         dispatch_group_enter(finishLoadThumbs);
-        [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:@{@"id": mediaImdbID, @"language": userLanguage, @"external_source": @"imdb_id"} andResponseBlock:^(id responseObject, NSError *error) {
+        [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind
+                               withParameters:@{@"id": mediaImdbID, @"language": userLanguage, @"external_source": @"imdb_id"}
+                             andResponseBlock:^(id responseObject, NSError *error) {
             if(!error){
                 if ([responseObject[@"movie_results"] count] > 0) {
                     imgName = [responseObject valueForKeyPath:@"movie_results.poster_path"][0];

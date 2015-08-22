@@ -15,7 +15,7 @@
 
 @property (nonatomic) CGFloat screenWidth;
 @property (nonatomic) CGFloat screenHeight;
-@property (nonatomic) NSUInteger bottomOffset;
+@property (nonatomic) CGFloat bottomOffset;
 
 @property (strong, atomic) UIImageView *profileImageView;
 
@@ -36,11 +36,11 @@
     
     CGFloat percent = (userDatas.isSameUser) ? (348.0/1136.0) : (423.0/1136.0);
     
-    self.bottomOffset = (userDatas.isSameUser) ? 0 : 5;
+    self.bottomOffset = (userDatas.isSameUser) ? 1.0 : 43.0;
     self.frame = CGRectMake(0, 0, self.screenWidth, self.screenHeight * percent); //455
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
     self.backgroundColor = [UIColor clearColor];
+    
     self.userDatas = userDatas;
     
     self.profileHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.screenWidth, self.screenHeight * .1919014085)];
@@ -92,8 +92,9 @@
     
     
     UIView *statsContainer = [self displayButtons];
-    statsContainer.frame = CGRectMake(0, CGRectGetMaxY(self.profileHeaderView.frame) - self.bottomOffset,
+    statsContainer.frame = CGRectMake(0, CGRectGetHeight(self.frame) - (CGRectGetHeight(statsContainer.frame) + self.bottomOffset),
                                       CGRectGetWidth(statsContainer.frame), CGRectGetHeight(statsContainer.frame));
+    statsContainer.backgroundColor = [UIColor clearColor];
     [self addSubview:statsContainer];
     
     int sizeImage = 130;
@@ -167,11 +168,14 @@
     
     NSMutableDictionary *lastMediaAdded = self.userDatas.lastMediaAdded; // @"Breaking Bad of Silicon Valley";
     NSString *lastMediaAddedName = lastMediaAdded[@"name"];
-    NSMutableAttributedString *lastEntryDiscoverAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"last element added %@", nil), lastMediaAddedName] attributes:nil];
-
-    NSRange lastEntryRange = [[lastEntryDiscoverAttrString string] rangeOfString:lastMediaAddedName];
-    [lastEntryDiscoverAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0] range:NSMakeRange(lastEntryRange.location, lastEntryRange.length)];
     
+    NSMutableAttributedString *lastEntryDiscoverAttrString;
+    if (lastMediaAddedName != nil) {
+        lastEntryDiscoverAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"last element added %@", nil), lastMediaAddedName] attributes:nil];
+        
+        NSRange lastEntryRange = [[lastEntryDiscoverAttrString string] rangeOfString:lastMediaAddedName];
+        [lastEntryDiscoverAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:13.0] range:NSMakeRange(lastEntryRange.location, lastEntryRange.length)];
+    }
     
     NSUInteger maxWidthLastEntryDiscoverLabel = (int)self.screenWidth - ((int)CGRectGetMinX(labelsContainer.frame) + 20);
     
@@ -219,7 +223,7 @@
 
 - (UIView*) displayButtons
 {
-    float widthViews = self.screenWidth * 0.246875;
+    CGFloat widthViews = self.screenWidth * 0.246875;
     NSUInteger offsetBtnElements = 12;
     
     UIView *statsContainer = [[UIView alloc] initWithFrame:CGRectZero];
@@ -294,8 +298,9 @@
     
     
     UIButton *followersLabelContainerBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.frame.size.width - widthViews,
-                                                                                      CGRectGetMaxY(self.profileHeaderView.frame) - self.bottomOffset,
+                                                                                      CGRectGetHeight(self.frame) - (64 + self.bottomOffset),
                                                                                       widthViews, 64)];
+    
     followersLabelContainerBtn.backgroundColor = [UIColor colorWithRed:(17.0/255.0)
                                                                  green:(27.0/255.0)
                                                                   blue:(28.0/255.0) alpha:.55];
@@ -330,7 +335,7 @@
     
     UILabel *numberFollowersLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     numberFollowersLabel.textColor = [UIColor whiteColor];
-    numberFollowersLabel.backgroundColor = [UIColor redColor];
+    numberFollowersLabel.backgroundColor = [UIColor clearColor];
     numberFollowersLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:30.0f];
     numberFollowersLabel.text = [NSString stringWithFormat:@"%@", numberOfFollowers];
     numberFollowersLabel.tag = 8;
@@ -341,7 +346,6 @@
     numberFollowersLabel.frame = CGRectMake(CGRectGetWidth(followersLabelContainerBtn.frame) - (CGRectGetWidth(numberFollowersLabel.frame) + 12),
                                             CGRectGetMinY(followersTitle.frame) - CGRectGetHeight(numberFollowersLabel.frame),
                                             CGRectGetWidth(numberFollowersLabel.frame), CGRectGetHeight(numberFollowersLabel.frame));
-    
     [followersLabelContainerBtn addSubview:numberFollowersLabel];
     
     [self addSubview:followersLabelContainerBtn];

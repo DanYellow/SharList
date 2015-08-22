@@ -221,7 +221,8 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     mediaTitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:22.0];
     mediaTitleLabel.tag = DMVMediaTitleTag;
     [mediaTitleLabel sizeToFit];
-    mediaTitleLabel.frame = CGRectMake(0, CGRectGetMinY(mediaTitleLabel.frame),
+    mediaTitleLabel.frame = CGRectMake(0,
+                                       CGRectGetMinY(mediaTitleLabel.frame),
                                        screenWidth * (574.0/640.0), CGRectGetHeight(mediaTitleLabel.frame));
     mediaTitleLabel.center = CGPointMake(self.view.center.x, mediaTitleLabel.center.y);
 
@@ -276,8 +277,10 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     // This label shows the number of iteration of the card currently shown among user's discoverties
     UILabel *numberOfIterationAmongDiscoveriesLabel = [UILabel new];
     numberOfIterationAmongDiscoveriesLabel.tag = DMVAmongDiscoveriesLabelTag;
+    numberOfIterationAmongDiscoveriesLabel.backgroundColor = [UIColor clearColor];
 
-    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake((screenWidth - (screenWidth * 0.9)), 0, screenWidth * (574.0/640.0), 20);
+    // (screenWidth - (screenWidth * (574.0/640.0)))
+    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(-5.0, 0, screenWidth * (574.0/640.0), 20);
     numberOfIterationAmongDiscoveriesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
     
     CGFloat iterationAmongDiscoveriesPercent = [self.mediaDatasController.mediaDatas[@"nb_iterations"] floatValue];
@@ -298,15 +301,14 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         
         NSString *percentApparition = [percentageFormatter stringFromNumber:[NSNumber numberWithFloat:iterationAmongDiscoveriesPercent]];
         
-        NSMutableAttributedString *NbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"Present of %@ discoveries", nil), percentApparition] attributes:nil];
+        NSMutableAttributedString *nbrDiscoveriesAttrString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"Present of %@ discoveries", nil), percentApparition] attributes:nil];
         
-        NSRange hellStringRange = [[NbrDiscoveriesAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), percentApparition]];
+        NSRange hellStringRange = [[nbrDiscoveriesAttrString string] rangeOfString:[NSString stringWithFormat:NSLocalizedString(@"p %@ discoveries", nil), percentApparition]];
         
-        [NbrDiscoveriesAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:14.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
+        [nbrDiscoveriesAttrString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:14.0] range:NSMakeRange(hellStringRange.location, hellStringRange.length)];
         
-        numberOfIterationAmongDiscoveriesLabel.attributedText = NbrDiscoveriesAttrString;
+        numberOfIterationAmongDiscoveriesLabel.attributedText = nbrDiscoveriesAttrString;
     }
-    
     numberOfIterationAmongDiscoveriesLabel.textColor = [UIColor whiteColor];
     numberOfIterationAmongDiscoveriesLabel.textAlignment = NSTextAlignmentLeft;
     numberOfIterationAmongDiscoveriesLabel.center = CGPointMake(self.view.center.x, numberOfIterationAmongDiscoveriesLabel.center.y);
@@ -983,9 +985,11 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     
     NSString *descriptionText = @"";
+    BOOL hasDesc = YES;
     if ([data[@"description"] isEqual:[NSNull null]] || [data[@"description"] isEqualToString:@""]) {
         // the movie db does not provide description for this media
         descriptionText = NSLocalizedString(@"nodescription", nil);
+        hasDesc = NO;
     } else {
         descriptionText = [data[@"description"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
@@ -1013,17 +1017,18 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-    UIButton *collapseExpandBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    collapseExpandBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame), 40, 40);
-    collapseExpandBtn.backgroundColor = [UIColor clearColor];
-    collapseExpandBtn.tag = DMVExColBtn;
-    [collapseExpandBtn setImage:[UIImage imageNamed:@"expand_text_icon"] forState:UIControlStateNormal];
-    collapseExpandBtn.center = CGPointMake(infoMediaView.center.x, collapseExpandBtn.center.y);
-    [collapseExpandBtn addTarget:self action:@selector(collapseExpandDesc) forControlEvents:UIControlEventTouchUpInside];
-    [infoMediaView addSubview:collapseExpandBtn];
-    
-    
-    infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    if (hasDesc) {
+        UIButton *collapseExpandBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        collapseExpandBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame), 40, 40);
+        collapseExpandBtn.backgroundColor = [UIColor clearColor];
+        collapseExpandBtn.tag = DMVExColBtn;
+        [collapseExpandBtn setImage:[UIImage imageNamed:@"expand_text_icon"] forState:UIControlStateNormal];
+        collapseExpandBtn.center = CGPointMake(infoMediaView.center.x, collapseExpandBtn.center.y);
+        [collapseExpandBtn addTarget:self action:@selector(collapseExpandDesc) forControlEvents:UIControlEventTouchUpInside];
+        [infoMediaView addSubview:collapseExpandBtn];
+        
+        infoMediaViewLastView = [infoMediaView.subviews lastObject];
+    }
     
     UIView *fbFriendsContainer = [self displayFacebookFriends];
     fbFriendsContainer.tag = 14;

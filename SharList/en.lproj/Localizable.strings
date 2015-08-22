@@ -68,7 +68,7 @@
 "localNotificationAlertActionRefresh" = "discover";
 "localNotificationAlertBodyRefresh" = "There are always new things to discover";
 "authorize fb friends" = "I would like to see my friends";
-"new discovery" = " - New !";
+"new discovery" = "New !";
 
 // Tutorial part \\
 "refreshmeetingType" = "The refresh button allows to make discoveries, they can be of two types";

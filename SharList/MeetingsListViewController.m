@@ -889,11 +889,8 @@
     headerView.opaque = YES;
     headerView.backgroundColor = [UIColor clearColor];
     
+    CGFloat percentWidthContent = (604.0/640.0);
 
-
-    
-    CGFloat percentWidthContent = (300.0/screenWidth);
-    
     CGRect bottomBorderFrame = CGRectMake( (screenWidth - (CGRectGetWidth(headerView.frame) * percentWidthContent)) / 2,
                                           CGRectGetHeight(headerView.frame),
                                           CGRectGetWidth(headerView.frame) * percentWidthContent,
@@ -945,7 +942,8 @@
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 200.0;
+    return (screenHeight * (374.0/1136.0)) + 13;
+//    return 200.0;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -1054,10 +1052,9 @@
         
         userDiscovered.tag = 98;
 
-        userDiscovered.center = CGPointMake(cell.center.x, userDiscovered.center.y);
         
+        userDiscovered.backgroundColor = [UIColor redColor];
         [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
-        
         [cell.contentView addSubview:userDiscovered];
     } else {
         userDiscovered = (SHDUserDiscovered *)[cell.contentView viewWithTag:98];
