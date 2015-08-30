@@ -1817,7 +1817,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     content.contentURL = [NSURL URLWithString:@"http://www.shound.fr"];
     
     // Sizes available : https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
-    NSString *imgMediaURLString = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", @"w92", self.mediaDatasController.mediaDatas[@"poster_path"]];
+    NSString *imgMediaURLString = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/%@%@", @"w300", self.mediaDatasController.mediaDatas[@"poster_path"]];
     content.imageURL = [NSURL URLWithString:imgMediaURLString];
     
     [FBSDKShareDialog showFromViewController:self
