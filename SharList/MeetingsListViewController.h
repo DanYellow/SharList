@@ -56,6 +56,7 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) NSTimer *timerRefreshBtn;
 @property (nonatomic, assign, getter=isTableViewAdded) BOOL tableViewAdded;
+@property (nonatomic, assign, getter=isTableViewEndScrolling) BOOL tableViewEndScrolling;
 @property (nonatomic, retain) UILabel *tableFooter;
 @property (nonatomic, assign) CGPoint tableViewLastPosition; //last
 

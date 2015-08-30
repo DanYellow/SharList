@@ -150,7 +150,7 @@
         NSArray *facebookFriendDatas = [[[NSUserDefaults standardUserDefaults] objectForKey:@"facebookFriendsList"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"id == %@", [self.userDiscovered fbId]]];
         self.title = [[facebookFriendDatas valueForKey:@"first_name"] componentsJoinedByString:@""];
     } else {
-        self.title = [formatter stringFromDate:[self.userDiscovered lastDiscovery]];
+        self.title = @""; //[formatter stringFromDate:[self.userDiscovered lastDiscovery]]
     }
 
     // We get the datas of current user to compare it to the current list
@@ -891,6 +891,13 @@
     detailsMediaViewController.mediaDatas = selectedCell.model;
     detailsMediaViewController.userDiscoverId = self.metUserId;
     detailsMediaViewController.title = [selectedCell.model objectForKey:@"name"];
+    
+    UIBarButtonItem *newBackButton =
+    [[UIBarButtonItem alloc] initWithTitle:@""
+                                     style:UIBarButtonItemStylePlain
+                                    target:nil
+                                    action:nil];
+    [[self navigationItem] setBackBarButtonItem:newBackButton];
 
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
@@ -905,6 +912,8 @@
                              tableView.alpha = 1;
                          }
                          completion:nil];
+        UIActivityIndicatorView *loadingIndicator = (UIActivityIndicatorView*)[self.view viewWithTag:7];
+        [loadingIndicator stopAnimating];
     }
 }
 
@@ -1108,6 +1117,13 @@
     DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
     detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.title = sender.media[@"name"];
+    
+    UIBarButtonItem *newBackButton =
+    [[UIBarButtonItem alloc] initWithTitle:@""
+                                     style:UIBarButtonItemStylePlain
+                                    target:nil
+                                    action:nil];
+    [[self navigationItem] setBackBarButtonItem:newBackButton];
     
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }

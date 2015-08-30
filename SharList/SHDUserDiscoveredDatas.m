@@ -151,6 +151,7 @@
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"addedAt" ascending:NO];
     NSArray *userMediasListOrdered = [userMediasListWithDate sortedArrayUsingDescriptors:@[descriptor]];
 
+    // If there is no datas orderable by date (userMediasListOrdered is null) so we take the entry of user likes
     NSMutableDictionary *lastElAdded = [NSMutableDictionary new];
     if ([userMediasListOrdered.firstObject valueForKey:@"name"] == nil) {
         lastElAdded = userMediasList.firstObject;

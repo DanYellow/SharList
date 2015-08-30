@@ -208,6 +208,7 @@
     }
     
     self.discoveries = [NSMutableDictionary new];
+    self.tableViewEndScrolling = YES;
     
     UIView *tableViewHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 366)]; //284
     tableViewHeader.backgroundColor = [UIColor clearColor];
@@ -1051,11 +1052,19 @@
         userDiscovered = [[SHDUserDiscovered alloc] initWithDatas:currentUserMet];
         userDiscovered.tag = 98;
 
-        [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
+        
         [cell.contentView addSubview:userDiscovered];
     } else {
         userDiscovered = (SHDUserDiscovered *)[cell.contentView viewWithTag:98];
+//        NSLog(@"rerer");
     }
+    
+    
+    if (self.tableViewEndScrolling) {
+        [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
+    }
+    
+    
     
     [userDiscovered setProfileImage:userDiscoveredDatas.fbid];
     
@@ -1082,6 +1091,7 @@
 // Scrolls but user keeps finger on the scrollview
 - (void) scrollViewDidEndDragging:(UITableView *)tableView willDecelerate:(BOOL)decelerate
 {
+    
     if (!decelerate) {
 //        [self loadCellsMediasThumbsForTableView:tableView];
     }
@@ -1141,14 +1151,14 @@
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView
 {
-//    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.25];
+    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:1];
 }
 
 // Big scroll
 - (void)scrollViewWillBeginDecelerating:(UITableView *)tableView
 {
     self.tableViewLastPosition = tableView.contentOffset;
-    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.05];
+    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:1];
 }
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath

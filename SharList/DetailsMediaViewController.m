@@ -929,19 +929,20 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     
     NSUInteger nbItsPosY = ([self.mediaDatasController.type isEqualToString:@"serie"]) ? CGRectGetMaxY(infoMediaViewLastView.frame) : 0;
     nbItsPosY += 12;
-
-    UILabel *numberOfIterationAmongDiscoveriesLabel = [self displayNumberOfIterationsAmongDiscoveries];
-    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(CGRectGetMinX(numberOfIterationAmongDiscoveriesLabel.frame),
-                                                              nbItsPosY,
-                                                              CGRectGetWidth(numberOfIterationAmongDiscoveriesLabel.frame),
-                                                              CGRectGetHeight(numberOfIterationAmongDiscoveriesLabel.frame));
-    [infoMediaView addSubview:numberOfIterationAmongDiscoveriesLabel];
+//
+//    UILabel *numberOfIterationAmongDiscoveriesLabel = [self displayNumberOfIterationsAmongDiscoveries];
+//    numberOfIterationAmongDiscoveriesLabel.frame = CGRectMake(CGRectGetMinX(numberOfIterationAmongDiscoveriesLabel.frame),
+//                                                              nbItsPosY,
+//                                                              CGRectGetWidth(numberOfIterationAmongDiscoveriesLabel.frame),
+//                                                              CGRectGetHeight(numberOfIterationAmongDiscoveriesLabel.frame));
+//    [infoMediaView addSubview:numberOfIterationAmongDiscoveriesLabel];
     
-    infoMediaViewLastView = [infoMediaView.subviews lastObject];
+//    infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
     UIButton *trailerBtn = [self displayTrailerButton];
     trailerBtn.frame = CGRectMake(CGRectGetMinX(trailerBtn.frame),
-                                                              CGRectGetMaxY(infoMediaViewLastView.frame) + 18,
+                                                                nbItsPosY,
+//                                                              CGRectGetMaxY(infoMediaViewLastView.frame) + 18,
                                                               CGRectGetWidth(trailerBtn.frame),
                                                               CGRectGetHeight(trailerBtn.frame));
     [infoMediaView addSubview:trailerBtn];
@@ -1512,7 +1513,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 {
     MediaCommentsViewController *mediaCommentsViewController = [MediaCommentsViewController new];
     mediaCommentsViewController.mediaId = self.mediaDatas[@"imdbID"];
-    mediaCommentsViewController.numberOfComments = self.numberOfComments;
+    mediaCommentsViewController.numberOfComments = self.mediaDatasController.mediaDatas[@"comments_count"];
     mediaCommentsViewController.userDiscoverId = self.userDiscoverId;
     
     UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:[self takeSnapshotOfView:self.view]];

@@ -99,8 +99,8 @@
 
     CALayer *overlayLayer = [CALayer layer];
     overlayLayer.frame = userDiscoveredFbProfileImg.bounds;
-    overlayLayer.name = @"overlayLayerImgMedia";
-    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.85].CGColor;
+    overlayLayer.name = @"overlayLayerImgProfile";
+    overlayLayer.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.70].CGColor;
     [userDiscoveredFbProfileImg.layer insertSublayer:overlayLayer atIndex:0];
     
     self.discoveryTypeIcon = [[UIImageView alloc] initWithFrame:CGRectMake(8, 8, 40, 40)];
@@ -235,6 +235,7 @@
     self.favoriteIconIV.hidden = !isFavorite;
 }
 
+// Set thumbs posters at bottom of view
 - (void) setMediaThumbs:(NSMutableArray*) mediasArray
 {
 //    return;
@@ -260,6 +261,7 @@
         }
         
         thumbMedia.hidden = NO;
+        thumbMedia.opaque = YES;
         
         NSString *userLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
         [[JLTMDbClient sharedAPIInstance] setAPIKey:@THEMOVIEDBAPIKEY];

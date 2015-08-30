@@ -606,7 +606,6 @@
     [manager GET:shoundAPIPath parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (responseObject[@"response"] != nil) {
             self.comments = responseObject[@"response"];
-            
             // This part is called for reload uitableview
             // e.g : current user adds new comment
             if ([commentsTableView isDescendantOfView:self.view]) {

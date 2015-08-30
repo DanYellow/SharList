@@ -151,8 +151,14 @@ last_update : date - last update of user list | Automatically updated by the dat
 isAnonymous : Boolean | Useful to hide or not user in meetings
 isFamous : Boolean | Useful to know if a meeting is done with someone famous
 
-WIP : Build of a REAL API under sf 2.6
+WIP : Build of a REAL API under sf 2.6 (silex)
 
+
+### Listes de fonctionnalités à implementer (ou implémentée)
+- Système de "keep", l'utilisateur doit pouvoir garder une élement sans pour autant l'ajouter à la liste des choses qu'il souhaite faire découvrir
+- Création de groupes/cahier - comme Pinterest
+- Chat
+- Le header dynamique
 
 ## Design 
 ### Polices 

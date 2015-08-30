@@ -156,7 +156,7 @@
     if (!self.userDatas.isSameUser) {
         statsLabel.attributedText = statsAttrString;
     } else {
-        statsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:21.0];
+        statsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:21.0];        
         statsLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPatronym"];
     }
     
