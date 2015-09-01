@@ -228,6 +228,12 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
 
     [self.infoMediaContainer addSubview:mediaTitleLabel];
     
+    if (![self connected]) {
+        [self noInternetConnexionAlert];
+        
+        return;
+    }
+    
     UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(mediaTitleLabel.frame), screenWidth, screenHeight - CGRectGetMaxY(mediaTitleLabel.frame) + 10)]; //CGRectGetMaxY(mediaTitleLabel.frame)
     infoMediaView.backgroundColor = [UIColor clearColor];
     infoMediaView.opaque = NO;
@@ -995,18 +1001,13 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         descriptionText = [data[@"description"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
 
-    SHDCollapseTextView *mediaDescription = [[SHDCollapseTextView alloc] initWithFrame:CGRectMake((screenWidth - mediaDescriptionWidth) / 2, mediaDescriptionY, mediaDescriptionWidth, 92)
+    SHDCollapseTextView *mediaDescription = [[SHDCollapseTextView alloc] initWithFrame:CGRectMake((screenWidth - mediaDescriptionWidth) / 2, mediaDescriptionY, mediaDescriptionWidth, 92.0f)
                                                                                   text:descriptionText
                                                                                andFont:[UIFont fontWithName:@"HelveticaNeue" size:14.0]];
     [mediaDescription layoutIfNeeded];
     mediaDescription.translatesAutoresizingMaskIntoConstraints = NO;
     mediaDescription.textColor = [UIColor whiteColor];
-    mediaDescription.editable = NO;
-    mediaDescription.selectable = YES;
     mediaDescription.delegate = self;
-//    mediaDescription.backgroundColor = [UIColor clearColor];
-    mediaDescription.showsHorizontalScrollIndicator = NO;
-    mediaDescription.showsVerticalScrollIndicator = NO;
     mediaDescription.contentInset = UIEdgeInsetsMake(-10, -5, -100, 0);
     mediaDescription.center = CGPointMake(self.view.center.x, mediaDescription.center.y);
     
@@ -1015,10 +1016,10 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     mediaDescription.tag = DMVMediaDescriptionTag;
     [infoMediaView addSubview:mediaDescription];
     
-    
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
-    
-    if (hasDesc) {
+
+    // If the media has a description AND its length (height is greater or equals than 92.0)
+    if (hasDesc && CGRectGetHeight(mediaDescription.frame) >= 92.0f) {
         UIButton *collapseExpandBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         collapseExpandBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame), 40, 40);
         collapseExpandBtn.backgroundColor = [UIColor clearColor];

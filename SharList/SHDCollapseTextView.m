@@ -22,8 +22,11 @@
     self.selectable = YES;
     self.opaque = YES;
     self.dataDetectorTypes = UIDataDetectorTypeNone;
-    self.isExpanded = NO;
+    self.showsHorizontalScrollIndicator = NO;
+    self.showsVerticalScrollIndicator = NO;
     self.contentInset = UIEdgeInsetsMake(-10, -5, -90, 0);
+    
+    self.isExpanded = NO;
     
     self.font = aFont;
     if (self.contentSize.height > self.frame.size.height) {
@@ -38,6 +41,13 @@
     [self sizeToFit];
     self.expandedHeight = CGRectGetHeight(self.frame) - origHeight + 100;
     self.height = CGRectGetHeight(self.frame) + 40;
+    
+    CGSize size = [self sizeThatFits:CGSizeMake(aFrame.size.width, aFrame.size.height)];
+    CGFloat newHeight = (size.height < CGRectGetHeight(aFrame)) ? size.height : CGRectGetHeight(aFrame);
+    
+    aFrame = CGRectMake(CGRectGetMinX(aFrame), CGRectGetMinY(aFrame), CGRectGetWidth(aFrame), newHeight);
+    
+    
     self.frame = aFrame;
 
     return self;
