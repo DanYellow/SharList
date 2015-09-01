@@ -53,6 +53,7 @@
 @property (retain, nonatomic) NSMutableData *responseData;
 @property (retain, atomic) NSMutableDictionary *discoveries;
 @property (strong, nonatomic) NSArray *listOfDistinctsDay;
+@property (strong, nonatomic) NSMutableArray *visibleCells;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) NSTimer *timerRefreshBtn;
 @property (nonatomic, assign, getter=isTableViewAdded) BOOL tableViewAdded;

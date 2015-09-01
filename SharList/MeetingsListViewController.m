@@ -209,6 +209,7 @@
     
     self.discoveries = [NSMutableDictionary new];
     self.tableViewEndScrolling = YES;
+    self.visibleCells = [NSMutableArray new];
     
     UIView *tableViewHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 366)]; //284
     tableViewHeader.backgroundColor = [UIColor clearColor];
@@ -1051,21 +1052,15 @@
         
         userDiscovered = [[SHDUserDiscovered alloc] initWithDatas:currentUserMet];
         userDiscovered.tag = 98;
-
+        
+        [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
         
         [cell.contentView addSubview:userDiscovered];
     } else {
         userDiscovered = (SHDUserDiscovered *)[cell.contentView viewWithTag:98];
 //        NSLog(@"rerer");
     }
-    
-    
-    if (self.tableViewEndScrolling) {
-        [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
-    }
-    
-    
-    
+
     [userDiscovered setProfileImage:userDiscoveredDatas.fbid];
     
     NSString *pictoString = @"";
@@ -1100,6 +1095,7 @@
 // Big scrolling release
 - (void)scrollViewDidEndDecelerating:(UITableView *)tableView
 {
+//    NSLog(@"%s", __FUNCTION__);
     [self loadCellsMediasThumbsForTableView:tableView];
 //    NSUInteger deltaScroll = abs((int)self.tableViewLastPosition.y - (int)tableView.contentOffset.y);
 //    if (deltaScroll > screenHeight) {
@@ -1111,12 +1107,19 @@
 
 - (void) loadCellsMediasThumbsForTableView:(UITableView *) tableView
 {
-    for (UITableViewCell *aCell in [tableView visibleCells]) {
+    for (ShareListMediaTableViewCell *aCell in [tableView visibleCells]) {
+        
+        if ([self.visibleCells containsObject:aCell.model]) {
+            continue;
+        }
+        
         aCell.alpha = 1;
         
+
         NSIndexPath *aCellIndexPath = [tableView indexPathForCell:aCell];
         
         Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: aCellIndexPath.section]] objectAtIndex:aCellIndexPath.row];
+        
         SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:currentUserMet];
         
         SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
@@ -1143,10 +1146,11 @@
 
 - (void) unloadCellsMediasThumbsForTableView:(UITableView *) tableView andOpacity:(CGFloat)opacity
 {
-    for (UITableViewCell *aCell in [tableView visibleCells]) {
-        SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
-        userDiscovered.mediaThumbsContainer.alpha = opacity;
-    }
+    self.visibleCells = [[[tableView visibleCells] valueForKey:@"model"] mutableCopy];
+//    for (UITableViewCell *aCell in [tableView visibleCells]) {
+//        SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
+//        userDiscovered.mediaThumbsContainer.alpha = opacity;
+//    }
 }
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView
@@ -1166,6 +1170,12 @@
     // Called when the last cell is displayed
     if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
         [loadingIndicator stopAnimating];
+        
+        // We set the visible cells model only on first using
+        if ([self.visibleCells count] == 0) {
+            self.visibleCells = [[[tableView visibleCells] valueForKey:@"model"] mutableCopy];
+        }
+        
     }
 }
 
