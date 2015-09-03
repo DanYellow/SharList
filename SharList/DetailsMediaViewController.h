@@ -82,7 +82,6 @@ typedef NS_ENUM(NSUInteger, DMVTag) {
 
 
 @property (nonatomic, assign, getter=isPhysicsAdded) BOOL PhysicsAdded;
-@property (nonatomic, assign, getter=isAdded) BOOL Added; // Indicate if the current media is among user list
 @property (nonatomic, assign, getter=isAmongBSAccount) BOOL AmongBSAccount; // Indicates if the media (video or serie) is among BS Account
 
 @property (nonatomic, strong) id mediaDatas;

@@ -180,17 +180,15 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
                                                   forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = YES;
+   
     
    
-    if ([[userTasteDict objectForKey:self.mediaDatasController.type] class] != [NSNull class] &&
-        ![[[userTasteDict objectForKey:self.mediaDatasController.type] valueForKey:@"imdbID"] containsObject:self.mediaDatasController.imdbId]) {
-        self.Added = NO;
+    if (!self.mediaDatasController.isInCurrentUserList) {
         // Media in the list
         self.addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"addToList"]  style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
         
     } else {
         // Media not in the list
-        self.Added = YES;
         self.addMediaToFavoriteBtnItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"delToList"] style:UIBarButtonItemStylePlain target:self action:@selector(addAndRemoveMediaToList:)];
     }
     
@@ -318,6 +316,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     numberOfIterationAmongDiscoveriesLabel.textColor = [UIColor whiteColor];
     numberOfIterationAmongDiscoveriesLabel.textAlignment = NSTextAlignmentLeft;
     numberOfIterationAmongDiscoveriesLabel.center = CGPointMake(self.view.center.x, numberOfIterationAmongDiscoveriesLabel.center.y);
+    
     
     return numberOfIterationAmongDiscoveriesLabel;
 }
@@ -1048,7 +1047,7 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     // Btn add / remove from list
     infoMediaViewLastView = [infoMediaView.subviews lastObject];
     
-    NSString *addRemoveFromListBtnText = (self.isAdded) ? NSLocalizedString(@"RemoveToList", nil) : NSLocalizedString(@"AddToList", nil);
+    NSString *addRemoveFromListBtnText = (self.mediaDatasController.isInCurrentUserList) ? NSLocalizedString(@"RemoveToList", nil) : NSLocalizedString(@"AddToList", nil);
 
     UIButton *addRemoveFromListBtn = [self displayAddRemoveFromListBtn:addRemoveFromListBtnText];
     addRemoveFromListBtn.frame = CGRectMake(0, CGRectGetMaxY(infoMediaViewLastView.frame) + 30,
