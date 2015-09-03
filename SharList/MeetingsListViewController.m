@@ -921,8 +921,13 @@
     [headerView.layer addSublayer:bottomBorder];
 
 
-    NSString *title = [self.listOfDistinctsDay objectAtIndex:section];
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
     
+    NSDate *meetingsDate = [dateFormatter dateFromString:[self.listOfDistinctsDay objectAtIndex:section]];
+   
+    NSString *title = [NSDateFormatter localizedStringFromDate:meetingsDate dateStyle:NSDateFormatterShortStyle timeStyle:NSDateFormatterNoStyle];
+
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,
                                                                0,
                                                                screenWidth,
@@ -994,8 +999,10 @@
     [self manageEmptyViewForDatas:meetings andAtableView:tableView];
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
+//    dateFormatter.dateFormat = NSLocalizedString(@"yyyy/MM/dd", nil);
     [dateFormatter setLocale:[NSLocale currentLocale]];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    
     
     NSString *dateString = [self.listOfDistinctsDay objectAtIndex:section];
     
