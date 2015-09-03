@@ -46,6 +46,8 @@ dispatch_group_t dFinishLoadDatas;
     [self fetchShoundAPIDatas];
     [self fetchFacebookFriends];
     
+    self.isInCurrentUserList = [self currentUserInfosAboutMedia];
+    
     dispatch_group_notify(dFinishLoadDatas, dispatch_get_main_queue(), ^{
         if (self.delegate != nil) {
             [self.delegate datasAreReady];
@@ -53,6 +55,22 @@ dispatch_group_t dFinishLoadDatas;
     });
 
     return self;
+}
+
+- (BOOL) currentUserInfosAboutMedia
+{
+    NSPredicate *discoveriesWoCUser = [NSPredicate predicateWithFormat:@"fbId == %@",
+                                       [[NSUserDefaults standardUserDefaults] objectForKey:@"currentUserfbID"]];
+    Discovery *currentUser = [Discovery MR_findFirstWithPredicate:discoveriesWoCUser];
+    
+    NSDictionary *currentUserLikes = [NSKeyedUnarchiver unarchiveObjectWithData:currentUser.likes];
+    
+    NSMutableArray *linearizeCurrentUserLikes = [NSMutableArray new];
+    for (NSString *keyName in [currentUserLikes filterKeysForNullObj]) {
+        [linearizeCurrentUserLikes addObjectsFromArray:[[currentUserLikes objectForKey:keyName] valueForKey:@"imdbID"]];
+    }
+
+    return [linearizeCurrentUserLikes containsObject:self.imdbId];
 }
 
 - (void) fetchGlobalInfosForObj:(NSDictionary*)mediaObj

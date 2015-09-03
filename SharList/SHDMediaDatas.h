@@ -13,6 +13,9 @@
 
 #import "Discovery.h"
 
+#import "NSDictionary+FilterKeysForNullObj.h"
+
+
 @protocol SHDMediaDatasDelegate <NSObject>
 
 @required
@@ -27,6 +30,9 @@
 
 @property (strong, atomic) NSDate *nextEpisodeDate;
 @property (strong, atomic) NSString *nextEpisodeRef; // S01E04 e.g.
+
+@property (nonatomic, assign) BOOL isInCurrentUserList; // Indicate if the current media is among user list
+@property (nonatomic, assign) BOOL isUserList;
 
 - (instancetype) initWithMedia:(NSDictionary *)media;
 @property (nonatomic, weak) id<SHDMediaDatasDelegate> delegate;
