@@ -314,8 +314,11 @@
 {
     UIImageView *userDiscoveredFbProfileImg = (UIImageView*)[self viewWithTag:SHDDiscoverProfileImgTag];
     
+    NSString *fbMetUserString = fbId;
+    NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbMetUserString,(int)self.initFrame.size.width, (int)self.initFrame.size.height];
+
     [userDiscoveredFbProfileImg setImageWithURL:
-     [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%i&height=%i", fbId, (int)self.initFrame.size.width, (int)self.initFrame.size.height]]
+     [NSURL URLWithString:metUserFBImgURL]
                                placeholderImage:[UIImage imageNamed:@"TrianglesBG"]]; //10204498235807141
 }
 

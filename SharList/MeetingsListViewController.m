@@ -789,6 +789,9 @@
     UITableView *userMeetingsListTableView = (UITableView*)[self.view viewWithTag:1];
     [userMeetingsListTableView reloadData];
 
+    [self loadCellsMediasThumbsForTableView:userMeetingsListTableView];
+    [self unloadCellsMediasThumbsForTableView:userMeetingsListTableView andOpacity:.75];
+
     [loadingIndicator stopAnimating];
 }
 
@@ -814,6 +817,7 @@
     [animation setDuration:.3];
     [[userMeetingsListTableView layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
     
+    [self loadCellsMediasThumbsForTableView:userMeetingsListTableView];
     
     [loadingIndicator stopAnimating];
 }
@@ -983,10 +987,10 @@
         default:
             break;
     }
+    
 
     // We don't want the taste of the current user
     NSArray *meetings = [Discovery MR_findAllSortedBy:@"lastDiscovery" ascending:NO withPredicate:filterPredicates];
-    
     [self manageEmptyViewForDatas:meetings andAtableView:tableView];
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
@@ -1007,6 +1011,8 @@
     
     return [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex:section]] count];
 }
+
+
 
 //- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 //{
@@ -1086,9 +1092,8 @@
 // Scrolls but user keeps finger on the scrollview
 - (void) scrollViewDidEndDragging:(UITableView *)tableView willDecelerate:(BOOL)decelerate
 {
-    
     if (!decelerate) {
-//        [self loadCellsMediasThumbsForTableView:tableView];
+        [self loadCellsMediasThumbsForTableView:tableView];
     }
 }
 
@@ -1128,7 +1133,6 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
         });
-        
     }
 }
 
@@ -1155,14 +1159,14 @@
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView
 {
-    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:1];
+    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.75];
 }
 
 // Big scroll
 - (void)scrollViewWillBeginDecelerating:(UITableView *)tableView
 {
     self.tableViewLastPosition = tableView.contentOffset;
-    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:1];
+    [self unloadCellsMediasThumbsForTableView:tableView andOpacity:.5];
 }
 
 - (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -1626,9 +1630,10 @@
     
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self performSelectorOnMainThread:@selector(reloadSections) withObject:nil waitUntilDone:YES];
-    } else {
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
     }
+//    else {
+//        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[[UIApplication sharedApplication] applicationIconBadgeNumber] + 1];
+//    }
     
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]){
         UIUserNotificationSettings *grantedSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
@@ -1686,7 +1691,6 @@
         //TODO: process error or result.
         if (!error) {
             [self fetchUserFacebookFriendsReloadAfter:YES];
-            
         }
     }];
 }

@@ -69,6 +69,8 @@ dispatch_group_t dFinishLoadDatas;
         apiLink = kJLTMDbFind;
         self.trailerAPILink = kJLTMDbTVVideos;
         queryParams =  @{@"id": mediaObj[@"imdbID"], @"language": userLanguage, @"external_source": @"imdb_id"};
+    } else {
+        NSLog(@"error");
     }
     
     [[JLTMDbClient sharedAPIInstance] GET:apiLink withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
@@ -202,7 +204,7 @@ dispatch_group_t dFinishLoadDatas;
 {
     dispatch_group_enter(dFinishLoadDatas);
 
-    NSString *shoundAPIPath = [[self.settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media/beta"];
+    NSString *shoundAPIPath = [[self.settingsDict objectForKey:@"apiPathV2"] stringByAppendingString:@"media.php/media"];
     
     NSDictionary *parameters = @{@"imdbId": self.imdbId};
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -212,14 +214,12 @@ dispatch_group_t dFinishLoadDatas;
     
     [manager GET:shoundAPIPath parameters:parameters
          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-             
              NSDictionary *obj = @{
                                    @"store_links": [responseObject valueForKeyPath:@"response.storeLinks"],
                                    @"comments_count": [NSNumber numberWithInteger:[[responseObject valueForKeyPath:@"response.commentsCount"] integerValue]]
                                    };
              [self.mediaDatas addEntriesFromDictionary:obj];
              dispatch_group_leave(dFinishLoadDatas);
-
          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
              NSLog(@"error viewDidLoad - : %@", error);
              dispatch_group_leave(dFinishLoadDatas);
@@ -260,7 +260,7 @@ dispatch_group_t dFinishLoadDatas;
              
              dispatch_group_leave(dFinishLoadDatas);
          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             NSLog(@"error viewDidLoad - : %@", error);
+//             NSLog(@"error viewDidLoad - : %@", error);
              [self.mediaDatas setObject:@[]
                                  forKey:@"media_facebook_friends"];
              dispatch_group_leave(dFinishLoadDatas);

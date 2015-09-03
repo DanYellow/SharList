@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>fbauth2</string>
-	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -35,13 +31,17 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>32</string>
+	<string>33</string>
 	<key>FacebookAppID</key>
 	<string>1557139914519856</string>
 	<key>FacebookBundleName</key>
 	<string>FacebookSDKStrings</string>
 	<key>FacebookDisplayName</key>
 	<string>Shound</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbauth2</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>

@@ -136,7 +136,7 @@
         self.userDiscovered = [Discovery MR_findFirstByAttribute:@"fbId"
                                            withValue:self.metUserId inContext:[NSManagedObjectContext MR_defaultContext]];
         
-        if (!self.userDiscovered) {
+        if (!self.userDiscovered.isSeen) {
             self.userDiscovered.isSeen = YES;
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }

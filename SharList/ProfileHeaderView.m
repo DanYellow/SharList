@@ -79,7 +79,7 @@
                      
                      NSString *fbMetUserString = self.userDatas.fbid;
                      NSString *metUserFBImgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=%li&height=%li", fbMetUserString,(unsigned long)sizeImage, (unsigned long)sizeImage];
-                     
+
                      [self.profileImageView setImageWithURL:[NSURL URLWithString:metUserFBImgURL] placeholderImage:nil];
                  }
                  
