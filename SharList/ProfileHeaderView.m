@@ -229,26 +229,38 @@
     UIView *statsContainer = [[UIView alloc] initWithFrame:CGRectZero];
     statsContainer.backgroundColor = [UIColor clearColor];
     
-    NSArray *categories = [[self.userDatas.discoveredUserLikes filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    NSArray *categories = [@[@"movie", @"serie"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    
+    NSUInteger tagValue = 0;
     
     for (int i = 0; i < [categories count]; i++) {
         NSString *dictKey = [categories objectAtIndex:i];
         NSString *title = [NSLocalizedString(dictKey, nil) uppercaseString];
+        
+        NSArray *datasForCat = [self.userDatas.discoveredUserLikes objectForKey:dictKey];
         
         
         CGRect statContainerFrame = CGRectMake((i * 1) + (widthViews * i),
                                                0,
                                                widthViews, 64);
         
-        
         UIButton *statContainer = [UIButton buttonWithType:UIButtonTypeCustom];
         statContainer.frame = statContainerFrame;
         statContainer.backgroundColor = [UIColor colorWithRed:(17.0/255.0) green:(27.0/255.0) blue:(28.0/255.0) alpha:.55];
-        statContainer.tag = i;
+        
+        if ([datasForCat isKindOfClass:[NSArray class]]){
+            statContainer.tag = tagValue;
+            tagValue++;
+        }
+    
+        statContainer.enabled = ([datasForCat isKindOfClass:[NSArray class]]) ? YES : NO;
+        statContainer.alpha = ([datasForCat isKindOfClass:[NSArray class]]) ? 1.0 : 0.5;
         [statContainer addTarget:self action:@selector(nbElementsForSectionSelected:) forControlEvents:UIControlEventTouchUpInside];
+        
         [statContainer addTarget:self action:@selector(highlightBtnContainer:) forControlEvents:UIControlEventTouchDown];
         [statContainer addTarget:self action:@selector(unHighlightBtnContainer:) forControlEvents:UIControlEventTouchUpOutside];
         [statContainer addTarget:self action:@selector(unHighlightBtnContainer:) forControlEvents:UIControlEventTouchUpInside];
+        
         [statsContainer addSubview:statContainer];
         
         UILabel *statCount = [[UILabel alloc] initWithFrame:CGRectMake(offsetBtnElements, 0, widthViews, 35.0)];
@@ -256,8 +268,9 @@
         statCount.backgroundColor = [UIColor clearColor];
         statCount.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:35.0f];
         
+        
         // COntains the number of Series / Movies
-        NSUInteger nbElementsForCat = [[self.userDatas.discoveredUserLikes objectForKey:dictKey] count];
+        NSUInteger nbElementsForCat = ([datasForCat isKindOfClass:[NSArray class]]) ? [datasForCat count] : 0;
         statCount.text = [NSString stringWithFormat: @"%li", (unsigned long)nbElementsForCat];
         [statCount sizeToFit];
         [statContainer insertSubview:statCount atIndex:10];
