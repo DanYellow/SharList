@@ -102,6 +102,9 @@
     // Design on the view
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(appearsSearchBar)];
     
+    // Shows
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"keep_list_icon"] style:UIBarButtonItemStylePlain target:self action:@selector(showKeepList)];
+    
     CAGradientLayer *gradientBGView = [CAGradientLayer layer];
     gradientBGView.frame = self.view.bounds;
     UIColor *topGradientView = [UIColor colorWithRed:(29.0f/255.0f) green:(82.0/255.0f) blue:(107.0f/255.0f) alpha:1];
@@ -114,9 +117,8 @@
     bgLayer.opacity = .7f;
     bgLayer.name = @"TrianglesBG";
     bgLayer.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"TrianglesBG"]].CGColor;
-    if (![FBSDKAccessToken currentAccessToken] || ![userPreferences objectForKey:@"currentUserfbID"]) {
-        [self.view.layer insertSublayer:bgLayer atIndex:1];
-    }
+    [self.view.layer insertSublayer:bgLayer atIndex:1];
+    
     
     
     // Loading indicator of the app
@@ -288,8 +290,8 @@
     
     [self.searchController.view addSubview:UISearchControllerBG];
     
-
-    categoryList = [@[@"book", @"serie", @"movie"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    // @"book",
+    categoryList = [@[@"serie", @"movie"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     filteredTableDatas = [NSMutableDictionary new];
     
     
@@ -402,6 +404,7 @@
     }
     
     SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:self.user];
+
     ProfileHeaderView *profileView = [[ProfileHeaderView alloc] initWithDatas:userDiscoveredDatas];
     profileView.delegate = self;
     
@@ -567,13 +570,12 @@
 
 
 // This method have to be called when the user is connected
-- (void) userConnectionForFbID:(NSNumber*)userfbID
+- (void) userConnectionForFbID:(NSString*)userfbID
 {
     // We retrieve user taste if it exists in local
     self.user = [Discovery MR_findFirstByAttribute:@"fbId"
                                               withValue:userfbID];
     userTasteDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                       [NSNull null], @"book",
                        [NSNull null], @"movie",
                        [NSNull null], @"serie",
                        nil];
@@ -754,10 +756,12 @@
     
 
     NSString *title, *year, *imdbID;
-    ShareListMediaTableViewCell *cell;
+    
     
     //Search results tableview
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        ShareListMediaTableViewCell *cell;
+        
         NSString *sectionTitle = [[categoryList sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
                                   objectAtIndex:indexPath.section];
         
@@ -803,8 +807,10 @@
                 cell.imageView.image = nil;
             }
         }
-        
+        return cell;
     } else {
+        SHDMediaCell *cell;
+        
         NSString *sectionTitle = [[[userTasteDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
                                   objectAtIndex:indexPath.section];
         
@@ -819,46 +825,23 @@
         if (cell == nil) {
             CGRect cellFrame = CGRectMake(0, 0, screenWidth, 69.0f);
             
-            cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+            cell = [[SHDMediaCell alloc] initWithReuseIdentifier:CellIdentifier andFrame:cellFrame];
             cell.delegate = self;
             cell.rightUtilityButtons = [self rightCellButtons];
-            
-            UIView *bgColorView = [UIView new];
-            [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
-            [cell setSelectedBackgroundView:bgColorView];
-            
-            cell.delegate = self;
-            // For "Classic mode" we want a cell's background more opaque
-            cell.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.35]; //[UIColor colorWithRed:(246.0/255.0) green:(246.0/255.0) blue:(246.0/255.0) alpha:0.87];
-            
-            // We hide this part to get easily datas
-            cell.textLabel.frame = cellFrame;
-            
-            cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
-            cell.textLabel.textColor = [UIColor whiteColor];
-//            cell.backgroundView.alpha = .3f;
-            
+
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
         
-        cell.model = [rowsOfSection objectAtIndex:indexPath.row];
-        
-        if ([[rowsOfSection objectAtIndex:indexPath.row][@"type"] isEqualToString:@"serie"]) {
-            [self getLastNextReleaseSerieEpisodeForCell:cell];
-        } else {
-            cell.detailTextLabel.text = @"";
-        }
-        
-        if ([cell.model valueForKey:@"imdbID"] != nil)
-            [self getImageCellForData:cell.model aCell:cell];
+        cell.media = [rowsOfSection objectAtIndex:indexPath.row];
+
+//        if ([cell.model valueForKey:@"imdbID"] != nil)
+//            [self getImageCellForData:cell.model aCell:cell];
         
         cell.textLabel.text = title;
+        
+        return cell;
 
     }
-    
-
-    
-    return cell;
 }
 
 - (void) getLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell
@@ -1033,7 +1016,7 @@
 }
 
 
-- (void)swipeableTableViewCell:(ShareListMediaTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
+- (void)swipeableTableViewCell:(SHDMediaCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
     switch (index) {
         case 0:
         {
@@ -1042,11 +1025,11 @@
             
             __block NSIndexPath *cellIndexPath = [tableView indexPathForCell:cell];
             
-            NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] mutableCopy];
-            [updatedUserTaste removeObjectsInArray:[updatedUserTaste filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"imdbID == %@", [cell.model valueForKey:@"imdbID"]]]];
+            NSMutableArray *updatedUserTaste = [[userTasteDict objectForKey:[cell.media valueForKey:@"type"]] mutableCopy];
+            [updatedUserTaste removeObjectsInArray:[updatedUserTaste filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"imdbID == %@", [cell.media valueForKey:@"imdbID"]]]];
             
-            [userTasteDict removeObjectForKey:[cell.model valueForKey:@"type"]];
-            [userTasteDict setObject:updatedUserTaste forKey:[cell.model valueForKey:@"type"]];
+            [userTasteDict removeObjectForKey:[cell.media valueForKey:@"type"]];
+            [userTasteDict setObject:updatedUserTaste forKey:[cell.media valueForKey:@"type"]];
             
             NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"fbId == %@", [userPreferences objectForKey:@"currentUserfbID"]];
             [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
@@ -1054,7 +1037,7 @@
                 NSData *arrayData = [NSKeyedArchiver archivedDataWithRootObject:userTasteDict];
                 userTaste.likes = arrayData;
             } completion:^(BOOL success, NSError *error) {
-                BOOL lastItem = ([[userTasteDict objectForKey:[cell.model valueForKey:@"type"]] count] == 0);
+                BOOL lastItem = ([[userTasteDict objectForKey:[cell.media valueForKey:@"type"]] count] == 0);
                 
                 if (lastItem) {
                     [tableView reloadSections:[NSIndexSet indexSetWithIndex:cellIndexPath.section]
@@ -1086,14 +1069,23 @@
 {
 //    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
     
-    ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     
-    NSObject *object = selectedCell.model;
-    
+    NSObject *object;
     DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
+    
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
+        
+        object = selectedCell.model;
+    } else {
+        SHDMediaCell *selectedCell = (SHDMediaCell*)[tableView cellForRowAtIndexPath:indexPath];
+        object = selectedCell.media;
+    }
+    
+    
     detailsMediaViewController.mediaDatas = object;
     detailsMediaViewController.delegate = self;
-    detailsMediaViewController.title = [selectedCell.model objectForKey:@"name"];
+    detailsMediaViewController.title = [object valueForKey:@"name"];
 //    // Trick for weird issue about present view and pushview
     detailsMediaViewController.tabBarController.tabBar.hidden = YES;
     
@@ -1574,7 +1566,7 @@
     UIVisualEffectView *visualEffectView;
     visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
     
-    visualEffectView.frame = bluredImageView.bounds;
+    visualEffectView.frame = self.view.bounds;
     [bluredImageView addSubview:visualEffectView];
     
     self.searchResultsController.tableView.backgroundView = bluredImageView;
@@ -1602,6 +1594,15 @@
     return img;
 }
 
+- (void) showKeepList
+{
+    KeepListViewControler *keepListViewController = [KeepListViewControler new];
+    keepListViewController.title = @"KeepList";
+    keepListViewController.tabBarController.tabBar.hidden = YES;
+    [self disappearsSearchBar];
+    [self.searchController setActive:NO];
+    [self.navigationController pushViewController:keepListViewController animated:YES];
+}
 
 
 #pragma mark - Delegate methods

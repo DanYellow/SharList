@@ -19,7 +19,10 @@
 #import <JLTMDbClient.h>
 
 #import "ShareListMediaTableViewCell.h"
+#import "SHDMediaCell.h"
 #import "DetailsMediaViewController.h"
+#import "KeepListViewControler.h"
+
 
 #import "Discovery.h"
 
