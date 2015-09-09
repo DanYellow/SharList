@@ -895,7 +895,7 @@
     headerView.opaque = YES;
     headerView.backgroundColor = [UIColor clearColor];
     
-    CGFloat percentWidthContent = (604.0/640.0);
+    CGFloat percentWidthContent = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? (604.0/640.0) : .85;
 
     CGRect bottomBorderFrame = CGRectMake( (screenWidth - (CGRectGetWidth(headerView.frame) * percentWidthContent)) / 2,
                                           CGRectGetHeight(headerView.frame),
@@ -953,8 +953,7 @@
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return (screenHeight * (374.0/1136.0)) + 13;
-//    return 200.0;
+    return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? (screenHeight * (374.0/1136.0)) + 13 :  (screenHeight * (348.0/1024.0)) + 80;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -1107,26 +1106,20 @@
 // Big scrolling release
 - (void)scrollViewDidEndDecelerating:(UITableView *)tableView
 {
-//    NSLog(@"%s", __FUNCTION__);
     [self loadCellsMediasThumbsForTableView:tableView];
-//    NSUInteger deltaScroll = abs((int)self.tableViewLastPosition.y - (int)tableView.contentOffset.y);
-//    if (deltaScroll > screenHeight) {
-//        [self loadCellsMediasThumbsForTableView:tableView];
-//    } else {
-//        [self displayVisibleCells:tableView];
-//    }
 }
 
 - (void) loadCellsMediasThumbsForTableView:(UITableView *) tableView
 {
     for (ShareListMediaTableViewCell *aCell in [tableView visibleCells]) {
         
+//        userDiscovered.mediaThumbsContainer.alpha = 1.0;
+        
         if ([self.visibleCells containsObject:aCell.model]) {
+            SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
+            [userDiscovered increaseThumbsAlpha];
             continue;
         }
-        
-        aCell.alpha = 1;
-        
 
         NSIndexPath *aCellIndexPath = [tableView indexPathForCell:aCell];
         
@@ -1135,33 +1128,19 @@
         SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:currentUserMet];
         
         SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
-        userDiscovered.mediaThumbsContainer.hidden = NO;
-
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
         });
     }
 }
 
-// Only shows visible cells if the delta is too short
-//- (void) displayVisibleCells:(UITableView *) tableView
-//{
-//    for (UITableViewCell *aCell in [tableView visibleCells]) {
-//        SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
-//        userDiscovered.mediaThumbsContainer.hidden = NO;
-//        [UIView animateWithDuration:0.25 animations:^{
-//            userDiscovered.mediaThumbsContainer.alpha = 1;
-//        }];
-//    }
-//}
-
 - (void) unloadCellsMediasThumbsForTableView:(UITableView *) tableView andOpacity:(CGFloat)opacity
 {
     self.visibleCells = [[[tableView visibleCells] valueForKey:@"model"] mutableCopy];
-//    for (UITableViewCell *aCell in [tableView visibleCells]) {
-//        SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
-//        userDiscovered.mediaThumbsContainer.alpha = opacity;
-//    }
+    for (UITableViewCell *aCell in [tableView visibleCells]) {
+        SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
+        [userDiscovered decreaseThumbsAlpha];
+    }
 }
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView
