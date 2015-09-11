@@ -232,6 +232,9 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         return;
     }
     
+
+    
+    
     UIScrollView *infoMediaView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(mediaTitleLabel.frame), screenWidth, screenHeight - CGRectGetMaxY(mediaTitleLabel.frame) + 10)]; //CGRectGetMaxY(mediaTitleLabel.frame)
     infoMediaView.backgroundColor = [UIColor clearColor];
     infoMediaView.opaque = NO;
@@ -612,6 +615,20 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
     self.mediaDatas = tempDictionary;
     [self displayBuyButtonForShops:self.mediaDatasController.mediaDatas[@"store_links"]];
     [self setMediaViewForDatas:self.mediaDatasController.mediaDatas];
+    
+    // We retrieve the position of the UIBarbutton item
+    CGRect barButtonItemList = [(UIView*)[self.addMediaToFavoriteBtnItem valueForKey:@"view"] frame];
+    UIButton *keepListBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    keepListBtn.frame = CGRectMake(CGRectGetMinX(barButtonItemList), 65, 50, 50);
+    keepListBtn.backgroundColor = [UIColor clearColor];
+    if(self.mediaDatasController.isAmongKeepList)
+        [keepListBtn setImage:[[UIImage imageNamed:@"del_to_keeplist"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    else
+        [keepListBtn setImage:[[UIImage imageNamed:@"add_to_keeplist"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [keepListBtn addTarget:self action:@selector(addAndRemoveMediaToKeeplist:)
+                   forControlEvents:UIControlEventTouchUpInside];
+    keepListBtn.tintColor = [UIColor whiteColor];
+    [self.infoMediaContainer addSubview:keepListBtn];
 }
 
 - (void) setNavigationItems
@@ -1712,6 +1729,30 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
             }
         }
     }];
+}
+
+- (void) addAndRemoveMediaToKeeplist:(id) sender
+{
+    // We remove element in keeplist
+    if (self.mediaDatasController.isAmongKeepList) {
+        KeepListElement *mediaInKL = [KeepListElement MR_findFirstByAttribute:@"imdbId" withValue:self.mediaDatasController.imdbId];
+        [mediaInKL MR_deleteEntityInContext:[NSManagedObjectContext MR_defaultContext]];
+        
+        [sender setImage:[[UIImage imageNamed:@"add_to_keeplist"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    } else {
+        KeepListElement *mediaForKL = [KeepListElement MR_createEntity];
+        mediaForKL.imdbId = self.mediaDatasController.imdbId;
+        mediaForKL.name = self.mediaDatasController.mediaDatas[@"name"];
+        mediaForKL.type = self.mediaDatasController.type;
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        
+        [sender setImage:[[UIImage imageNamed:@"del_to_keeplist"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    }
+    
+    self.mediaDatasController.isAmongKeepList = !self.mediaDatasController.isAmongKeepList;
+    [JDStatusBarNotification showWithStatus:NSLocalizedString(@"keeplist updated", nil)
+                               dismissAfter:3
+                                  styleName:@"JDStatusBarStyleDark"];
 }
 
 #pragma mark - Server part
