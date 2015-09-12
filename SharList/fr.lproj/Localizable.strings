@@ -37,7 +37,7 @@
 "e.g." = "ex.";
 "Tap on " = "Appuyez sur  ";
 "Tap on  to fill your list" = "Appuyez sur   pour rechercher";
-"No results" = "Aucun résultat";
+"No results" = "Aucun résultat\n¯\\_(ツ)_/¯";
 "No internet connection" = "Aucune connexion Internet";
 "Delete" = "Retirer";
 "localNotificationAlertBodyNotUpdateList" = "Vous avez découvert de nouvelles choses ? Ajoutez-les";
@@ -153,6 +153,7 @@
 "release today" = "Aujourd'hui !";
 "release tomorrow" = "Demain !";
 "list updated" = "Liste mise à jour";
+"keeplist updated" = "Keeplist mise à jour";
 "AddToList" = "Ajouter à la liste";
 "RemoveToList" = "Retirer de la liste";
 "To introduce friends" = "Faire découvrir à mes amis";
@@ -217,6 +218,8 @@
 "in common" = "En commun";
 "to discover" = "À découvrir";
 
+// KeeplistViewController
+"keep_list_desc" = "Votre keeplist vous permet de garder dans un coin les séries et films que vous avez découvert pour les regarder plus tard.";
 
 // Facebook post
 "FBLinkShareParams_name" = "Téléchargez Shound";

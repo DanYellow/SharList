@@ -35,7 +35,7 @@
 "Tap on " = "Tap on  ";
 "Tap on  to fill your list" = "Tap on  to search";
 "e.g." = "e.g.";
-"No results" = "No results";
+"No results" = "No results\n¯\\_(ツ)_/¯";
 "No internet connection" = "No Internet connection";
 "Delete" = "Delete";
 "localNotificationAlertBodyNotUpdateList" = "Discover new things ? Add it to your list";
@@ -137,6 +137,7 @@
 "next episode %@" = "Next episode: %@";
 "release tomorrow" = "Tomorrow!";
 "list updated" = "List updated";
+"keeplist updated" = "Keeplist updated";
 "AddToList" = "Add to list";
 "RemoveToList" = "Remove from list";
 "To introduce friends" = "Introduce to my friends";
@@ -192,6 +193,9 @@
 "validate" = "Validate";
 "sent comment" = "Comment updated";
 "updated comment" = "Comment send";
+
+// KeeplistViewController
+"keep_list_desc" = "Your keeplist allows you to keep tv shows and movies that you discover to watch them later.";
 
 //Facebook
 "errorConnect" = "Facebook has an issue";
