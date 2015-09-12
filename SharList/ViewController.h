@@ -18,7 +18,6 @@
 #import "UIImageView+AFNetworking.h"
 #import <JLTMDbClient.h>
 
-#import "ShareListMediaTableViewCell.h"
 #import "SHDMediaCell.h"
 #import "DetailsMediaViewController.h"
 #import "KeepListViewControler.h"

@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#import "Underscore.h"
+#define _ Underscore
+
 @interface NSDictionary (FilterKeysForNullObj)
 
 - (NSMutableArray*) filterKeysForNullObj;

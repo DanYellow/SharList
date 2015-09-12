@@ -47,6 +47,7 @@ dispatch_group_t dFinishLoadDatas;
     [self fetchFacebookFriends];
     
     self.isInCurrentUserList = [self currentUserInfosAboutMedia];
+    self.isAmongKeepList = [self isInCurrentKeepList];
     
     dispatch_group_notify(dFinishLoadDatas, dispatch_get_main_queue(), ^{
         if (self.delegate != nil) {
@@ -57,6 +58,15 @@ dispatch_group_t dFinishLoadDatas;
     return self;
 }
 
+- (BOOL) isInCurrentKeepList
+{
+    NSPredicate *discoveriesWoCUser = [NSPredicate predicateWithFormat:@"imdbId == %@", self.imdbId];
+    KeepListElement *mediaInKeeplist = [KeepListElement MR_findFirstWithPredicate:discoveriesWoCUser];
+
+    return (mediaInKeeplist == nil) ? NO : YES;
+}
+
+// Check if user
 - (BOOL) currentUserInfosAboutMedia
 {
     NSPredicate *discoveriesWoCUser = [NSPredicate predicateWithFormat:@"fbId == %@",
@@ -65,12 +75,13 @@ dispatch_group_t dFinishLoadDatas;
     
     NSDictionary *currentUserLikes = [NSKeyedUnarchiver unarchiveObjectWithData:currentUser.likes];
     
-    NSMutableArray *linearizeCurrentUserLikes = [NSMutableArray new];
-    for (NSString *keyName in [currentUserLikes filterKeysForNullObj]) {
-        [linearizeCurrentUserLikes addObjectsFromArray:[[currentUserLikes objectForKey:keyName] valueForKey:@"imdbID"]];
-    }
+    
+//    NSMutableArray *linearizeCurrentUserLikes = [NSMutableArray new];
+//    for (NSString *keyName in [currentUserLikes filterKeysForNullObj]) {
+//        [linearizeCurrentUserLikes addObjectsFromArray:[[currentUserLikes objectForKey:keyName] valueForKey:@"imdbID"]];
+//    }
 
-    return [linearizeCurrentUserLikes containsObject:self.imdbId];
+    return [[[currentUserLikes objectForKey:self.type] valueForKey:@"imdbID"] containsObject:self.imdbId];
 }
 
 - (void) fetchGlobalInfosForObj:(NSDictionary*)mediaObj

@@ -1749,6 +1749,10 @@ NSString * const BSCLIENTID = @"8bc04c11b4c283b72a3fa48cfc6149f3";
         [sender setImage:[[UIImage imageNamed:@"del_to_keeplist"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     }
     
+    if ([self.keepListDelegate respondsToSelector:@selector(userKeeplistUpdated)]) {
+        [self.keepListDelegate userKeeplistUpdated];
+    }
+    
     self.mediaDatasController.isAmongKeepList = !self.mediaDatasController.isAmongKeepList;
     [JDStatusBarNotification showWithStatus:NSLocalizedString(@"keeplist updated", nil)
                                dismissAfter:3

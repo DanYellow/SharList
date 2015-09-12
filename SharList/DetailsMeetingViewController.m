@@ -700,7 +700,7 @@
     NSString *sectionTitle = [[[self.metUserLikesDict filterKeysForNullObj] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
                                                                           objectAtIndex:indexPath.section];
     NSString *title, *imdbID; // year
-    ShareListMediaTableViewCell *cell;
+    SHDMediaCell *cell;
     
     cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     NSArray *rowsOfSection = [self.metUserLikesDict objectForKey:sectionTitle];
@@ -710,26 +710,13 @@
     imdbID = [rowsOfSection objectAtIndex:indexPath.row][@"imdbID"];
     
     
-    
     if (cell == nil) {
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.backgroundColor = [UIColor clearColor];
-        cell.textLabel.frame = cellFrame;
-        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
-        cell.textLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-        cell.textLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-        cell.textLabel.layer.shadowOpacity = .75f;
-        cell.textLabel.textColor = [UIColor whiteColor];
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
-        cell.indentationLevel = 1;
+        cell = [[SHDMediaCell alloc] initWithReuseIdentifier:CellIdentifier andFrame:cellFrame];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        
-        UIView *bgColorView = [UIView new];
-        [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
-        [cell setSelectedBackgroundView:bgColorView];
     }
     
-    cell.model = [rowsOfSection objectAtIndex:indexPath.row];
+    cell.media = [rowsOfSection objectAtIndex:indexPath.row];
+    cell.textLabel.text = title;
     
     if (![currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] isEqual:[NSNull null]]) {
         if ([[currentUserTaste[[rowsOfSection objectAtIndex:indexPath.row][@"type"]] valueForKey:@"imdbID"] containsObject:[[rowsOfSection objectAtIndex:indexPath.row] objectForKey:@"imdbID"]]) {
@@ -739,80 +726,9 @@
         }
     }
     
-    if ([cell.model valueForKey:@"imdbID"] != nil)
-        [self getImageCellForData:cell.model aCell:cell];
-    
-    if ([[rowsOfSection objectAtIndex:indexPath.row][@"type"] isEqualToString:@"serie"]) {
-        [self getLastNextReleaseSerieEpisodeForCell:cell];
-    } else {
-        cell.detailTextLabel.text = @"";
-    }
-    
-    cell.textLabel.text = title;
-    
     return cell;
 }
 
-- (void) getLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell
-{
-    NSDictionary *queryParams =  @{@"id": [aCell.model objectForKey:@"imdbID"], @"external_source": @"imdb_id"};
-    
-    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbFind withParameters:queryParams andResponseBlock:^(id responseObject, NSError *error) {
-        if(!error){
-            
-            NSDictionary *tvQueryParams = @{@"id": [responseObject valueForKeyPath: @"tv_results.id"][0]};
-            
-            [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTV withParameters:tvQueryParams andResponseBlock:^(id responseObject, NSError *error) {
-                if(!error){
-                    // Get the date of the next episode
-                    NSDictionary *tvSeasonQueryParams = @{@"id": [responseObject valueForKeyPath:@"id"],
-                                                          @"season_number": [responseObject valueForKeyPath:@"number_of_seasons"]};
-                    
-                    NSString *lastAirEpisode = (NSString*)[responseObject valueForKeyPath:@"last_air_date"];
-                    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-                    dateFormatter.dateFormat = @"yyyy-MM-dd";
-                    NSDate *lastAirEpisodeDate = [dateFormatter dateFromString:lastAirEpisode];
-                    
-                    [[JLTMDbClient sharedAPIInstance] GET:kJLTMDbTVSeasons withParameters:tvSeasonQueryParams andResponseBlock:^(id responseObject, NSError *error) {
-                        NSDateFormatter *dateFormatter = [NSDateFormatter new];
-                        dateFormatter.dateFormat = @"yyyy-MM-dd";
-                        
-                        NSDate *closestDate = nil;
-                        int episodeNumber = 0;
-                        
-                        for (NSDictionary* episode in responseObject[@"episodes"]) {
-                            if ([episode objectForKey:@"air_date"] != (id)[NSNull null]) {
-                                NSString *dateString = (NSString *)[episode objectForKey:@"air_date"];
-                                
-                                NSDate *episodeDate = [dateFormatter dateFromString:dateString];
-                                episodeNumber++;
-                                if([episodeDate timeIntervalSinceNow] < -100000) {
-                                    continue;
-                                }
-                                
-                                // If the the date is today so we break the loop
-                                if ([[NSCalendar currentCalendar] isDateInToday:episodeDate] || !closestDate) {
-                                    closestDate = episodeDate;
-                                    break;
-                                }
-                                
-                                if([episodeDate timeIntervalSinceNow] < [closestDate timeIntervalSinceNow] || !closestDate) {
-                                    closestDate = episodeDate;
-                                }
-                            }
-                        }
-                        
-                        NSDate *dateForEpisode = (closestDate != nil) ? closestDate : lastAirEpisodeDate;
-                        [self displayLastNextReleaseSerieEpisodeForCell:aCell
-                                                                   date:dateForEpisode
-                                                    andSeasonForEpisode:[NSString stringWithFormat:@"S%02iE%02i", [tvSeasonQueryParams[@"season_number"] intValue], episodeNumber]];
-                    }];
-                }
-            }];
-            
-        }
-    }];
-}
 
 //- (void)scrollViewDidEndDecelerating:(UITableView *)tableView
 //{
@@ -855,45 +771,18 @@
 //}
 
 
-- (void) displayLastNextReleaseSerieEpisodeForCell:(ShareListMediaTableViewCell*)aCell date:(NSDate*)aDate andSeasonForEpisode:(NSString*)aEpisodeString
-{
-    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    dateFormatter.timeStyle = NSDateFormatterNoStyle;
-    dateFormatter.dateFormat = @"dd/MM/yyyy";
-    dateFormatter.dateStyle = NSDateFormatterShortStyle;
-    
-    NSString *lastAirEpisodeDateString = [dateFormatter stringFromDate:aDate];
-    
-    aCell.detailTextLabel.text = ([aDate timeIntervalSinceNow] > 0) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), lastAirEpisodeDateString] : @"";
-    // If an episode of this serie is release today we notify the user
-    aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInToday:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil), NSLocalizedString(@"release today", @"aujourd'hui !")] : aCell.detailTextLabel.text;
-    // If an episode of this serie is release tomorrow we notify the user
-    aCell.detailTextLabel.text = ([[NSCalendar currentCalendar] isDateInTomorrow:aDate]) ? [NSString stringWithFormat:NSLocalizedString(@"next episode %@", nil),  NSLocalizedString(@"release tomorrow", @"demain !")] : aCell.detailTextLabel.text;
-    
-    if ([aDate timeIntervalSinceNow] > 0 || [[NSCalendar currentCalendar] isDateInToday:aDate] || [[NSCalendar currentCalendar] isDateInTomorrow:aDate]) {
-        aCell.detailTextLabel.text = [aCell.detailTextLabel.text stringByAppendingString:[NSString stringWithFormat:@" • %@", aEpisodeString]];
-    }
-    
-    
-    aCell.detailTextLabel.font = [UIFont fontWithName:@"Helvetica" size:12.0];
-    aCell.detailTextLabel.textColor = [UIColor whiteColor];
-    aCell.detailTextLabel.layer.shadowColor = [UIColor blackColor].CGColor;
-    aCell.detailTextLabel.layer.shadowOffset = CGSizeMake(1.50f, 1.50f);
-    aCell.detailTextLabel.layer.shadowOpacity = .85f;
-}
 
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
     //    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
     
-    ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
+    SHDMediaCell *selectedCell = (SHDMediaCell*)[tableView cellForRowAtIndexPath:indexPath];
     
     DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
-    detailsMediaViewController.mediaDatas = selectedCell.model;
+    detailsMediaViewController.mediaDatas = selectedCell.media;
     detailsMediaViewController.userDiscoverId = self.metUserId;
-    detailsMediaViewController.title = [selectedCell.model objectForKey:@"name"];
+    detailsMediaViewController.title = [selectedCell.media objectForKey:@"name"];
     
     UIBarButtonItem *newBackButton =
     [[UIBarButtonItem alloc] initWithTitle:@""
@@ -943,7 +832,7 @@
 - (void) addAsFavorite:(UIBarButtonItem*)sender
 {
     NSString *currentUserPFChannelName = @"sh_channel_";
-    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:self.metUserId];
+    currentUserPFChannelName = [currentUserPFChannelName stringByAppendingString:self.userDiscovered.fbId];
 
 
     NSMutableArray *rightBarButtonItemsArray = [[NSMutableArray alloc] initWithArray:self.navigationItem.rightBarButtonItems];
@@ -1095,9 +984,9 @@
 }
 
 #pragma mark - delegate
-- (void) scrollToSectionWithNumber:(UIButton*)sender {
-    
-    NSInteger aSectionNumber = sender.tag;
+- (void) scrollToSectionWithNumber:(UIButton*)sender
+{
+    NSUInteger aSectionNumber = sender.tag;
     
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:1];
     

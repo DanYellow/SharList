@@ -16,6 +16,7 @@
 #import "AFNetworking.h"
 #import "UIImageView+AFNetworking.h"
 
+#import "SHDMediaCell.h"
 #import "ShareListMediaTableViewCell.h"
 #import "DetailsMediaViewController.h"
 
@@ -49,7 +50,7 @@ typedef NS_ENUM (NSInteger, FollowingStatus) {
 
 @property (strong, nonatomic) id metUserId;
 @property (strong, atomic) Discovery *userDiscovered;
-@property (retain, nonatomic) NSMutableData *responseData;
+@property (strong, nonatomic) NSMutableData *responseData;
 @property (nonatomic, assign) id<UpdateMeetingsListDelegate> delegate;
 @property (assign, nonatomic, getter=isDisplayedFromPush) BOOL isDisplayedFromPush; // Indicate if the view is push from notification
 

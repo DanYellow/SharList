@@ -10,6 +10,10 @@
 
 #import "SWTableViewCell.h"
 
+#import "AFNetworking.h"
+#import "UIImageView+AFNetworking.h"
+#import <JLTMDbClient.h>
+
 @interface ShareListMediaTableViewCell : SWTableViewCell
 
 

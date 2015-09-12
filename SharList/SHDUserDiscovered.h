@@ -50,4 +50,8 @@ typedef NS_ENUM(NSUInteger, Tag) {
 - (void) newDiscoverManager:(BOOL)isSeen;
 - (void) favoriteDiscoverManager:(BOOL)isFavorite;
 
+- (void) decreaseThumbsAlpha;
+- (void) increaseThumbsAlpha;
+
+
 @end

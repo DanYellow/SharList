@@ -30,6 +30,8 @@
 // Categories
 #import "NSArray+Reverse.h"
 #import "NSDate+CupertinoYankee.h"
+#import "UITableViewCell+Model.h"
+
 
 // Views
 #import "ConnectView.h"

@@ -12,6 +12,7 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 #import "Discovery.h"
+#import "KeepListElement.h"
 
 #import "NSDictionary+FilterKeysForNullObj.h"
 
@@ -28,13 +29,15 @@
 @property (strong, atomic) NSString *imdbId;
 @property (strong, atomic) NSString *type; // movie or serie
 
-@property (strong, atomic) NSDate *nextEpisodeDate;
+@property (weak, atomic) NSDate *nextEpisodeDate;
 @property (strong, atomic) NSString *nextEpisodeRef; // S01E04 e.g.
 
 @property (nonatomic, assign) BOOL isInCurrentUserList; // Indicate if the current media is among user list
 @property (nonatomic, assign) BOOL isUserList;
+@property (nonatomic, assign) BOOL isAmongKeepList;
 
 - (instancetype) initWithMedia:(NSDictionary *)media;
+
 @property (nonatomic, weak) id<SHDMediaDatasDelegate> delegate;
 
 

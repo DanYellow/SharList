@@ -713,7 +713,7 @@
                                                                             target:self
                                                                           selector:@selector(updateRefreshBtnMask)
                                                                           userInfo:nil
-                                                                           repeats:YES];
+                                                                        repeats:YES];
                 }
             });
         }
@@ -895,7 +895,7 @@
     headerView.opaque = YES;
     headerView.backgroundColor = [UIColor clearColor];
     
-    CGFloat percentWidthContent = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? (604.0/640.0) : .85;
+    CGFloat percentWidthContent = (604.0/640.0);
 
     CGRect bottomBorderFrame = CGRectMake( (screenWidth - (CGRectGetWidth(headerView.frame) * percentWidthContent)) / 2,
                                           CGRectGetHeight(headerView.frame),
@@ -953,7 +953,8 @@
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? (screenHeight * (374.0/1136.0)) + 13 :  (screenHeight * (348.0/1024.0)) + 80;
+    return (screenHeight * (374.0/1136.0)) + 13;
+//    return 200.0;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -1030,7 +1031,7 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
-    ShareListMediaTableViewCell *selectedCell = (ShareListMediaTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
+    UITableViewCell *selectedCell = (UITableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
 
 //    selectedCell.contentView.alpha = .75;
     
@@ -1046,7 +1047,7 @@
 {
     static NSString *CellIdentifier = @"myCell";
     
-    ShareListMediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: indexPath.section]] objectAtIndex:indexPath.row];
     
@@ -1055,7 +1056,7 @@
     SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:currentUserMet];
     
     if (cell == nil) {
-        cell = [[ShareListMediaTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                                   reuseIdentifier:CellIdentifier];
         
         cell.backgroundColor = [UIColor clearColor];
@@ -1098,6 +1099,7 @@
 // Scrolls but user keeps finger on the scrollview
 - (void) scrollViewDidEndDragging:(UITableView *)tableView willDecelerate:(BOOL)decelerate
 {
+    
     if (!decelerate) {
         [self loadCellsMediasThumbsForTableView:tableView];
     }
@@ -1111,16 +1113,12 @@
 
 - (void) loadCellsMediasThumbsForTableView:(UITableView *) tableView
 {
-    for (ShareListMediaTableViewCell *aCell in [tableView visibleCells]) {
-        
-//        userDiscovered.mediaThumbsContainer.alpha = 1.0;
-        
-        if ([self.visibleCells containsObject:aCell.model]) {
-            SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
-            [userDiscovered increaseThumbsAlpha];
+    for (UITableViewCell *aCell in [tableView visibleCells]) {
+        if ([self.visibleCells containsObject:aCell.model])
             continue;
-        }
-
+        
+        aCell.alpha = 1;
+        
         NSIndexPath *aCellIndexPath = [tableView indexPathForCell:aCell];
         
         Discovery *currentUserMet = [[self.discoveries objectForKey:[self.listOfDistinctsDay objectAtIndex: aCellIndexPath.section]] objectAtIndex:aCellIndexPath.row];
@@ -1128,19 +1126,29 @@
         SHDUserDiscoveredDatas *userDiscoveredDatas = [[SHDUserDiscoveredDatas alloc] initWithDiscoveredUser:currentUserMet];
         
         SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
+        userDiscovered.mediaThumbsContainer.hidden = NO;
+
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [userDiscovered setMediaThumbs:userDiscoveredDatas.mediasIds];
         });
     }
 }
 
+// Only shows visible cells if the delta is too short
+//- (void) displayVisibleCells:(UITableView *) tableView
+//{
+//    for (UITableViewCell *aCell in [tableView visibleCells]) {
+//        SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
+//        userDiscovered.mediaThumbsContainer.hidden = NO;
+//        [UIView animateWithDuration:0.25 animations:^{
+//            userDiscovered.mediaThumbsContainer.alpha = 1;
+//        }];
+//    }
+//}
+
 - (void) unloadCellsMediasThumbsForTableView:(UITableView *) tableView andOpacity:(CGFloat)opacity
 {
     self.visibleCells = [[[tableView visibleCells] valueForKey:@"model"] mutableCopy];
-    for (UITableViewCell *aCell in [tableView visibleCells]) {
-        SHDUserDiscovered *userDiscovered = (SHDUserDiscovered *)[aCell.contentView viewWithTag:98];
-        [userDiscovered decreaseThumbsAlpha];
-    }
 }
 
 - (void)scrollViewWillBeginDragging:(UITableView *)tableView

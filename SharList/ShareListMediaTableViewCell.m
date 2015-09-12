@@ -19,7 +19,6 @@
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-    
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     self.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.35];
     self.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
@@ -27,6 +26,7 @@
 //    self.selectionStyle = UITableViewCellSelectionStyleNone;
     self.textLabel.backgroundColor = [UIColor clearColor];
     self.detailTextLabel.numberOfLines = 0;
+    self.backgroundColor = [UIColor colorWithRed:(48.0/255.0) green:(49.0/255.0) blue:(50.0/255.0) alpha:0.35];
     
     return self;
 }
@@ -40,18 +40,12 @@
 - (void) setModel:(id)s
 {
     _model = s;
+    
+//    [self getImageCellForData:_model aCell:self];
 }
 
 - (id) model {
     return _model;
-}
-
-
-- (void) setFavorite:(BOOL)aFavorite {
-    _favorite = aFavorite;
-}
-- (BOOL) favorite {
-    return _favorite;
 }
 
 @end

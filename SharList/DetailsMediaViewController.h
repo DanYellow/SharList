@@ -46,6 +46,7 @@
 
 
 @protocol UpdateUserTasteListDelegate;
+@protocol UpdateUserKeepListDelegate;
 
 extern NSString * const BSCLIENTID;
 
@@ -88,6 +89,7 @@ typedef NS_ENUM(NSUInteger, DMVTag) {
 @property (nonatomic, retain) NSMutableData *responseData;
 @property (nonatomic, strong) NSString *numberLikesString;
 @property (nonatomic, assign) id<UpdateUserTasteListDelegate> delegate;
+@property (nonatomic, assign) id<UpdateUserKeepListDelegate> keepListDelegate;
 @property (nonatomic, assign) NSMutableDictionary *mediaDatasDict;
 @property (strong, nonatomic) NSString *userDiscoverId;
 
@@ -115,7 +117,11 @@ typedef NS_ENUM(NSUInteger, DMVTag) {
 @protocol UpdateUserTasteListDelegate <NSObject>
 
 @required
-
 - (void) userListHaveBeenUpdate:(NSMutableDictionary *)dict;
+@end
 
+@protocol UpdateUserKeepListDelegate <NSObject>
+
+@required
+- (void) userKeeplistUpdated;
 @end

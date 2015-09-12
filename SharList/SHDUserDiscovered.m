@@ -38,7 +38,7 @@
     self.currentUserLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.currentUser likes]] mutableCopy];
     self.discoveredUserLikes = [[NSKeyedUnarchiver unarchiveObjectWithData:[self.userDiscovered likes]] mutableCopy];
     
-    CGFloat percentWidthContent = (600.0/640.0);
+    CGFloat percentWidthContent = ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) ? (600.0/640.0) : .85;
     CGFloat posX = (screenWidth - (screenWidth * percentWidthContent)) / 2;
 
     self.frame = CGRectMake(0, 0,
@@ -59,6 +59,9 @@
                                            CGRectGetWidth(self.initFrame),
                                            thumbsMediasViewPercent * CGRectGetHeight(self.initFrame))];
     thumbsMediasContainerView.backgroundColor = [UIColor colorWithRed:(223.0/255.0) green:(239.0/255.0) blue:(245.0/255.0) alpha:0.95];
+    thumbsMediasContainerView.showsHorizontalScrollIndicator = NO;
+    thumbsMediasContainerView.showsVerticalScrollIndicator = NO;
+    thumbsMediasContainerView.userInteractionEnabled = NO;
     thumbsMediasContainerView.frame = CGRectMake(0, CGRectGetMaxY(self.initFrame) - CGRectGetHeight(thumbsMediasContainerView.frame), CGRectGetWidth(thumbsMediasContainerView.frame), CGRectGetHeight(thumbsMediasContainerView.frame));
     thumbsMediasContainerView.tag = SHDDiscoverMediaThumbsTag;
 //
@@ -289,25 +292,43 @@
                 [thumbMedia setImageWithURL:
                  [NSURL URLWithString:imgDistURL]
                            placeholderImage:[UIImage imageNamed:@"TrianglesBG"]];
+                
             }
         }];
     }
     
+    // It hides useless thumbs
     for (NSUInteger i = mediasArray.count; i < 4; i++) {
         UIImageView *thumbMedia = (UIImageView*) [thumbsMediasContainerView viewWithTag:100+i];
         thumbMedia.hidden = YES;
     }
     
     dispatch_group_notify(finishLoadThumbs, dispatch_get_main_queue(), ^{
-        [UIView animateWithDuration:0.25 animations:^{
-            thumbsMediasContainerView.alpha = 1;
-        }];
+        [self increaseThumbsAlpha];
+//        [UIView animateWithDuration:0.25 animations:^{
+//            thumbsMediasContainerView.alpha = 1;
+//        }];
 
     });
 }
 
-- (UIView*) mediaThumbsContainer {
+- (UIView*) mediaThumbsContainer
+{
     return [self viewWithTag:SHDDiscoverMediaThumbsTag];
+}
+
+- (void) decreaseThumbsAlpha
+{
+    for (UIView *thumb in [[self viewWithTag:SHDDiscoverMediaThumbsTag] subviews]) {
+        thumb.alpha = .4;
+    }
+}
+
+- (void) increaseThumbsAlpha
+{
+    for (UIView *thumb in [[self viewWithTag:SHDDiscoverMediaThumbsTag] subviews]) {
+        thumb.alpha = 1.0;
+    }
 }
 
 - (void) setProfileImage:(NSString*)fbId
