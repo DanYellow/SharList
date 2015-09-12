@@ -50,8 +50,8 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 
 - Gestion de l'iPad
 - Correction de bugs
-- Filtrage de la liste d'un utilisateur rencontré
-- Amélioration de la vue "Découverte"
+- Possibilité de filtrer de la liste d'un utilisateur rencontré
+- Amélioration de la vue "Découvertes"
 - Changement du design
 
 - Highlight Slider - Mise en avant de contenus
@@ -69,6 +69,10 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Possibilité d'acheter une série ou un film dans sa version originale sous-titrée (dans la limite des disponibilité d'iTunes) - **Done**
 
 ###### 1.2.1
+- Keeplist en local
+- Système de notifications (développer le système côté serveur Shound)
+- Développer le slider
+
 - Inverser l'affichage des goûts en commun (X % de la liste à découvrir!) - **Done**
 - Ajouter "pull to refresh" pour permettre de découvrir de nouvelles choses + Indiquer le temps restant avant la prochaine rencontre : 'XX:XX avant de pouvoir découvrir de nouvelles choses' - **Done**
 - Remettre le scroll-to-top lors de la recherche d'une nouvelle récouverte' - **Done**
@@ -77,6 +81,7 @@ gqsnkky_wongsky_1415569231@tfbnw.net : 123456789C
 - Afficher les dernières recherches
 - Gérer l'iPad - **Done**
 - Ajouter le nombre de découvertes faites - **Done**
+
 
 
 ###### X.X.X
@@ -187,7 +192,7 @@ _ Nombre de films / séries retirées
 - Avoir X % de progression dans une série
 
 
-Martine Aubry : Vous avez regardé plus de 35 heures d'épisodes. C'est la lutte
+Martine Aubry : Vous avez regardé plus de 35 heures d'épisodes. C'est la lutte finale !
 
 ## Pods dependancies
 
