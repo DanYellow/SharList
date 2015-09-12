@@ -158,6 +158,7 @@
     
     if (cell == nil) {
         cell = [[SHDMediaCell alloc] initWithReuseIdentifier:CellIdentifier andFrame:CGRectMake(0, 0, screenWidth, 69.0f)];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
     KeepListElement *elmnt = [self.userKeepList objectAtIndex:indexPath.row];
@@ -172,30 +173,39 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 {
-    //    NSString *titleForHeader = [self tableView:tableView titleForHeaderInSection:indexPath.section];
-    
     SHDMediaCell *selectedCell = (SHDMediaCell*)[tableView cellForRowAtIndexPath:indexPath];
     
     NSObject *object = selectedCell.media;
     
     DetailsMediaViewController *detailsMediaViewController = [DetailsMediaViewController new];
     detailsMediaViewController.mediaDatas = object;
+    detailsMediaViewController.keepListDelegate = self;
     detailsMediaViewController.title = [selectedCell.media objectForKey:@"name"];
     [self.navigationController pushViewController:detailsMediaViewController animated:YES];
 }
 
+#pragma mark - custom delegates
+
+- (void) userKeeplistUpdated
+{
+    [self reloadFirstSection];
+}
 
 
 #pragma mark - custom methods
 
 - (void) filterTableview:(id)sender
 {
+    [self reloadFirstSection];
+}
+
+- (void) reloadFirstSection
+{
     UITableView *userSelectionTableView = (UITableView*)[self.view viewWithTag:KLVTableViewTag];
     
     [userSelectionTableView reloadSections:[NSIndexSet indexSetWithIndex:0]
                           withRowAnimation:UITableViewRowAnimationFade];
 }
-
 
 
 - (void)didReceiveMemoryWarning {

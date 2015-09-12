@@ -18,7 +18,7 @@ typedef NS_ENUM(NSUInteger, KLVTag) {
     KLVSegmentedControlTag = 2
 };
 
-@interface KeepListViewControler : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface KeepListViewControler : UIViewController <UITableViewDelegate, UITableViewDataSource, UpdateUserKeepListDelegate>
 {
     CGFloat screenWidth;
     CGFloat screenHeight;
