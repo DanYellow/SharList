@@ -14,6 +14,7 @@
 
 @property (nonatomic, retain) NSNumber * dbId;
 @property (nonatomic, retain) NSString * fbId;
+@property (nonatomic, assign) BOOL isAnonymous;
 @property (nonatomic, assign) BOOL isFacebookFriend;
 @property (nonatomic, assign) BOOL isFavorite;
 @property (nonatomic, assign) BOOL isRandomDiscover;

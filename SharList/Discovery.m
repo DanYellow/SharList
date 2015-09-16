@@ -13,6 +13,7 @@
 
 @dynamic dbId;
 @dynamic fbId;
+@dynamic isAnonymous;
 @dynamic isFacebookFriend;
 @dynamic isFavorite;
 @dynamic isSeen;

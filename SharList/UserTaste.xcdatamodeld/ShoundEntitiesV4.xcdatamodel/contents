@@ -7,6 +7,7 @@
     <entity name="Discovery" representedClassName="Discovery" syncable="YES">
         <attribute name="dbId" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="fbId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isAnonymous" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isFacebookFriend" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isRandomDiscover" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
@@ -23,7 +24,7 @@
     </entity>
     <elements>
         <element name="CurrentUser" positionX="106" positionY="-63" width="128" height="75"/>
-        <element name="Discovery" positionX="-63" positionY="-18" width="128" height="180"/>
+        <element name="Discovery" positionX="-63" positionY="-18" width="128" height="195"/>
         <element name="KeepListElement" positionX="205" positionY="75" width="128" height="103"/>
     </elements>
 </model>

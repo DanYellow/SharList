@@ -55,9 +55,9 @@
         // It create weird behaviour if is here
 //        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         
-//        UIView *bgColorView = [UIView new];
-//        [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
-//        [self setSelectedBackgroundView:bgColorView];
+        UIView *bgColorView = [UIView new];
+        [bgColorView setBackgroundColor:[UIColor colorWithWhite:1 alpha:.09]];
+        [self setSelectedBackgroundView:bgColorView];
     }
     
     
@@ -234,7 +234,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 
